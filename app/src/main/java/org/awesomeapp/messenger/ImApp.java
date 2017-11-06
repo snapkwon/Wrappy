@@ -80,12 +80,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import im.zom.messenger.BuildConfig;
+import net.wrappy.im.BuildConfig;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.util.Languages;
 import org.ironrabbit.type.CustomTypefaceManager;

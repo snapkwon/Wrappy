@@ -16,7 +16,7 @@
  */
 package org.awesomeapp.messenger.ui.legacy;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;

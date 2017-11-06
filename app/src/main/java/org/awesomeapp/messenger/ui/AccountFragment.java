@@ -60,7 +60,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 
 public class AccountFragment extends Fragment {

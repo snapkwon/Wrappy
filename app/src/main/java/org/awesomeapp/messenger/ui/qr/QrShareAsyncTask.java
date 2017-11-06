@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class QrShareAsyncTask extends AsyncTask<String, Void, Bitmap> {
     private static final String TAG = "QrGenAsyncTask";

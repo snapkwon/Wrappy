@@ -27,7 +27,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.MainActivity;
 import org.awesomeapp.messenger.tasks.AddContactAsyncTask;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class MoreFragment extends Fragment {
 

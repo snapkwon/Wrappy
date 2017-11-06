@@ -15,7 +15,7 @@ import net.sqlcipher.DatabaseUtils;
 import java.io.File;
 import java.util.ArrayList;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
     /**
  * Created by n8fr8 on 6/2/16.

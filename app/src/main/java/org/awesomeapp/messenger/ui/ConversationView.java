@@ -137,7 +137,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats

@@ -374,8 +374,8 @@ d63ca3b add a release build flavor package id
 89360b3 move language util class into main zom awesomeapp package
 d5f3782 fix build gradle to have a valid flavor name (cannot be "release")
 29efac6 update build, add a new releae flavor with default id
-c8e261f update resource package id for im.zom.messenger
-7097ca4 moved awesomeAppCore to zomCore and changed package id core package is now im.zom.messenger
+c8e261f update resource package id for net.wrappy.im
+7097ca4 moved awesomeAppCore to zomCore and changed package id core package is now net.wrappy.im
 473a253 15.0.0-beta-1
 6ce8da4 Merge pull request #51 from n8fr8/master
 2174320 fix logic for various states of message delivery and encryption

@@ -189,7 +189,7 @@ import javax.net.ssl.SSLSocketFactory;
 import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
 import eu.siacs.conversations.Uploader;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class XmppConnection extends ImConnection {

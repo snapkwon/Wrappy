@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import org.awesomeapp.messenger.ui.legacy.SettingActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingActivity;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class AccountsActivity extends BaseActivity {
 

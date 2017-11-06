@@ -41,7 +41,7 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.sql.Date;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 //import com.bumptech.glide.Glide;
 

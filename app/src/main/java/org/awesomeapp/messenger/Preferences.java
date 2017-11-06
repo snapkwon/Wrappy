@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import org.awesomeapp.messenger.util.Languages;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 
 /**

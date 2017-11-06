@@ -62,7 +62,7 @@ import org.awesomeapp.messenger.provider.Imps;
 
 import java.io.IOException;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;

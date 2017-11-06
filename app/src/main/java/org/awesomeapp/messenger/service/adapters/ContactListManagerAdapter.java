@@ -21,7 +21,7 @@ import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.service.IContactList;
 import org.awesomeapp.messenger.service.IContactListListener;
 import org.awesomeapp.messenger.service.ISubscriptionListener;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.model.ChatGroup;

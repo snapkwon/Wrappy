@@ -57,7 +57,7 @@ import org.awesomeapp.messenger.ui.widgets.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /** Activity used to pick a contact. */
 public class ContactsPickerActivity extends BaseActivity {

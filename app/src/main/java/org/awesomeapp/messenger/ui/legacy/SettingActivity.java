@@ -41,7 +41,7 @@ import org.awesomeapp.messenger.util.Languages;
 
 import java.util.ArrayList;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicResponder;
 

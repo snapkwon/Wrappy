@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 
 public class AddContactActivity extends BaseActivity {

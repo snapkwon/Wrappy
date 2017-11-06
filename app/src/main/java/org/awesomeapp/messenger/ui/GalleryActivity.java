@@ -63,7 +63,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class GalleryActivity extends BaseActivity {
 

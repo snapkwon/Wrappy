@@ -52,7 +52,7 @@ import org.awesomeapp.messenger.ui.widgets.LetterAvatar;
 
 import java.util.ArrayList;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class GroupDisplayActivity extends BaseActivity {
 

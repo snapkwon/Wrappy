@@ -22,7 +22,7 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.Date;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 2/12/16.

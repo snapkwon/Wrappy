@@ -100,7 +100,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.iocipher.VirtualFileSystem;
 
 /**

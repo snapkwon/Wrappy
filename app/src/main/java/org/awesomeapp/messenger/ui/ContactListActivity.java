@@ -32,7 +32,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class ContactListActivity extends AppCompatActivity {
 

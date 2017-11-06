@@ -51,7 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 
 public class ContactDisplayActivity extends BaseActivity {

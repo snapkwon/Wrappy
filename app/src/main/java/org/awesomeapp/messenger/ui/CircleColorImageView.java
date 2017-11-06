@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 3/16/16.

@@ -67,7 +67,7 @@ import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import org.awesomeapp.messenger.util.Languages;
 
 public class OnboardingActivity extends BaseActivity {

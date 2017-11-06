@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 3/29/16.

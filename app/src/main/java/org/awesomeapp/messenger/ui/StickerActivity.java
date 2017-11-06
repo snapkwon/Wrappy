@@ -63,7 +63,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.iocipher.FileInputStream;
 
 public class StickerActivity extends BaseActivity {

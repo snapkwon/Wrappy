@@ -3,7 +3,7 @@ package org.awesomeapp.messenger.ui.legacy;
 import org.awesomeapp.messenger.crypto.IOtrChatSession;
 import org.awesomeapp.messenger.crypto.otr.OtrDebugLogger;
 import org.awesomeapp.messenger.service.IChatSession;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import org.awesomeapp.messenger.model.Address;
 import org.awesomeapp.messenger.service.ImServiceConstants;
 

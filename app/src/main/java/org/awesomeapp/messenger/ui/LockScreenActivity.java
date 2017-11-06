@@ -27,7 +27,7 @@ import android.widget.ViewFlipper;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PassphraseSecrets;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.Preferences;

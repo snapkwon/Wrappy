@@ -21,7 +21,7 @@ import android.widget.ListView;
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.provider.Imps;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class AccountsFragment extends ListFragment {
 

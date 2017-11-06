@@ -19,7 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.awesomeapp.messenger.ImApp;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 
 public class StickerGridAdapter extends BaseAdapter

@@ -3,7 +3,7 @@
  */
 package org.awesomeapp.messenger.util;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import java.io.File;
 import java.io.FileDescriptor;

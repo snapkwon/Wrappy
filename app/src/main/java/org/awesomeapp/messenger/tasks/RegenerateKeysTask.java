@@ -35,7 +35,7 @@ import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 5/1/17.

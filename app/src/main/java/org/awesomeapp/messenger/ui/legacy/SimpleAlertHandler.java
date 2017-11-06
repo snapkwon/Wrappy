@@ -17,7 +17,7 @@
 
 package org.awesomeapp.messenger.ui.legacy;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import org.awesomeapp.messenger.model.Contact;
 import org.awesomeapp.messenger.model.ContactListListener;
 import org.awesomeapp.messenger.model.ImErrorInfo;

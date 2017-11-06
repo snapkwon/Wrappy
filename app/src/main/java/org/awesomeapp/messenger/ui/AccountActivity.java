@@ -63,7 +63,7 @@ import org.awesomeapp.messenger.util.XmppUriHelper;
 import java.util.HashMap;
 import java.util.Locale;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class AccountActivity extends BaseActivity {
 

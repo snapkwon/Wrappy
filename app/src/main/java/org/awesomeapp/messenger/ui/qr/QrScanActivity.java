@@ -11,7 +11,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.ImageView.ScaleType.FIT_CENTER;
 import static android.widget.LinearLayout.HORIZONTAL;
 import static android.widget.LinearLayout.VERTICAL;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import android.Manifest;
 import android.app.Activity;

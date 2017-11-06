@@ -63,7 +63,7 @@ import org.awesomeapp.messenger.tasks.MigrateAccountTask;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingAccount;
 import org.awesomeapp.messenger.ui.widgets.ConversationViewHolder;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class ConversationListFragment extends Fragment {
 

@@ -52,7 +52,7 @@ import java.util.UUID;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicResponder;

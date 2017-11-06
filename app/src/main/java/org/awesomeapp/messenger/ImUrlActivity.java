@@ -61,7 +61,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import static org.awesomeapp.messenger.ui.ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS;
 

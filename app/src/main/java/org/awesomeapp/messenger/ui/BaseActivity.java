@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import org.ironrabbit.type.CustomTypefaceManager;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 5/7/16.

@@ -60,7 +60,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.Date;
 import java.util.Locale;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,

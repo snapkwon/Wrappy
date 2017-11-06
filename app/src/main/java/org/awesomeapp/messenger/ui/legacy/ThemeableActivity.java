@@ -1,6 +1,6 @@
 package org.awesomeapp.messenger.ui.legacy;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import java.io.File;
 

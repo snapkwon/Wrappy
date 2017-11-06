@@ -19,7 +19,7 @@ import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;
 
 import java.util.ArrayList;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_NOSENSOR;
 import static android.graphics.Color.BLACK;

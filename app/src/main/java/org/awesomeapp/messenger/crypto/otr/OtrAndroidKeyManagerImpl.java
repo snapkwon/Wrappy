@@ -1,7 +1,7 @@
 package org.awesomeapp.messenger.crypto.otr;
 
 import org.awesomeapp.messenger.crypto.IOtrKeyManager;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.ImApp;
 import org.awesomeapp.messenger.model.Address;

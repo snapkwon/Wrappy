@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
 

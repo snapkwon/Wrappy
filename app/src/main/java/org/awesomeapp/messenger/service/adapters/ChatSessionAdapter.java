@@ -30,7 +30,7 @@ import  org.awesomeapp.messenger.service.IChatListener;
 import org.awesomeapp.messenger.service.IDataListener;
 
 import eu.siacs.conversations.Downloader;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import info.guardianproject.iocipher.File;
 
 import org.awesomeapp.messenger.ImApp;

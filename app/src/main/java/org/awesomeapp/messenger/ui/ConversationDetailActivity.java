@@ -83,8 +83,8 @@ import java.util.UUID;
 
 import org.awesomeapp.messenger.service.IChatSession;
 
-import im.zom.messenger.BuildConfig;
-import im.zom.messenger.R;
+import net.wrappy.im.BuildConfig;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.service.IChatSessionManager;
 import org.awesomeapp.messenger.service.IContactListManager;

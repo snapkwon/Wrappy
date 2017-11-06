@@ -17,7 +17,7 @@
 
 package org.awesomeapp.messenger.ui;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import org.awesomeapp.messenger.ImUrlActivity;
 import org.awesomeapp.messenger.ui.onboarding.OnboardingManager;

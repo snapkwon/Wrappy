@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by N-Pex on 2017-08-21.

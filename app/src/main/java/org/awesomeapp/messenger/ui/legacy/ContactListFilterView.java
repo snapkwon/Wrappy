@@ -19,7 +19,7 @@ package org.awesomeapp.messenger.ui.legacy;
 
 import org.awesomeapp.messenger.service.IContactListManager;
 import org.awesomeapp.messenger.service.IImConnection;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 import org.awesomeapp.messenger.model.ImErrorInfo;
 
 import org.awesomeapp.messenger.ImApp;

@@ -2,7 +2,7 @@ package org.awesomeapp.messenger.ui.widgets;
 
 import java.io.IOException;
 import java.util.List;
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 import android.app.Activity;
 import android.content.Context;

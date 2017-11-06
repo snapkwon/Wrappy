@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import org.awesomeapp.messenger.util.SecureMediaStore;
 
-import im.zom.messenger.R;
+import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 8/10/15.
