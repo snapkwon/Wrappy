@@ -48,7 +48,7 @@
 	        android:cursorVisible="true"
 	        android:inputType="textEmailAddress"/>
 	
-	    <org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView
+	    <net.wrappy.im.ui.widgets.InstantAutoCompleteTextView
 			android:id="@+id/spinnerDomains"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"

@@ -17,7 +17,7 @@
  */
 -->
 
-<org.awesomeapp.messenger.ui.AccountListItem
+<net.wrappy.im.ui.AccountListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -38,7 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/providerName"
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/providerName"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"
                     android:singleLine="true"
@@ -50,7 +51,8 @@
                     />
             </LinearLayout>
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/loginName"
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/loginName"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:ellipsize="marquee"
                 android:singleLine="true"
@@ -68,4 +70,4 @@
             />
            
 
-</org.awesomeapp.messenger.ui.AccountListItem>
+</net.wrappy.im.ui.AccountListItem>

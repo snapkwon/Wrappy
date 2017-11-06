@@ -26,7 +26,7 @@
     >
 
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/invite_friends"
@@ -35,7 +35,7 @@
         android:textColor="?colorPrimary"
         />
     <!--
-    <org.ironrabbit.type.CustomTypefaceTextView
+ CustomTypefaceTextViewView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_invite_new_friends"
@@ -54,7 +54,7 @@
 
         >
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/btnInviteSMS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:drawableLeft="@android:drawable/ic_menu_send"
             android:background="@android:color/transparent"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            />   <org.ironrabbit.type.CustomTypefaceTextView
+            />   <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/btnInviteShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
 
         />
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/btnInviteScan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
     </LinearLayout>
 
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/header_got_invited"
@@ -117,7 +117,7 @@
         android:layout_marginTop="10dp"
         />
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_tap_invite"
@@ -138,7 +138,7 @@
         >
         </LinearLayout>
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:layout_marginTop="5dip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -148,12 +148,13 @@
 
         />
 
-    <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/input_contact_label"
+    <net.ironrabbit.type.CustomTypefaceTextView
+        android:id="@+id/input_contact_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/input_contact_label" />
 
-    <org.ironrabbit.type.CustomTypefaceEditText
+    <net.ironrabbit.type.CustomTypefaceEditText
         android:id="@+id/email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

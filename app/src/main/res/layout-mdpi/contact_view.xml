@@ -20,7 +20,7 @@
 <view xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    class="org.awesomeapp.messenger.ui.ContactListItem"
+    class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="3dp"	
@@ -37,7 +37,7 @@
         android:layout_gravity="center_vertical"
         >
         
-                <org.ironrabbit.type.CustomTypefaceTextView
+                <net.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/line1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
 
                     />
        
-                  <org.ironrabbit.type.CustomTypefaceTextView
+                  <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line2"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"

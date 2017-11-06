@@ -35,7 +35,7 @@ android:orientation="vertical"
 
         />
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/languageButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@ android:orientation="vertical"
 
 </LinearLayout>
 
-    <org.ironrabbit.type.CustomTypefaceTextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/nextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

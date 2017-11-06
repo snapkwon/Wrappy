@@ -61,7 +61,8 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				>
-			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvNickname"
+			<net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/tvNickname"
 				android:selectAllOnFocus="true"
 				android:layout_width="wrap_content"
 				android:ellipsize="end"
@@ -92,7 +93,8 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				>
-			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/edtName"
+			<net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/edtName"
 			                               android:selectAllOnFocus="true"
 			                               android:layout_width="wrap_content"
 			                               android:layout_height="wrap_content"
@@ -145,7 +147,7 @@
 
 
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="none"
@@ -173,8 +175,7 @@
 				android:src="@drawable/qr"
 				android:layout_alignParentLeft="true"
 				/>
-
-		<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/tvFingerprint"
+CustomTypefaceTextViewView android:id="@+id/tvFingerprint"
 		                       android:selectAllOnFocus="true"
 		                       android:layout_width="200dp"
 		                       android:layout_height="wrap_content"
@@ -219,7 +220,8 @@
 				android:layout_alignParentLeft="true"
 				/>
 
-			<org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/omemoFingerprint"
+			<net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/omemoFingerprint"
 				android:selectAllOnFocus="true"
 				android:layout_width="200dp"
 				android:layout_height="wrap_content"

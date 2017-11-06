@@ -2,10 +2,8 @@ package eu.siacs.conversations;
 
 import android.webkit.URLUtil;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.awesomeapp.messenger.util.SecureMediaStore;
-import org.awesomeapp.messenger.util.SystemServices;
+import net.wrappy.im.util.SecureMediaStore;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.io.CipherOutputStream;
 import org.bouncycastle.crypto.io.CipherInputStream;

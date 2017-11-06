@@ -46,26 +46,26 @@
         android:required="false" />
 
     <permission
-        android:name="org.awesomeapp.messenger.permission.IM_SERVICE"
+        android:name="org.wrappy.im.permission.IM_SERVICE"
         android:description="@string/perm_desc"
         android:label="@string/perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
-        android:name="org.awesomeapp.messenger.permission.READ_ONLY"
+        android:name="org.wrappy.im.permission.READ_ONLY"
         android:description="@string/ro_perm_desc"
         android:label="@string/ro_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
-        android:name="org.awesomeapp.messenger.permission.WRITE_ONLY"
+        android:name="org.wrappy.im.permission.WRITE_ONLY"
         android:description="@string/wo_perm_desc"
         android:label="@string/wo_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
 
     <application
-        android:name="org.awesomeapp.messenger.ImApp"
+        android:name=".ImApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
@@ -73,7 +73,7 @@
         tools:replace="android:icon,android:allowBackup,android:label"
         >
         <activity
-            android:name="org.awesomeapp.messenger.RouterActivity"
+            android:name=".RouterActivity"
             android:theme="@style/InviteDialog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -213,7 +213,7 @@
         </activity>
 
         <service
-            android:name="org.awesomeapp.messenger.plugin.xmpp.XmppImPlugin"
+            android:name=".plugin.xmpp.XmppImPlugin"
             android:exported="false">
             <intent-filter>
                 <action android:name="org.awesomeapp.messenger.plugin" />
@@ -233,7 +233,7 @@
         <!--
         <service android:name=".plugin.loopback.LoopbackImPlugin">
             <intent-filter>
-                <action android:name="org.awesomeapp.messenger.plugin" />
+                <action android:naimugin" />
             </intent-filter>
             <meta-data android:name="info.guardianproject.otr.app.im.provider_name" android:value="Loopback"/>
             <meta-data android:name="info.guardianproject.otr.app.im.provider_full_name"
@@ -247,7 +247,7 @@
 
         <!-- android:process="info.guardianproject.otr.app.process.im" -->
         <service
-            android:name="org.awesomeapp.messenger.service.RemoteImService"
+            android:name=".service.RemoteImService"
             android:exported="false"
             android:permission="org.awesomeapp.messenger.permission.IM_SERVICE">
             <intent-filter>
@@ -256,22 +256,22 @@
             </intent-filter>
         </service>
         <service
-            android:name="org.awesomeapp.messenger.service.HeartbeatService"
+            android:name=".service.HeartbeatService"
             android:exported="false" />
 
         <provider
-            android:name="org.awesomeapp.messenger.provider.ImpsProvider"
-            android:authorities="org.awesomeapp.messenger.provider.Imps"
+            android:name=".provider.ImpsProvider"
+            android:authorities="net.wrappy.im.provider.Imps"
             android:exported="false"
             android:grantUriPermissions="true"
             android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
             android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
 
         <activity
-            android:name="org.awesomeapp.messenger.ImUrlActivity"
+            android:name=".ImUrlActivity"
             android:theme="@style/InviteDialog"></activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
+            android:name=".ui.legacy.SignoutActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -280,11 +280,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.AddContactActivity"
+            android:name=".ui.AddContactActivity"
             android:exported="false"
             android:label="@string/add_friends" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.ContactsPickerActivity"
+            android:name=".ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend">
             <intent-filter>
@@ -299,7 +299,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.AccountActivity"
+            android:name=".ui.AccountActivity"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
@@ -318,7 +318,7 @@
         </activity>
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.AccountSettingsActivity"
+            android:name=".ui.AccountSettingsActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
@@ -330,7 +330,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.SettingActivity"
+            android:name=".ui.legacy.SettingActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
@@ -342,7 +342,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.SmpResponseActivity"
+            android:name=".ui.legacy.SmpResponseActivity"
             android:exported="false"
             android:theme="@android:style/Theme.Dialog" />
         <activity
@@ -352,7 +352,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
-            android:name="org.awesomeapp.messenger.service.NetworkConnectivityReceiver"
+            android:name=".service.NetworkConnectivityReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -360,7 +360,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.awesomeapp.messenger.service.BootCompletedListener"
+            android:name=".service.BootCompletedListener"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -369,17 +369,17 @@
         </receiver>
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
+            android:name=".ui.LockScreenActivity"
             android:label="@string/title_activity_lock_screen"></activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.onboarding.OnboardingActivity"
+            android:name=".ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"></activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
+            android:name=".ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.qr.QrDisplayActivity"
+            android:name=".ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"
@@ -388,7 +388,7 @@
 
         <activity android:name="net.hockeyapp.android.UpdateActivity" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.legacy.DummyActivity"
+            android:name=".ui.legacy.DummyActivity"
             android:allowTaskReparenting="true"
             android:alwaysRetainTaskState="false"
             android:clearTaskOnLaunch="true"
@@ -398,10 +398,10 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name="org.awesomeapp.messenger.ui.widgets.ImageViewActivity" />
-        <activity android:name="org.awesomeapp.messenger.ui.widgets.SecureCameraActivity" />
+        <activity android:name=".ui.widgets.ImageViewActivity" />
+        <activity android:name=".ui.widgets.SecureCameraActivity" />
         <activity
-            android:name="org.awesomeapp.messenger.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction">
@@ -429,23 +429,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.awesomeapp.messenger.ui.ConversationDetailActivity"
+            android:name=".ui.ConversationDetailActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.ContactListActivity"
+            android:name=".ui.ContactListActivity"
             android:exported="false" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.GalleryActivity"
+            android:name=".ui.GalleryActivity"
             android:exported="false"
             android:title="@string/photo_gallery" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.StickerActivity"
+            android:name=".ui.StickerActivity"
             android:exported="false"
             android:title="@string/action_stickers" />
         <activity
-            android:name="org.awesomeapp.messenger.ui.PanicSetupActivity"
+            android:name=".ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
@@ -455,18 +455,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
+        <activity android:name=".ui.ContactDisplayActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
             ></activity>
-        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
+        <activity android:name=".ui.GroupDisplayActivity"></activity>
 
         <meta-data
-            android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
+            android:name="net.wrappy.im.tasks.GlideVFSModule"
             android:value="GlideModule" />
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.AccountsActivity"
+            android:name=".ui.AccountsActivity"
             android:label="@string/accounts"></activity>
 
         <provider

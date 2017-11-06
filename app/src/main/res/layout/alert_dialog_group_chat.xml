@@ -31,7 +31,7 @@
          />
 -->
 
-    <org.ironrabbit.type.CustomTypefaceEditText
+    <net.ironrabbit.type.CustomTypefaceEditText
         android:id="@+id/chat_room"
         android:hint="@string/group_name"
         android:layout_height="wrap_content"
