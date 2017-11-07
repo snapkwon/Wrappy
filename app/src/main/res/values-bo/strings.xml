@@ -83,7 +83,7 @@
   <string name="empty_conversation_group">གླེང་མོལ་སྒོ་ཕྱེ་མེད། གླེང་མོལ་བྱེད་འགོ་བཙུགས།</string>
   <string name="search_label">འབྲེལ་མིང་། </string>
   <string name="search_hint">གླེང་མོལ་བྱེད་འདོད་ཡོད་ས་ཞིག་གི་མིང་ཕྲིས།</string>
-  <string name="input_contact_label">ཁྱེད་ཀྱི་གྲོགས་པོའི་ཐོ་འགོད་མིང་ཆ་ཚང་ཕྲིས། དཔེར་ན། (zomisfun.4x3f5g@zom.im) ལྟ་བུ།</string>
+  <string name="input_contact_label">ཁྱེད་ཀྱི་གྲོགས་པོའི་ཐོ་འགོད་མིང་ཆ་ཚང་ཕྲིས། དཔེར་ན། (wrappyisfun.4x3f5g@wrappy.net) ལྟ་བུ།</string>
   <!--Views: Chat: Single-->
   <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> དྲ་ཐོག་ཏུ་ཡོད།</string>
   <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> ད་ལྟ་འདིར་མེད།</string>
