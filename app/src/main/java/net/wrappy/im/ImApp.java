@@ -94,8 +94,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final String EXTRA_INTENT_PROXY_HOST = "proxy.host";
     public static final String EXTRA_INTENT_PROXY_PORT = "proxy.port";
 
-    public static final String IMPS_CATEGORY = "org.wrappy.im.service.IMPS_CATEGORY";
-    public static final String ACTION_QUIT = "org.wrappy.im.service.QUIT";
+    public static final String IMPS_CATEGORY = "net.wrappy.im.service.IMPS_CATEGORY";
+    public static final String ACTION_QUIT = "net.wrappy.im.service.QUIT";
 
     public static final int SMALL_AVATAR_WIDTH = 48;
     public static final int SMALL_AVATAR_HEIGHT = 48;

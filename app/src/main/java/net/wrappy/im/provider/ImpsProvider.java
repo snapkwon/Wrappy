@@ -16,10 +16,25 @@
 
 package net.wrappy.im.provider;
 
-import info.guardianproject.cacheword.CacheWordHandler;
-import info.guardianproject.cacheword.ICacheWordSubscriber;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.UriMatcher;
+import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.CursorWindow;
+import android.database.DatabaseUtils;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.text.TextUtils;
 
+import net.sqlcipher.database.SQLiteConstraintException;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteQueryBuilder;
 import net.wrappy.im.ImApp;
+import net.wrappy.im.provider.Imps.Contacts;
 
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LogCleaner;
@@ -36,23 +51,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import net.sqlcipher.database.SQLiteConstraintException;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
-import net.sqlcipher.database.SQLiteQueryBuilder;
-
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.UriMatcher;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.CursorWindow;
-import android.database.DatabaseUtils;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.text.TextUtils;
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
 
 /** A content provider for IM */
 public class ImpsProvider extends ContentProvider implements ICacheWordSubscriber {
@@ -62,8 +62,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String DATABASE_OPEN_TRAIL_TAG = "database_open";
     private static final String LOG_TAG = "imProvider";
 
-    //private static final String AUTHORITY = "Imps";
-    private static final String AUTHORITY = "Imps";
+    //private static final String AUTHORITY = "net.wrappy.im.provider.Imps";
+    private static final String AUTHORITY = "net.wrappy.im.provider.Imps";
 
     private static final String TABLE_ACCOUNTS = "accounts";
     private static final String TABLE_PROVIDERS = "providers";
@@ -1885,7 +1885,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 case MATCH_CHATTING_CONTACTS:
                 case MATCH_CHATTING_CONTACTS_BY_PROVIDER:
 
-                    url = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
+                    url = Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
                     break;
 
                 case MATCH_CONTACTS_BY_PROVIDER:
@@ -2118,10 +2118,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             presenceValues.put(Imps.Presence.PRESENCE_STATUS, Imps.Presence.OFFLINE);
 
             StringBuffer whereClause = new StringBuffer();
-            whereClause.append(Imps.Contacts.USERNAME);
+            whereClause.append(Contacts.USERNAME);
             whereClause.append("=?");
             whereClause.append(" AND ");
-            whereClause.append(Imps.Contacts.ACCOUNT);
+            whereClause.append(Contacts.ACCOUNT);
             whereClause.append("=?");
             
             for (int i = 0; i < usernameCount; i++) {

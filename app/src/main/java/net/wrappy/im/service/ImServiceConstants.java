@@ -25,7 +25,7 @@ public class ImServiceConstants {
       //      "info.guardianproject.otr.app.im",
         //    "RemoteImService");
     public static final ComponentName IM_SERVICE_COMPONENT = new ComponentName(
-          "org.wrappy.im",
+          "net.wrappy.im",
         "RemoteImService");
 
     /** Broadcast action: broadcast event for avatar changed. */

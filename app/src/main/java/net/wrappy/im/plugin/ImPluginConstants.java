@@ -21,7 +21,7 @@ import net.wrappy.im.provider.Imps;
 public class ImPluginConstants {
 
     /** The intent action name for the plugin service. */
-    public static final String PLUGIN_ACTION_NAME = "org.wrappy.im.plugin";
+    public static final String PLUGIN_ACTION_NAME = "net.wrappy.im.plugin";
 
     /**
      * The name of the provider. It should match the values defined in

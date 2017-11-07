@@ -12,9 +12,9 @@
         android:normalScreens="true"
         android:smallScreens="true" />
 
-    <uses-permission android:name="org.awesomeapp.messenger.permission.READ_ONLY" />
-    <uses-permission android:name="org.awesomeapp.messenger.permission.WRITE_ONLY" />
-    <uses-permission android:name="org.awesomeapp.messenger.permission.IM_SERVICE" />
+    <uses-permission android:name="net.wrappy.im.permission.READ_ONLY" />
+    <uses-permission android:name="net.wrappy.im.permission.WRITE_ONLY" />
+    <uses-permission android:name="net.wrappy.im.permission.IM_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -46,26 +46,26 @@
         android:required="false" />
 
     <permission
-        android:name="org.wrappy.im.permission.IM_SERVICE"
+        android:name="net.wrappy.im.permission.IM_SERVICE"
         android:description="@string/perm_desc"
         android:label="@string/perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
-        android:name="org.wrappy.im.permission.READ_ONLY"
+        android:name="net.wrappy.im.permission.READ_ONLY"
         android:description="@string/ro_perm_desc"
         android:label="@string/ro_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
     <permission
-        android:name="org.wrappy.im.permission.WRITE_ONLY"
+        android:name="net.wrappy.im.permission.WRITE_ONLY"
         android:description="@string/wo_perm_desc"
         android:label="@string/wo_perm_label"
         android:permissionGroup="android.permission-group.MESSAGES"
         android:protectionLevel="dangerous" />
 
     <application
-        android:name=".ImApp"
+        android:name="net.wrappy.im.ImApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
@@ -73,7 +73,7 @@
         tools:replace="android:icon,android:allowBackup,android:label"
         >
         <activity
-            android:name=".RouterActivity"
+            android:name="net.wrappy.im.RouterActivity"
             android:theme="@style/InviteDialog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -213,10 +213,10 @@
         </activity>
 
         <service
-            android:name=".plugin.xmpp.XmppImPlugin"
+            android:name="net.wrappy.im.plugin.xmpp.XmppImPlugin"
             android:exported="false">
             <intent-filter>
-                <action android:name="org.awesomeapp.messenger.plugin" />
+                <action android:name="net.wrappy.im.plugin" />
             </intent-filter>
 
             <meta-data
@@ -233,7 +233,7 @@
         <!--
         <service android:name=".plugin.loopback.LoopbackImPlugin">
             <intent-filter>
-                <action android:naimugin" />
+                <action android:name="net.wrappy.im.plugin" />
             </intent-filter>
             <meta-data android:name="info.guardianproject.otr.app.im.provider_name" android:value="Loopback"/>
             <meta-data android:name="info.guardianproject.otr.app.im.provider_full_name"
@@ -247,31 +247,31 @@
 
         <!-- android:process="info.guardianproject.otr.app.process.im" -->
         <service
-            android:name=".service.RemoteImService"
+            android:name="net.wrappy.im.service.RemoteImService"
             android:exported="false"
-            android:permission="org.awesomeapp.messenger.permission.IM_SERVICE">
+            android:permission="net.wrappy.im.permission.IM_SERVICE">
             <intent-filter>
                 <action android:name="info.guardianproject.otr.app.im.IRemoteImService" />
                 <action android:name="info.guardianproject.otr.app.im.SERVICE" />
             </intent-filter>
         </service>
         <service
-            android:name=".service.HeartbeatService"
+            android:name="net.wrappy.im.service.HeartbeatService"
             android:exported="false" />
 
         <provider
-            android:name=".provider.ImpsProvider"
+            android:name="net.wrappy.im.provider.ImpsProvider"
             android:authorities="net.wrappy.im.provider.Imps"
             android:exported="false"
             android:grantUriPermissions="true"
-            android:readPermission="org.awesomeapp.messenger.permission.READ_ONLY"
-            android:writePermission="org.awesomeapp.messenger.permission.WRITE_ONLY" />
+            android:readPermission="net.wrappy.im.permission.READ_ONLY"
+            android:writePermission="net.wrappy.im.permission.WRITE_ONLY" />
 
         <activity
-            android:name=".ImUrlActivity"
+            android:name="net.wrappy.im.ImUrlActivity"
             android:theme="@style/InviteDialog"></activity>
         <activity
-            android:name=".ui.legacy.SignoutActivity"
+            android:name="net.wrappy.im.ui.legacy.SignoutActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -280,11 +280,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AddContactActivity"
+            android:name="net.wrappy.im.ui.AddContactActivity"
             android:exported="false"
             android:label="@string/add_friends" />
         <activity
-            android:name=".ui.ContactsPickerActivity"
+            android:name="net.wrappy.im.ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend">
             <intent-filter>
@@ -299,26 +299,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AccountActivity"
+            android:name="net.wrappy.im.ui.AccountActivity"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+                <category android:name="net.wrappy.im.service.IMPS_CATEGORY" />
 
                 <data android:mimeType="vnd.android.cursor.item/imps-accounts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+                <category android:name="net.wrappy.im.service.IMPS_CATEGORY" />
                 <data android:mimeType="vnd.android.cursor.item/imps-providers" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".ui.AccountSettingsActivity"
+            android:name="net.wrappy.im.ui.AccountSettingsActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
@@ -330,7 +330,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.legacy.SettingActivity"
+            android:name="net.wrappy.im.ui.legacy.SettingActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
@@ -342,7 +342,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.legacy.SmpResponseActivity"
+            android:name="net.wrappy.im.ui.legacy.SmpResponseActivity"
             android:exported="false"
             android:theme="@android:style/Theme.Dialog" />
         <activity
@@ -352,7 +352,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
-            android:name=".service.NetworkConnectivityReceiver"
+            android:name="net.wrappy.im.service.NetworkConnectivityReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -360,7 +360,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".service.BootCompletedListener"
+            android:name="net.wrappy.im.service.BootCompletedListener"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -369,17 +369,17 @@
         </receiver>
 
         <activity
-            android:name=".ui.LockScreenActivity"
+            android:name="net.wrappy.im.ui.LockScreenActivity"
             android:label="@string/title_activity_lock_screen"></activity>
         <activity
-            android:name=".ui.onboarding.OnboardingActivity"
+            android:name="net.wrappy.im.ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"></activity>
         <activity
-            android:name=".ui.qr.QrScanActivity"
+            android:name="net.wrappy.im.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ui.qr.QrDisplayActivity"
+            android:name="net.wrappy.im.ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"
@@ -388,7 +388,7 @@
 
         <activity android:name="net.hockeyapp.android.UpdateActivity" />
         <activity
-            android:name=".ui.legacy.DummyActivity"
+            android:name="net.wrappy.im.ui.legacy.DummyActivity"
             android:allowTaskReparenting="true"
             android:alwaysRetainTaskState="false"
             android:clearTaskOnLaunch="true"
@@ -398,10 +398,10 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name=".ui.widgets.ImageViewActivity" />
-        <activity android:name=".ui.widgets.SecureCameraActivity" />
+        <activity android:name="net.wrappy.im.ui.widgets.ImageViewActivity" />
+        <activity android:name="net.wrappy.im.ui.widgets.SecureCameraActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name="net.wrappy.im.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/AppThemeNoAction">
@@ -429,23 +429,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ConversationDetailActivity"
+            android:name="net.wrappy.im.ui.ConversationDetailActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".ui.ContactListActivity"
+            android:name="net.wrappy.im.ui.ContactListActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GalleryActivity"
+            android:name="net.wrappy.im.ui.GalleryActivity"
             android:exported="false"
             android:title="@string/photo_gallery" />
         <activity
-            android:name=".ui.StickerActivity"
+            android:name="net.wrappy.im.ui.StickerActivity"
             android:exported="false"
             android:title="@string/action_stickers" />
         <activity
-            android:name=".ui.PanicSetupActivity"
+            android:name="net.wrappy.im.ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
@@ -455,18 +455,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ContactDisplayActivity"
+        <activity android:name="net.wrappy.im.ui.ContactDisplayActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
             ></activity>
-        <activity android:name=".ui.GroupDisplayActivity"></activity>
+        <activity android:name="net.wrappy.im.ui.GroupDisplayActivity"></activity>
 
         <meta-data
             android:name="net.wrappy.im.tasks.GlideVFSModule"
             android:value="GlideModule" />
 
         <activity
-            android:name=".ui.AccountsActivity"
+            android:name="net.wrappy.im.ui.AccountsActivity"
             android:label="@string/accounts"></activity>
 
         <provider

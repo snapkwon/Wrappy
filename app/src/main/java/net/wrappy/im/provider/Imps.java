@@ -135,10 +135,10 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/providers");
+                .parse("content://net.wrappy.im.provider.Imps/providers");
 
         public static final Uri CONTENT_URI_WITH_ACCOUNT = Uri
-                .parse("content://Imps/providers/account");
+                .parse("content://net.wrappy.im.provider.Imps/providers/account");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -269,11 +269,11 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/accounts");
+                .parse("content://net.wrappy.im.provider.Imps/accounts");
 
         /** The content:// style URL for looking up by domain */
         public static final Uri BY_DOMAIN_URI = Uri
-                .parse("content://Imps/domainAccounts");
+                .parse("content://net.wrappy.im.provider.Imps/domainAccounts");
 
 
         /**
@@ -328,7 +328,7 @@ public class Imps {
     public static final class AccountStatus implements BaseColumns, AccountStatusColumns {
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/accountStatus");
+                .parse("content://net.wrappy.im.provider.Imps/accountStatus");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -472,62 +472,62 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/contacts");
+                .parse("content://net.wrappy.im.provider.Imps/contacts");
 
         /** The content:// style URL for contacts joined with presence */
         public static final Uri CONTENT_URI_WITH_PRESENCE = Uri
-                .parse("content://Imps/contactsWithPresence");
+                .parse("content://net.wrappy.im.provider.Imps/contactsWithPresence");
 
         /**
          * The content:// style URL for barebone contacts, not joined with any
          * other table
          */
         public static final Uri CONTENT_URI_CONTACTS_BAREBONE = Uri
-                .parse("content://Imps/contactsBarebone");
+                .parse("content://net.wrappy.im.provider.Imps/contactsBarebone");
 
         /** The content:// style URL for contacts who have an open chat session */
         public static final Uri CONTENT_URI_CHAT_CONTACTS = Uri
-                .parse("content://Imps/contacts/chatting");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/chatting");
 
         /** The content:// style URL for contacts who have been blocked */
         public static final Uri CONTENT_URI_BLOCKED_CONTACTS = Uri
-                .parse("content://Imps/contacts/blocked");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/blocked");
 
         /** The content:// style URL for contacts by provider and account */
         public static final Uri CONTENT_URI_CONTACTS_BY = Uri
-                .parse("content://Imps/contacts");
+                .parse("content://net.wrappy.im.provider.Imps/contacts");
 
         /**
          * The content:// style URL for contacts by provider and account, and
          * who have an open chat session
          */
         public static final Uri CONTENT_URI_CHAT_CONTACTS_BY = Uri
-                .parse("content://Imps/contacts/chatting");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/chatting");
 
         /**
          * The content:// style URL for contacts by provider and account, and
          * who are online
          */
         public static final Uri CONTENT_URI_ONLINE_CONTACTS_BY = Uri
-                .parse("content://Imps/contacts/online");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/online");
 
         /**
          * The content:// style URL for contacts by provider and account, and
          * who are offline
          */
         public static final Uri CONTENT_URI_OFFLINE_CONTACTS_BY = Uri
-                .parse("content://Imps/contacts/offline");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/offline");
 
         /** The content:// style URL for operations on bulk contacts */
         public static final Uri BULK_CONTENT_URI = Uri
-                .parse("content://Imps/bulk_contacts");
+                .parse("content://net.wrappy.im.provider.Imps/bulk_contacts");
 
         /**
          * The content:// style URL for the count of online contacts in each
          * contact list by provider and account.
          */
         public static final Uri CONTENT_URI_ONLINE_COUNT = Uri
-                .parse("content://Imps/contacts/onlineCount");
+                .parse("content://net.wrappy.im.provider.Imps/contacts/onlineCount");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -580,7 +580,7 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/contactLists");
+                .parse("content://net.wrappy.im.provider.Imps/contactLists");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -624,7 +624,7 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/blockedList");
+                .parse("content://net.wrappy.im.provider.Imps/blockedList");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -727,7 +727,7 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/contactsEtag");
+                .parse("content://net.wrappy.im.provider.Imps/contactsEtag");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -951,57 +951,57 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/messages");
+                .parse("content://net.wrappy.im.provider.Imps/messages");
 
         /** The content:// style URL for messages by thread id */
         public static final Uri CONTENT_URI_MESSAGES_BY_THREAD_ID = Uri
-                .parse("content://Imps/messagesByThreadId");
+                .parse("content://net.wrappy.im.provider.Imps/messagesByThreadId");
 
         /** The content:// style URL for messages by thread id */
         public static final Uri CONTENT_URI_MESSAGES_BY_PACKET_ID = Uri
-                .parse("content://Imps/messagesByPacketId");
+                .parse("content://net.wrappy.im.provider.Imps/messagesByPacketId");
 
         /** The content:// style URL for messages by account and contact */
         public static final Uri CONTENT_URI_MESSAGES_BY_ACCOUNT_AND_CONTACT = Uri
-                .parse("content://Imps/messagesByAcctAndContact");
+                .parse("content://net.wrappy.im.provider.Imps/messagesByAcctAndContact");
 
         /** The content:// style URL for messages by account and contact */
         public static final Uri CONTENT_URI_MESSAGES_BY_SEARCH = Uri
-                .parse("content://Imps/messagesBySearch");
+                .parse("content://net.wrappy.im.provider.Imps/messagesBySearch");
 
         /** The content:// style URL for messages by provider */
         public static final Uri CONTENT_URI_MESSAGES_BY_PROVIDER = Uri
-                .parse("content://Imps/messagesByProvider");
+                .parse("content://net.wrappy.im.provider.Imps/messagesByProvider");
 
         /** The content:// style URL for messages by account */
         public static final Uri CONTENT_URI_BY_ACCOUNT = Uri
-                .parse("content://Imps/messagesByAccount");
+                .parse("content://net.wrappy.im.provider.Imps/messagesByAccount");
 
         /** The content:// style url for off the record messages */
         public static final Uri OTR_MESSAGES_CONTENT_URI = Uri
-                .parse("content://Imps/otrMessages");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessages");
 
         /** The content:// style url for off the record messages by thread id */
         public static final Uri OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID = Uri
-                .parse("content://Imps/otrMessagesByThreadId");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessagesByThreadId");
 
         /**
          * The content:// style url for off the record messages by account and
          * contact
          */
         public static final Uri OTR_MESSAGES_CONTENT_URI_BY_ACCOUNT_AND_CONTACT = Uri
-                .parse("content://Imps/otrMessagesByAcctAndContact");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessagesByAcctAndContact");
 
         /** The content:// style URL for off the record messages by provider */
         public static final Uri OTR_MESSAGES_CONTENT_URI_BY_PROVIDER = Uri
-                .parse("content://Imps/otrMessagesByProvider");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessagesByProvider");
 
         /** The content:// style URL for off the record messages by account */
         public static final Uri OTR_MESSAGES_CONTENT_URI_BY_ACCOUNT = Uri
-                .parse("content://Imps/otrMessagesByAccount");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessagesByAccount");
 
         public static final Uri OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID = Uri
-                .parse("content://Imps/otrMessagesByPacketId");
+                .parse("content://net.wrappy.im.provider.Imps/otrMessagesByPacketId");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -1051,7 +1051,7 @@ public class Imps {
         }
 
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/groupMembers");
+                .parse("content://net.wrappy.im.provider.Imps/groupMembers");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of group
@@ -1104,7 +1104,7 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/invitations");
+                .parse("content://net.wrappy.im.provider.Imps/invitations");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -1143,13 +1143,13 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/avatars");
+                .parse("content://net.wrappy.im.provider.Imps/avatars");
 
         /**
          * The content:// style URL for avatars by provider, account and contact
          */
         public static final Uri CONTENT_URI_AVATARS_BY = Uri
-                .parse("content://Imps/avatarsBy");
+                .parse("content://net.wrappy.im.provider.Imps/avatarsBy");
 
         /** The MIME type of {@link #CONTENT_URI} providing the avatars */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/imps-avatars";
@@ -1177,14 +1177,14 @@ public class Imps {
         String PRESENCE_STATUS = "mode";
 
         /** Presence Status definition */
-        
+
         int OFFLINE = 0;
         int INVISIBLE = 1;
         int AWAY = 2;
         int IDLE = 3;
         int DO_NOT_DISTURB = 4;
         int AVAILABLE = 5;
-        
+
         int NEW_ACCOUNT = -99;
 
 
@@ -1216,22 +1216,22 @@ public class Imps {
     public static final class Presence implements BaseColumns, PresenceColumns {
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/presence");
+                .parse("content://net.wrappy.im.provider.Imps/presence");
 
         /** The content URL for IM presences for an account */
         public static final Uri CONTENT_URI_BY_ACCOUNT = Uri
-                .parse("content://Imps/presence/account");
+                .parse("content://net.wrappy.im.provider.Imps/presence/account");
 
         /** The content:// style URL for operations on bulk contacts */
         public static final Uri BULK_CONTENT_URI = Uri
-                .parse("content://Imps/bulk_presence");
+                .parse("content://net.wrappy.im.provider.Imps/bulk_presence");
 
         /**
          * The content:// style URL for seeding presences for a given account
          * id.
          */
         public static final Uri SEED_PRESENCE_BY_ACCOUNT_CONTENT_URI = Uri
-                .parse("content://Imps/seed_presence/account");
+                .parse("content://net.wrappy.im.provider.Imps/seed_presence/account");
 
         /**
          * The MIME type of a {@link #CONTENT_URI} providing a directory of
@@ -1299,11 +1299,11 @@ public class Imps {
 
         /** The content:// style URL for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/chats");
+                .parse("content://net.wrappy.im.provider.Imps/chats");
 
         /** The content URL for all chats that belong to the account */
         public static final Uri CONTENT_URI_BY_ACCOUNT = Uri
-                .parse("content://Imps/chats/account");
+                .parse("content://net.wrappy.im.provider.Imps/chats/account");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of chats.
@@ -1335,11 +1335,11 @@ public class Imps {
 
         /** The content:// style URI for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/sessionCookies");
+                .parse("content://net.wrappy.im.provider.Imps/sessionCookies");
 
         /** The content:// style URL for session cookies by provider and account */
         public static final Uri CONTENT_URI_SESSION_COOKIES_BY = Uri
-                .parse("content://Imps/sessionCookiesBy");
+                .parse("content://net.wrappy.im.provider.Imps/sessionCookiesBy");
 
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of
@@ -1371,7 +1371,7 @@ public class Imps {
 
         /** The content:// style URI for this table */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/providerSettings");
+                .parse("content://net.wrappy.im.provider.Imps/providerSettings");
 
         /** The MIME type of {@link #CONTENT_URI} providing provider settings */
         public static final String CONTENT_TYPE = "vnd.android-dir/imps-providerSettings";
@@ -2184,7 +2184,7 @@ public class Imps {
             BrandingResourceMapCacheColumns {
         /** The content:// style URL for this table. */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/brandingResMapCache");
+                .parse("content://net.wrappy.im.provider.Imps/brandingResMapCache");
     }
 
     /**
@@ -2237,14 +2237,14 @@ public class Imps {
 
         /** The content:// style URL for this table. */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/outgoingRmqMessages");
+                .parse("content://net.wrappy.im.provider.Imps/outgoingRmqMessages");
 
         /**
          * The content:// style URL for the highest rmq id for the outgoing rmq
          * messages
          */
         public static final Uri CONTENT_URI_FOR_HIGHEST_RMQ_ID = Uri
-                .parse("content://Imps/outgoingHighestRmqId");
+                .parse("content://net.wrappy.im.provider.Imps/outgoingHighestRmqId");
 
         /** The default sort order for this table. */
         public static final String DEFAULT_SORT_ORDER = "rmq_id ASC";
@@ -2312,7 +2312,7 @@ public class Imps {
 
         /** The content:// style URL for this table. */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/lastRmqId");
+                .parse("content://net.wrappy.im.provider.Imps/lastRmqId");
     }
 
     /**
@@ -2329,7 +2329,7 @@ public class Imps {
 
         /** The content:// style URL for this table. */
         public static final Uri CONTENT_URI = Uri
-                .parse("content://Imps/s2dids");
+                .parse("content://net.wrappy.im.provider.Imps/s2dids");
     }
 
     public static boolean isUnlocked(Context context)
