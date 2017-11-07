@@ -2,9 +2,9 @@
 {
   "servers":[
     {
-      "domain": "home.zom.im",
-      "server": "home.zom.im",
-      "address": "162.247.72.41",
+      "domain": "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com",
+      "server": "",
+      "address": "10.153.179.53",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
