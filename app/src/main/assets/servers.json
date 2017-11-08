@@ -6,11 +6,11 @@
       "server": "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com",
       "address": "10.153.179.53",
       "port": 5222,
-      "certificate": "",
+      "certificate": "3D:37:92:C7:74:AD:A1:60:8E:54:FC:B5:F6:B0:1B:FA:DC:8C:A8:86",
       "logoUrl": "https://s3....",
-      "country": "",
+      "country": "ch",
       "muc": "conference.ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com"
-    }/*,
+    },
     {
       "domain": "blah.im",
       "server": "jabber.blah.im",
@@ -82,7 +82,7 @@
       "country": "",
       "muc": "conference.jabberafrica.org",
       "onion": "​"
-    }*/
+    }
 
 
 
