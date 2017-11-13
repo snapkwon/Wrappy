@@ -407,5 +407,30 @@
     <string name="group_you">you</string>
     <string name="title_activity_launcher">LauncherActivity</string>
 
+    <string name="Page1Titlenull"></string>
+    <string name="Page1Title">Wrappy</string>
+    <string name="Page2Title">Free</string>
+    <string name="Page3Title">Cloud</string>
+    <string name="Page4Title">Secure</string>
+    <string name="Page5Title">Magic</string>
+    <string name="Page6Title">Powerful</string>
+    <string name="Page7Title">Fast</string>
+    <string name="Page8Title">Privacy</string>
+    <string name="Page9Title">Ecology</string>
+    <string name="Page10Title">Borderless</string>
+    <string name="Page11Title">Revolution</string>
+    <string name="Page1Message">Connect the world. This is the next-generation of SNS Platform.</string>
+    <string name="Page2Message">Wrappy is free forever voice calls , video calls, TV conferences ...</string>
+    <string name="Page3Message">Wrappy allows you to access your messages from multiple devices.</string>
+    <string name="Page4Message">Your messages are 100% encrypted and can be self-destructed.</string>
+    <string name="Page5Message">You can easily send/receive currencies to/from friends.</string>
+    <string name="Page6Message">There’s no limit for your storage of media data and chat records.</string>
+    <string name="Page7Message">You can send and receive messages instantly.</string>
+    <string name="Page8Message">You can delete your history at all time.</string>
+    <string name="Page9Message">A simple currency system.</string>
+    <string name="Page10Message">Currencies that can be used anywhere, from any country.</string>
+    <string name="Page11Message">A pioneer in an innovative &amp; constantly evolving era.</string>
+    <string name="StartMessaging">Start Messaging</string>
+
 
 </resources>

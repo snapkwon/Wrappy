@@ -1,0 +1,173 @@
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fillViewport="true">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fafafa">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="top"
+            android:layout_marginTop="88dp"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+
+                <ImageView
+                    android:id="@+id/icon_image1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/intro1" />
+
+
+                <ImageView
+                    android:id="@+id/icon_image2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/icon_introtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/text_1" />
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="336dp"
+            android:background="@drawable/regbtn_states"
+            android:layout_gravity="center_horizontal"
+            android:textSize="16dp"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/start_messaging_button"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_height="match_parent"
+            android:id="@+id/backgroundintro"
+            android:src="@drawable/backgroundintro"
+            android:scaleType="fitEnd" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_pages"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="26dp">
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:radius="100dp"
+                android:layout_height="8dp"
+                android:background="@drawable/circle"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+            <FrameLayout
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:shape="ring"
+                android:background="@drawable/circle"
+                android:layout_marginLeft="7dp"/>
+
+        </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/intro_view_pager"/>
+
+    </FrameLayout>
+
+</ScrollView>
+
+

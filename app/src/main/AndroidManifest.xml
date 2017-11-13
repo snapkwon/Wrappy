@@ -486,7 +486,12 @@
         </provider>
 
         <activity
-            android:name="org.awesomeapp.messenger.ui.LauncherActivity"
+        android:name="org.awesomeapp.messenger.ui.LauncherActivity"
+        android:label="@string/title_activity_launcher"></activity>
+
+        <activity
+            android:name="org.awesomeapp.messenger.ui.IntroActivity"
+            android:theme="@style/NoActionBar"
             android:label="@string/title_activity_launcher"></activity>
     </application>
 

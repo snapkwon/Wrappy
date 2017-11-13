@@ -20,8 +20,11 @@
 
 <resources>
 
-    
-    
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="Theme.ChatSwitcher" parent="android:style/Theme.Dialog">
         <item name="android:windowBackground">@drawable/dialog_im_switch_chats_strip</item>
         <item name="android:windowNoTitle">true</item>

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import org.awesomeapp.messenger.provider.Imps;
 import org.awesomeapp.messenger.ui.AddContactActivity;
+import org.awesomeapp.messenger.ui.IntroActivity;
 import org.awesomeapp.messenger.ui.legacy.ImPluginHelper;
 import org.awesomeapp.messenger.ui.LockScreenActivity;
 import org.awesomeapp.messenger.ui.legacy.SignInHelper;
@@ -402,7 +403,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     void showOnboarding () {
         
         //now show onboarding UI
-        Intent intent = new Intent(this, OnboardingActivity.class);
+        Intent intent = new Intent(this, IntroActivity.class);
         Intent returnIntent = getIntent();
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
