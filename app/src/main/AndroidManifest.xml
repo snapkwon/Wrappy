@@ -70,8 +70,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
-        tools:replace="android:icon,android:allowBackup,android:label"
-        >
+        tools:replace="android:icon,android:allowBackup,android:label">
         <activity
             android:name="org.awesomeapp.messenger.RouterActivity"
             android:theme="@style/InviteDialog">
@@ -118,7 +117,7 @@
                 <!--
                 The ultimate in crack smoking!  Some apps will only respect these file associations
                 if the mimeType is not set, and other apps will only respect them if mimeType is set
-                to */*.  Therefore we have two whole copies of the same thing, besides setting the mimeType. 
+                to */*.  Therefore we have two whole copies of the same thing, besides setting the mimeType.
                 -->
                 <data android:mimeType="*/*" />
                 <!-- this crack smoking pattern is required to match file extensions in folders -->
@@ -269,7 +268,7 @@
 
         <activity
             android:name="org.awesomeapp.messenger.ImUrlActivity"
-            android:theme="@style/InviteDialog"></activity>
+            android:theme="@style/InviteDialog" />
         <activity
             android:name="org.awesomeapp.messenger.ui.legacy.SignoutActivity"
             android:exported="false">
@@ -289,21 +288,26 @@
             android:label="@string/choose_friend">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android.cursor.dir/imps-contacts" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="vnd.android.cursor.dir/imps-chats" />
             </intent-filter>
         </activity>
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountActivity"
             android:exported="false"
-            android:windowSoftInputMode="stateUnchanged" >
+            android:windowSoftInputMode="stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
 
@@ -311,12 +315,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="org.awesomeapp.messenger.service.IMPS_CATEGORY" />
+
                 <data android:mimeType="vnd.android.cursor.item/imps-providers" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountSettingsActivity"
             android:exported="false">
@@ -364,23 +369,24 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name="org.awesomeapp.messenger.ui.LockScreenActivity"
-            android:label="@string/title_activity_lock_screen"></activity>
+            android:label="@string/title_activity_lock_screen" />
         <activity
             android:name="org.awesomeapp.messenger.ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask" />
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrScanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name="org.awesomeapp.messenger.ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
+
         <service
             android:name="info.guardianproject.cacheword.CacheWordService"
             android:enabled="true"
@@ -455,11 +461,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
+        <activity
+            android:name="org.awesomeapp.messenger.ui.ContactDisplayActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
-            ></activity>
-        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity"></activity>
+            android:theme="@style/AppThemeNoAction" />
+        <activity android:name="org.awesomeapp.messenger.ui.GroupDisplayActivity" />
 
         <meta-data
             android:name="org.awesomeapp.messenger.tasks.GlideVFSModule"
@@ -467,7 +473,7 @@
 
         <activity
             android:name="org.awesomeapp.messenger.ui.AccountsActivity"
-            android:label="@string/accounts"></activity>
+            android:label="@string/accounts" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -476,8 +482,12 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity
+            android:name="org.awesomeapp.messenger.ui.LauncherActivity"
+            android:label="@string/title_activity_launcher"></activity>
     </application>
 
 </manifest>

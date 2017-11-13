@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--
+<?xml version='1.0' encoding='UTF-8'?><!--
 /*
  * Copyright (C) 2007-2008 Esmertec AG.
  * Copyright (C) 2007-2008 The Android Open Source Project
@@ -16,7 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
---><resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- General: Names -->
     <string name="ic_launcher_name">Zom</string>
     <string name="app_name">Zom</string>
@@ -405,6 +405,7 @@
     <string name="no_photos">Shared and received photos will appear here</string>
     <string name="group_admin">admin</string>
     <string name="group_you">you</string>
+    <string name="title_activity_launcher">LauncherActivity</string>
 
 
 </resources>
