@@ -493,6 +493,14 @@
             android:name="net.wrappy.im.ui.IntroActivity"
             android:theme="@style/NoActionBar"
             android:label="@string/title_activity_launcher"></activity>
+        <activity
+            android:name="net.wrappy.im.ui.SetPatternActivity"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name="net.wrappy.im.ui.ConfirmPatternActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

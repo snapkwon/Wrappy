@@ -129,6 +129,8 @@ dependencies {
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 
+    compile project(':library')
+
     /**
      compile "org.igniterealtime.smack:smack-android:$smackVersion"
      compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
