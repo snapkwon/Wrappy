@@ -26,7 +26,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by ben on 13/11/2017.
  */
 
-public class RectAPI {
+public class RestAPI {
 
     public static String GET_QUESTIONS_SECURITY = "http://www.mocky.io/v2/5a0a619a2e00009219489c7e";
     public static String POST_QUESTION_ANSWERS = "http://www.mocky.io/v2/5a0a65fa2e0000391a489c94";

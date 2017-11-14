@@ -1,8 +1,6 @@
 package net.wrappy.im;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,11 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.wrappy.im.helper.AppFuncs;
-import net.wrappy.im.helper.RectAPI;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
@@ -56,7 +53,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     }
 
     private void getListQuestion() {
-        new RectAPI.GetDataUrl(new RectAPI.RectAPIListenner() {
+        new RestAPI.GetDataUrl(new RestAPI.RectAPIListenner() {
             @Override
             public void OnComplete(String error, String s) {
                 try {
@@ -66,9 +63,9 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                         return;
                     }
                     AppFuncs.log(s);
-                    JsonObject jsonObject = RectAPI.parseStringToJsonElement(s).getAsJsonObject();
-                    if (RectAPI.getStatus(jsonObject)==1) {
-                        JsonArray jsonArrayQuestions = RectAPI.getData(jsonObject).getAsJsonArray();
+                    JsonObject jsonObject = RestAPI.parseStringToJsonElement(s).getAsJsonObject();
+                    if (RestAPI.getStatus(jsonObject)==1) {
+                        JsonArray jsonArrayQuestions = RestAPI.getData(jsonObject).getAsJsonArray();
                         questions = new String[jsonArrayQuestions.size()];
                         for (int i=0 ; i<jsonArrayQuestions.size();i++) {
                             questions[i] = jsonArrayQuestions.get(i).getAsJsonObject().get("question").getAsString();
@@ -95,7 +92,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                     ex.printStackTrace();
                 }
             }
-        }).execute(RectAPI.GET_QUESTIONS_SECURITY);
+        }).execute(RestAPI.GET_QUESTIONS_SECURITY);
     }
 
     @Override
@@ -142,7 +139,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                         AppFuncs.alert(getApplicationContext(),errorString,true);
                         return;
                     }
-                    String s = new RectAPI.PostDataUrl(jsonArray.toString(), null).execute(RectAPI.POST_QUESTION_ANSWERS).get();
+                    String s = new RestAPI.PostDataUrl(jsonArray.toString(), null).execute(RestAPI.POST_QUESTION_ANSWERS).get();
                     AppFuncs.log(s);
                 }
 
