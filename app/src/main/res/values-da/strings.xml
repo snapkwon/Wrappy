@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!--General: Names-->
-  <string name="ic_launcher_name">Zom</string>
-  <string name="app_name">Zom</string>
-  <string name="im_label">Zom</string>
+  <string name="ic_launcher_name">Wrappy</string>
+  <string name="app_name">Wrappy</string>
+  <string name="im_label">Wrappy</string>
   <!--General: Permissions-->
   <string name="ro_perm_label">læs beskeder</string>
   <string name="ro_perm_desc">
@@ -190,8 +190,8 @@ Rør skærm for at invitere.</string>
   <string name="already_logged_in">du er allerede logget ind fra en anden klient.</string>
   <string name="msisdn_error">Beklager! Telefonnummeret kan ikke læses fra dit SIM-kort. Kontakt din udbyder for at få hjælp.</string>
   <string name="not_signed_in">Du er ikke logget ind i øjeblikket.</string>
-  <string name="account_setup_error_server">Zom stødte på en fejl under etablering af forbindelse til server - kontoller din konfiguration og prøv igen.</string>
-  <string name="error_suspended_connection">Zom har mistet en forbindelse til netværket</string>
+  <string name="account_setup_error_server">Wrappy stødte på en fejl under etablering af forbindelse til server - kontoller din konfiguration og prøv igen.</string>
+  <string name="error_suspended_connection">Wrappy har mistet en forbindelse til netværket</string>
   <string name="unable_to_create_or_join_group_chat">Kunne ikke oprette eller deltage i gruppesamtale</string>
   <string name="there_is_no_viewer_available_for_this_file_format">Der er ingen fremviser tilgængelig for dette filformat</string>
   <string name="otr_keysync_warning_message">Kopier filen \'otr_keystore.ofcaes\' fra computerværktøjet OtrFileConverter til rod-mappen af din enheds lager</string>

@@ -18,7 +18,7 @@
  */
 -->
     <view
-    class="org.awesomeapp.messenger.ui.ConversationListItem"
+    class="net.wrappy.im.ui.ConversationListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="3dp"
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:textColor="?contactTextSecondary"
                 />
 
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
 
     </RelativeLayout>
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

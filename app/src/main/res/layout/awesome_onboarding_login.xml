@@ -8,7 +8,7 @@ android:padding="10dp"
 android:paddingTop="40dp"
     >
 
-<org.ironrabbit.type.CustomTypefaceTextView
+<net.ironrabbit.type.CustomTypefaceTextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
@@ -17,7 +17,8 @@ android:paddingTop="40dp"
     android:textColor="@android:color/black"
     />
 
-<org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtName"
+<net.ironrabbit.type.CustomTypefaceEditText
+    android:id="@+id/edtName"
     android:selectAllOnFocus="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,7 +33,8 @@ android:paddingTop="40dp"
     android:layout_margin="3dp"
     />
 
-<org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtPass"
+<net.ironrabbit.type.CustomTypefaceEditText
+    android:id="@+id/edtPass"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:hint="@string/account_setup_password"
@@ -44,7 +46,8 @@ android:paddingTop="40dp"
     android:layout_margin="3dp"
     />
 
-<org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnSignIn"
+<net.ironrabbit.type.CustomTypefaceButton
+    android:id="@+id/btnSignIn"
     android:text="@string/sign_in"
     android:layout_height="wrap_content"
     android:layout_marginTop="3dip"

@@ -18,9 +18,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- General: Names -->
-    <string name="ic_launcher_name">Zom</string>
-    <string name="app_name">Zom</string>
-    <string name="im_label">Zom</string>
+    <string name="ic_launcher_name">Wrappy</string>
+    <string name="app_name">Wrappy</string>
+    <string name="im_label">Wrappy</string>
 
     <!-- General: Permissions -->
     <string name="ro_perm_label">read instant messages</string>
@@ -38,7 +38,7 @@
     <string name="no">Cancel</string>
     <string name="connect">Connect</string>
     <!-- Views -->
-    <string name="title_activity_lock_screen">Zom Locked</string>
+    <string name="title_activity_lock_screen">Wrappy Locked</string>
     <string name="lock_screen_create_passphrase">Set Password</string>
     <string name="lock_screen_confirm_passphrase">Confirm Password</string>
     <string name="lock_screen_passphrase_hint">Password</string>
@@ -111,7 +111,7 @@
 
     <string name="search_label">Contact</string>
     <string name="search_hint">type the name of a contact to chat with</string>
-    <string name="input_contact_label">Enter your friend\'s full username (ie. zomisfun.4x3f5g@zom.im) here:</string>
+    <string name="input_contact_label">Enter your friend\'s full username (ie. wrappyisfun.4x3f5g@wrappy.net) here:</string>
     <!-- Views: Chat: Single -->
     <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> is online</string>
     <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> is away</string>
@@ -185,7 +185,7 @@
 
     <!-- Actions: Settings: General: Other Tuning -->
     <string name="pref_group_tuning_title">Other Tuning</string>
-    <string name="start_on_boot">Start Zom Automatically</string>
+    <string name="start_on_boot">Start Wrappy Automatically</string>
     <string name="start_on_boot_summary">Always start and automatically sign into previously logged in accounts</string>
     <string name="hide_offline_contacts">Hide offline contacts</string>
     <string name="foreground_service_title">Use foreground priority</string>
@@ -217,8 +217,8 @@
     <string name="notify_groupchat_label">Group chat invitation</string>
     <string name="group_chat_invite_notify_text">New group chat invitation from <xliff:g id="user">%s</xliff:g></string>
     <string name="new_messages_notify">New message(s) from</string>
-    <string name="starting_the_chatsecure_service_">Starting the Zom service…</string>
-    <string name="app_unlocked">Zom is running</string>
+    <string name="starting_the_chatsecure_service_">Starting the Wrappy service…</string>
+    <string name="app_unlocked">Wrappy is running</string>
     <!-- Alerts: Exceptions -->
     <string name="error">Attention</string>
     <string name="error_prefix">Error: </string>
@@ -254,7 +254,7 @@
     <string name="error_suspended_connection">Network is offline</string>
     <string name="unable_to_create_or_join_group_chat">Unable to create or join group chat</string>
     <string name="unsupported_incoming_data">Unsupported incoming data, cannot share!</string>
-    <string name="swipe_alert">Zom detected that a request was made to remove its task.  Zom will likely crash.  Please use the Sign out all menu item from the account list screen instead.</string>
+    <string name="swipe_alert">Wrappy detected that a request was made to remove its task.  Wrappy will likely crash.  Please use the Sign out all menu item from the account list screen instead.</string>
     <string name="there_is_no_viewer_available_for_this_file_format">There is no viewer available for this file format</string>
     <string name="otr_keysync_warning_message">Please copy the \'otr_keystore.ofcaes\' file from the desktop OtrFileConverter tool to the root directory of your device storage</string>
     <string name="msg_sent_failed">This message could not be sent.</string>
@@ -267,9 +267,9 @@
 
     <string name="pref_group_protect_data_title">Protect My Data</string>
     <string name="panic_trigger_app">Panic Trigger App</string>
-    <string name="panic_trigger_app_summary">A panic app can trigger Zom to lock, send a message, delete data, etc.</string>
+    <string name="panic_trigger_app_summary">A panic app can trigger Wrappy to lock, send a message, delete data, etc.</string>
     <string name="panic_setup">Panic Setup</string>
-    <string name="panic_setup_summary">Set up how Zom reacts to a panic notification.</string>
+    <string name="panic_setup_summary">Set up how Wrappy reacts to a panic notification.</string>
     <string name="panic_app_none">None</string>
     <string name="panic_app_none_summary">No Panic Trigger App, ignore all incoming panic triggers.</string>
     <string name="panic_app_default">Default</string>
@@ -395,7 +395,7 @@
 
     <string name="unable_to_securely_share_this_file">Unable to securely share this file</string>
 
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Your keystore is corrupted. Please re-install Zom or \'clear data\' for the app</string>
+    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Your keystore is corrupted. Please re-install Wrappy or \'clear data\' for the app</string>
     <string name="swipe_hint">&lt; swipe left and right for more options &gt;</string>
 
     <string name="no_convos">Time to start Zomming!</string>

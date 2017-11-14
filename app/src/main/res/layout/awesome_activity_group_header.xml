@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/tvGroupName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                 android:src="@drawable/ic_mode_edit_black_18dp" />
         </LinearLayout>
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/tvGroupAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             />
     </LinearLayout>
 
-    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <net.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tvActionShare"
         style="@style/GroupInfoAction"
         android:layout_width="match_parent"
@@ -79,7 +79,7 @@
         android:visibility="gone"
         />
 
-    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <net.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tvActionAddFriends"
         style="@style/GroupInfoAction"
         android:layout_width="match_parent"
@@ -89,7 +89,7 @@
         android:text="@string/add_friends"
         />
 
-    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <net.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tvActionMute"
         style="@style/GroupInfoAction"
         android:layout_width="match_parent"
@@ -100,7 +100,7 @@
         />
 
 
-    <org.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <net.ironrabbit.type.CustomTypefaceTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="none"

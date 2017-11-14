@@ -109,7 +109,7 @@
         android:transcriptMode="normal"
         android:scrollbars="vertical"
         android:layout_weight="9"
-        app:layout_behavior="org.awesomeapp.messenger.ui.widgets.PatchedScrollingViewBehavior"
+        app:layout_behavior="net.wrappy.im.ui.widgets.PatchedScrollingViewBehavior"
         android:paddingBottom="48dp"
         android:layout_marginTop="0dp"
         android:paddingTop="0dp"
@@ -131,7 +131,7 @@
                 android:id="@+id/waiting_view_image"
                 />
 
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/waiting_view_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                 android:id="@+id/upgrade_view_image"
                 />
 
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/upgrade_view_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:gravity="center"
                 />
-            <org.ironrabbit.type.CustomTypefaceButton
+            <net.ironrabbit.type.CustomTypefaceButton
                 android:layout_width="200dp"
                 android:layout_height="40dp"
                 android:gravity="center"
@@ -218,7 +218,7 @@
             android:id="@+id/btnDeleteVoice"
             />
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/swipe_up_delete"
@@ -257,7 +257,7 @@
                 >
 
 
-                <org.awesomeapp.messenger.ui.CircleColorImageView
+                <net.wrappy.im.ui.CircleColorImageView
                     android:id="@+id/btnAttachPicture"
                     android:src="@drawable/ic_insert_photo_white_36dp"
                     android:layout_margin="3dp"
@@ -268,7 +268,7 @@
                     android:layout_height="64dp"
                     />
 
-                <org.awesomeapp.messenger.ui.CircleColorImageView
+                <net.wrappy.im.ui.CircleColorImageView
                     android:id="@+id/btnTakePicture"
                     android:src="@drawable/ic_photo_camera_white_36dp"
                     android:layout_margin="3dp"
@@ -279,7 +279,7 @@
 
                     />
 
-                <org.awesomeapp.messenger.ui.CircleColorImageView
+                <net.wrappy.im.ui.CircleColorImageView
                     android:id="@+id/btnAttachSticker"
                     android:src="@drawable/ic_insert_emoticon_white_36dp"
                     android:layout_margin="3dp"
@@ -289,7 +289,7 @@
                     android:layout_height="64dp"
                     />
 
-                <org.awesomeapp.messenger.ui.CircleColorImageView
+                <net.wrappy.im.ui.CircleColorImageView
                     android:id="@+id/btnAttachFile"
                     android:src="@drawable/ic_insert_drive_file_white_36dp"
                     android:layout_margin="3dp"
@@ -326,7 +326,7 @@
 
         </RelativeLayout>
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="..."
@@ -362,7 +362,7 @@
                 android:layout_margin="6dp"
                 />
 
-            <org.ironrabbit.type.CustomTypefaceEditText
+            <net.ironrabbit.type.CustomTypefaceEditText
                 android:id="@+id/composeMessage"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -377,7 +377,7 @@
 
                 />
 
-            <org.ironrabbit.type.CustomTypefaceTextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -428,7 +428,8 @@
         android:visibility="gone"
         >
 
-        <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/txtInvitation"
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/txtInvitation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/invitation_prompt" />
@@ -437,12 +438,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnAccept"
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/btnAccept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/accept_invitation" />
 
-            <org.ironrabbit.type.CustomTypefaceTextView android:id="@+id/btnDecline"
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/btnDecline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dip"
@@ -464,7 +467,7 @@
             android:layout_above="@+id/btnDeclineSubscription"
             />
 
-            <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnApproveSubscription"
+         CustomTypefaceButtontton android:id="@+id/btnApproveSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/approve_subscription"
@@ -472,7 +475,7 @@
                 android:layout_toLeftOf="@+id/btnDeclineSubscription"
                 android:layout_toStartOf="@+id/btnDeclineSubscription" />
 
-            <org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnDeclineSubscription"
+         CustomTypefaceButtontton android:id="@+id/btnDeclineSubscription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dip"

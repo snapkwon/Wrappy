@@ -15,7 +15,7 @@ android:orientation="vertical"
     android:layout_margin="0dp"
     />
 
-<org.ironrabbit.type.CustomTypefaceTextView
+<net.ironrabbit.type.CustomTypefaceTextView
     android:id="@+id/statusInviteFriends"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -34,7 +34,7 @@ android:orientation="vertical"
     android:gravity="center_horizontal|top"
     android:orientation="horizontal" >
 
-    <org.ironrabbit.type.CustomTypefaceButton
+    <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/btnInviteSMS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@ android:orientation="vertical"
         style="@android:style/Widget.Button"
 
 
-        />   <org.ironrabbit.type.CustomTypefaceButton
+        />   <net.ironrabbit.type.CustomTypefaceButton
     android:id="@+id/btnInviteShare"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@ android:orientation="vertical"
 
 
     />
-    <org.ironrabbit.type.CustomTypefaceButton
+    <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/btnInviteScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,8 +80,7 @@ android:orientation="vertical"
         />
 
 </LinearLayout>
-    <!--
-<org.ironrabbit.type.CustomTypefaceButton
+    <!--CustomTypefaceButtontton
     android:id="@+id/btnInviteSkip"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

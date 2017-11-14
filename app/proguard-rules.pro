@@ -31,7 +31,7 @@
 -dontwarn android.support.**
 
 ####
--keep class org.awesomeapp.messenger.**  { *; }
+-keep class im.**  { *; }
 -keep class net.java.otr4j.**  { *; }
 -keep class net.java.otr4j.**  { *; }
 -keep class net.java.otr4j.OtrException  { *; }

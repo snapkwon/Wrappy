@@ -1,28 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'witness'
 
-/* gets the version name from the latest Git tag, stripping the leading v off */
-def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags', '--always', '--abbrev=0'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
 android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'im.zom.messenger'
-        versionCode 1531000
-        versionName getVersionName()
-        archivesBaseName = "Zom-$versionName"
+        //applicationId 'net.wrappy.im'
+        applicationId 'net.wrappy.im'
+        versionCode 11
+        versionName "0.9.2"
+        archivesBaseName = "Wrappy-0.9.2"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
-        testApplicationId 'im.zom.messenger.test'
+        testApplicationId 'net.wrappy.im.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         multiDexEnabled true
     }
@@ -53,13 +44,13 @@ android {
     productFlavors {
         free {
             dimension "free"
-            applicationId = "org.awesomeapp.messenger"
-            applicationId 'org.awesomeapp.messenger'
+            applicationId = "net.wrappy.im"
+            applicationId 'net.wrappy.im'
         }
         zomrelease {
             dimension "free"
-            applicationId = "im.zom.messenger"
-            applicationId 'im.zom.messenger'
+            applicationId = "net.wrappy.im"
+            applicationId 'net.wrappy.im'
         }
     }
 

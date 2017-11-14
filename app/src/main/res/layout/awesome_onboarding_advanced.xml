@@ -19,7 +19,7 @@ android:paddingTop="40dp"
         android:id="@+id/viewCreate"
         >
 
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -27,7 +27,8 @@ android:paddingTop="40dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
 
             />
-        <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNameAdvanced"
+        <net.ironrabbit.type.CustomTypefaceEditText
+            android:id="@+id/edtNameAdvanced"
             android:selectAllOnFocus="true"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -45,7 +46,7 @@ android:paddingTop="40dp"
             android:textColor="?messageTextPrimary"
 
             />
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -55,8 +56,7 @@ android:paddingTop="40dp"
             />
 
 
-    <!--
-<org.awesomeapp.messenger.ui.widgets.InstantAutoCompleteTextView
+    <!--im.widgets.InstantAutoCompleteTextView
     android:id="@+id/spinnerDomains"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -71,7 +71,8 @@ android:paddingTop="40dp"
     />
     -->
 
-<org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewPass"
+<net.ironrabbit.type.CustomTypefaceEditText
+    android:id="@+id/edtNewPass"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:hint="@string/account_setup_password"
@@ -84,7 +85,8 @@ android:paddingTop="40dp"
 
     />
 
-<org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/edtNewPassConfirm"
+<net.ironrabbit.type.CustomTypefaceEditText
+    android:id="@+id/edtNewPassConfirm"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:hint="@string/account_setup_password_confirm"
@@ -98,7 +100,8 @@ android:paddingTop="40dp"
 
     />
 
-        <org.ironrabbit.type.CustomTypefaceEditText android:id="@+id/spinnerDomains"
+        <net.ironrabbit.type.CustomTypefaceEditText
+            android:id="@+id/spinnerDomains"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="@string/select_domain_new_account"
@@ -111,7 +114,7 @@ android:paddingTop="40dp"
             android:textColor="?messageTextPrimary"
 
             />
-        <org.ironrabbit.type.CustomTypefaceTextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/statusError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,7 +124,8 @@ android:paddingTop="40dp"
             android:textColor="?colorPrimary"
             />
 
-<org.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnNewRegister"
+<net.ironrabbit.type.CustomTypefaceButton
+    android:id="@+id/btnNewRegister"
     android:text="@string/btn_create_new_account"
     android:layout_height="wrap_content"
     android:layout_marginTop="3dip"
