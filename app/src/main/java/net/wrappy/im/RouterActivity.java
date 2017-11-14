@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.AddContactActivity;
+import net.wrappy.im.ui.IntroActivity;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.legacy.SignInHelper;
@@ -397,7 +398,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     void showOnboarding () {
         
         //now show onboarding UI
-        Intent intent = new Intent(this, OnboardingActivity.class);
+        Intent intent = new Intent(this, IntroActivity.class);
         Intent returnIntent = getIntent();
         returnIntent.putExtra(EXTRA_DO_SIGNIN, mDoSignIn);
         intent.putExtra(EXTRA_ORIGINAL_INTENT, returnIntent);
