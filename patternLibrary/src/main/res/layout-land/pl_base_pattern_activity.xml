@@ -50,7 +50,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <me.zhanghai.android.patternlock.PatternView
+    <me.tornado.android.patternlock.PatternView
         android:id="@+id/pl_pattern"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

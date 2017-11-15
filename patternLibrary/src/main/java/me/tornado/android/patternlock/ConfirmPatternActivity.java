@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.android.patternlock;
+package me.tornado.android.patternlock;
 
 import android.os.Bundle;
 import android.view.View;

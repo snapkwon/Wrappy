@@ -1,17 +1,15 @@
 package net.wrappy.im.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import net.wrappy.im.ui.ConfirmPatternActivity;
-import net.wrappy.im.ui.SetPatternActivity;
+import net.wrappy.im.ui.PatternActivity;
 
 import java.util.List;
 
-import me.zhanghai.android.patternlock.PatternUtils;
-import me.zhanghai.android.patternlock.PatternView;
+import me.tornado.android.patternlock.PatternUtils;
+import me.tornado.android.patternlock.PatternView;
 
 
 /**
@@ -20,7 +18,6 @@ import me.zhanghai.android.patternlock.PatternView;
 
 public class PatternLockUtils {
 
-    public static final int REQUEST_CODE_CONFIRM_PATTERN = 1214;
 
     private PatternLockUtils() {}
 
@@ -48,25 +45,6 @@ public class PatternLockUtils {
     }
 
     public static void setPatternByUser(Context context) {
-        context.startActivity(new Intent(context, SetPatternActivity.class));
+        context.startActivity(new Intent(context, PatternActivity.class));
     }
-
-    // NOTE: Should only be called when there is a pattern for this account.
-    public static void confirmPattern(Activity activity, int requestCode) {
-        activity.startActivityForResult(new Intent(activity, ConfirmPatternActivity.class),
-                requestCode);
-    }
-
-    public static void confirmPattern(Activity activity) {
-        confirmPattern(activity, REQUEST_CODE_CONFIRM_PATTERN);
-    }
-
-    public static void confirmPatternIfHas(Activity activity) {
-        if (hasPattern(activity)) {
-            confirmPattern(activity);
-        }
-    }
-
-
-
 }

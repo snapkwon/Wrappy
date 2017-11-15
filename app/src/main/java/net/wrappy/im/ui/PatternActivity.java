@@ -11,14 +11,12 @@ import android.view.MenuItem;
 
 import java.util.List;
 
-import me.zhanghai.android.patternlock.PatternUtils;
-import me.zhanghai.android.patternlock.PatternView;
+import me.tornado.android.patternlock.PatternUtils;
+import me.tornado.android.patternlock.PatternView;
 
 import net.wrappy.im.util.PatternLockUtils;
-import net.wrappy.im.util.PreferenceContract;
-import net.wrappy.im.util.PreferenceUtils;
 
-public class SetPatternActivity extends me.zhanghai.android.patternlock.SetPatternActivity {
+public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

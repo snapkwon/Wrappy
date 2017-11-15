@@ -8,7 +8,7 @@
  * adapted by Zhang Hai.
  */
 
-package me.zhanghai.android.patternlock;
+package me.tornado.android.patternlock;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

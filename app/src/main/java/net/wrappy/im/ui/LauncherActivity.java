@@ -2,28 +2,20 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-import android.support.v7.widget.ListPopupWindow;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
-import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingActivity;
-
 import net.wrappy.im.R;
-import net.wrappy.im.util.PatternLockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zhanghai.android.patternlock.PatternView;
+import me.tornado.android.patternlock.PatternView;
 
 
 public class LauncherActivity extends BaseActivity {
@@ -33,17 +25,12 @@ public class LauncherActivity extends BaseActivity {
     private Button mBtnForgetPass;
     private Button mBtnLogin;
     private Button mBtnregister;
+    public static final int REQUEST_CODE_REGISTER = 1111;
+    public static final int REQUEST_CODE_LOGIN = 1112;
 
-    private PatternView patterview;
 
     private static final List<PatternView.Cell> LOGO_PATTERN = new ArrayList<>();
-    static {
-        LOGO_PATTERN.add(PatternView.Cell.of(0, 1));
-        LOGO_PATTERN.add(PatternView.Cell.of(1, 0));
-        LOGO_PATTERN.add(PatternView.Cell.of(2, 1));
-        LOGO_PATTERN.add(PatternView.Cell.of(1, 2));
-        LOGO_PATTERN.add(PatternView.Cell.of(1, 1));
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +43,6 @@ public class LauncherActivity extends BaseActivity {
         getSupportActionBar().setTitle("");
 
         View viewSplash = findViewById(R.id.flipViewMain);
-        View viewRegister =  findViewById(R.id.flipViewRegister);
-        View viewLogin = findViewById(R.id.flipViewLogin);
         View viewForgetPass = findViewById(R.id.flipViewForgetPass);
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
@@ -71,9 +56,6 @@ public class LauncherActivity extends BaseActivity {
         mBtnForgetPass = (Button)viewSplash.findViewById(R.id.btnforgetpass);
         mBtnLogin = (Button)viewSplash.findViewById(R.id.btnShowLogin);
         mBtnregister = (Button)viewSplash.findViewById(R.id.btnShowRegister);
-        patterview = (PatternView)viewRegister.findViewById(R.id.pattern_view);
-
-        patterview.setPattern(PatternView.DisplayMode.Animate, LOGO_PATTERN);
 
         mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +107,7 @@ public class LauncherActivity extends BaseActivity {
                 ||mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin
                 ||mViewFlipper.getCurrentView().getId()==R.id.flipViewRegister )
         {
-                showSplash();
+            showSplash();
         }
 
     }
@@ -146,25 +128,25 @@ public class LauncherActivity extends BaseActivity {
 
     private void showLogin()
     {
-        getSupportActionBar().show();
-        mViewFlipper.setDisplayedChild(3);
+        this.startActivityForResult(new Intent(this, PatternActivity.class), REQUEST_CODE_LOGIN);
 
     }
 
     private void showRegister()
     {
-        this.startActivityForResult(new Intent(this, SetPatternActivity.class), 1);
-        //getSupportActionBar().show();
-      //  mViewFlipper.setDisplayedChild(2);
+        this.startActivityForResult(new Intent(this, PatternActivity.class), REQUEST_CODE_REGISTER);
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            String result = data.getStringExtra("result");
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_REGISTER) {
+                String result = data.getStringExtra("result");
+            } else  if (requestCode == REQUEST_CODE_LOGIN) {
+                String result = data.getStringExtra("result");
+            }
         }
     }
 
