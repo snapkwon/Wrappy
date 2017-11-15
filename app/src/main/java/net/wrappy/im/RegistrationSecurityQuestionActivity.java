@@ -1,5 +1,6 @@
 package net.wrappy.im;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     LinearLayout securityQuestionLayout;
     String[] questions;
     ImageButton headerbarBack;
+    AppTextView headerbarTitle;
     ArrayAdapter<String> questionsAdapter;
     AppButton btnQuestionComplete;
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
@@ -46,14 +48,17 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         securityQuestionLayout = (LinearLayout) findViewById(R.id.securityQuestionLayout);
         headerbarBack = (ImageButton) findViewById(R.id.headerbarBack);
         headerbarBack.setOnClickListener(this);
+        headerbarTitle = (AppTextView) findViewById(R.id.headerbarTitle);
+        headerbarTitle.setText("Question");
         btnQuestionComplete = (AppButton) findViewById(R.id.btnQuestionComplete);
         btnQuestionComplete.setOnClickListener(this);
+
         getListQuestion();
 
     }
 
     private void getListQuestion() {
-        new RestAPI.GetDataUrl(new RestAPI.RectAPIListenner() {
+        new RestAPI.GetDataUrl(new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(String error, String s) {
                 try {
@@ -141,6 +146,10 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                     }
                     String s = new RestAPI.PostDataUrl(jsonArray.toString(), null).execute(RestAPI.POST_QUESTION_ANSWERS).get();
                     AppFuncs.log(s);
+                    if (RestAPI.getStatus(RestAPI.parseStringToJsonElement(s).getAsJsonObject())==1) {
+                        Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
+                        startActivity(intent);
+                    }
                 }
 
             }

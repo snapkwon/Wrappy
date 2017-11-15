@@ -49,6 +49,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.RegistrationSecurityQuestionActivity;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
