@@ -10,15 +10,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ViewFlipper;
 
-import net.wrappy.im.R;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import me.tornado.android.patternlock.PatternView;
 
 
-public class LauncherActivity extends BaseActivity {
+public class LauncherActivity extends BaseActivity implements RestAPI.RectAPIListenner {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
@@ -128,27 +137,38 @@ public class LauncherActivity extends BaseActivity {
 
     private void showLogin()
     {
-        this.startActivityForResult(new Intent(this, PatternActivity.class), REQUEST_CODE_LOGIN);
+
+        this.startActivity(new Intent(this, PatternActivity.class));
+        finish();
 
     }
 
     private void showRegister()
     {
-        this.startActivityForResult(new Intent(this, PatternActivity.class), REQUEST_CODE_REGISTER);
-
+        new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
     }
 
-    @Override
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE_REGISTER) {
                 String result = data.getStringExtra("result");
+
+                JsonArray jsonArray = new JsonArray();
+
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("UserName",mEditUsername.getText().toString());
+                jsonObject.addProperty("PassWord",result);
+
+
+                jsonArray.add(jsonObject);
+                new RestAPI.PostDataUrl(jsonArray.toString(), this).execute(RestAPI.POST_REGISTER);
             } else  if (requestCode == REQUEST_CODE_LOGIN) {
                 String result = data.getStringExtra("result");
             }
         }
-    }
+    }*/
 
 
     private void setAnimLeft ()
@@ -167,4 +187,25 @@ public class LauncherActivity extends BaseActivity {
         mViewFlipper.setOutAnimation(animOut);
     }
 
+    @Override
+    public void OnComplete(String error, String s) {
+        JSONObject mainObject = null;
+        try {
+              mainObject = new JSONObject(s);
+              JSONObject uniObject = mainObject.getJSONObject("data");
+              int  status = mainObject.getInt("status");
+              if(status == 1) {
+                  String username = uniObject.getString("jid");
+                  Intent intent = new Intent(this, PatternActivity.class);
+                  intent.putExtra("username" , username);
+                  this.startActivity(new Intent(this, PatternActivity.class));
+                  finish();
+              }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

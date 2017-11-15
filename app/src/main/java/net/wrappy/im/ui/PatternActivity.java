@@ -14,10 +14,13 @@ import java.util.List;
 import me.tornado.android.patternlock.PatternUtils;
 import me.tornado.android.patternlock.PatternView;
 
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.util.PatternLockUtils;
 
-public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity {
+public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity implements RestAPI.RectAPIListenner{
 
+
+    String password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -40,9 +43,15 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     @Override
     protected void onSetPattern(List<PatternView.Cell> pattern) {
         PatternLockUtils.setPattern(pattern, this);
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", PatternUtils.patternToString(pattern));
-        setResult(this.RESULT_OK,returnIntent);
-        finish();
+        password = PatternUtils.patternToString(pattern);
+     //   Intent returnIntent = new Intent();
+      //  returnIntent.putExtra("result", PatternUtils.patternToString(pattern));
+      //  setResult(this.RESULT_OK,returnIntent);
+       // finish();
+    }
+
+    @Override
+    public void OnComplete(String error, String s) {
+
     }
 }
