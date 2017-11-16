@@ -38,7 +38,7 @@ import net.wrappy.im.util.PatternLockUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity implements RestAPI.RectAPIListenner{
+public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity implements RestAPI.RestAPIListenner{
 
     String username;
     String password;

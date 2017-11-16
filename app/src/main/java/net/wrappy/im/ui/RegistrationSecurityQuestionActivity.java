@@ -58,7 +58,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     }
 
     private void getListQuestion() {
-        new RestAPI.GetDataUrl(new RestAPI.RectAPIListenner() {
+        new RestAPI.GetDataUrl(new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(String error, String s) {
                 try {

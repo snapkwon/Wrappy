@@ -27,7 +27,7 @@ import java.util.List;
 import me.tornado.android.patternlock.PatternView;
 
 
-public class LauncherActivity extends BaseActivity implements RestAPI.RectAPIListenner {
+public class LauncherActivity extends BaseActivity implements RestAPI.RestAPIListenner {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;

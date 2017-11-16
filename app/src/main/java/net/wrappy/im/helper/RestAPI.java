@@ -38,7 +38,7 @@ public class RestAPI {
     public static String PUT_UPDATEPASS ="http://www.mocky.io/v2/5a0becc03200006b22e96545";
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0a67ce2e0000ab1a489c97";
 
-    public interface RectAPIListenner {
+    public interface RestAPIListenner {
         public void OnComplete(String error, String s);
     }
 
@@ -65,10 +65,10 @@ public class RestAPI {
 
         String json="";
         String error = null;
-        RectAPIListenner listenner;
+        RestAPIListenner listenner;
 
 
-        public PostDataUrl(String json, RectAPIListenner listenner) {
+        public PostDataUrl(String json, RestAPIListenner listenner) {
             this.json = json;
             this.listenner = listenner;
         }
@@ -134,10 +134,10 @@ public class RestAPI {
 
         String json="";
         String error = null;
-        RectAPIListenner listenner;
+        RestAPIListenner listenner;
 
 
-        public PutDataUrl(String json, RectAPIListenner listenner) {
+        public PutDataUrl(String json, RestAPIListenner listenner) {
             this.json = json;
             this.listenner = listenner;
         }
@@ -201,9 +201,9 @@ public class RestAPI {
 
         HttpURLConnection conn;
         String error = null;
-        RectAPIListenner listenner;
+        RestAPIListenner listenner;
 
-        public GetDataUrl(RectAPIListenner listenner) {
+        public GetDataUrl(RestAPIListenner listenner) {
             this.listenner = listenner;
         }
 
