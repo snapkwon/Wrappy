@@ -1,4 +1,4 @@
-package net.wrappy.im;
+package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +12,12 @@ import android.widget.Spinner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
-import net.wrappy.im.ui.BaseActivity;
 
 import java.util.ArrayList;
 

@@ -1,12 +1,8 @@
-package net.wrappy.im;
+package net.wrappy.im.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -14,16 +10,14 @@ import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
 
+import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
-import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.util.SecureMediaStore;
-
-import java.io.InputStream;
 
 /**
  * Created by ben on 15/11/2017.
