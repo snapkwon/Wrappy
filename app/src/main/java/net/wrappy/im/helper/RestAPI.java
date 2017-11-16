@@ -1,26 +1,18 @@
 package net.wrappy.im.helper;
 
 import android.os.AsyncTask;
-import android.widget.Spinner;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.wrappy.im.util.GiphyAPI;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by ben on 13/11/2017.
@@ -30,8 +22,9 @@ public class RestAPI {
 
     public static String GET_QUESTIONS_SECURITY = "http://www.mocky.io/v2/5a0a619a2e00009219489c7e";
     public static String POST_QUESTION_ANSWERS = "http://www.mocky.io/v2/5a0a65fa2e0000391a489c94";
+    public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0a67ce2e0000ab1a489c97";
 
-    public interface RectAPIListenner {
+    public interface RestAPIListenner {
         public void OnComplete(String error, String s);
     }
 
@@ -57,10 +50,10 @@ public class RestAPI {
 
         String json="";
         String error = null;
-        RectAPIListenner listenner;
+        RestAPIListenner listenner;
 
 
-        public PostDataUrl(String json, RectAPIListenner listenner) {
+        public PostDataUrl(String json, RestAPIListenner listenner) {
             this.json = json;
             this.listenner = listenner;
         }
@@ -117,9 +110,9 @@ public class RestAPI {
 
         HttpURLConnection conn;
         String error = null;
-        RectAPIListenner listenner;
+        RestAPIListenner listenner;
 
-        public GetDataUrl(RectAPIListenner listenner) {
+        public GetDataUrl(RestAPIListenner listenner) {
             this.listenner = listenner;
         }
 
