@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <net.wrappy.im.helper.layout.AppTextView
+        android:id="@+id/txtQuestionTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="#e5e5e5"
+        android:text="Question"
+        style="@style/AppText02"
+        android:layout_marginBottom="5dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spinner_question"
+        android:layout_marginBottom="5dp"
+        />
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="5dp"/>
+
+    <net.wrappy.im.helper.layout.AppEditTextView
+        android:id="@+id/edQuestionAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/AppText02"
+        android:lines="1"
+        android:imeOptions="actionDone"
+        android:background="@null"
+        android:padding="10dp"
+        android:hint="Answer"
+        android:layout_marginBottom="5dp"/>
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+</LinearLayout>

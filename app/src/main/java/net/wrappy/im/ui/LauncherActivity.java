@@ -204,10 +204,10 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RectAPILis
                   Bundle arg = new Bundle();
                   arg.putInt("type",type_request);
                   arg.putString("username" , username);
-                  arg.putString("password" , username);
+                  arg.putString("password" , password);
                   intent.putExtras(arg);
                   this.startActivity(intent);
-                  finish();
+                 // finish();
               }
 
 

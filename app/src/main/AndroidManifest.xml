@@ -211,6 +211,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.RegistrationSecurityQuestionActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction"/>
+        <activity android:name=".ui.UpdateProfileActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction"/>
+
         <service
             android:name="net.wrappy.im.plugin.xmpp.XmppImPlugin"
             android:exported="false">

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FF2b63"
+    android:elevation="1dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/headerbarBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_arrow_back"/>
+
+    <net.wrappy.im.helper.layout.AppTextView
+        android:id="@+id/headerbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="16sp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:textColor="@android:color/white"/>
+
+
+</RelativeLayout>

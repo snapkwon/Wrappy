@@ -61,6 +61,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         mHandler = new SimpleAlertHandler(this);
 
     }
+    @Override
+    protected void onCanceled() {
+        finish();
+        //  finish();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -143,16 +148,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             signInHelper.activateAccount(account.providerId,account.accountId);
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
-            showInviteScreen();
+            showQuestionScreen();
 
             mExistingAccountTask = null;
         }
     }
 
-    private void showInviteScreen ()
+    private void showQuestionScreen ()
     {
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
         startActivity(intent);
         finish();
     }
