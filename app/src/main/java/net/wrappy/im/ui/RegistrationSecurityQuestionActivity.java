@@ -149,6 +149,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                     if (RestAPI.getStatus(RestAPI.parseStringToJsonElement(s).getAsJsonObject())==1) {
                         Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                 }
 

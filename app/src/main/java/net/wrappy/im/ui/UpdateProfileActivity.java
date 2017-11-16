@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
 
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -94,8 +95,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 }
                 // success
                 AppFuncs.alert(getApplicationContext(),"Updated",true);
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
             if (view.getId() == btnSkip.getId()) {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
 
             }
             if (view.getId() == btnCameraAvarta.getId()) {

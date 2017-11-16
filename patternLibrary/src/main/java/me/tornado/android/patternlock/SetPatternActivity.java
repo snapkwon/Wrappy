@@ -186,7 +186,7 @@ public class SetPatternActivity extends BasePatternActivity
 
     protected void onCanceled() {
         setResult(RESULT_CANCELED);
-        finish();
+      //  finish();
     }
 
     private void onRightButtonClicked() {
@@ -208,7 +208,7 @@ public class SetPatternActivity extends BasePatternActivity
 
     protected void onConfirmed() {
         setResult(RESULT_OK);
-        finish();
+        //finish();
     }
 
     private void updateStage(Stage newStage) {
