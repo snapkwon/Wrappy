@@ -34,7 +34,8 @@ public class RestAPI {
 
     public static String GET_QUESTIONS_SECURITY = "http://www.mocky.io/v2/5a0a619a2e00009219489c7e";
     public static String POST_QUESTION_ANSWERS = "http://www.mocky.io/v2/5a0a65fa2e0000391a489c94";
-    public static String POST_REGISTER = "http://www.mocky.io/v2/5a0bfa333200000225e96588";
+    public static String POST_REGISTER = "http://www.mocky.io/v2/5a0d513b2e000052213a2ddd";
+    public static String PUT_UPDATEPASS ="http://www.mocky.io/v2/5a0becc03200006b22e96545";
 
     public interface RectAPIListenner {
         public void OnComplete(String error, String s);

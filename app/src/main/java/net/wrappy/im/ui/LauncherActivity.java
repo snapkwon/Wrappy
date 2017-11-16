@@ -37,6 +37,8 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RectAPILis
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
 
+    int type_request;
+
 
     private static final List<PatternView.Cell> LOGO_PATTERN = new ArrayList<>();
 
@@ -145,6 +147,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RectAPILis
 
     private void showRegister()
     {
+        type_request = REQUEST_CODE_REGISTER;
         new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
     }
 
@@ -196,9 +199,14 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RectAPILis
               int  status = mainObject.getInt("status");
               if(status == 1) {
                   String username = uniObject.getString("jid");
+                  String password = uniObject.getString("xmppPass");
                   Intent intent = new Intent(this, PatternActivity.class);
-                  intent.putExtra("username" , username);
-                  this.startActivity(new Intent(this, PatternActivity.class));
+                  Bundle arg = new Bundle();
+                  arg.putInt("type",type_request);
+                  arg.putString("username" , username);
+                  arg.putString("password" , username);
+                  intent.putExtras(arg);
+                  this.startActivity(intent);
                   finish();
               }
 
