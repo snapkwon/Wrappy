@@ -17,12 +17,9 @@
         android:layout_margin="0dp"
         >
 
-        <include android:id="@+id/flipViewMain" layout="@layout/awesome_onboarding_splash"/>
+        <include android:id="@+id/flipViewMain" layout="@layout/launcher_main"/>
 
-        <include android:id="@+id/flipViewRegister" layout="@layout/awesome_onboarding_register"/>
-
-        <include android:id="@+id/flipViewLogin" layout="@layout/awesome_onboarding_login"/>
-
+        <include android:id="@+id/flipViewForgetPass" layout="@layout/launcher_forgetpass"/>
 
     </ViewFlipper>
 
