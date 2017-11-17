@@ -148,7 +148,9 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
     private void showRegister()
     {
         type_request = REQUEST_CODE_REGISTER;
-        new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
+       // new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
+        Intent intent = new Intent(this, PatternActivity.class);
+        startActivity(intent);
     }
 
    /* @Override
@@ -188,6 +190,11 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Animation animOut = AnimationUtils.loadAnimation(LauncherActivity.this, R.anim.push_right_out);
         mViewFlipper.setInAnimation(animIn);
         mViewFlipper.setOutAnimation(animOut);
+    }
+
+    @Override
+    public void OnInit() {
+
     }
 
     @Override

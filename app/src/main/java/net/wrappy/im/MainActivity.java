@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (settings.getBoolean("prefBlockScreenshots",true))
+        if (settings.getBoolean("prefBlockScreenshots",false))
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 

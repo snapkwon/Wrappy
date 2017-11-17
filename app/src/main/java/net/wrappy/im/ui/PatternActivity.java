@@ -5,9 +5,11 @@
 
 package net.wrappy.im.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,15 +40,11 @@ import net.wrappy.im.util.PatternLockUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity implements RestAPI.RestAPIListenner{
+public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
 
     String username;
     String password;
-    ExistingAccountTask mExistingAccountTask;
-    private String mFingerprint;
-    private OnboardingAccount mNewAccount;
-
-    private SimpleAlertHandler mHandler;
+    ProgressDialog dialog;
 
     public static final int STATUS_SUCCESS = 1;
 
@@ -55,10 +53,40 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
 
         super.onCreate(savedInstanceState);
-        Bundle arg= getIntent().getExtras();
-        username = arg.getString("username");
-        password = arg.getString("password");
-        mHandler = new SimpleAlertHandler(this);
+       // Bundle arg= getIntent().getExtras();
+      //  username = arg.getString("username");
+       // password = arg.getString("password");
+        dialog = new ProgressDialog(PatternActivity.this);
+        dialog.setCancelable(false);
+        new RestAPI.PostDataUrl(null, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnInit() {
+                dialog.setMessage("waiting");
+                dialog.show();
+            }
+
+            @Override
+            public void OnComplete(String error, String s) {
+                JSONObject mainObject = null;
+                try {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    mainObject = new JSONObject(s);
+                    JSONObject uniObject = mainObject.getJSONObject("data");
+                    int  status = mainObject.getInt("status");
+                    if(status == 1) {
+                         username = uniObject.getString("jid");
+                         password = uniObject.getString("xmppPass");
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).execute(RestAPI.POST_REGISTER);
 
     }
     @Override
@@ -93,7 +121,30 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         jsonArray.add(jsonObject);
 
-        new RestAPI.PutDataUrl(jsonArray.toString(), this).execute(RestAPI.PUT_UPDATEPASS);
+        new RestAPI.PutDataUrl(jsonArray.toString(), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnInit() {
+                dialog.setMessage("waiting");
+                dialog.show();
+            }
+
+            @Override
+            public void OnComplete(String error, String s) {
+                JSONObject mainObject = null;
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                try {
+                    mainObject = new JSONObject(s);
+                    if(mainObject.getInt("status") ==  STATUS_SUCCESS) {
+                      //  doExistingAccountRegister(username, password);
+                        showQuestionScreen();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).execute(RestAPI.PUT_UPDATEPASS);
 
      //   Intent returnIntent = new Intent();
       //  returnIntent.putExtra("result", PatternUtils.patternToString(pattern));
@@ -101,68 +152,21 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
        // finish();
     }
 
-    private void doExistingAccountRegister (String username , String password)
-    {
-
-        if (mExistingAccountTask == null) {
-            mExistingAccountTask = new PatternActivity.ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
-        }
-    }
-
-    private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
-        @Override
-        protected OnboardingAccount doInBackground(String... account) {
-            try {
-
-                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(PatternActivity.this);
-                KeyPair keyPair = keyMan.generateLocalKeyPair();
-                mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
-
-                String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(PatternActivity.this, mHandler, nickname, account[0], account[1]);
-
-                if (result != null) {
-                    String jabberId = result.username + '@' + result.domain;
-                    keyMan.storeKeyPair(jabberId,keyPair);
-                }
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(OnboardingAccount account) {
-
-           // mUsername = account.username + '@' + account.domain;
-
-            ImApp mApp = (ImApp)getApplication();
-            mApp.setDefaultAccount(account.providerId,account.accountId);
-
-            SignInHelper signInHelper = new SignInHelper(PatternActivity.this, mHandler);
-            signInHelper.activateAccount(account.providerId,account.accountId);
-            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
-
-            showQuestionScreen();
-
-            mExistingAccountTask = null;
-        }
-    }
 
     private void showQuestionScreen ()
     {
 
         Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
+        Bundle arg = new Bundle();
+        arg.putString("username",username);
+        arg.putString("password",password);
+        intent.putExtras(arg);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }
 
-    @Override
+   /* @Override
     public void OnComplete(String error, String s) {
 
         JSONObject mainObject = null;
@@ -174,5 +178,5 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

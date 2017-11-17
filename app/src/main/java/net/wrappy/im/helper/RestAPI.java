@@ -39,6 +39,7 @@ public class RestAPI {
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0a67ce2e0000ab1a489c97";
 
     public interface RestAPIListenner {
+        public void OnInit();
         public void OnComplete(String error, String s);
     }
 
@@ -71,6 +72,9 @@ public class RestAPI {
         public PostDataUrl(String json, RestAPIListenner listenner) {
             this.json = json;
             this.listenner = listenner;
+            if (listenner!=null) {
+                listenner.OnInit();
+            }
         }
 
         @Override
@@ -84,8 +88,8 @@ public class RestAPI {
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
                 conn.setRequestProperty("Accept","application/json");
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
 
@@ -140,6 +144,9 @@ public class RestAPI {
         public PutDataUrl(String json, RestAPIListenner listenner) {
             this.json = json;
             this.listenner = listenner;
+            if (listenner!=null) {
+                listenner.OnInit();
+            }
         }
 
         @Override
@@ -153,8 +160,8 @@ public class RestAPI {
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
                 conn.setRequestProperty("Accept","application/json");
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
 
