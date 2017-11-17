@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -31,7 +32,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
-    AppEditTextView edUsername, edEmail, edPhone, edOther;
+    EditText edUsername, edEmail, edPhone, edOther;
     AppButton btnComplete, btnSkip;
     ImageButton btnCameraHeader,btnCameraAvarta;
     CircleImageView imgAvarta;
@@ -53,10 +54,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         headerbarTitle = (AppTextView) findViewById(R.id.headerbarTitle);
         headerbarTitle.setText("Update Profile");
         //
-        edUsername = (AppEditTextView) findViewById(R.id.edProfileUsername);
-        edEmail = (AppEditTextView) findViewById(R.id.edProfileEmail);
-        edPhone = (AppEditTextView) findViewById(R.id.edProfilePhone);
-        edOther = (AppEditTextView) findViewById(R.id.edProfileOther);
+        edUsername = (EditText) findViewById(R.id.edProfileUsername);
+        edEmail = (EditText) findViewById(R.id.edProfileEmail);
+        edPhone = (EditText) findViewById(R.id.edProfilePhone);
+        edOther = (EditText) findViewById(R.id.edProfileOther);
         btnComplete = (AppButton) findViewById(R.id.btnProfileComplete);
         btnComplete.setOnClickListener(this);
         btnSkip = (AppButton) findViewById(R.id.btnProfileSkip);
