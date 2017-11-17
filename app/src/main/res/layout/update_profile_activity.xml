@@ -89,6 +89,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Username"
+                            android:imeOptions="actionNext"
                             style="@style/AppText02"
                             android:background="@null"/>
 
@@ -119,6 +120,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Email"
                             android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext"
                             style="@style/AppText02"
                             android:background="@null"/>
 
@@ -148,6 +150,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Phone"
+                            android:inputType="phone"
+                            android:imeOptions="actionNext"
                             style="@style/AppText02"
                             android:background="@null"/>
 
@@ -177,6 +181,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Other"
+                            android:imeOptions="actionDone"
                             style="@style/AppText02"
                             android:background="@null"/>
 

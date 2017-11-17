@@ -2,9 +2,12 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -34,7 +37,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     ArrayAdapter<String> questionsAdapter;
     AppButton btnQuestionComplete;
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
-    ArrayList<AppEditTextView> appEditTextViewsAnswers = new ArrayList<>();
+    ArrayList<EditText> appEditTextViewsAnswers = new ArrayList<>();
     boolean isFlag;
 
     @Override
@@ -87,7 +90,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                                 spinnersQuestion.add(questionSpinner);
                                 questionSpinner.setAdapter(questionsAdapter);
                                 questionSpinner.setSelection(i);
-                                AppEditTextView editTextView = (AppEditTextView) questionLayoutView.findViewById(R.id.edQuestionAnswer);
+                                EditText editTextView = (EditText) questionLayoutView.findViewById(R.id.edQuestionAnswer);
                                 appEditTextViewsAnswers.add(editTextView);
                             }
                             btnQuestionComplete.setEnabled(true);
@@ -117,7 +120,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                     for (int i=0; i < spinnersQuestion.size(); i++) {
                         Spinner spinner = spinnersQuestion.get(i);
                         String question = spinner.getSelectedItem().toString();
-                        AppEditTextView editTextView = appEditTextViewsAnswers.get(i);
+                        EditText editTextView = appEditTextViewsAnswers.get(i);
                         String answer = editTextView.getText().toString().trim();
                         // validate answer text
                         if (answer.isEmpty()) {
