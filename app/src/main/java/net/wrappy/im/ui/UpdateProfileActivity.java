@@ -79,8 +79,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 finish();
             }
             if (view.getId() == btnComplete.getId()) {
-                if (!validateData().isEmpty()) {
-                    AppFuncs.alert(getApplicationContext(),validateData(),true);
+                String error = validateData();
+                if (!error.isEmpty()) {
+                    AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
                 JsonObject jsonObject = new JsonObject();
