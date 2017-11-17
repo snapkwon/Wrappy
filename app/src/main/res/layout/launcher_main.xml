@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,19 +18,20 @@
         android:gravity="top"
         />
 
-    <net.ironrabbit.type.CustomTypefaceEditText
+    <net.wrappy.im.helper.layout.AppEditTextView
         android:id="@+id/edtUserMame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/id_or_username"
         android:layout_margin="10dp"
         android:layout_gravity="bottom"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
+        android:inputType="textNoSuggestions"
+        style="@style/AppText02"
+        app:font_type="bold"
         android:gravity="center"
         />
 
-    <net.ironrabbit.type.CustomTypefaceButton
+    <net.wrappy.im.helper.layout.AppButton
         android:id="@+id/btnforgetpass"
         android:textSize="15pt"
         android:layout_width="match_parent"
@@ -39,7 +41,7 @@
         android:layout_gravity="bottom"
         android:background="@drawable/rounded_rect_primary"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
+        app:font_type="bold"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         style="@android:style/Widget.Button"
@@ -48,7 +50,7 @@
 
 
 
-    <net.ironrabbit.type.CustomTypefaceButton
+    <net.wrappy.im.helper.layout.AppButton
         android:id="@+id/btnShowLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,14 +59,14 @@
         android:layout_gravity="bottom"
         android:background="@drawable/rounded_rect_primary"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
+        app:font_type="bold"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         style="@android:style/Widget.Button"
 
         />
 
-    <net.ironrabbit.type.CustomTypefaceButton
+    <net.wrappy.im.helper.layout.AppButton
         android:id="@+id/btnShowRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,7 +75,7 @@
         android:layout_gravity="bottom"
         android:background="@drawable/rounded_rect_primary"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
+        app:font_type="bold"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         style="@android:style/Widget.Button"

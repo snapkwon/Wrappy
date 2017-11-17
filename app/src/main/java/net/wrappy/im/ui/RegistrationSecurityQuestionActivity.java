@@ -2,8 +2,10 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -88,6 +90,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                                 questionSpinner.setAdapter(questionsAdapter);
                                 questionSpinner.setSelection(i);
                                 AppEditTextView editTextView = (AppEditTextView) questionLayoutView.findViewById(R.id.edQuestionAnswer);
+                                editTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
                                 appEditTextViewsAnswers.add(editTextView);
                             }
                             btnQuestionComplete.setEnabled(true);
