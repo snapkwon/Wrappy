@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="profile_gender">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
 
 
 </resources>

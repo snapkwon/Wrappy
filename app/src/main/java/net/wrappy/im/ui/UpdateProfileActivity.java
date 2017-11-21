@@ -1,10 +1,16 @@
 package net.wrappy.im.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,7 +38,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
-    EditText edUsername, edEmail, edPhone, edOther;
+    EditText edUsername, edEmail, edPhone;
+    AppCompatSpinner spinnerProfileGender;
     AppButton btnComplete, btnSkip;
     ImageButton btnCameraHeader,btnCameraAvarta;
     CircleImageView imgAvarta;
@@ -57,7 +64,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         edUsername = (EditText) findViewById(R.id.edProfileUsername);
         edEmail = (EditText) findViewById(R.id.edProfileEmail);
         edPhone = (EditText) findViewById(R.id.edProfilePhone);
-        edOther = (EditText) findViewById(R.id.edProfileOther);
+        spinnerProfileGender = (AppCompatSpinner) findViewById(R.id.spinnerProfileGender);
         btnComplete = (AppButton) findViewById(R.id.btnProfileComplete);
         btnComplete.setOnClickListener(this);
         btnSkip = (AppButton) findViewById(R.id.btnProfileSkip);
@@ -68,6 +75,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         btnCameraHeader.setOnClickListener(this);
         imgAvarta = (CircleImageView) findViewById(R.id.imgProfileAvarta);
         imgHeader = (ImageView) findViewById(R.id.imgProfileHeader);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.profile_gender, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProfileGender.setAdapter(adapter);
     }
 
     @Override
@@ -108,10 +119,30 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
             }
             if (view.getId() == btnCameraAvarta.getId()) {
-                AppFuncs.getImageFromDevice(this,IMAGE_AVARTA);
+                if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                        AppFuncs.getImageFromDevice(this,IMAGE_AVARTA);
+
+                    } else {
+                        ActivityCompat.requestPermissions(UpdateProfileActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                199);
+                }
             }
             if (view.getId() == btnCameraHeader.getId()) {
-                AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+                if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+
+                } else {
+                    ActivityCompat.requestPermissions(UpdateProfileActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            199);
+                }
             }
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -126,7 +157,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             user = edUsername.getText().toString().trim();
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
-            other = edOther.getText().toString().trim();
             if (user.isEmpty()) {
                 error = "Username is empty";
             } else if (user.length() < 6) {
