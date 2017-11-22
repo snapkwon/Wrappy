@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <net.wrappy.im.helper.layout.CircleImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:color/holo_blue_bright"/>
+            <ImageButton
+                android:id="@+id/btnGroupPhoto"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_camera_profile"
+                android:background="@android:color/transparent"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp">
+            <net.wrappy.im.helper.layout.AppEditTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter group name"
+                android:inputType="text"
+                style="@style/AppText02"
+                android:imeOptions="actionDone" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <net.wrappy.im.helper.layout.AppTextView
+        android:id="@+id/txtGroupNumbers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/AppText02"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="left"
+        android:text="3 members"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

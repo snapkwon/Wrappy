@@ -365,14 +365,17 @@ public class ContactsPickerActivity extends BaseActivity {
         switch (item.getItemId())
         {
             case android.R.id.home:
-                if (isGroupMode() && !isGroupOnlyMode()) {
+                if (getFragmentManager().findFragmentById(R.id.containerGroup)!=null) {
+                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.containerGroup)).commit();
+                } else if (isGroupMode() && !isGroupOnlyMode()) {
                     setGroupMode(false);
                 } else {
                     finish();
                 }
                 return true;
             case R.id.action_start_chat:
-                multiFinish();
+                getFragmentManager().beginTransaction().add(R.id.containerGroup,ContactsPickerGroupFragment.newsIntance()).commit();
+                //multiFinish();
                 return true;
         }
 
