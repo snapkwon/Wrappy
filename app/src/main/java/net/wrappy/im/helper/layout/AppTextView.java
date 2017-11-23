@@ -17,7 +17,7 @@ import net.wrappy.im.R;
 @SuppressLint("AppCompatCustomView")
 public class AppTextView extends TextView {
 
-    String fonts[] = {AppFonts.FONT_REGULAR, AppFonts.FONT_ITALIC, AppFonts.FONT_BOLD, AppFonts.FONT_LIGHT, AppFonts.FONT_MEDIUM };
+    String fonts[] = {AppFonts.FONT_REGULAR, AppFonts.FONT_ITALIC, AppFonts.FONT_LIGHT, AppFonts.FONT_LIGHT_ITALIC, AppFonts.FONT_BOLD, AppFonts.FONT_BOLD_ITALIC};
 
     public AppTextView(Context context) {
         super(context);

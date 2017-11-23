@@ -14,7 +14,7 @@ import net.wrappy.im.R;
 
 public class AppEditTextView extends android.support.v7.widget.AppCompatEditText {
 
-    String fonts[] = {AppFonts.FONT_REGULAR, AppFonts.FONT_ITALIC, AppFonts.FONT_BOLD, AppFonts.FONT_LIGHT, AppFonts.FONT_MEDIUM };
+    String fonts[] = {AppFonts.FONT_REGULAR, AppFonts.FONT_ITALIC, AppFonts.FONT_LIGHT, AppFonts.FONT_LIGHT_ITALIC, AppFonts.FONT_BOLD, AppFonts.FONT_BOLD_ITALIC};
 
     public AppEditTextView(Context context, AttributeSet attrs) {
         super(context, attrs);

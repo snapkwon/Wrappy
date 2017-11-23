@@ -52,7 +52,9 @@ import java.util.ArrayList;
 
 import net.wrappy.im.R;
 
-/** Activity used to pick a contact. */
+/**
+ * Activity used to pick a contact.
+ */
 public class ContactsPickerActivity extends BaseActivity {
 
     public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
@@ -92,13 +94,13 @@ public class ContactsPickerActivity extends BaseActivity {
 
     // The loader's unique id. Loader ids are specific to the Activity or
     // Fragment in which they reside.
-    private static final int LOADER_ID = 1;
+    public static final int LOADER_ID = 1;
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
 
     // TODO - Maybe extend the Contact class with provider and account instead?
-    private class SelectedContact {
+    public class SelectedContact {
         public long id;
         public String username;
         public Integer account;
@@ -111,7 +113,12 @@ public class ContactsPickerActivity extends BaseActivity {
             this.provider = provider;
         }
     }
+
     private LongSparseArray<SelectedContact> mSelection = new LongSparseArray<>();
+
+    public LongSparseArray<SelectedContact> getSelection() {
+        return mSelection;
+    }
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -119,10 +126,10 @@ public class ContactsPickerActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((ImApp)getApplication()).setAppTheme(this);
-        
+        ((ImApp) getApplication()).setAppTheme(this);
+
         setContentView(R.layout.contacts_picker_activity);
-        
+
         if (getIntent().getData() != null)
             mUri = getIntent().getData();
 
@@ -141,7 +148,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         boolean isGroupOnlyMode = isGroupOnlyMode();
         excludedContacts = getIntent().getStringArrayListExtra(EXTRA_EXCLUDED_CONTACTS);
-        mShowGroups = getIntent().getBooleanExtra(EXTRA_SHOW_GROUPS,false);
+        mShowGroups = getIntent().getBooleanExtra(EXTRA_SHOW_GROUPS, false);
 
         View btnCreateGroup = findViewById(R.id.btnCreateGroup);
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +184,7 @@ public class ContactsPickerActivity extends BaseActivity {
             });
         }
 
-        mListView = (ListView)findViewById(R.id.contactsList);
+        mListView = (ListView) findViewById(R.id.contactsList);
         setGroupMode(isGroupOnlyMode);
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -196,8 +203,7 @@ public class ContactsPickerActivity extends BaseActivity {
         //mSelectedContacts.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));
         //mListView.addHeaderView(mSelectedContacts);
 
-        mListView.setOnItemClickListener(new OnItemClickListener ()
-        {
+        mListView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
@@ -207,8 +213,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     } else {
                         select(position);
                     }
-                }
-                else {
+                } else {
                     Cursor cursor = (Cursor) mAdapter.getItem(position);
                     Intent data = new Intent();
                     data.putExtra(EXTRA_RESULT_USERNAME, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
@@ -230,8 +235,7 @@ public class ContactsPickerActivity extends BaseActivity {
         super.onStart();
     }
 
-    private void multiStart (int i)
-    {
+    private void multiStart(int i) {
         setGroupMode(true);
         if (i != -1) {
             select(i);
@@ -243,7 +247,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private boolean isGroupMode() {
-      return mListView.getChoiceMode() != ListView.CHOICE_MODE_SINGLE;
+        return mListView.getChoiceMode() != ListView.CHOICE_MODE_SINGLE;
     }
 
     private void setGroupMode(boolean groupMode) {
@@ -257,8 +261,7 @@ public class ContactsPickerActivity extends BaseActivity {
         updateStartGroupChatMenu();
     }
 
-    private void multiFinish ()
-    {
+    private void multiFinish() {
         if (mSelection.size() > 0) {
             ArrayList<String> users = new ArrayList<>();
             ArrayList<Integer> providers = new ArrayList<>();
@@ -266,9 +269,9 @@ public class ContactsPickerActivity extends BaseActivity {
 
             for (int i = 0; i < mSelection.size(); i++) {
                 SelectedContact contact = mSelection.valueAt(i);
-                    users.add(contact.username);
-                    providers.add(contact.provider);
-                    accounts.add(contact.account);
+                users.add(contact.username);
+                providers.add(contact.provider);
+                accounts.add(contact.account);
             }
 
             Intent data = new Intent();
@@ -281,20 +284,17 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
 
         if (response == RESULT_OK)
-            if (request == REQUEST_CODE_ADD_CONTACT)
-            {
+            if (request == REQUEST_CODE_ADD_CONTACT) {
                 String newContact = data.getExtras().getString(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
 
-                if (newContact != null)
-                {
+                if (newContact != null) {
                     Intent dataNew = new Intent();
-                    
+
                     long providerId = data.getExtras().getLong(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
 
                     dataNew.putExtra(EXTRA_RESULT_USERNAME, newContact);
@@ -310,7 +310,6 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -322,22 +321,18 @@ public class ContactsPickerActivity extends BaseActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
 
-        if (mSearchView != null )
-        {
+        if (mSearchView != null) {
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             mSearchView.setIconifiedByDefault(false);
 
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
-            {
-                public boolean onQueryTextChange(String newText)
-                {
+            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+                public boolean onQueryTextChange(String newText) {
                     mSearchString = newText;
                     doFilterAsync(mSearchString);
                     return true;
                 }
 
-                public boolean onQueryTextSubmit(String query)
-                {
+                public boolean onQueryTextSubmit(String query) {
                     mSearchString = query;
                     doFilterAsync(mSearchString);
 
@@ -347,7 +342,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
             mSearchView.setOnQueryTextListener(queryTextListener);
         }
-
 
 
         return true;
@@ -362,17 +356,22 @@ public class ContactsPickerActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
-                if (isGroupMode() && !isGroupOnlyMode()) {
+                if (getFragmentManager().findFragmentById(R.id.containerGroup) != null) {
+                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.containerGroup)).commit();
+                } else if (isGroupMode() && !isGroupOnlyMode()) {
                     setGroupMode(false);
                 } else {
                     finish();
                 }
                 return true;
             case R.id.action_start_chat:
-                multiFinish();
+                if (getFragmentManager().getBackStackEntryCount() > 0)
+                    multiFinish();
+                else
+                    getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                //multiFinish();
                 return true;
         }
 
@@ -381,17 +380,17 @@ public class ContactsPickerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isGroupMode() && !isGroupOnlyMode()) {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else if (isGroupMode() && !isGroupOnlyMode()) {
             setGroupMode(false);
-            return;
-        }
-        super.onBackPressed();
+        } else
+            super.onBackPressed();
     }
 
-    public void doFilterAsync (final String query)
-    {
+    public void doFilterAsync(final String query) {
 
-            doFilter(query);
+        doFilter(query);
     }
 
     boolean mAwaitingUpdate = false;
@@ -403,25 +402,22 @@ public class ContactsPickerActivity extends BaseActivity {
         if (mAdapter == null) {
 
             mAdapter = new ContactAdapter(ContactsPickerActivity.this, R.layout.contact_view);
-           mListView.setAdapter(mAdapter);
+            mListView.setAdapter(mAdapter);
 
             mLoaderCallbacks = new MyLoaderCallbacks();
             getSupportLoaderManager().initLoader(LOADER_ID, null, mLoaderCallbacks);
         } else {
 
-            if (!mAwaitingUpdate)
-            {
+            if (!mAwaitingUpdate) {
                 mAwaitingUpdate = true;
-                mHandler.postDelayed(new Runnable ()
-                {
+                mHandler.postDelayed(new Runnable() {
 
-                    public void run ()
-                    {
+                    public void run() {
 
                         getSupportLoaderManager().restartLoader(LOADER_ID, null, mLoaderCallbacks);
                         mAwaitingUpdate = false;
                     }
-                },1000);
+                }, 1000);
             }
 
         }
@@ -449,7 +445,7 @@ public class ContactsPickerActivity extends BaseActivity {
         // I guess we should move that somewhere else.
         ContactListItem cli = new ContactListItem(this, null);
         ContactViewHolder cvh = new ContactViewHolder(view);
-        cli.bind(cvh, cursor, null,false);
+        cli.bind(cvh, cursor, null, false);
         View btnClose = view.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
             private long itemId;
@@ -500,7 +496,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private void unselect(long id) {
         if (isSelected(id)) {
             removeTagView(mSelection.get(id));
-            mSelection.remove((Long)id);
+            mSelection.remove((Long) id);
             mAdapter.notifyDataSetChanged();
             if (mSelection.size() == 0) {
                 setGroupMode(false);
@@ -510,10 +506,13 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
-    private class ContactAdapter extends ResourceCursorAdapter {
+    public class ContactAdapter extends ResourceCursorAdapter {
+
+        private Context mContext;
 
         public ContactAdapter(Context context, int view) {
-            super(context, view, null,0);
+            super(context, view, null, 0);
+            mContext = context;
         }
 
         @Override
@@ -593,14 +592,13 @@ public class ContactsPickerActivity extends BaseActivity {
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
-        //    loader.setUpdateThrottle(50L);
+            //    loader.setUpdateThrottle(50L);
             return loader;
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.swapCursor(newCursor);
-
 
 
         }
@@ -611,7 +609,6 @@ public class ContactsPickerActivity extends BaseActivity {
             mAdapter.swapCursor(null);
 
 
-
         }
 
     }
@@ -619,7 +616,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
     public interface ContactListListener {
 
-        public void openChat (Cursor c);
-        public void showProfile (Cursor c);
+        public void openChat(Cursor c);
+
+        public void showProfile(Cursor c);
     }
 }

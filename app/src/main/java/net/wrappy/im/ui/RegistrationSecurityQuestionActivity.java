@@ -81,7 +81,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         headerbarBack = (ImageButton) findViewById(R.id.headerbarBack);
         headerbarBack.setOnClickListener(this);
         headerbarTitle = (AppTextView) findViewById(R.id.headerbarTitle);
-        headerbarTitle.setText("Question");
+        headerbarTitle.setText("REGISTRATION");
         btnQuestionComplete = (AppButton) findViewById(R.id.btnQuestionComplete);
         btnQuestionComplete.setOnClickListener(this);
 
