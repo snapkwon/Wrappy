@@ -7,6 +7,7 @@
 
 <resources>
     <dimen name="pl_pattern_dot_line_width">3dp</dimen>
-    <dimen name="pl_pattern_dot_size">12dp</dimen>
+    <dimen name="pl_pattern_dot_size">1dp</dimen>
     <dimen name="pl_pattern_dot_size_activated">28dp</dimen>
+    <dimen name="pl_pattern">58dp</dimen>
 </resources>

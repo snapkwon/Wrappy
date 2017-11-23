@@ -287,9 +287,9 @@ public class PatternView extends View {
         mPathPaint.setDither(true);
 
         // Removed since every developer should set their own patternViewStyle.
-        //mRegularColor = context.getColor(R.color.lock_pattern_view_regular_color);
-        //mErrorColor = context.getColor(R.color.lock_pattern_view_error_color);
-        //mSuccessColor = context.getColor(R.color.lock_pattern_view_success_color);
+        mRegularColor = context.getColor(R.color.regular);
+        mErrorColor = context.getColor(R.color.error);
+        mSuccessColor = context.getColor(R.color.success);
         mRegularColor = a.getColor(R.styleable.PatternView_pl_regularColor, mRegularColor);
         mErrorColor = a.getColor(R.styleable.PatternView_pl_errorColor, mErrorColor);
         mSuccessColor = a.getColor(R.styleable.PatternView_pl_successColor, mSuccessColor);
@@ -739,14 +739,7 @@ public class PatternView extends View {
     private void startCellActivatedAnimation(Cell cell) {
         final CellState cellState = mCellStates[cell.row][cell.column];
         startRadiusAnimation(mDotSize/2, mDotSizeActivated/2, 96, mLinearOutSlowInInterpolator,
-                cellState, new Runnable() {
-                    @Override
-                    public void run() {
-                        startRadiusAnimation(mDotSizeActivated/2, mDotSize/2, 192,
-                                mFastOutSlowInInterpolator,
-                                cellState, null);
-                    }
-                });
+                cellState, null);
         startLineEndAnimation(cellState, mInProgressX, mInProgressY,
                 getCenterXForColumn(cell.column), getCenterYForRow(cell.row));
     }
@@ -1064,6 +1057,17 @@ public class PatternView extends View {
         final int count = pattern.size();
         final boolean[][] drawLookup = mPatternDrawLookup;
 
+        for (int i = 0; i < mRowCount; i++) {
+            float centerY = getCenterYForRow(i);
+            for (int j = 0; j < mColumnCount; j++) {
+                CellState cellState = mCellStates[i][j];
+                float centerX = getCenterXForColumn(j);
+                float translationY = cellState.translationY;
+                drawCirclegray(canvas, (int) centerX, (int) centerY + translationY, getResources().getDimensionPixelSize(R.dimen.pl_pattern)/2,
+                        drawLookup[i][j], cellState.alpha);
+            }
+        }
+
         if (mPatternDisplayMode == DisplayMode.Animate) {
 
             // figure out which circles to draw
@@ -1109,15 +1113,21 @@ public class PatternView extends View {
         final Path currentPath = mCurrentPath;
         currentPath.rewind();
 
-        // draw the circles
-        for (int i = 0; i < mRowCount; i++) {
-            float centerY = getCenterYForRow(i);
-            for (int j = 0; j < mColumnCount; j++) {
-                CellState cellState = mCellStates[i][j];
-                float centerX = getCenterXForColumn(j);
-                float translationY = cellState.translationY;
-                drawCircle(canvas, (int) centerX, (int) centerY + translationY, cellState.radius,
-                        drawLookup[i][j], cellState.alpha);
+        for(Cell cell : mPattern) {
+            // draw the circles
+            for (int i = 0; i < mRowCount; i++) {
+                float centerY = getCenterYForRow(i);
+                for (int j = 0; j < mColumnCount; j++) {
+                    CellState cellState = mCellStates[i][j];
+                    float centerX = getCenterXForColumn(j);
+                    float translationY = cellState.translationY;
+                    if(cell.row == i && cell.column ==j)
+
+                    {
+                        drawCircle(canvas, (int) centerX, (int) centerY + translationY, cellState.radius,
+                                drawLookup[i][j], cellState.alpha);
+                    }
+                }
             }
         }
 
@@ -1132,7 +1142,6 @@ public class PatternView extends View {
             // Anyway other drawing sets their own alpha ignoring the original; And in this way we
             // can use ?colorControlNormal better.
             mPathPaint.setAlpha(255);
-
             boolean anyCircles = false;
             float lastX = 0f;
             float lastY = 0f;
@@ -1191,6 +1200,7 @@ public class PatternView extends View {
             // unselected circle
             return mRegularColor;
         } else if (mPatternDisplayMode == DisplayMode.Wrong) {
+
             // the pattern is wrong
             return mErrorColor;
         } else if (mPatternDisplayMode == DisplayMode.Correct ||
@@ -1207,6 +1217,13 @@ public class PatternView extends View {
     private void drawCircle(Canvas canvas, float centerX, float centerY, float radius,
                             boolean partOfPattern, float alpha) {
         mPaint.setColor(getCurrentColor(partOfPattern));
+        mPaint.setAlpha((int) (alpha * 255));
+        canvas.drawCircle(centerX, centerY, radius, mPaint);
+    }
+
+    private void drawCirclegray(Canvas canvas, float centerX, float centerY, float radius,
+                            boolean partOfPattern, float alpha) {
+        mPaint.setColor(0xEFEEEE);
         mPaint.setAlpha((int) (alpha * 255));
         canvas.drawCircle(centerX, centerY, radius, mPaint);
     }

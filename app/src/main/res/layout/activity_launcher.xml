@@ -19,8 +19,6 @@
 
         <include android:id="@+id/flipViewMain" layout="@layout/launcher_main"/>
 
-        <include android:id="@+id/flipViewForgetPass" layout="@layout/launcher_forgetpass"/>
-
     </ViewFlipper>
 
 

@@ -54,7 +54,6 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         getSupportActionBar().setTitle("");
 
         View viewSplash = findViewById(R.id.flipViewMain);
-        View viewForgetPass = findViewById(R.id.flipViewForgetPass);
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper1);
 
@@ -64,16 +63,9 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         mViewFlipper.setDisplayedChild(0);
 
         mEditUsername = (EditText)viewSplash.findViewById(R.id.edtUserMame);
-        mBtnForgetPass = (Button)viewSplash.findViewById(R.id.btnforgetpass);
         mBtnLogin = (Button)viewSplash.findViewById(R.id.btnShowLogin);
         mBtnregister = (Button)viewSplash.findViewById(R.id.btnShowRegister);
-
-        mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showForgetPass();
-            }
-        });
+        mEditUsername.clearFocus();
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,8 +106,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         {
             finish();
         }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewForgetPass
-                ||mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin
+        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin
                 ||mViewFlipper.getCurrentView().getId()==R.id.flipViewRegister )
         {
             showSplash();
@@ -130,26 +121,27 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
 
     }
 
-    private void showForgetPass ()
-    {
-        getSupportActionBar().show();
-        mViewFlipper.setDisplayedChild(1);
-
-    }
-
     private void showLogin()
     {
 
-        this.startActivity(new Intent(this, PatternActivity.class));
-        finish();
+        Intent intent= new Intent(this, PatternActivity.class);
+        Bundle arg = new Bundle();
+        arg.putInt("type",REQUEST_CODE_LOGIN);
+        arg.putString("username" , mEditUsername.getText().toString() + "@" + "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com");
+        intent.putExtras(arg);
+        this.startActivity(intent);
 
     }
 
     private void showRegister()
     {
-        type_request = REQUEST_CODE_REGISTER;
+        Intent intent= new Intent(this, PatternActivity.class);
+        Bundle arg = new Bundle();
+        arg.putInt("type",REQUEST_CODE_REGISTER);
        // new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
-        Intent intent = new Intent(this, PatternActivity.class);
+        arg.putString("username" , mEditUsername.getText().toString());
+        intent.putExtras(arg);
+        this.startActivity(intent);
         startActivity(intent);
     }
 

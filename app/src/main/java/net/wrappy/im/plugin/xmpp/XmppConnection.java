@@ -1408,6 +1408,80 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    public int check_login( String passwordTemp ,long accountId, long providerId ) {
+
+        mAccountId = accountId;
+        mPassword = passwordTemp;
+        mProviderId = providerId;
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+
+        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
+
+        if (cursor == null)
+            return 404; //not going to work
+
+
+        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
+                cursor, contentResolver, mProviderId, false, null);
+
+        mUser = makeUser(providerSettings, contentResolver);
+
+        providerSettings.close();
+
+        // providerSettings is closed in initConnection();
+        mUsername = Imps.Account.getUserName(contentResolver, mAccountId);
+
+        String defaultStatus = null;
+
+        mNeedReconnect = true;
+        setState(LOGGING_IN, null);
+
+        mUserPresence = new Presence(Presence.AVAILABLE, defaultStatus, Presence.CLIENT_TYPE_MOBILE);
+
+        try {
+            if (mUsername == null || mUsername.length() == 0)
+                throw new Exception("empty username not allowed");
+
+            initConnectionAndLogin(providerSettings, mUsername);
+
+            setState(LOGGED_IN, null);
+            debug(TAG, "logged in");
+            return 200;
+
+
+        } catch (XMPPException e) {
+            debug(TAG, "exception thrown on connection", e);
+
+            ImErrorInfo info = new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER, e.getMessage());// our default behavior is to retry
+
+            if (mConnection != null && mConnection.isConnected()) {
+
+                setState(LOGGING_IN, info);
+                return 404;
+
+            } else {
+                //debug(TAG, "will not retry"); //WE MUST ALWAYS RETRY!
+                disconnect();
+                disconnected(info);
+            }
+
+
+        } catch (Exception e) {
+
+
+            ImErrorInfo info = new ImErrorInfo(ImErrorInfo.UNKNOWN_ERROR, "keymanagement exception");
+            setState(LOGGING_IN, info);
+            return 404;
+
+        } finally {
+
+            if (!cursor.isClosed())
+                cursor.close();
+        }
+         return 200;
+    }
+
     // Runs in executor thread
     private void do_login() {
 

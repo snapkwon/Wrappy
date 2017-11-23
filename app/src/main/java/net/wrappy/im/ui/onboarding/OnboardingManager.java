@@ -403,7 +403,7 @@ public class OnboardingManager {
 
         settings.setRequireTls(true);
         settings.setTlsCertVerify(true);
-        settings.setAllowPlainAuth(false);
+        settings.setAllowPlainAuth(true);
 
         settings.setDoDnsSrv(doDnsSrvLookup);
 

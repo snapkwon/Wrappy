@@ -8,6 +8,7 @@ package me.tornado.android.patternlock;
 import android.os.Bundle;
 import android.view.View;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,26 @@ import java.util.List;
  */
 public class SetPatternActivity extends BasePatternActivity
         implements PatternView.OnPatternListener {
+
+    public static int TYPE_CONFIRM = 1;
+    public static int TYPE_NOCONFIRM = 2;
+    private int m_typePattern;
+
+
+
+    public void setTypePattern(int type)
+    {
+        m_typePattern = type;
+        if(m_typePattern == TYPE_NOCONFIRM)
+        {
+            bottomText.setVisibility(View.VISIBLE);
+            bottomText.setText("Forget password");
+        }
+        else if(m_typePattern == TYPE_CONFIRM)
+        {
+            bottomText.setVisibility(View.GONE);
+        }
+    }
 
     private enum LeftButtonState {
 
@@ -90,6 +111,7 @@ public class SetPatternActivity extends BasePatternActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        m_typePattern = TYPE_CONFIRM;
         mMinPatternSize = getMinPatternSize();
 
         mPatternView.setOnPatternListener(this);
@@ -105,6 +127,10 @@ public class SetPatternActivity extends BasePatternActivity
                 onRightButtonClicked();
             }
         });
+
+        mLeftButton.setVisibility(View.GONE);
+        mRightButton.setVisibility(View.GONE);
+
 
         if (savedInstanceState == null) {
             updateStage(Stage.Draw);
@@ -150,13 +176,22 @@ public class SetPatternActivity extends BasePatternActivity
                     updateStage(Stage.DrawTooShort);
                 } else {
                     mPattern = new ArrayList<>(newPattern);
-                    updateStage(Stage.DrawValid);
+                    if(m_typePattern == TYPE_CONFIRM) {
+                        updateStage(Stage.Confirm);
+                    }
+                    else if(m_typePattern == TYPE_NOCONFIRM)
+                    {
+                        onSetPattern(mPattern);
+                        onConfirmed();
+                    }
                 }
                 break;
             case Confirm:
             case ConfirmWrong:
                 if (newPattern.equals(mPattern)) {
-                    updateStage(Stage.ConfirmCorrect);
+                   // updateStage(Stage.ConfirmCorrect);
+                    onSetPattern(mPattern);
+                    onConfirmed();
                 } else {
                     updateStage(Stage.ConfirmWrong);
                 }

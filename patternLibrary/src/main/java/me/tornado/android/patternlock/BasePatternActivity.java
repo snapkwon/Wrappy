@@ -20,6 +20,7 @@ public class BasePatternActivity extends AppCompatActivity {
     protected LinearLayout mButtonContainer;
     protected Button mLeftButton;
     protected Button mRightButton;
+    protected TextView bottomText;
 
     private final Runnable clearPatternRunnable = new Runnable() {
         public void run() {
@@ -38,6 +39,7 @@ public class BasePatternActivity extends AppCompatActivity {
         mButtonContainer = (LinearLayout)findViewById(R.id.pl_button_container);
         mLeftButton = (Button)findViewById(R.id.pl_left_button);
         mRightButton = (Button)findViewById(R.id.pl_right_button);
+        bottomText = (TextView)findViewById(R.id.bottomText);
     }
 
     protected void removeClearPatternRunnable() {

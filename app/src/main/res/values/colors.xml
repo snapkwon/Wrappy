@@ -41,7 +41,7 @@
     <!-- A dark Holo shade of green -->
     <color name="holo_green_dark">#cc669900</color>
     <!-- A dark Holo shade of red -->
-    <color name="holo_red_dark">#cccc0000</color>
+    <color name="holo_red_dark">#EA657B</color>
     <!-- A Holo shade of purple -->
     <!-- A light Holo shade of orange -->
     <color name="holo_orange_light">#ccffbb33</color>
@@ -63,7 +63,7 @@
     
      -->
      
-    <color name="zom_primary">#E7275A</color>
+    <color name="zom_primary">#EA657B</color>
 
     <array name="zom_colors">
         <item>@color/zom_primary</item>

@@ -149,7 +149,7 @@
     
     <item name="colorPrimary">#323232</item>
     <item name="colorPrimaryDark">#111111</item>
-    <item name="colorAccent">#ffff2b62</item>
+    <item name="colorAccent">#EA657B</item>
     
     <item name="windowActionBar">true</item>
     <!--   <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
@@ -196,7 +196,7 @@
         <item name="android:textSize">16sp</item>
     </style>
     <style name="AppText03">
-        <item name="android:textColor">#ffff2b62</item>
+        <item name="android:textColor">#b9b1a3</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -210,7 +210,7 @@
     <style name="AppButton02">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:background">@android:color/white</item>
+        <item name="android:background">#F2F2F2</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
