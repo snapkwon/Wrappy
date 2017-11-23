@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FF2b63"
+    android:background="#ee8394"
     android:elevation="1dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,7 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title"
-        android:textSize="16sp"
+        android:textSize="17sp"
+        app:font_type="bold"
+        android:textAllCaps="true"
         android:layout_centerInParent="true"
         android:layout_gravity="center_vertical"
         android:textColor="@android:color/white"/>
