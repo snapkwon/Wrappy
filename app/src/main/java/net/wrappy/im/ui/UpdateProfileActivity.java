@@ -1,10 +1,16 @@
 package net.wrappy.im.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,14 +34,15 @@ import net.wrappy.im.util.SecureMediaStore;
 public class UpdateProfileActivity extends BaseActivity implements View.OnClickListener {
 
     private final int IMAGE_HEADER = 100;
-    private final int IMAGE_AVARTA = 101;
+    private final int IMAGE_AVATAR = 101;
 
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
-    EditText edUsername, edEmail, edPhone, edOther;
+    EditText edUsername, edEmail, edPhone;
+    AppCompatSpinner spinnerProfileGender;
     AppButton btnComplete, btnSkip;
-    ImageButton btnCameraHeader,btnCameraAvarta;
-    CircleImageView imgAvarta;
+    ImageButton btnCameraHeader,btnCameraAvatar;
+    CircleImageView imgAvatar;
     ImageView imgHeader;
     boolean isFlag;
     String user,email,phone,other;
@@ -57,17 +64,20 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         edUsername = (EditText) findViewById(R.id.edProfileUsername);
         edEmail = (EditText) findViewById(R.id.edProfileEmail);
         edPhone = (EditText) findViewById(R.id.edProfilePhone);
-        edOther = (EditText) findViewById(R.id.edProfileOther);
+        spinnerProfileGender = (AppCompatSpinner) findViewById(R.id.spinnerProfileGender);
         btnComplete = (AppButton) findViewById(R.id.btnProfileComplete);
         btnComplete.setOnClickListener(this);
         btnSkip = (AppButton) findViewById(R.id.btnProfileSkip);
         btnSkip.setOnClickListener(this);
-        btnCameraAvarta = (ImageButton) findViewById(R.id.btnProfileCameraAvarta);
-        btnCameraAvarta.setOnClickListener(this);
+        btnCameraAvatar = (ImageButton) findViewById(R.id.btnProfileCameraAvatar);
+        btnCameraAvatar.setOnClickListener(this);
         btnCameraHeader = (ImageButton) findViewById(R.id.btnProfileCameraHeader);
         btnCameraHeader.setOnClickListener(this);
-        imgAvarta = (CircleImageView) findViewById(R.id.imgProfileAvarta);
+        imgAvatar = (CircleImageView) findViewById(R.id.imgProfileAvatar);
         imgHeader = (ImageView) findViewById(R.id.imgProfileHeader);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.profile_gender, R.layout.update_profile_textview);
+        spinnerProfileGender.setAdapter(adapter);
     }
 
     @Override
@@ -107,11 +117,31 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 finish();
 
             }
-            if (view.getId() == btnCameraAvarta.getId()) {
-                AppFuncs.getImageFromDevice(this,IMAGE_AVARTA);
+            if (view.getId() == btnCameraAvatar.getId()) {
+                if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                        AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
+
+                    } else {
+                        ActivityCompat.requestPermissions(UpdateProfileActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                199);
+                }
             }
             if (view.getId() == btnCameraHeader.getId()) {
-                AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+                if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+
+                } else {
+                    ActivityCompat.requestPermissions(UpdateProfileActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            199);
+                }
             }
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -126,7 +156,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             user = edUsername.getText().toString().trim();
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
-            other = edOther.getText().toString().trim();
             if (user.isEmpty()) {
                 error = "Username is empty";
             } else if (user.length() < 6) {
@@ -153,9 +182,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 if (requestCode==IMAGE_HEADER) {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
                     imgHeader.setImageBitmap(bmpThumbnail);
-                } else if (requestCode == IMAGE_AVARTA) {
+                } else if (requestCode == IMAGE_AVATAR) {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgAvarta.setImageBitmap(bmpThumbnail);
+                    imgAvatar.setImageBitmap(bmpThumbnail);
                 }
             }
         }catch (Exception ex) {
