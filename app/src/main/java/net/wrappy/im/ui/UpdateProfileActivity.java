@@ -34,15 +34,15 @@ import net.wrappy.im.util.SecureMediaStore;
 public class UpdateProfileActivity extends BaseActivity implements View.OnClickListener {
 
     private final int IMAGE_HEADER = 100;
-    private final int IMAGE_AVARTA = 101;
+    private final int IMAGE_AVATAR = 101;
 
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
     EditText edUsername, edEmail, edPhone;
     AppCompatSpinner spinnerProfileGender;
     AppButton btnComplete, btnSkip;
-    ImageButton btnCameraHeader,btnCameraAvarta;
-    CircleImageView imgAvarta;
+    ImageButton btnCameraHeader,btnCameraAvatar;
+    CircleImageView imgAvatar;
     ImageView imgHeader;
     boolean isFlag;
     String user,email,phone,other;
@@ -69,15 +69,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         btnComplete.setOnClickListener(this);
         btnSkip = (AppButton) findViewById(R.id.btnProfileSkip);
         btnSkip.setOnClickListener(this);
-        btnCameraAvarta = (ImageButton) findViewById(R.id.btnProfileCameraAvarta);
-        btnCameraAvarta.setOnClickListener(this);
+        btnCameraAvatar = (ImageButton) findViewById(R.id.btnProfileCameraAvatar);
+        btnCameraAvatar.setOnClickListener(this);
         btnCameraHeader = (ImageButton) findViewById(R.id.btnProfileCameraHeader);
         btnCameraHeader.setOnClickListener(this);
-        imgAvarta = (CircleImageView) findViewById(R.id.imgProfileAvarta);
+        imgAvatar = (CircleImageView) findViewById(R.id.imgProfileAvatar);
         imgHeader = (ImageView) findViewById(R.id.imgProfileHeader);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.profile_gender, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.array.profile_gender, R.layout.update_profile_textview);
         spinnerProfileGender.setAdapter(adapter);
     }
 
@@ -118,12 +117,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 finish();
 
             }
-            if (view.getId() == btnCameraAvarta.getId()) {
+            if (view.getId() == btnCameraAvatar.getId()) {
                 if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
+                        == PackageManager.PERMISSION_GRANTED) {
 
-                        AppFuncs.getImageFromDevice(this,IMAGE_AVARTA);
+                        AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
 
                     } else {
                         ActivityCompat.requestPermissions(UpdateProfileActivity.this,
@@ -134,7 +133,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (view.getId() == btnCameraHeader.getId()) {
                 if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
+                        == PackageManager.PERMISSION_GRANTED) {
 
                     AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
 
@@ -183,9 +182,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 if (requestCode==IMAGE_HEADER) {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
                     imgHeader.setImageBitmap(bmpThumbnail);
-                } else if (requestCode == IMAGE_AVARTA) {
+                } else if (requestCode == IMAGE_AVATAR) {
                     Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgAvarta.setImageBitmap(bmpThumbnail);
+                    imgAvatar.setImageBitmap(bmpThumbnail);
                 }
             }
         }catch (Exception ex) {

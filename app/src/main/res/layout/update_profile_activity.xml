@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
-                android:background="#cccccc"/>
+                android:background="#e8e8e8"/>
 
             <ImageButton
                 android:id="@+id/btnProfileCameraHeader"
@@ -31,7 +31,7 @@
                 android:layout_alignParentRight="true"
                 android:src="@drawable/ic_camera_profile"
                 android:background="@null"
-                android:layout_margin="10dp"/>
+                android:padding="10dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -45,19 +45,19 @@
                     android:layout_marginLeft="10dp">
 
                     <net.wrappy.im.helper.layout.CircleImageView
-                        android:id="@+id/imgProfileAvarta"
+                        android:id="@+id/imgProfileAvatar"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:background="@drawable/avarta"/>
+                        android:background="@drawable/avatar"/>
                     <ImageButton
-                        android:id="@+id/btnProfileCameraAvarta"
+                        android:id="@+id/btnProfileCameraAvatar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
                         android:src="@drawable/ic_camera_profile"
                         android:background="@null"
-                        android:layout_margin="10dp"/>
+                        android:padding="12dp"/>
 
                 </RelativeLayout>
 
@@ -91,6 +91,8 @@
                             android:hint="Username"
                             android:imeOptions="actionNext"
                             style="@style/AppText02"
+                            android:textColorHint="#bebebe"
+                            android:textSize="14sp"
                             android:background="@null"/>
 
                     </LinearLayout>
@@ -122,6 +124,8 @@
                             android:inputType="textEmailAddress"
                             android:imeOptions="actionNext"
                             style="@style/AppText02"
+                            android:textColorHint="#bebebe"
+                            android:textSize="14sp"
                             android:background="@null"/>
 
                     </LinearLayout>
@@ -153,6 +157,8 @@
                             android:inputType="phone"
                             android:imeOptions="actionNext"
                             style="@style/AppText02"
+                            android:textColorHint="#bebebe"
+                            android:textSize="14sp"
                             android:background="@null"/>
 
                     </LinearLayout>
@@ -205,6 +211,7 @@
                             android:layout_height="wrap_content"
                             android:text="SKIP"
                             style="@style/AppButton02"
+                            android:textColor="#676767"
                             />
 
                     </LinearLayout>
