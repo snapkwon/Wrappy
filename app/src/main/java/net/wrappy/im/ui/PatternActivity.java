@@ -70,6 +70,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         super.onCreate(savedInstanceState);
 
         ActionBar actionbar = getSupportActionBar();
+        actionbar.setHomeButtonEnabled(true);
+        actionbar.setDisplayHomeAsUpEnabled(true);
 
         mHandler = new SimpleAlertHandler(this);
 
@@ -130,14 +132,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override
@@ -196,6 +193,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
        // finish();
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private void showQuestionScreen ()
     {
