@@ -380,13 +380,11 @@ public class ContactsPickerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isGroupMode() && !isGroupOnlyMode()) {
-            setGroupMode(false);
-            return;
-        }
         if (getFragmentManager().getBackStackEntryCount() > 0)
             getFragmentManager().popBackStack();
-        else
+        else if (isGroupMode() && !isGroupOnlyMode()) {
+            setGroupMode(false);
+        } else
             super.onBackPressed();
     }
 
