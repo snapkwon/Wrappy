@@ -28,6 +28,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -72,10 +73,12 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 
+import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
 import net.wrappy.im.util.SystemServices;
 
+import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 public class ConversationDetailActivity extends BaseActivity {
@@ -157,6 +160,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         applyStyleForToolbar();
 
         Intent intent = getIntent();
@@ -178,7 +182,16 @@ public class ConversationDetailActivity extends BaseActivity {
     public void applyStyleForToolbar() {
 
 
-        getSupportActionBar().setTitle(mConvoView.getTitle());
+       getSupportActionBar().setTitle(mConvoView.getTitle());
+        mApp = ((ImApp) getApplicationContext());
+        Drawable avatar = null;
+        try {
+
+            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + "@ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com", ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
+        } catch (DecoderException e) {
+            e.printStackTrace();
+        }
+        getSupportActionBar().setLogo(avatar);
 
         if (mConvoView.getLastSeen() != null) {
             getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
@@ -348,10 +361,10 @@ public class ConversationDetailActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.menu_end_conversation:
+            /*case R.id.menu_end_conversation:
                 mConvoView.closeChatSession(true);
                 finish();
-                return true;
+                return true;*/
             case R.id.menu_verify_or_view:
                 mConvoView.showVerifyDialog();
                 return true;

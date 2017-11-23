@@ -29,12 +29,12 @@
          />
 
 
-    <item android:id="@+id/menu_end_conversation"
-        android:title="@string/menu_end_conversation" 
+  <!--  <item android:id="@+id/menu_end_conversation"
+        android:title="@string/menu_end_conversation"
         android:icon="@drawable/ic_menu_close"
          app:showAsAction="never"
-        
-         />
 
+         />
+-->
 
 </menu>
