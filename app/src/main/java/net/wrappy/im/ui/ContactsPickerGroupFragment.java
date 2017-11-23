@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +50,8 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     TextView txtGroupNumbers;
     private ContactAdapter mAdapter;
 
+    private Activity mActivity;
+
     public static ContactsPickerGroupFragment newsIntance() {
         return new ContactsPickerGroupFragment();
     }
@@ -59,24 +62,25 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         mainView = inflater.inflate(R.layout.contacts_picker_group_fragment, null);
         ButterKnife.bind(this, mainView);
 
+        mActivity = getActivity();
         btnGroupPhoto.setOnClickListener(this);
 
-        mAdapter = new ContactAdapter(getActivity(), R.layout.contact_view);
+        mAdapter = new ContactAdapter(mActivity, R.layout.contact_view);
         lstContacts.setAdapter(mAdapter);
         MyLoaderCallbacks mLoaderCallbacks = new MyLoaderCallbacks();
-        ((ContactsPickerActivity) getActivity()).getSupportLoaderManager().initLoader(ContactsPickerActivity.LOADER_ID, null, mLoaderCallbacks);
+        ((ContactsPickerActivity) mActivity).getSupportLoaderManager().initLoader(ContactsPickerActivity.LOADER_ID, null, mLoaderCallbacks);
 
         return mainView;
     }
 
     @Override
     public void onClick(View view) {
-        if (ContextCompat.checkSelfPermission(getActivity(),
+        if (ContextCompat.checkSelfPermission(mActivity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-            AppFuncs.getImageFromDevice(getActivity(), IMAGE_AVARTA);
+            AppFuncs.getImageFromDevice(mActivity, IMAGE_AVARTA);
         } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 199);
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 199);
         }
     }
 
@@ -119,7 +123,6 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
             CursorLoader loader = new CursorLoader(getActivity(), Imps.Contacts.CONTENT_URI, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
-            //    loader.setUpdateThrottle(50L);
             return loader;
         }
 
@@ -127,7 +130,8 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.swapCursor(newCursor);
 
-            txtGroupNumbers.setText(getString(R.string.num_member_group_chat, String.valueOf(mAdapter.getCount())));
+            if(mActivity != null && isAdded())
+                txtGroupNumbers.setText(getString(R.string.num_member_group_chat, String.valueOf(mAdapter.getCount())));
         }
 
         @Override
@@ -152,7 +156,8 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
-            v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+            if(mActivity != null && isAdded())
+                v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             return v;
         }
 
@@ -163,17 +168,11 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
             ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
-
-                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
 
-
             v.bind(holder, cursor, "", false);
-            int index = cursor.getPosition();
-            long itemId = getItemId(index);
             holder.mAvatarCheck.setVisibility(View.VISIBLE);
-            String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
             holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
         }
     }
