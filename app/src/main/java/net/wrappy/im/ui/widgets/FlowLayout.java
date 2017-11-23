@@ -124,6 +124,8 @@ public class FlowLayout extends NestedScrollView {
             }
             if (getChildCount() > 0) {
                 currentY += getChildAt(getChildCount() - 1).getMeasuredHeight();
+            } else {
+                currentY += FlowLayout.this.getMinimumHeight();
             }
 
             setMeasuredDimension(width, currentY);

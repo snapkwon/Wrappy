@@ -53,7 +53,8 @@
         android:layout_gravity="left"
         android:text="3 members"/>
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
+        android:id="@+id/lstContacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

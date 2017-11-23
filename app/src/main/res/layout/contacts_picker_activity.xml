@@ -19,6 +19,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/llRoot"
@@ -37,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_margin="10dp"
+                android:minHeight="30dp"
                 android:scrollbarAlwaysDrawVerticalTrack="true"
                 app:itemHeightPadding="4dp"
                 app:itemWidthPadding="4dp" />
@@ -83,6 +85,7 @@
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/btnAddFriend"
                 android:layout_width="match_parent"
@@ -133,6 +136,7 @@
             android:visibility="gone" />
 
     </LinearLayout>
+
     <FrameLayout
         android:id="@+id/containerGroup"
         android:layout_width="match_parent"
