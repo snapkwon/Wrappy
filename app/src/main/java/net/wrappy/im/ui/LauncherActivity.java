@@ -65,7 +65,6 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         mEditUsername = (EditText)viewSplash.findViewById(R.id.edtUserMame);
         mBtnLogin = (Button)viewSplash.findViewById(R.id.btnShowLogin);
         mBtnregister = (Button)viewSplash.findViewById(R.id.btnShowRegister);
-        mEditUsername.clearFocus();
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override

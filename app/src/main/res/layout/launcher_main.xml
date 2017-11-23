@@ -8,6 +8,8 @@
     android:layout_margin="0dp"
     android:gravity="center|top"
     android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     >
 
 
