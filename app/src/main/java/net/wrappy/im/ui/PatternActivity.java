@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -221,6 +222,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     private class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
+
+        @Override
+        protected void onPreExecute()
+        {
+        }
+
         @Override
         protected Integer doInBackground(String... account) {
             try {

@@ -1,7 +1,9 @@
 package net.wrappy.im.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -69,7 +71,22 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLogin();
+                if(mEditUsername.getText().toString().isEmpty())
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(LauncherActivity.this).create();
+                    alertDialog.setTitle("Warning");
+                    alertDialog.setMessage("username cannot be empty");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    showLogin();
+                }
             }
         });
 
