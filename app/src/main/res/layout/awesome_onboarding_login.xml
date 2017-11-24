@@ -12,7 +12,7 @@ android:paddingTop="40dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
-    android:text="You can use Zom with an existing XMPP/Jabber account on any server you would like."
+    android:text="You can use Wrappy with an existing XMPP/Jabber account on any server you would like."
     android:textSize="18dp"
     android:textColor="@android:color/black"
     />
