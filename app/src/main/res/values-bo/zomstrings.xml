@@ -1,4 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE resources [
+    <!ENTITY appName "Wrappy">
+    ]>
 <resources>
   <string name="app_name_zom">འཛོམས།</string>
   <string name="create_an_account">ཁ་བྱང་ཞིག་བཟོས།</string>
@@ -58,7 +61,7 @@
   <string name="color_bg_summary">འཕྲིན་ཐུང་དང་ཐོ་གཞུང་གི་རྒྱབ་ལྗོངས་ཀྱི་ཁ་དོག</string>
   <string name="menu_approve_friend">གྲོགས་པོ་ངོས་ལེན་བྱས་སམ།</string>
   <string name="header_got_invited">མགྲོན་འབོད་བྱས་སོང་ངམ།</string>
-  <string name="action_tap_invite">ཁྱེད་ཀྱི་གྲོགས་པོས་བསྐུར་བའི་འཛོམས་ZOM.IM འབྲེལ་ཐག་དེ་ལ་བསྣུན་པའམ་ཡང་ན་དེའི་་ཨང་ཚབ་ལ་གཤེར།</string>
+  <string name="action_tap_invite">ཁྱེད་ཀྱི་གྲོགས་པོས་བསྐུར་བའི་འཛོམས་&appName;.IM འབྲེལ་ཐག་དེ་ལ་བསྣུན་པའམ་ཡང་ན་དེའི་་ཨང་ཚབ་ལ་གཤེར།</string>
   <string name="action_invite_new_friends">གྲོགས་པོ་གདན་འདྲེན་གྱི་འབྲེལ་ཐག་འཕྲིན་ཐུང་བརྒྱུད་ནས་བསྐུར། བཀོལ་ཆས་བཞན་པ་གང་རུང་བརྒྱུད་ནས་འགོ་འགྲེམས་བྱོས།</string>
   <string name="not_verified">ཁྱེད་ཀྱི་གྲོགས་པོའི་བདེ་འཇགས་ངོ་བོ་བརྟན་པོ་ཡིན་པ་བདེན་དཔང་བྱོས།</string>
   <string name="security_code">བདེ་འཇགས་ངོ་བོ།</string>
