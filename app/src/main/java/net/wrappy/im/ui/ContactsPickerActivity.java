@@ -359,13 +359,7 @@ public class ContactsPickerActivity extends BaseActivity {
         if (!isClickedMenu) {
             switch (item.getItemId()) {
                 case android.R.id.home:
-                    if (getFragmentManager().findFragmentById(R.id.containerGroup) != null) {
-                        getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.containerGroup)).commit();
-                    } else if (isGroupMode() && !isGroupOnlyMode()) {
-                        setGroupMode(false);
-                    } else {
-                        finish();
-                    }
+                    onBackPressed();
                     return true;
                 case R.id.action_start_chat:
                     if (getFragmentManager().getBackStackEntryCount() > 0)
