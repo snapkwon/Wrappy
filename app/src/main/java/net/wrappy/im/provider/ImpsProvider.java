@@ -69,7 +69,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String TABLE_PROVIDERS = "providers";
     private static final String TABLE_PROVIDER_SETTINGS = "providerSettings";
 
-    private static final String TABLE_CONTACTS = "contacts";
+    public static final String TABLE_CONTACTS = "contacts";
     private static final String TABLE_CONTACTS_ETAG = "contactsEtag";
     private static final String TABLE_BLOCKED_LIST = "blockedList";
     private static final String TABLE_CONTACT_LIST = "contactList";
