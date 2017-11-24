@@ -143,7 +143,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Intent intent= new Intent(this, PatternActivity.class);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
-        arg.putString("username" , mEditUsername.getText().toString() + "@" + "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com");
+        arg.putString("username" , mEditUsername.getText().toString() + "@" + "im.proteusiondev.com");
         intent.putExtras(arg);
         this.startActivity(intent);
 

@@ -187,7 +187,7 @@ public class ConversationDetailActivity extends BaseActivity {
         Drawable avatar = null;
         try {
 
-            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + "@ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com", ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
+            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + "@im.proteusiondev.com", ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
         } catch (DecoderException e) {
             e.printStackTrace();
         }
