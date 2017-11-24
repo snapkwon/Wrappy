@@ -3,19 +3,19 @@ package net.wrappy.im.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.LayoutInflater;
@@ -28,6 +28,7 @@ import android.widget.TextView;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.util.SecureMediaStore;
 
 import butterknife.BindView;
@@ -51,6 +52,9 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     private ContactAdapter mAdapter;
 
     private Activity mActivity;
+    private boolean mAwaitingUpdate;
+    private MyLoaderCallbacks mLoaderCallbacks;
+    private Handler mHandler = new Handler();
 
     public static ContactsPickerGroupFragment newsIntance() {
         return new ContactsPickerGroupFragment();
@@ -65,12 +69,33 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         mActivity = getActivity();
         btnGroupPhoto.setOnClickListener(this);
 
-        mAdapter = new ContactAdapter(mActivity, R.layout.contact_view);
-        lstContacts.setAdapter(mAdapter);
-        MyLoaderCallbacks mLoaderCallbacks = new MyLoaderCallbacks();
-        ((ContactsPickerActivity) mActivity).getSupportLoaderManager().initLoader(ContactsPickerActivity.LOADER_ID, null, mLoaderCallbacks);
+        doFilter();
 
         return mainView;
+    }
+
+
+    public synchronized void doFilter() {
+        if (mAdapter == null) {
+            mAdapter = new ContactAdapter(mActivity, R.layout.contact_view);
+            lstContacts.setAdapter(mAdapter);
+
+            mLoaderCallbacks = new MyLoaderCallbacks();
+            getLoaderManager().initLoader(2, null, mLoaderCallbacks);
+        } else {
+
+            if (!mAwaitingUpdate) {
+                mAwaitingUpdate = true;
+                mHandler.postDelayed(new Runnable() {
+
+                    public void run() {
+                        getLoaderManager().restartLoader(2, null, mLoaderCallbacks);
+                        mAwaitingUpdate = false;
+                    }
+                }, 1000);
+            }
+
+        }
     }
 
     @Override
@@ -101,14 +126,38 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
     }
 
-    class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+    class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<android.database.Cursor> {
+//        @Override
+//        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//            StringBuilder buf = new StringBuilder();
+//
+//
+//            buf.append('(');
+//            buf.append(BaseColumns._ID).append(" in ").append('(');
+//            LongSparseArray<ContactsPickerActivity.SelectedContact> contacts = ((ContactsPickerActivity) getActivity()).getSelection();
+//            for (int i = 0; i < contacts.size(); i++) {
+//                Long key = contacts.keyAt(i);
+//                ContactsPickerActivity.SelectedContact contact = contacts.get(key);
+//                buf.append(contact.id);
+//                if (i < contacts.size() - 1)
+//                    buf.append(',');
+//            }
+//            buf.append(')');
+//
+//            buf.append(')');
+//
+//            CursorLoader loader = new CursorLoader(getActivity(), Imps.Contacts.CONTENT_URI, ContactListItem.CONTACT_PROJECTION,
+//                    buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
+//            return loader;
+//        }
+
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        public android.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
 
             buf.append('(');
-            buf.append(BaseColumns._ID).append(" in ").append('(');
+            buf.append(ImpsProvider.TABLE_CONTACTS).append('.').append(BaseColumns._ID).append(" in ").append('(');
             LongSparseArray<ContactsPickerActivity.SelectedContact> contacts = ((ContactsPickerActivity) getActivity()).getSelection();
             for (int i = 0; i < contacts.size(); i++) {
                 Long key = contacts.keyAt(i);
@@ -127,7 +176,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+        public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.swapCursor(newCursor);
 
             if(mActivity != null && isAdded())
@@ -135,7 +184,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(android.content.Loader<Cursor> loader) {
             mAdapter.swapCursor(null);
         }
 

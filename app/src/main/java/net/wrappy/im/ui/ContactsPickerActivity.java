@@ -45,12 +45,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.widgets.FlowLayout;
 
 import java.util.ArrayList;
-
-import net.wrappy.im.R;
 
 /**
  * Activity used to pick a contact.
@@ -91,6 +90,7 @@ public class ContactsPickerActivity extends BaseActivity {
     View mLayoutGroupSelect;
     ListView mListView = null;
     private MenuItem mMenuStartGroupChat;
+    private boolean isClickedMenu;
 
     // The loader's unique id. Loader ids are specific to the Activity or
     // Fragment in which they reside.
@@ -356,25 +356,27 @@ public class ContactsPickerActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (getFragmentManager().findFragmentById(R.id.containerGroup) != null) {
-                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.containerGroup)).commit();
-                } else if (isGroupMode() && !isGroupOnlyMode()) {
-                    setGroupMode(false);
-                } else {
-                    finish();
-                }
-                return true;
-            case R.id.action_start_chat:
-                if (getFragmentManager().getBackStackEntryCount() > 0)
-                    multiFinish();
-                else
-                    getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
-                //multiFinish();
-                return true;
-        }
+        if (!isClickedMenu) {
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    onBackPressed();
+                    return true;
+                case R.id.action_start_chat:
+                    if (getFragmentManager().getBackStackEntryCount() > 0)
+                        multiFinish();
+                    else
+                        getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                    return true;
+            }
 
+            isClickedMenu = true;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickedMenu = false;
+                }
+            }, 500);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -384,6 +386,7 @@ public class ContactsPickerActivity extends BaseActivity {
             getFragmentManager().popBackStack();
         else if (isGroupMode() && !isGroupOnlyMode()) {
             setGroupMode(false);
+            unselectAll();
         } else
             super.onBackPressed();
     }
@@ -498,11 +501,13 @@ public class ContactsPickerActivity extends BaseActivity {
             removeTagView(mSelection.get(id));
             mSelection.remove((Long) id);
             mAdapter.notifyDataSetChanged();
-            if (mSelection.size() == 0) {
-                setGroupMode(false);
-            } else {
-                updateStartGroupChatMenu();
-            }
+            updateStartGroupChatMenu();
+        }
+    }
+
+    private void unselectAll() {
+        while (mSelection.size() > 0) {
+            unselect(mSelection.keyAt(0));
         }
     }
 
