@@ -9,9 +9,9 @@
 
     <string name="pl_cancel">Cancel</string>
     <string name="pl_confirm">Confirm</string>
-    <string name="pl_confirm_pattern">Draw the pattern again to confirm</string>
+    <string name="pl_confirm_pattern">Confirm your pass pattern</string>
     <string name="pl_continue">Continue</string>
-    <string name="pl_draw_pattern">Draw an unlock pattern</string>
+    <string name="pl_draw_pattern">Draw your password pattern</string>
     <string name="pl_draw_pattern_to_unlock">Draw pattern to unlock</string>
     <string name="pl_forgot_pattern">Forgot pattern</string>
     <string name="pl_pattern_confirmed">Your new unlock pattern</string>

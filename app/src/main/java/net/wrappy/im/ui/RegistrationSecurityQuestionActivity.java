@@ -6,10 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,7 +23,6 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
-import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.ui.legacy.SignInHelper;
@@ -93,7 +90,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         new RestAPI.GetDataUrl(new RestAPI.RestAPIListenner() {
             @Override
             public void OnInit() {
-                dialog.setMessage("Wating...");
+                dialog.setMessage(getString(R.string.waiting_dialog));
                 dialog.show();
             }
 

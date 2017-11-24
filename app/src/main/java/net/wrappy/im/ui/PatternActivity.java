@@ -10,23 +10,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import java.security.KeyPair;
-import java.util.List;
-
-import me.tornado.android.patternlock.PatternUtils;
-import me.tornado.android.patternlock.PatternView;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -35,16 +25,20 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
-import net.wrappy.im.service.adapters.ImConnectionAdapter;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.PatternLockUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.KeyPair;
+import java.util.List;
+
+import me.tornado.android.patternlock.PatternUtils;
+import me.tornado.android.patternlock.PatternView;
 
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_LOGIN;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
@@ -224,7 +218,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new PatternActivity.ExistingAccountTask();
             mExistingAccountTask.execute(username, password);
-            dialog.setMessage("Wating...");
+            dialog.setMessage(getString(R.string.waiting_dialog));
             dialog.show();
         }
     }
