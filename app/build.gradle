@@ -83,7 +83,10 @@ ext {
     smackVersion = "4.2.1-beta1"
 }
 
-
+repositories {
+    jcenter()
+    maven { url 'https://github.com/jitsi/jitsi-maven-repository/raw/master/releases' }
+}
 
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
