@@ -16,6 +16,10 @@ android {
         testApplicationId 'net.wrappy.im.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         multiDexEnabled true
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi", "mips"
+        }
+
     }
 
     dexOptions {
