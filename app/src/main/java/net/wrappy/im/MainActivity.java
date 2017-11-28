@@ -75,6 +75,7 @@ import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactActivity;
 import net.wrappy.im.ui.BaseActivity;
+import net.wrappy.im.ui.ConferenceActivity;
 import net.wrappy.im.ui.ContactsListFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
@@ -206,25 +207,27 @@ public class MainActivity extends BaseActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ConferenceActivity.class);
+                startActivity(intent);
 
-                int tabIdx = mViewPager.getCurrentItem();
-
-                if (tabIdx == 0) {
-
-                    if (mContactList.getContactCount() > 0) {
-                        Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
-                        startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-                    }
-                    else
-                    {
-                        inviteContact();
-                    }
-
-                } else if (tabIdx == 1) {
-                    inviteContact();
-                } else if (tabIdx == 2) {
-                    startPhotoTaker();
-                }
+//                int tabIdx = mViewPager.getCurrentItem();
+//
+//                if (tabIdx == 0) {
+//
+//                    if (mContactList.getContactCount() > 0) {
+//                        Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
+//                        startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+//                    }
+//                    else
+//                    {
+//                        inviteContact();
+//                    }
+//
+//                } else if (tabIdx == 1) {
+//                    inviteContact();
+//                } else if (tabIdx == 2) {
+//                    startPhotoTaker();
+//                }
 
 
 
