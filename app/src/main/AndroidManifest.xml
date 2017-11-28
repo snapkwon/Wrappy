@@ -211,8 +211,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.RegistrationSecurityQuestionActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction"/>
-        <activity android:name=".ui.UpdateProfileActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction"/>
+        <activity
+            android:name=".ui.RegistrationSecurityQuestionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoAction" />
+        <activity
+            android:name=".ui.UpdateProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoAction" />
 
         <service
             android:name="net.wrappy.im.plugin.xmpp.XmppImPlugin"
@@ -384,9 +390,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" />
         <activity
-            android:name="net.wrappy.im.ui.qr.QrScanActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
             android:name="net.wrappy.im.ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
@@ -464,10 +467,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="net.wrappy.im.ui.ContactDisplayActivity"
+        <activity
+            android:name="net.wrappy.im.ui.ContactDisplayActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
-            ></activity>
+            android:theme="@style/AppThemeNoAction"></activity>
         <activity android:name="net.wrappy.im.ui.GroupDisplayActivity"></activity>
 
         <meta-data
@@ -489,17 +492,17 @@
         </provider>
 
         <activity
-        android:name="net.wrappy.im.ui.LauncherActivity"
-        android:label="@string/title_activity_launcher"></activity>
+            android:name="net.wrappy.im.ui.LauncherActivity"
+            android:label="@string/title_activity_launcher"></activity>
 
         <activity
             android:name="net.wrappy.im.ui.IntroActivity"
-            android:theme="@style/NoActionBar"
-            android:label="@string/title_activity_launcher"></activity>
+            android:label="@string/title_activity_launcher"
+            android:theme="@style/NoActionBar"></activity>
         <activity
             android:name="net.wrappy.im.ui.PatternActivity"
-            android:launchMode="singleTop">
-        </activity>
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".ui.qr.QrScanFriendActivity" />
 
     </application>
 

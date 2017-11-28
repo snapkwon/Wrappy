@@ -1,21 +1,5 @@
 package net.wrappy.im.ui.onboarding;
 
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.qr.QrScanActivity;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.ui.legacy.ImPluginHelper;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
-import net.wrappy.im.util.LogCleaner;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.SecureRandom;
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -30,6 +14,22 @@ import android.provider.Telephony;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.legacy.ImPluginHelper;
+import net.wrappy.im.ui.qr.QrScanFriendActivity;
+import net.wrappy.im.util.LogCleaner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.SecureRandom;
+import java.util.HashMap;
 
 public class OnboardingManager {
 
@@ -81,7 +81,7 @@ public class OnboardingManager {
     
     public static void inviteScan (Activity context, String message)
     {
-        Intent intent = new Intent(context, QrScanActivity.class);
+        Intent intent = new Intent(context, QrScanFriendActivity.class);
         intent.putExtra(Intent.EXTRA_TEXT,message);
         intent.setType("text/plain");
         context.startActivityForResult(intent, REQUEST_SCAN);
