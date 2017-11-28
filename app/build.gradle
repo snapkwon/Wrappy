@@ -23,7 +23,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "1536m"
+        javaMaxHeapSize "4g"
         preDexLibraries true
     }
 
@@ -95,7 +95,7 @@ repositories {
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile fileTree(include: '*.aar', dir: 'libs')
+    compile fileTree(include: '*.aar', dir: 'jitsi')
     compile 'com.android.support:multidex:1.0.2'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4@aar'
     compile project(':otr4jandroid')
@@ -137,7 +137,6 @@ dependencies {
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
 
     compile project(':patternLibrary')
-
     /**
      compile "org.igniterealtime.smack:smack-android:$smackVersion"
      compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"

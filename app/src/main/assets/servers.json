@@ -2,14 +2,14 @@
 {
   "servers":[
     {
-      "domain": "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com",
-      "server": "ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com",
-      "address": "10.153.179.53",
+      "domain": "im.proteusiondev.com",
+      "server": "im.proteusiondev.com",
+      "address": "10.11.5.12",
       "port": 5222,
-      "certificate": "3D:37:92:C7:74:AD:A1:60:8E:54:FC:B5:F6:B0:1B:FA:DC:8C:A8:86",
+      "certificate": "",
       "logoUrl": "https://s3....",
       "country": "ch",
-      "muc": "conference.ec2-13-115-115-136.ap-northeast-1.compute.amazonaws.com"
+      "muc": "conference.im.proteusiondev.com"
     },
     {
       "domain": "blah.im",

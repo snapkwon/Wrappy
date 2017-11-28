@@ -85,4 +85,10 @@ public class ConferenceActivity extends JitsiMeetActivity {
             view.loadURLObject(urlObject);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
