@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
@@ -31,6 +32,7 @@ import net.wrappy.im.provider.ImpsErrorInfo;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Debug;
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -48,6 +50,7 @@ import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -61,7 +64,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
-
 import org.jivesoftware.smackx.address.provider.MultipleAddressesProvider;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -76,6 +78,7 @@ import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
 import org.jivesoftware.smackx.httpfileupload.element.Slot;
+import org.jivesoftware.smackx.httpfileupload.element.SlotRequest_V0_2;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.Affiliate;
@@ -170,8 +173,6 @@ import javax.net.ssl.SSLContext;
 
 import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
-
-import net.wrappy.im.R;
 
 public class XmppConnection extends ImConnection {
 
@@ -4655,7 +4656,12 @@ public class XmppConnection extends ImConnection {
                     try {
 
                         //   String defaultType = "application/octet-stream";
-                        Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+
+                        /* harded-code urn:xmpp:http:upload:0 t urn:xmpp:http:upload */
+
+                        //Slot upSlot = manager.requestSlot(fileName, fileSize, mimeType);
+                        Object slotRequest = new SlotRequest_V0_2(upService.getAddress(), fileName, fileSize, mimeType);
+                        Slot upSlot = (Slot)mConnection.createStanzaCollectorAndSend((IQ)slotRequest).nextResultOrThrow();
 
                         String uploadKey = uploadFile(fileSize, is, upSlot, uploadListener, doEncryption);
 
