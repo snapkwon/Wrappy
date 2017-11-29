@@ -40,7 +40,7 @@ import java.util.ArrayList;
 public class RegistrationSecurityQuestionActivity extends AppCompatActivity implements View.OnClickListener {
 
     LinearLayout securityQuestionLayout;
-    ExistingAccountTask mExistingAccountTask;
+
     String[] questions;
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
@@ -52,12 +52,12 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
     private String mFingerprint;
     private OnboardingAccount mNewAccount;
 
-    private String username;
-    private String password;
+    String password;
 
-    private SimpleAlertHandler mHandler;
+    private
 
     ProgressDialog dialog;
+    JsonObject registerJson = new JsonObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +65,17 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         setContentView(R.layout.registration_activity_security_question);
 
         Bundle arg = getIntent().getExtras();
-        username = arg.getString("username");
-        password = arg.getString("password");
+        if (arg!=null) {
+            password = arg.getString("password","");
+            if (password.equalsIgnoreCase("")) {
+                finish();
+                return;
+            }
+            JsonObject secretJson = new JsonObject();
+            secretJson.addProperty("secret",password);
+            registerJson.add("wpKAuthDto", secretJson);
+        }
         referenceView();
-        mHandler = new SimpleAlertHandler(this);
         dialog = new ProgressDialog(RegistrationSecurityQuestionActivity.this);
         dialog.setCancelable(false);
     }
@@ -95,7 +102,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
             }
 
             @Override
-            public void OnComplete(String error, String s) {
+            public void OnComplete(int httpCode, String error, String s) {
                 try {
                     if (dialog != null && dialog.isShowing()) {
                         dialog.dismiss();
@@ -138,56 +145,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         }).execute(RestAPI.GET_QUESTIONS_SECURITY);
     }
 
-    private void doExistingAccountRegister (String username , String password)
-    {
 
-        if (mExistingAccountTask == null) {
-            mExistingAccountTask = new RegistrationSecurityQuestionActivity.ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
-        }
-    }
-
-    private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
-        @Override
-        protected OnboardingAccount doInBackground(String... account) {
-            try {
-
-                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(RegistrationSecurityQuestionActivity.this);
-                KeyPair keyPair = keyMan.generateLocalKeyPair();
-                mFingerprint = keyMan.getFingerprint(keyPair.getPublic());
-
-                String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(RegistrationSecurityQuestionActivity.this, mHandler, nickname, account[0], account[1]);
-
-                if (result != null) {
-                    String jabberId = result.username + '@' + result.domain;
-                    keyMan.storeKeyPair(jabberId,keyPair);
-                }
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(OnboardingAccount account) {
-
-            // mUsername = account.username + '@' + account.domain;
-
-            ImApp mApp = (ImApp)getApplication();
-            mApp.setDefaultAccount(account.providerId,account.accountId);
-
-            SignInHelper signInHelper = new SignInHelper(RegistrationSecurityQuestionActivity.this, mHandler);
-            signInHelper.activateAccount(account.providerId,account.accountId);
-            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
-
-            mExistingAccountTask = null;
-        }
-    }
 
     @Override
     public void onClick(View view) {
@@ -203,6 +161,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                     JsonArray jsonArray = new JsonArray();
                     String errorString = "";
                     ArrayList<String> strings = new ArrayList<>();
+
                     for (int i=0; i < spinnersQuestion.size(); i++) {
                         Spinner spinner = spinnersQuestion.get(i);
                         String question = spinner.getSelectedItem().toString();
@@ -223,9 +182,9 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                         strings.add(answer);
 
                         JsonObject jsonObject = new JsonObject();
+                        jsonObject.addProperty("index",i+1);
                         jsonObject.addProperty("question",question);
                         jsonObject.addProperty("answer",answer);
-
 
                         jsonArray.add(jsonObject);
                     }
@@ -233,14 +192,17 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                         AppFuncs.alert(getApplicationContext(),errorString,true);
                         return;
                     }
-                    String s = new RestAPI.PostDataUrl(jsonArray.toString(), null).execute(RestAPI.POST_QUESTION_ANSWERS).get();
-                    AppFuncs.log(s);
-                    if (RestAPI.getStatus(RestAPI.parseStringToJsonElement(s).getAsJsonObject())==1) {
-                        doExistingAccountRegister(username, password);
-                        Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
+                    registerJson.add("securityQuestions",jsonArray);
+                    Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
+                    intent.putExtra("data",registerJson.toString());
+                    intent.putExtra("password",password);
+                    startActivity(intent);
+//                    String s = new RestAPI.PostDataUrl(jsonArray.toString(), null).execute(RestAPI.POST_QUESTION_ANSWERS).get();
+//                    AppFuncs.log(s);
+//                    if (RestAPI.getStatus(RestAPI.parseStringToJsonElement(s).getAsJsonObject())==1) {
+//                        doExistingAccountRegister(username, password);
+//                        finish();
+//                    }
                 }
 
             }
@@ -249,6 +211,11 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         }finally {
             isFlag = false;
         }
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 }

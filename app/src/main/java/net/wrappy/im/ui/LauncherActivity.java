@@ -143,7 +143,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Intent intent= new Intent(this, PatternActivity.class);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
-        arg.putString("username" , mEditUsername.getText().toString() + "@" + "im.proteusiondev.com");
+        arg.putString("username" , mEditUsername.getText().toString().trim());
         intent.putExtras(arg);
         this.startActivity(intent);
 
@@ -154,10 +154,8 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Intent intent= new Intent(this, PatternActivity.class);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_REGISTER);
-       // new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
-        arg.putString("username" , mEditUsername.getText().toString());
+        arg.putString("username" , "");
         intent.putExtras(arg);
-        this.startActivity(intent);
         startActivity(intent);
     }
 
@@ -206,7 +204,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
     }
 
     @Override
-    public void OnComplete(String error, String s) {
+    public void OnComplete(int HTTP_CODE, String error, String s) {
         JSONObject mainObject = null;
         try {
               mainObject = new JSONObject(s);

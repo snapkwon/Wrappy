@@ -17,11 +17,13 @@ import android.view.MenuItem;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
@@ -70,8 +72,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         mHandler = new SimpleAlertHandler(this);
 
         Bundle arg= getIntent().getExtras();
-        type_request = arg.getInt("type");
-        username = arg.getString("username");
+        if (arg!=null) {
+            type_request = arg.getInt("type", 0);
+            username = arg.getString("username", "");
+        }
+
         if(type_request == REQUEST_CODE_LOGIN)
         {
             this.setTypePattern(TYPE_NOCONFIRM);
@@ -96,7 +101,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 }
 
                 @Override
-                public void OnComplete(String error, String s) {
+                public void OnComplete(int HTTP_CODE, String error, String s) {
                     JSONObject mainObject = null;
                     try {
                         if (dialog != null && dialog.isShowing()) {
@@ -138,47 +143,45 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         password = PatternUtils.patternToString(pattern);
         if(type_request == REQUEST_CODE_REGISTER) {
 
-            // password = PatternUtils.patternToString(pattern);
-
-            JsonArray jsonArray = new JsonArray();
-
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("UserName", username);
-            jsonObject.addProperty("PassWord", password);
-
-
-            jsonArray.add(jsonObject);
-
-            new RestAPI.PutDataUrl(jsonArray.toString(), new RestAPI.RestAPIListenner() {
-                @Override
-                public void OnInit() {
-                    dialog.setMessage("waiting");
-                    dialog.show();
-                }
-
-                @Override
-                public void OnComplete(String error, String s) {
-                    JSONObject mainObject = null;
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
-                    try {
-                        mainObject = new JSONObject(s);
-                        if (mainObject.getInt("status") == STATUS_SUCCESS) {
-                            //  doExistingAccountRegister(username, password);
-                            showQuestionScreen();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).execute(RestAPI.PUT_UPDATEPASS);
+            showQuestionScreen();
         }
 
         else if(type_request == REQUEST_CODE_LOGIN)
         {
+            String url = RestAPI.loginUrl(username,password);
+            RestAPI.PostDataWrappy(getApplicationContext(), null, RestAPI.loginUrl(username, password), new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnInit() {
 
-            doExistingAccountRegister(username,password);
+                }
+
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    if (!RestAPI.checkHttpCode(httpCode)) {
+                        AppFuncs.alert(getApplicationContext(),s,true);
+                        return;
+                    }
+                    String jID =  (new JsonParser()).parse(s).getAsJsonObject().get("jid").getAsString()+"@im.proteusiondev.com";
+                    String jPass = (new JsonParser()).parse(s).getAsJsonObject().get("xmppPassword").getAsString();
+                    doExistingAccountRegister(jID,jPass);
+                }
+            });
+//            new RestAPI.PostDataUrl("", new RestAPI.RestAPIListenner() {
+//                @Override
+//                public void OnInit() {
+//
+//                }
+//
+//                @Override
+//                public void OnComplete(int HTTP_CODE, String error, String s) {
+//                    if (!RestAPI.checkHttpCode(HTTP_CODE)){
+//                        AppFuncs.alert(getApplicationContext(),s,true);
+//                        return;
+//                    }
+//                    String jID =  (new JsonParser()).parse(s).getAsJsonObject().get("jid").getAsString();
+//                    doExistingAccountRegister(jID,password);
+//                }
+//            }).execute(RestAPI.loginUrl(username,password));
         }
 
      //   Intent returnIntent = new Intent();
@@ -204,7 +207,6 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
         Bundle arg = new Bundle();
-        arg.putString("username",username);
         arg.putString("password",password);
         intent.putExtras(arg);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -222,6 +224,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             dialog.show();
         }
     }
+
+
 
     private class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 
@@ -246,7 +250,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
                 if(account!=null) {
                     XmppConnection t = new XmppConnection(PatternActivity.this);
-                    status =  t.check_login(password,result.accountId,result.providerId);
+                    status =  t.check_login(account[1],result.accountId,result.providerId);
                     if(status == 200)
                     {
                         ImApp mApp = (ImApp)getApplication();

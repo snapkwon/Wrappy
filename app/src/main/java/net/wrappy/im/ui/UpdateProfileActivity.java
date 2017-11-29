@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatSpinner;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -16,16 +18,26 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
-import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.ui.legacy.SignInHelper;
+import net.wrappy.im.ui.legacy.SimpleAlertHandler;
+import net.wrappy.im.ui.onboarding.OnboardingAccount;
+import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.SecureMediaStore;
+
+import java.security.KeyPair;
+import java.util.ArrayList;
 
 /**
  * Created by ben on 15/11/2017.
@@ -45,14 +57,33 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     CircleImageView imgAvatar;
     ImageView imgHeader;
     boolean isFlag;
-    String user,email,phone,other;
+    String user,email,phone,other,password;
+    JsonObject dataJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.update_profile_activity);
+        getSecurityQuestions();
+        if (dataJson==null) {
+            finish();
+            return;
+        }
+        mHandler = new SimpleAlertHandler(this);
         preferenceView();
+    }
+
+    private void getSecurityQuestions() {
+        try {
+            password = getIntent().getStringExtra("password");
+            String data = getIntent().getStringExtra("data");
+            dataJson = new JsonObject();
+            dataJson = (new JsonParser()).parse(data).getAsJsonObject();
+        }catch (Exception ex) {
+            dataJson = null;
+            ex.printStackTrace();
+        }
     }
 
     private void preferenceView() {
@@ -96,20 +127,53 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("jid","jid@wrappy.net");
-                jsonObject.addProperty("username",user);
-                jsonObject.addProperty("email",email);
-                String respond = new RestAPI.PostDataUrl(jsonObject.toString(),null).execute(RestAPI.POST_UPDATE_EMAIL_USERNAME).get();
-                JsonObject object = RestAPI.parseStringToJsonElement(respond).getAsJsonObject();
-                if (RestAPI.getStatus(object)==0) {
-                    AppFuncs.alert(getApplicationContext(),RestAPI.getDescription(object),true);
-                    return;
+                jsonObject.addProperty("identifier",user);
+                if (!email.isEmpty()) {
+                    jsonObject.addProperty("email",email);
                 }
-                // success
-                AppFuncs.alert(getApplicationContext(),"Updated",true);
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                if (!phone.isEmpty()) {
+                    jsonObject.addProperty("mobile",phone);
+                }
+
+
+                dataJson.add("wpKMemberDto",jsonObject);
+
+
+                RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
+                    @Override
+                    public void OnInit() {
+
+                    }
+
+                    @Override
+                    public void OnComplete(int httpCode, String error, String s) {
+                        if (!RestAPI.checkHttpCode(httpCode)) {
+                            AppFuncs.alert(getApplicationContext(),s,true);
+                            return;
+                        }
+                        String url = RestAPI.loginUrl(user,password);
+                        RestAPI.PostDataWrappy(getApplicationContext(), null, RestAPI.loginUrl(user,password), new RestAPI.RestAPIListenner() {
+                            @Override
+                            public void OnInit() {
+
+                            }
+
+                            @Override
+                            public void OnComplete(int httpCode, String error, String s) {
+                                if (!RestAPI.checkHttpCode(httpCode)) {
+                                    AppFuncs.alert(getApplicationContext(),s,true);
+                                    return;
+                                }
+                                String jID =  (new JsonParser()).parse(s).getAsJsonObject().get("jid").getAsString()+"@im.proteusiondev.com";
+                                String jPass = (new JsonParser()).parse(s).getAsJsonObject().get("xmppPassword").getAsString();
+                                doExistingAccountRegister(jID,jPass);
+                            }
+                        });
+
+
+                    }
+                });
+
             }
             if (view.getId() == btnSkip.getId()) {
                 Intent intent = new Intent(this, MainActivity.class);
@@ -162,15 +226,72 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 error = "Length of username must be more than 6 characters";
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = "Username contains special characters";
-            } else if (email.isEmpty()) {
-                error = "Email is empty";
-            } else if (!AppFuncs.isEmailValid(email)) {
-                error = "Invalid email format";
-            } else {}
+            }
+//            else if (email.isEmpty()) {
+//                error = "Email is empty";
+//            } else if (!AppFuncs.isEmailValid(email)) {
+//                error = "Invalid email format";
+//            } else {}
         }catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             return error;
+        }
+    }
+
+    ExistingAccountTask mExistingAccountTask;
+    SimpleAlertHandler mHandler;
+
+    private void doExistingAccountRegister (String username , String password)
+    {
+
+        if (mExistingAccountTask == null) {
+            mExistingAccountTask = new ExistingAccountTask();
+            mExistingAccountTask.execute(username, password);
+        }
+    }
+
+    private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
+        @Override
+        protected OnboardingAccount doInBackground(String... account) {
+            try {
+
+                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(UpdateProfileActivity.this);
+                KeyPair keyPair = keyMan.generateLocalKeyPair();
+
+                String nickname = new XmppAddress(account[0]).getUser();
+                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1]);
+
+                if (result != null) {
+                    String jabberId = result.username + '@' + result.domain;
+                    keyMan.storeKeyPair(jabberId,keyPair);
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(OnboardingAccount account) {
+
+            // mUsername = account.username + '@' + account.domain;
+
+            ImApp mApp = (ImApp)getApplication();
+            mApp.setDefaultAccount(account.providerId,account.accountId);
+
+            SignInHelper signInHelper = new SignInHelper(UpdateProfileActivity.this, mHandler);
+            signInHelper.activateAccount(account.providerId,account.accountId);
+            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
+
+            mExistingAccountTask = null;
+
+            Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -190,5 +311,11 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 }

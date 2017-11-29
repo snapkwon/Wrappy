@@ -3,6 +3,7 @@ package net.wrappy.im.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,6 +11,16 @@ import android.widget.Toast;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import net.wrappy.im.ImApp;
+import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.ui.RegistrationSecurityQuestionActivity;
+import net.wrappy.im.ui.legacy.SignInHelper;
+import net.wrappy.im.ui.legacy.SimpleAlertHandler;
+import net.wrappy.im.ui.onboarding.OnboardingAccount;
+import net.wrappy.im.ui.onboarding.OnboardingManager;
+
+import java.security.KeyPair;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
