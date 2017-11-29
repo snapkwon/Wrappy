@@ -1,5 +1,7 @@
 package net.wrappy.im.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,6 +15,27 @@ import java.util.Map;
 
 public class ConferenceActivity extends JitsiMeetActivity {
     JitsiMeetView view;
+    private static final String AUDIO_MUTED = "startWithAudioMuted";
+    private static final String VIDEO_MUTED = "startWithVideoMuted";
+    private static final String ROOM_ID = "roomId";
+
+    public static void startVideoCall(Context context, String roomId) {
+        startConference(context, roomId, false);
+    }
+
+    public static void startAudioCall(Context context, String roomId) {
+        startConference(context, roomId, true);
+    }
+
+    private static void startConference(Context context, String roomId, boolean isAudioCall) {
+        Intent intent = new Intent(context, ConferenceActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(VIDEO_MUTED, isAudioCall);
+        bundle.putBoolean(AUDIO_MUTED, !isAudioCall);
+        intent.putExtras(bundle);
+        intent.putExtra(ROOM_ID, roomId);
+        context.startActivity(intent);
+    }
 
     @Override
     protected JitsiMeetView initializeView() {
@@ -21,16 +44,18 @@ public class ConferenceActivity extends JitsiMeetActivity {
         // XXX In order to increase (1) awareness of API breakages and (2) API
         // coverage, utilize JitsiMeetViewListener in the Debug configuration of
         // the app.
-        if (BuildConfig.DEBUG && view != null) {
+        if (view != null) {
             view.setListener(new JitsiMeetViewListener() {
                 private void on(String name, Map<String, Object> data) {
                     // Log with the tag "ReactNative" in order to have the log
                     // visible in react-native log-android as well.
-                    Log.d(
-                            "ReactNative",
-                            JitsiMeetViewListener.class.getSimpleName() + " "
-                                    + name + " "
-                                    + data);
+                    if (BuildConfig.DEBUG) {
+                        Log.d(
+                                "ReactNative",
+                                JitsiMeetViewListener.class.getSimpleName() + " "
+                                        + name + " "
+                                        + data);
+                    }
                 }
 
                 @Override
@@ -56,6 +81,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
                 @Override
                 public void onConferenceWillLeave(Map<String, Object> data) {
                     on("CONFERENCE_WILL_LEAVE", data);
+                    finish();
                 }
 
                 @Override
@@ -76,7 +102,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
         setWelcomePageEnabled(false);
         super.onCreate(savedInstanceState);
         Bundle config = new Bundle();
-        config.putBoolean("startWithAudioMuted", false);
+        config.putBoolean(AUDIO_MUTED, false);
         config.putBoolean("startWithVideoMuted", true);
         Bundle urlObject = new Bundle();
         urlObject.putBundle("config", config);
