@@ -1,7 +1,6 @@
 package net.wrappy.im.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 
 import net.wrappy.im.ui.PatternActivity;
@@ -45,6 +44,6 @@ public class PatternLockUtils {
     }
 
     public static void setPatternByUser(Context context) {
-        context.startActivity(new Intent(context, PatternActivity.class));
+        context.startActivity(PatternActivity.getStartIntent(context));
     }
 }

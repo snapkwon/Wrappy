@@ -6,6 +6,7 @@
 package net.wrappy.im.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -44,6 +45,10 @@ import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_LOGIN;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
 public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
+
+    public static Intent getStartIntent(Context context){
+        return new Intent(context, PatternActivity.class);
+    }
 
     String username;
     String password;
