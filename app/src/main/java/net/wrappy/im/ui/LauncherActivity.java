@@ -12,18 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ViewFlipper;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import me.tornado.android.patternlock.PatternView;
@@ -140,7 +135,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
     private void showLogin()
     {
 
-        Intent intent= new Intent(this, PatternActivity.class);
+        Intent intent = PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
         arg.putString("username" , mEditUsername.getText().toString() + "@" + "im.proteusiondev.com");
@@ -151,13 +146,12 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
 
     private void showRegister()
     {
-        Intent intent= new Intent(this, PatternActivity.class);
+        Intent intent= PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_REGISTER);
        // new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
         arg.putString("username" , mEditUsername.getText().toString());
         intent.putExtras(arg);
-        this.startActivity(intent);
         startActivity(intent);
     }
 
@@ -215,7 +209,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
               if(status == 1) {
                   String username = uniObject.getString("jid");
                   String password = uniObject.getString("xmppPass");
-                  Intent intent = new Intent(this, PatternActivity.class);
+                  Intent intent = PatternActivity.getStartIntent(this);
                   Bundle arg = new Bundle();
                   arg.putInt("type",type_request);
                   arg.putString("username" , username);

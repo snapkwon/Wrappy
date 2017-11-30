@@ -17,18 +17,18 @@
 
 package net.wrappy.im.model;
 
-import net.wrappy.im.crypto.otr.OtrChatManager;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Imps;
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
+import net.wrappy.im.crypto.otr.OtrChatManager;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Imps;
 
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 /**
  * A ChatSession represents a conversation between two users. A ChatSession has
@@ -90,7 +90,7 @@ public class ChatSession {
             if (mParticipant instanceof Contact) {
                 //if we can't omemo, check it again to be sure
                 if (!mCanOmemo) {
-                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+                    //mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
             }
 
@@ -126,7 +126,8 @@ public class ChatSession {
     public boolean canOmemo ()
     {
 
-        return mCanOmemo;
+        //return mCanOmemo;
+        return false;
 
     }
 
@@ -172,8 +173,8 @@ public class ChatSession {
             if (mParticipant instanceof Contact) {
                 //if we can't omemo, check it again to be sure
                 if (!mCanOmemo) {
-                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-
+                    //mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+                    mCanOmemo = false;
                 }
             }
 

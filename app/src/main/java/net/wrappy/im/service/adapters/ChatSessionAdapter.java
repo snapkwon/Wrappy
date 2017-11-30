@@ -17,23 +17,30 @@
 
 package net.wrappy.im.service.adapters;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
+import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
+import net.java.otr4j.OtrEngineListener;
+import net.java.otr4j.session.SessionID;
+import net.java.otr4j.session.SessionStatus;
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrChatListener;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.crypto.otr.OtrChatSessionAdapter;
 import net.wrappy.im.crypto.otr.OtrDataHandler;
 import net.wrappy.im.crypto.otr.OtrDebugLogger;
-import net.wrappy.im.model.Message;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.service.IChatListener;
-import net.wrappy.im.service.IDataListener;
-
-import eu.siacs.conversations.Downloader;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import info.guardianproject.iocipher.File;
-
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ChatSession;
@@ -43,11 +50,23 @@ import net.wrappy.im.model.GroupMemberListener;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImEntity;
 import net.wrappy.im.model.ImErrorInfo;
+import net.wrappy.im.model.Message;
 import net.wrappy.im.model.MessageListener;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatListener;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IDataListener;
+import net.wrappy.im.service.RemoteImService;
+import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
@@ -61,30 +80,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.RemoteImService;
-
-import net.wrappy.im.service.StatusBarNotifier;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
-
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.RemoteCallbackList;
-import android.os.RemoteException;
-import android.provider.BaseColumns;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
+import eu.siacs.conversations.Downloader;
+import info.guardianproject.iocipher.File;
 
 import static cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory.TAG;
 
@@ -534,7 +531,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     fileName += "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                 }
 
-                boolean doEncryption = !isGroupChatSession();
+                //boolean doEncryption = !isGroupChatSession();
+                /* turn-off for now */
+                boolean doEncryption = false;
 
                 UploadProgressListener listener = new UploadProgressListener() {
                     @Override

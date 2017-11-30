@@ -28,6 +28,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
@@ -287,12 +288,12 @@ public class PatternView extends View {
         mPathPaint.setDither(true);
 
         // Removed since every developer should set their own patternViewStyle.
-        mRegularColor = context.getColor(R.color.regular);
-        mErrorColor = context.getColor(R.color.error);
-        mSuccessColor = context.getColor(R.color.success);
-        mRegularColor = a.getColor(R.styleable.PatternView_pl_regularColor, mRegularColor);
-        mErrorColor = a.getColor(R.styleable.PatternView_pl_errorColor, mErrorColor);
-        mSuccessColor = a.getColor(R.styleable.PatternView_pl_successColor, mSuccessColor);
+        mRegularColor = ContextCompat.getColor(context, R.color.regular);
+        mErrorColor = ContextCompat.getColor(context, R.color.error);
+        mSuccessColor = ContextCompat.getColor(context, R.color.success);
+//        mRegularColor = a.getColor(R.styleable.PatternView_pl_regularColor, mRegularColor);
+//        mErrorColor = a.getColor(R.styleable.PatternView_pl_errorColor, mErrorColor);
+//        mSuccessColor = a.getColor(R.styleable.PatternView_pl_successColor, mSuccessColor);
 
         a.recycle();
 
