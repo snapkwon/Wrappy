@@ -17,8 +17,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -29,7 +31,13 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.SecurityQuestions;
+import net.wrappy.im.model.WpKAuthDto;
+import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -57,8 +65,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     CircleImageView imgAvatar;
     ImageView imgHeader;
     boolean isFlag;
-    String user,email,phone,other,password;
-    JsonObject dataJson;
+    String user,email,phone,gender,password;
+
+    Registration registrationData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,24 +75,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.update_profile_activity);
         getSecurityQuestions();
-        if (dataJson==null) {
-            finish();
-            return;
-        }
         mHandler = new SimpleAlertHandler(this);
         preferenceView();
     }
 
     private void getSecurityQuestions() {
-        try {
-            password = getIntent().getStringExtra("password");
-            String data = getIntent().getStringExtra("data");
-            dataJson = new JsonObject();
-            dataJson = (new JsonParser()).parse(data).getAsJsonObject();
-        }catch (Exception ex) {
-            dataJson = null;
-            ex.printStackTrace();
-        }
+        registrationData = new Registration();
+        WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
+        ArrayList<SecurityQuestions> securityQuestions = getIntent().getParcelableArrayListExtra(SecurityQuestions.class.getName());
+        registrationData.setWpKAuthDto(wpKAuthDto);
+        password = wpKAuthDto.getSecret();
+        registrationData.setSecurityQuestions(securityQuestions);
     }
 
     private void preferenceView() {
@@ -126,51 +128,53 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("identifier",user);
-                if (!email.isEmpty()) {
-                    jsonObject.addProperty("email",email);
-                }
-                if (!phone.isEmpty()) {
-                    jsonObject.addProperty("mobile",phone);
-                }
+                WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone);
 
+                registrationData.setWpKMemberDto(wpKMemberDto);
 
-                dataJson.add("wpKMemberDto",jsonObject);
+                Gson gson = new Gson();
+                JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
 
 
                 RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
-                    @Override
-                    public void OnInit() {
 
+                    @Override
+                    public void onComplete(TypeToken typeToken) {
+                        String url = RestAPI.loginUrl(user,password);
+                        RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+
+                            @Override
+                            public void onComplete(TypeToken typeToken) {
+                                WpkToken wpkToken = typeToken.;
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+
+                            @Override
+                            public void RespondToClass(String error, Object aClass) {
+                                try {
+                                    if (error!=null && !error.isEmpty()) {
+                                        AppFuncs.alert(getApplicationContext(),error,true);
+                                    }
+                                    WpkToken wpkToken = (WpkToken) aClass;
+                                    wpkToken.saveToken(getApplicationContext());
+                                    doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
+                                }catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void OnComplete(int httpCode, String error, String s) {}
+                        });
                     }
 
                     @Override
-                    public void OnComplete(int httpCode, String error, String s) {
-                        if (!RestAPI.checkHttpCode(httpCode)) {
-                            AppFuncs.alert(getApplicationContext(),s,true);
-                            return;
-                        }
-                        String url = RestAPI.loginUrl(user,password);
-                        RestAPI.PostDataWrappy(getApplicationContext(), null, RestAPI.loginUrl(user,password), new RestAPI.RestAPIListenner() {
-                            @Override
-                            public void OnInit() {
-
-                            }
-
-                            @Override
-                            public void OnComplete(int httpCode, String error, String s) {
-                                if (!RestAPI.checkHttpCode(httpCode)) {
-                                    AppFuncs.alert(getApplicationContext(),s,true);
-                                    return;
-                                }
-                                String jID =  (new JsonParser()).parse(s).getAsJsonObject().get("jid").getAsString()+"@im.proteusiondev.com";
-                                String jPass = (new JsonParser()).parse(s).getAsJsonObject().get("xmppPassword").getAsString();
-                                doExistingAccountRegister(jID,jPass);
-                            }
-                        });
-
-
+                    public void onError(String error) {
+                        AppFuncs.alert(getApplicationContext(),error,true);
                     }
                 });
 
@@ -227,11 +231,16 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = "Username contains special characters";
             }
-//            else if (email.isEmpty()) {
-//                error = "Email is empty";
-//            } else if (!AppFuncs.isEmailValid(email)) {
-//                error = "Invalid email format";
-//            } else {}
+            else if (!email.isEmpty() && !AppFuncs.isEmailValid(email)) {
+                error = "Invalid email format";
+            } else {}
+
+            if (email.isEmpty()) {
+                email = null;
+            }
+            if (phone.isEmpty()) {
+                phone = null;
+            }
         }catch (Exception ex) {
             ex.printStackTrace();
         } finally {

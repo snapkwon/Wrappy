@@ -15,7 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -24,6 +26,8 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.SecurityQuestions;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -32,6 +36,8 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by ben on 13/11/2017.
@@ -41,7 +47,6 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
 
     LinearLayout securityQuestionLayout;
 
-    String[] questions;
     ImageButton headerbarBack;
     AppTextView headerbarTitle;
     ArrayAdapter<String> questionsAdapter;
@@ -49,8 +54,6 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
     ArrayList<EditText> appEditTextViewsAnswers = new ArrayList<>();
     boolean isFlag;
-    private String mFingerprint;
-    private OnboardingAccount mNewAccount;
 
     String password;
 
@@ -63,18 +66,6 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity_security_question);
-
-        Bundle arg = getIntent().getExtras();
-        if (arg!=null) {
-            password = arg.getString("password","");
-            if (password.equalsIgnoreCase("")) {
-                finish();
-                return;
-            }
-            JsonObject secretJson = new JsonObject();
-            secretJson.addProperty("secret",password);
-            registerJson.add("wpKAuthDto", secretJson);
-        }
         referenceView();
         dialog = new ProgressDialog(RegistrationSecurityQuestionActivity.this);
         dialog.setCancelable(false);
@@ -94,55 +85,61 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
     }
 
     private void getListQuestion() {
-        new RestAPI.GetDataUrl(new RestAPI.RestAPIListenner() {
+
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPI.RestAPIListenner() {
+
+
             @Override
-            public void OnInit() {
-                dialog.setMessage(getString(R.string.waiting_dialog));
-                dialog.show();
+            public void RespondToClass(String error, Object aClass) {
+
             }
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
-                    //TODO get data question list from url
-                    if (error!=null) {
-                        AppFuncs.alert(getApplicationContext(),error,true);
+                    if (!RestAPI.checkHttpCode(httpCode)) {
                         return;
                     }
-                    AppFuncs.log(s);
-                    JsonObject jsonObject = RestAPI.parseStringToJsonElement(s).getAsJsonObject();
-                    if (RestAPI.getStatus(jsonObject)==1) {
-                        JsonArray jsonArrayQuestions = RestAPI.getData(jsonObject).getAsJsonArray();
-                        questions = new String[jsonArrayQuestions.size()];
-                        for (int i=0 ; i<jsonArrayQuestions.size();i++) {
-                            questions[i] = jsonArrayQuestions.get(i).getAsJsonObject().get("question").getAsString();
-                        }
-                        questionsAdapter = new ArrayAdapter<String>(RegistrationSecurityQuestionActivity.this,R.layout.registration_activity_security_question_item_textview,questions);
-                        securityQuestionLayout.removeAllViews();
-                        if (questions.length > 2) {
-                            for (int i=0 ; i < 3; i++) {
-                                View questionLayoutView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.registration_activity_security_question_item,null);
-                                securityQuestionLayout.addView(questionLayoutView);
-                                AppTextView txtQuestionTitle = (AppTextView) questionLayoutView.findViewById(R.id.txtQuestionTitle);
-                                txtQuestionTitle.setText("Question " + String.valueOf(i+1));
-                                Spinner questionSpinner = (Spinner) questionLayoutView.findViewById(R.id.spinnerQuestion);
-                                spinnersQuestion.add(questionSpinner);
-                                questionSpinner.setAdapter(questionsAdapter);
-                                questionSpinner.setSelection(i);
-                                EditText editTextView = (EditText) questionLayoutView.findViewById(R.id.edQuestionAnswer);
-                                appEditTextViewsAnswers.add(editTextView);
+                    JsonArray jsonArray = (new JsonParser()).parse(s).getAsJsonArray();
+                    ArrayList<String> stringQuestions = new ArrayList<>();
+                    for (JsonElement jsonElement : jsonArray) {
+                        try {
+                            JsonObject jsonObject = jsonElement.getAsJsonObject();
+                            JsonObject l10N = jsonObject.get("l10N").getAsJsonObject();
+                            HashMap<String, String> stringHashMap = RestAPI.jsonToMap(l10N);
+                            String question;
+                            if (stringHashMap.containsKey(Locale.getDefault().toString())) {
+                                question = stringHashMap.get(Locale.getDefault().toString());
+                            } else {
+                                question = stringHashMap.get("en_US");
                             }
-                            btnQuestionComplete.setEnabled(true);
+                            stringQuestions.add(question);
+
+                        }catch (Exception ex){
+                            ex.printStackTrace();
                         }
                     }
+                    questionsAdapter = new ArrayAdapter<String>(RegistrationSecurityQuestionActivity.this,R.layout.registration_activity_security_question_item_textview,stringQuestions);
+                    securityQuestionLayout.removeAllViews();
+                    for (int i=0 ; i < stringQuestions.size(); i++) {
+                        View questionLayoutView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.registration_activity_security_question_item,null);
+                        securityQuestionLayout.addView(questionLayoutView);
+                        AppTextView txtQuestionTitle = (AppTextView) questionLayoutView.findViewById(R.id.txtQuestionTitle);
+                        txtQuestionTitle.setText("Question " + String.valueOf(i+1));
+                        Spinner questionSpinner = (Spinner) questionLayoutView.findViewById(R.id.spinnerQuestion);
+                        spinnersQuestion.add(questionSpinner);
+                        questionSpinner.setAdapter(questionsAdapter);
+                        questionSpinner.setSelection(i);
+                        EditText editTextView = (EditText) questionLayoutView.findViewById(R.id.edQuestionAnswer);
+                        appEditTextViewsAnswers.add(editTextView);
+                    }
+                    btnQuestionComplete.setEnabled(true);
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        }).execute(RestAPI.GET_QUESTIONS_SECURITY);
+        });
+
     }
 
 
@@ -158,10 +155,9 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
             }
             if (view.getId() == btnQuestionComplete.getId()) {
                 if (spinnersQuestion.size() > 0) {
-                    JsonArray jsonArray = new JsonArray();
                     String errorString = "";
                     ArrayList<String> strings = new ArrayList<>();
-
+                    ArrayList<SecurityQuestions> securityQuestions = new ArrayList<>();
                     for (int i=0; i < spinnersQuestion.size(); i++) {
                         Spinner spinner = spinnersQuestion.get(i);
                         String question = spinner.getSelectedItem().toString();
@@ -180,29 +176,19 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                             }
                         }
                         strings.add(answer);
-
-                        JsonObject jsonObject = new JsonObject();
-                        jsonObject.addProperty("index",i+1);
-                        jsonObject.addProperty("question",question);
-                        jsonObject.addProperty("answer",answer);
-
-                        jsonArray.add(jsonObject);
+                        SecurityQuestions questions = new SecurityQuestions(i+1,question,answer);
+                        securityQuestions.add(questions);
                     }
                     if (!errorString.isEmpty()) {
                         AppFuncs.alert(getApplicationContext(),errorString,true);
                         return;
                     }
-                    registerJson.add("securityQuestions",jsonArray);
+                    WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
+
                     Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
-                    intent.putExtra("data",registerJson.toString());
-                    intent.putExtra("password",password);
+                    intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
+                    intent.putParcelableArrayListExtra(SecurityQuestions.class.getName(),securityQuestions);
                     startActivity(intent);
-//                    String s = new RestAPI.PostDataUrl(jsonArray.toString(), null).execute(RestAPI.POST_QUESTION_ANSWERS).get();
-//                    AppFuncs.log(s);
-//                    if (RestAPI.getStatus(RestAPI.parseStringToJsonElement(s).getAsJsonObject())==1) {
-//                        doExistingAccountRegister(username, password);
-//                        finish();
-//                    }
                 }
 
             }
