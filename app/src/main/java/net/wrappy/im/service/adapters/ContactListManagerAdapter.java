@@ -726,11 +726,14 @@ public class ContactListManagerAdapter extends
 
         public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
-            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
-            String nickname = from.getName();
-            Uri uri = insertOrUpdateSubscription(username, nickname,
-                    subType,
-                    subStatus);
+            //Avoid crash when null adapter
+            if (mAdaptee != null) {
+                String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+                String nickname = from.getName();
+                Uri uri = insertOrUpdateSubscription(username, nickname,
+                        subType,
+                        subStatus);
+            }
 
             boolean hadListener = broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {

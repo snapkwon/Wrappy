@@ -101,14 +101,18 @@ public class ConferenceActivity extends JitsiMeetActivity {
         // about what we want anyway.
         setWelcomePageEnabled(false);
         super.onCreate(savedInstanceState);
-        Bundle config = new Bundle();
-        config.putBoolean(AUDIO_MUTED, false);
-        config.putBoolean("startWithVideoMuted", true);
-        Bundle urlObject = new Bundle();
-        urlObject.putBundle("config", config);
-        urlObject.putString("url", "https://meet.jit.si/Test123");
-        if (view != null) {
-            view.loadURLObject(urlObject);
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle config = new Bundle();
+            config.putBoolean(AUDIO_MUTED, intent.getBooleanExtra(AUDIO_MUTED, false));
+            config.putBoolean(VIDEO_MUTED, intent.getBooleanExtra(VIDEO_MUTED, false));
+            Bundle urlObject = new Bundle();
+            urlObject.putBundle("config", config);
+            String roomId = "wrappy." + intent.getStringExtra(ROOM_ID);
+            urlObject.putString("url", "https://meet.jit.si/" + roomId);
+            if (view != null) {
+                view.loadURLObject(urlObject);
+            }
         }
     }
 
