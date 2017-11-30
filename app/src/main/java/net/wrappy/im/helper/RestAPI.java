@@ -43,8 +43,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import static org.jivesoftware.smackx.xdata.packet.DataForm.Type.result;
-
 /**
  * Created by ben on 13/11/2017.
  */
@@ -70,8 +68,7 @@ public class RestAPI {
     }
 
     public interface RestAPIListenner {
-        public void onComplete(TypeToken typeToken);
-        public void onError(String error);
+        public void OnComplete(int httpCode, String error, String s);
     }
 
     public static JsonElement getData(JsonObject jsonObject) {
@@ -130,32 +127,24 @@ public class RestAPI {
         return header;
     }
 
-    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner, TypeToken typeToken) {
+    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);
         Ion.with(context).load(url).addHeader("Authorization",header)
                 .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
-                .as(typeToken).withResponse().setCallback(new FutureCallback<TypeToken>() {
+        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void onCompleted(Exception e, TypeToken result) {
-                if (e!=null) {
-                    listenner.onError(e.getLocalizedMessage());
-                    return;
-                }
-                listenner.onComplete(result);
+            public void onCompleted(Exception e, Response<String> result) {
+                listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
             }
         });
     }
-    public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner, TypeToken typeToken) {
+
+    public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).addHeader("Authorization",header).as(typeToken)
-                .withResponse().setCallback(new FutureCallback<TypeToken>() {
+        Ion.with(context).load(url).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void onCompleted(Exception e, TypeToken result) {
-                if (e!=null) {
-                    listenner.onError(e.getLocalizedMessage());
-                    return;
-                }
-                listenner.onComplete(result);
+            public void onCompleted(Exception e, Response<String> result) {
+                listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
             }
         });
     }

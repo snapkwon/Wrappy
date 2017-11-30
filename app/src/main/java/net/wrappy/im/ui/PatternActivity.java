@@ -119,24 +119,26 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         else if(type_request == REQUEST_CODE_LOGIN)
         {
             String url = RestAPI.loginUrl(username,password);
-            RestAPI.PostDataWrappyRespondToClass(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
                 @Override
-                public void RespondToClass(String error, Object aClass) {
+                public void OnComplete(int httpCode, String error, String s) {
                     try {
-                        WpkToken wpkToken = (WpkToken) aClass;
+                        if (!RestAPI.checkHttpCode(httpCode)) {
+                            AppFuncs.alert(getApplicationContext(),s,true);
+                            return;
+                        }
+                        JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                        Gson gson = new Gson();
+                        WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                         wpkToken.saveToken(getApplicationContext());
                         doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
                     }catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                }
-
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
 
                 }
-            },WpkToken.class);
+            });
         }
     }
 

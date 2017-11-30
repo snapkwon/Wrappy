@@ -66,6 +66,19 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity_security_question);
+
+//        Bundle arg = getIntent().getExtras();
+//        if (arg!=null) {
+//            password = arg.getString("password","");
+//            if (password.equalsIgnoreCase("")) {
+//                finish();
+//                return;
+//            }
+//            JsonObject secretJson = new JsonObject();
+//            secretJson.addProperty("secret",password);
+//            registerJson.add("wpKAuthDto", secretJson);
+//        }
+
         referenceView();
         dialog = new ProgressDialog(RegistrationSecurityQuestionActivity.this);
         dialog.setCancelable(false);
@@ -88,11 +101,6 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
 
         RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPI.RestAPIListenner() {
 
-
-            @Override
-            public void RespondToClass(String error, Object aClass) {
-
-            }
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {

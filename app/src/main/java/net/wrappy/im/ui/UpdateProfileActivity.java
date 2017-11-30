@@ -139,42 +139,26 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
 
                     @Override
-                    public void onComplete(TypeToken typeToken) {
+                    public void OnComplete(int httpCode, String error, String s) {
                         String url = RestAPI.loginUrl(user,password);
                         RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
                             @Override
-                            public void onComplete(TypeToken typeToken) {
-                                WpkToken wpkToken = typeToken.;
-                            }
-
-                            @Override
-                            public void onError(String error) {
-
-                            }
-
-                            @Override
-                            public void RespondToClass(String error, Object aClass) {
+                            public void OnComplete(int httpCode, String error, String s) {
                                 try {
                                     if (error!=null && !error.isEmpty()) {
                                         AppFuncs.alert(getApplicationContext(),error,true);
                                     }
-                                    WpkToken wpkToken = (WpkToken) aClass;
+                                    JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                    Gson gson = new Gson();
+                                    WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                                     wpkToken.saveToken(getApplicationContext());
                                     doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
                                 }catch (Exception ex) {
                                     ex.printStackTrace();
                                 }
                             }
-
-                            @Override
-                            public void OnComplete(int httpCode, String error, String s) {}
                         });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        AppFuncs.alert(getApplicationContext(),error,true);
                     }
                 });
 
