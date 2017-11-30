@@ -45,6 +45,8 @@ import android.util.Log;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.wrappy.im.GethService.db.WalletDBHelper;
+import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -149,6 +151,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static Executor sThreadPoolExecutor = null;
 
+    private static WalletDBHelper walletDBHelper;
+
     private SharedPreferences settings = null;
 
     private boolean mThemeDark = false;
@@ -244,6 +248,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 e.printStackTrace();
             }
         }
+
+        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
+        WalletDatabaseManager.initializeInstance(walletDBHelper);
+
 
     }
 
