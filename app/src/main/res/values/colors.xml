@@ -64,6 +64,7 @@
      -->
      
     <color name="zom_primary">#EA657B</color>
+    <color name="search_background">#f4f2f4</color>
 
     <array name="zom_colors">
         <item>@color/zom_primary</item>

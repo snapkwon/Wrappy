@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.model.Contact;
@@ -40,13 +41,12 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrDisplayActivity;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
+
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.wrappy.im.R;
 
 
 public class ContactDisplayActivity extends BaseActivity {
@@ -346,7 +346,7 @@ public class ContactDisplayActivity extends BaseActivity {
         }
         catch (RemoteException re){}
 
-        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        Intent intent = ConversationDetailActivity.getStartIntent(this);
         intent.putExtra("id", mContactId);
         startActivity(intent);
         finish();

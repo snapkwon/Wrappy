@@ -272,13 +272,11 @@ public class ConversationListFragment extends Fragment {
             mRecView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mEmptyViewImage.setVisibility(View.VISIBLE);
-
         }
         else if (mRecView.getVisibility() == View.GONE) {
             mRecView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mEmptyViewImage.setVisibility(View.GONE);
-
         }
 
     }
@@ -404,9 +402,9 @@ public class ConversationListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Context context = v.getContext();
-                        Intent intent = new Intent(context, ConversationDetailActivity.class);
+                        Intent intent = ConversationDetailActivity.getStartIntent(context);
                         intent.putExtra("id", (int)chatId);
-                        intent.putExtra("address", address);
+//                        intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
                         context.startActivity(intent);
                     }
@@ -430,9 +428,9 @@ public class ConversationListFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Context context = v.getContext();
-                                Intent intent = new Intent(context, ConversationDetailActivity.class);
+                                Intent intent = ConversationDetailActivity.getStartIntent(context);
                                 intent.putExtra("id", chatId);
-                                intent.putExtra("address", nickname);
+//                                intent.putExtra("address", nickname);
                                 intent.putExtra("nickname", nickname);
 
                                 context.startActivity(intent);

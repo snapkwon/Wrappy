@@ -61,6 +61,7 @@ import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
+import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -73,7 +74,7 @@ import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
-import net.wrappy.im.ui.AddContactActivity;
+import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ContactsListFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
@@ -87,7 +88,6 @@ import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.XmppUriHelper;
-import net.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -101,7 +101,6 @@ import java.util.UUID;
 import info.guardianproject.iocipher.VirtualFileSystem;
 
 /**
- * TODO
  */
 public class MainActivity extends BaseActivity {
 
@@ -209,19 +208,19 @@ public class MainActivity extends BaseActivity {
 
                 int tabIdx = mViewPager.getCurrentItem();
 
-                if (tabIdx == 0) {
+                if (tabIdx == 0 || tabIdx == 1) {
 
-                    if (mContactList.getContactCount() > 0) {
+//                    if (mContactList.getContactCount() > 0) {
                         Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
                         startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-                    }
-                    else
-                    {
-                        inviteContact();
-                    }
+//                    }
+//                    else
+//                    {
+//                        inviteContact();
+//                    }
 
-                } else if (tabIdx == 1) {
-                    inviteContact();
+//                } else if (tabIdx == 1) {
+//                    inviteContact();
                 } else if (tabIdx == 2) {
                     startPhotoTaker();
                 }
@@ -303,7 +302,7 @@ public class MainActivity extends BaseActivity {
 
     public void inviteContact ()
     {
-        Intent i = new Intent(MainActivity.this, AddContactActivity.class);
+        Intent i = new Intent(MainActivity.this, AddContactNewActivity.class);
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
@@ -394,7 +393,7 @@ public class MainActivity extends BaseActivity {
           if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
 
                 long chatId = ContentUris.parseId(data);
-                Intent intentChat = new Intent(this, ConversationDetailActivity.class);
+                Intent intentChat = ConversationDetailActivity.getStartIntent(this);
                 intentChat.putExtra("id", chatId);
                 startActivity(intentChat);
             }
@@ -791,7 +790,7 @@ public class MainActivity extends BaseActivity {
                 protected void onPostExecute(Long chatId) {
 
                     if (chatId != -1 && openChat) {
-                        Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
+                        Intent intent = ConversationDetailActivity.getStartIntent(MainActivity.this);
                         intent.putExtra("id", chatId);
                         startActivity(intent);
                     }
@@ -996,7 +995,7 @@ public class MainActivity extends BaseActivity {
 
     private void showChat (long chatId)
     {
-        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        Intent intent = ConversationDetailActivity.getStartIntent(this);
         intent.putExtra("id",chatId);
         startActivity(intent);
     }
