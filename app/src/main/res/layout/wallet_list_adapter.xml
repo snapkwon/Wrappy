@@ -46,6 +46,7 @@
         android:id="@+id/imNext"
         android:layout_alignParentEnd="true"
         android:padding="10dp"
+        android:background="@drawable/ic_arrow"
         android:layout_alignParentRight="true" />
     <LinearLayout
         android:orientation="vertical"

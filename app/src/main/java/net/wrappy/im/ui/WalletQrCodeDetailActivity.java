@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -123,6 +125,82 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
 
         builder.setPositiveButton("OK", null);
         builder.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_wallet_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.removewallet) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(WalletQrCodeDetailActivity.this);
+                LayoutInflater inflater = WalletQrCodeDetailActivity.this.getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
+                dialogBuilder.setView(dialogView);
+
+                final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
+                edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+
+                dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+
+                        KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
+
+                        try{
+                            keyManager.getKeystore().deleteAccount(keyManager.getKeystore().getAccounts().get(0),edt.getText().toString());
+                            //  FileUtil.copyDirectory(sourceLocation,targetLocation);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(WalletQrCodeDetailActivity.this);
+                            LayoutInflater inflater = WalletQrCodeDetailActivity.this.getLayoutInflater();
+                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
+                            builder.setView(dialogView);
+
+                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
+                            tvTitle.setText("Delete Successfully");
+
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //   presentFragment(new WalletFragment(), true);
+                                    finish();
+                                }
+                            });
+                            builder.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(WalletQrCodeDetailActivity.this);
+                            LayoutInflater inflater = WalletQrCodeDetailActivity.this.getLayoutInflater();
+                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
+                            builder.setView(dialogView);
+
+                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
+                            tvTitle.setText(e.toString());
+
+                            builder.setPositiveButton("OK", null);
+                            builder.show();
+                        }
+
+                    }
+                });
+
+                dialogBuilder.setNegativeButton("Cancel", null);
+                AlertDialog b = dialogBuilder.create();
+                b.show();
+        }
+        else if (id == R.id.changepasswallet) {
+            Intent intent = new Intent(this, ChangePasswordAccount.class);
+            this.startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

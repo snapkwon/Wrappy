@@ -513,7 +513,8 @@
         <activity android:name=".ui.TransactionTab" />
         <activity android:name=".ui.Send_Ethereum_Activity" />
         <activity android:name=".ui.WalletQrCodeDetailActivity" />
-        <activity android:name=".ui.PackupWalletAccount"></activity>
+        <activity android:name=".ui.PackupWalletAccount" />
+        <activity android:name=".ui.ChangePasswordAccount"></activity>
     </application>
 
 </manifest>

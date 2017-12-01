@@ -100,7 +100,7 @@ public class RecycleWalletAdapter extends RecyclerView.Adapter<RecycleWalletAdap
         public RecyclerViewHolder(View itemView) {
             super(itemView);
 
-            imIcon = (ImageView) itemView.findViewById(net.wrappy.im.R.id.IconCoin);
+            imIcon = (ImageView) itemView.findViewById(R.id.IconCoin);
 
 
             txtName=(TextView)

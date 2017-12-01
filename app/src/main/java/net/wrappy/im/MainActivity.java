@@ -172,12 +172,12 @@ public class MainActivity extends BaseActivity {
 
         if(!Wallet.isNewWallet(this.getFilesDir())) {
             mwalletFragment = new WalletFragment();
-            adapter.addFragment(mwalletFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+            adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
         }
         else
         {
             mwelcome_wallet_fragment= new Welcome_Wallet_Fragment();
-            adapter.addFragment(mwelcome_wallet_fragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+            adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
 
         }
 
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity {
         mTabLayout.addTab(tab);
 
         tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_face_white_24dp);
+        tab.setIcon(R.drawable.ic_wallet);
         mTabLayout.addTab(tab);
 
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -346,7 +346,17 @@ public class MainActivity extends BaseActivity {
                  adapter.mFragments.remove(mwelcome_wallet_fragment);
                  fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
                  mwalletFragment = new WalletFragment();
-                 adapter.addFragment(mwalletFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+                 adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+                 adapter.notifyDataSetChanged();
+                 mViewPager.setAdapter(adapter);
+                 mViewPager.setCurrentItem(4);
+             }
+             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(4).equals(mwalletFragment))
+             {
+                 adapter.mFragments.remove(mwalletFragment);
+                 fragmentManager.beginTransaction().remove(mwalletFragment).commit();
+                 mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
+                 adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
                  adapter.notifyDataSetChanged();
                  mViewPager.setAdapter(adapter);
                  mViewPager.setCurrentItem(4);

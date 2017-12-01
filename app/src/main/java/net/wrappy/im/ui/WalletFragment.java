@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -152,11 +153,10 @@ public class WalletFragment extends Fragment  {
             getActivity().startService(serviceIntent);
         }
 
-        /*if(walletTask == null) {
+        if(walletTask == null) {
             walletTask = new WalletTasks();
             walletTask.execute();
-        }*/
-
+        }
         super.onResume();
     }
 
@@ -254,18 +254,18 @@ public class WalletFragment extends Fragment  {
         prd = new ModelWaletListView();
         prd.setNameCoin("Proteusion");
         prd.setTypeCoin(TYPE_PRO);
-  //      prd.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_proteusion));
+        prd.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_proteusion));
         prd.setPriceCoin("0");
         prd.setPercent("0");
         prd.setValue("0");
         prd.setNumber("0");
-       // prd.setTextCoin(context.getResources().getColor(R.color.textproteusion));
+       prd.setTextCoin(getActivity().getResources().getColor(R.color.textproteusion));
         arrWallet.add(prd);
         eth = new ModelWaletListView();
         eth.setNameCoin("Ethereum");
         eth.setTypeCoin(TYPE_ETH);
-    //    eth.setIcon(context.getResources().getDrawable(R.drawable.ic_ethereum));
-      //  eth.setTextCoin(context.getResources().getColor(R.color.textethereum));
+       eth.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_ethereum));
+        eth.setTextCoin(getActivity().getResources().getColor(R.color.textethereum));
         arrWallet.add(eth);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -275,8 +275,8 @@ public class WalletFragment extends Fragment  {
         adapter=new RecycleWalletAdapter(arrWallet);
         lv.setBackgroundColor(0xaabbcc);
 
-    //    lv.addItemDecoration(
-     //           new DividerItemDecoration(3));
+        lv.addItemDecoration(
+                new DividerItemDecoration(getActivity(),layoutManager.getOrientation()));
         lv.setAdapter(adapter);
     }
 
