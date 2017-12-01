@@ -408,6 +408,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                        + "locked INTEGER NOT NULL DEFAULT 0,"
                        + "keep_signed_in INTEGER NOT NULL DEFAULT 0,"
                        + "last_login_state INTEGER NOT NULL DEFAULT 0,"
+                       + "account_name TEXT,"
                        + "UNIQUE (provider, username)" + ");");
 
             createContactsTables(db);

@@ -377,6 +377,10 @@ public class OnboardingManager {
     }
 
     public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password) {
+        return addExistingAccount(context, handler, nickname, jabberId, password, null);
+    }
+
+    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password, String accountName) {
 
         OnboardingAccount result = null;
 
@@ -389,7 +393,7 @@ public class OnboardingManager {
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password, accountName);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 

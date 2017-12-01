@@ -63,7 +63,9 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
@@ -186,7 +188,7 @@ public class ConversationDetailActivity extends BaseActivity {
         Drawable avatar = null;
         try {
 
-            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + "@im.proteusiondev.com", ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
+            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + Constant.EMAIL_DOMAIN, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
         } catch (DecoderException e) {
             e.printStackTrace();
         }
@@ -269,7 +271,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp) getApplication();
 
-        mChatId = intent.getIntExtra("id", -1);
+        mChatId = intent.getLongExtra("id", -1);
         if (mChatId == -1)
             mChatId = intent.getLongExtra("id", -1);
 
@@ -287,11 +289,12 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     @OnClick({R.id.btnAddFriend})
-    protected void onClickAddFriend(View v){
+    protected void onClickAddFriend(View v) {
         RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mAddress), new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN);
             }
         });
     }

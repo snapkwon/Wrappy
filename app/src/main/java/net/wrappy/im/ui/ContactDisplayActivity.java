@@ -51,7 +51,7 @@ import java.util.List;
 
 public class ContactDisplayActivity extends BaseActivity {
 
-    private int mContactId = -1;
+    private long mContactId = -1;
     private String mNickname = null;
     private String mUsername = null;
     private long mProviderId = -1;
@@ -71,7 +71,7 @@ public class ContactDisplayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mContactId = (int) getIntent().getLongExtra("contactId", -1);
+        mContactId = getIntent().getLongExtra("contactId", -1);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");

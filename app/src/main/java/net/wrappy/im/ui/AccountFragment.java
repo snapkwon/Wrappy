@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IImConnection;
@@ -54,8 +55,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.wrappy.im.R;
-
 
 public class AccountFragment extends Fragment {
 
@@ -72,6 +71,7 @@ public class AccountFragment extends Fragment {
     String mUserAddress;
     String mNickname;
     String mUserKey;
+    String mAccountName;
 
     private final static String DEFAULT_PASSWORD_TEXT = "*************";
 
@@ -111,6 +111,7 @@ public class AccountFragment extends Fragment {
         mUserAddress = mApp.getDefaultUsername();
         mUserKey = mApp.getDefaultOtrKey();
         mNickname = Imps.Account.getNickname(getContext().getContentResolver(), mAccountId);
+        mAccountName = Imps.Account.getAccountName(getContext().getContentResolver(), mAccountId);
 
        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
@@ -174,7 +175,7 @@ public class AccountFragment extends Fragment {
             }
 
             tvUsername.setText(mUserAddress);
-            mTvNickname.setText(mNickname);
+            mTvNickname.setText(mAccountName);
 
             IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
 
@@ -237,7 +238,7 @@ public class AccountFragment extends Fragment {
 
         // Set an EditText view to get user input
         final EditText input = new EditText(getContext());
-        input.setText(mNickname);
+        input.setText(mAccountName);
         alert.setView(input);
 
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -245,7 +246,7 @@ public class AccountFragment extends Fragment {
                 String newNickname = input.getText().toString();
 
                 //update just the nickname
-                ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, newNickname, "", null);
+                ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, mNickname, "", null, newNickname);
 
                 mTvNickname.setText(newNickname);
                 // Do something with value!

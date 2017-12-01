@@ -172,7 +172,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     private static final String[] ACCOUNT_PROJECTION = { Imps.Account._ID, Imps.Account.PROVIDER,
                                                         Imps.Account.NAME, Imps.Account.USERNAME,
-                                                        Imps.Account.PASSWORD, };
+                                                        Imps.Account.PASSWORD, Imps.Account.ACCOUNT_NAME, };
 
     static final void log(String log) {
         Log.d(LOG_TAG, log);
@@ -436,6 +436,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
             String pw) {
+        return insertOrUpdateAccount(cr, providerId, accountId, nickname, username, pw, null);
+    }
+
+    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
+            String pw, String account_name) {
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
         String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), username };
 
@@ -456,6 +461,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (!TextUtils.isEmpty(pw))
                 values.put(Imps.Account.PASSWORD, pw);
 
+            if (!TextUtils.isEmpty(account_name))
+                values.put(Imps.Account.ACCOUNT_NAME, account_name);
+
             Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, id);
             cr.update(accountUri, values, null, null);
 
@@ -467,6 +475,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             values.put(Imps.Account.NAME, nickname);
             values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
+            values.put(Imps.Account.ACCOUNT_NAME, account_name);
 
             if (pw != null && pw.length() > 0) {
                 values.put(Imps.Account.KEEP_SIGNED_IN, true);
