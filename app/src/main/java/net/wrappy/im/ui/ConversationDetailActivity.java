@@ -152,7 +152,9 @@ public class ConversationDetailActivity extends BaseActivity {
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        mApp = (ImApp) getApplication();
+        setContentView(R.layout.awesome_activity_detail);
+
+        mApp = (ImApp)getApplication();
 
         mConvoView = new ConversationView(this);
 
@@ -175,7 +177,6 @@ public class ConversationDetailActivity extends BaseActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
-
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -381,6 +382,12 @@ public class ConversationDetailActivity extends BaseActivity {
             case R.id.menu_group_info:
                 mConvoView.showGroupInfo();
                 return true;
+            case R.id.menu_video_call:
+                mConvoView.startVideoConference();
+                return true;
+            case R.id.menu_voice_call:
+                mConvoView.startAudioConference();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -393,7 +400,6 @@ public class ConversationDetailActivity extends BaseActivity {
         } else {
             getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
         }
-
         return true;
     }
 

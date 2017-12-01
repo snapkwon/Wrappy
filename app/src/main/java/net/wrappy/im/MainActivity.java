@@ -205,7 +205,6 @@ public class MainActivity extends BaseActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 int tabIdx = mViewPager.getCurrentItem();
 
                 if (tabIdx == 0 || tabIdx == 1) {
