@@ -12,18 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ViewFlipper;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import me.tornado.android.patternlock.PatternView;
@@ -140,7 +135,7 @@ public class LauncherActivity extends BaseActivity {
     private void showLogin()
     {
 
-        Intent intent= new Intent(this, PatternActivity.class);
+        Intent intent = PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
         arg.putString("username" , mEditUsername.getText().toString().trim());
@@ -151,7 +146,7 @@ public class LauncherActivity extends BaseActivity {
 
     private void showRegister()
     {
-        Intent intent= new Intent(this, PatternActivity.class);
+        Intent intent= PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_REGISTER);
         arg.putString("username" , "");
