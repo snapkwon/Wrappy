@@ -108,8 +108,9 @@ public class ConferenceActivity extends JitsiMeetActivity {
             config.putBoolean(VIDEO_MUTED, intent.getBooleanExtra(VIDEO_MUTED, false));
             Bundle urlObject = new Bundle();
             urlObject.putBundle("config", config);
-            String roomId = "wrappy." + intent.getStringExtra(ROOM_ID);
+            String roomId = intent.getStringExtra(ROOM_ID);
             urlObject.putString("url", "https://meet.jit.si/" + roomId);
+//            urlObject.putString("url", String.format(ConferenceConstant.CONFERENCE_HOST, roomId));
             if (view != null) {
                 view.loadURLObject(urlObject);
             }

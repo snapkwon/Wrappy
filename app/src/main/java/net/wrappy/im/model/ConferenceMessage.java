@@ -25,20 +25,31 @@ public class ConferenceMessage {
         this.roomId = generateRoomId();
     }
 
-    public ConferenceMessage(String[] params) {
-        roomId = params[1].replace(ConferenceConstant.CONFERENCE_BRIDGE, "");
-        this.mType = ConferenceType.getEnumByValue(params[2]);
-        this.isGroup = roomId.contains("group.");
-        if (params.length > 3) {
-            this.mState = ConferenceState.getEnumByValue(params[3]);
+    public ConferenceMessage(String message) {
+        this(message.replaceFirst(ConferenceConstant.REGEX, "").split(ConferenceConstant.REGEX));
+    }
+
+    private ConferenceMessage(String[] params) {
+        if (params != null) {
+            if (params.length > 2) {
+                roomId = params[1].replace(ConferenceConstant.CONFERENCE_BRIDGE, "");
+                this.mType = ConferenceType.getEnumByValue(params[2]);
+                this.isGroup = roomId.contains("group.");
+            }
+            if (!ConferenceConstant.KEY.equals(params[0])) {
+                this.mState = ConferenceState.END;
+            } else if (params.length > 3) {
+                this.mState = ConferenceState.getEnumByValue(params[3]);
+            }
         }
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuffer = new StringBuilder();
-        String breakChar = ":";
-        stringBuffer.append(ConferenceConstant.KEY)
+        String breakChar = ConferenceConstant.REGEX;
+        stringBuffer.append(ConferenceConstant.CONFERENCE_PREFIX)
+                .append(breakChar)
                 .append(ConferenceConstant.CONFERENCE_BRIDGE + roomId)
                 .append(breakChar)
                 .append(mType.type);
@@ -68,6 +79,10 @@ public class ConferenceMessage {
             }
             return AUDIO;
         }
+
+        public String getType() {
+            return type;
+        }
     }
 
     public enum ConferenceState {
@@ -87,6 +102,10 @@ public class ConferenceMessage {
                 }
             }
             return END;
+        }
+
+        public String getState() {
+            return state;
         }
     }
 
@@ -118,8 +137,12 @@ public class ConferenceMessage {
         return mState != null && mState == ConferenceState.END;
     }
 
-    public ConferenceType getmType() {
+    public ConferenceType getType() {
         return mType;
+    }
+
+    public ConferenceState getState() {
+        return mState;
     }
 
     public void endCall() {

@@ -167,7 +167,6 @@ public class ConversationDetailActivity extends BaseActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
-
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -370,15 +369,12 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        getMenuInflater().inflate(R.menu.menu_conference, menu);
         if (mConvoView.isGroupChat()) {
             getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
             getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
         }
-
-        getMenuInflater().inflate(R.menu.menu_conference, menu);
-
         return true;
     }
 

@@ -2744,8 +2744,8 @@ public class ConversationView {
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
                     messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
-                    if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.KEY)) {
-                        doConference(body, id);
+                    if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                        doConference(body, id, timestamp);
                     }
                     break;
 
@@ -3126,16 +3126,16 @@ public class ConversationView {
         return roomId;
     }
 
-    private void doConference(String body, long id) {
-        String regex = ":";
-        String[] cmds = body.replaceFirst(regex, "").split(regex);
-        if (cmds.length == ConferenceConstant.NUM_OF_FIELDS) {
-            ConferenceMessage conference = new ConferenceMessage(cmds);
-            if (!conference.isEnded()) {
-                conference.endCall();
-                body = conference.toString();
-                Imps.updateMessageBodyInDb(mActivity.getContentResolver(), mLastChatId, String.valueOf(id), body);
-                mMessageAdapter.setNeedRequeryCursor(true);
+    private void doConference(String body, long id, long timestamp) {
+        ConferenceMessage conference = new ConferenceMessage(body);
+        if (!conference.isEnded()) {
+            conference.endCall();
+            body = conference.toString();
+            Imps.updateMessageBodyInDb(mActivity.getContentResolver(), mLastChatId, String.valueOf(id), body);
+            mMessageAdapter.setNeedRequeryCursor(true);
+            //Skip for expired conference
+            boolean expiredCall = ((System.currentTimeMillis() - timestamp) > SHOW_MEDIA_DELIVERY_INTERVAL);
+            if (!expiredCall) {
                 log("doConference");
                 if (conference.isAudio()) {
                     startAudioConference(conference.getRoomId());
