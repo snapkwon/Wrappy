@@ -34,8 +34,10 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -70,15 +72,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -235,6 +242,9 @@ public class ConversationView {
 
 
     private RequeryCallback mRequeryCallback = null;
+
+    // array data of spinner language
+    private String[] arraySpinner = null;
 
     public SimpleAlertHandler getHandler() {
         return mHandler;
@@ -3185,6 +3195,50 @@ public class ConversationView {
         }
     }
 
+    /**
+     * Showing popup menu item translate
+     * @return
+     */
+    public PopupWindow popupDisplay() {
+        PopupWindow popupWindow = new PopupWindow(mActivity);
+
+        // inflate menu item layout
+        LayoutInflater inflater = (LayoutInflater) mActivity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View view = inflater.inflate(R.layout.menu_popup_translate, null);
+
+        // setting up Spinner
+        arraySpinner = new String[] {
+                "English", "Japanese", "Vietnamese"
+        };
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity,
+                        R.layout.spinner_language_item, arraySpinner);
+        spinner.setAdapter(adapter);
+
+        final TextView textTurnOnOff = (TextView) view.findViewById(R.id.text_turn_on_off_translate);
+
+        // setting switch turn on/off translate
+        Switch turnOnOff = (Switch) view.findViewById(R.id.switch_turn_on_off_translate);
+        turnOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    textTurnOnOff.setText("On");
+                } else {
+                    textTurnOnOff.setText("Off");
+                }
+            }
+        });
+
+        popupWindow.setFocusable(true);
+        popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        popupWindow.setContentView(view);
+
+        return popupWindow;
+    }
 
 
 }

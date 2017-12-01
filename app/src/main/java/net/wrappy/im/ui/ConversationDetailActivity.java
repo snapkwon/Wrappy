@@ -45,12 +45,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
 
@@ -99,6 +103,10 @@ public class ConversationDetailActivity extends BaseActivity {
     private Toolbar mToolbar;
 
     private PrettyTime mPrettyTime;
+
+    // offset position for popup window
+    private static final int OFFSET_X = 300;
+    private static final int OFFSET_Y = 300;
 
     private Handler mHandler = new Handler()
     {
@@ -370,6 +378,10 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_group_info:
                 mConvoView.showGroupInfo();
+                return true;
+            case R.id.menu_settings_language:
+                PopupWindow popupWindow = mConvoView.popupDisplay();
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                 return true;
         }
         return super.onOptionsItemSelected(item);

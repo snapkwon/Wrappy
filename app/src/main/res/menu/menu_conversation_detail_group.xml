@@ -31,12 +31,16 @@
     <item
         android:id="@+id/menu_settings_language"
         android:icon="@drawable/ic_language_white_36dp"
+        android:orderInCategory="100"
         android:title="@string/choose_language"
-        app:showAsAction="always" />
+        app:showAsAction="always">
+
+    </item>
 
     <item
         android:id="@+id/menu_group_info"
         android:icon="@drawable/ic_info_outline_white_24dp"
+        android:orderInCategory="101"
         android:title="@string/menu_view_groups"
         app:showAsAction="always" />
 

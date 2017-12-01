@@ -437,5 +437,8 @@
     <string name="login">Login</string>
     <string name="waiting_dialog">Waiting...</string>
 
+    <!--Translate in conversation-->
+    <string name="translate_to">Translate to</string>
+    <string name="turn_off_translate">Off</string>
 
 </resources>
