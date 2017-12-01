@@ -24,7 +24,7 @@ import java.util.List;
 import me.tornado.android.patternlock.PatternView;
 
 
-public class LauncherActivity extends BaseActivity implements RestAPI.RestAPIListenner {
+public class LauncherActivity extends BaseActivity {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
@@ -138,7 +138,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Intent intent = PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
-        arg.putString("username" , mEditUsername.getText().toString() + "@" + "im.proteusiondev.com");
+        arg.putString("username" , mEditUsername.getText().toString().trim());
         intent.putExtras(arg);
         this.startActivity(intent);
 
@@ -149,8 +149,7 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Intent intent= PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_REGISTER);
-       // new RestAPI.PostDataUrl(null, this).execute(RestAPI.POST_REGISTER);
-        arg.putString("username" , mEditUsername.getText().toString());
+        arg.putString("username" , "");
         intent.putExtras(arg);
         startActivity(intent);
     }
@@ -192,37 +191,5 @@ public class LauncherActivity extends BaseActivity implements RestAPI.RestAPILis
         Animation animOut = AnimationUtils.loadAnimation(LauncherActivity.this, R.anim.push_right_out);
         mViewFlipper.setInAnimation(animIn);
         mViewFlipper.setOutAnimation(animOut);
-    }
-
-    @Override
-    public void OnInit() {
-
-    }
-
-    @Override
-    public void OnComplete(String error, String s) {
-        JSONObject mainObject = null;
-        try {
-              mainObject = new JSONObject(s);
-              JSONObject uniObject = mainObject.getJSONObject("data");
-              int  status = mainObject.getInt("status");
-              if(status == 1) {
-                  String username = uniObject.getString("jid");
-                  String password = uniObject.getString("xmppPass");
-                  Intent intent = PatternActivity.getStartIntent(this);
-                  Bundle arg = new Bundle();
-                  arg.putInt("type",type_request);
-                  arg.putString("username" , username);
-                  arg.putString("password" , password);
-                  intent.putExtras(arg);
-                  this.startActivity(intent);
-                 // finish();
-              }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 }

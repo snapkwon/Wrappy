@@ -16,16 +16,22 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.WpKAuthDto;
+import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -35,6 +41,7 @@ import net.wrappy.im.util.PatternLockUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.security.KeyPair;
 import java.util.List;
 
@@ -75,8 +82,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         mHandler = new SimpleAlertHandler(this);
 
         Bundle arg= getIntent().getExtras();
-        type_request = arg.getInt("type");
-        username = arg.getString("username");
+        if (arg!=null) {
+            type_request = arg.getInt("type", 0);
+            username = arg.getString("username", "");
+        }
+
         if(type_request == REQUEST_CODE_LOGIN)
         {
             this.setTypePattern(TYPE_NOCONFIRM);
@@ -87,41 +97,6 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         {
             this.setTypePattern(TYPE_CONFIRM);
             actionbar.setTitle("Registration");
-        }
-      //  username = arg.getString("username");
-       // password = arg.getString("password");
-        dialog = new ProgressDialog(PatternActivity.this);
-        dialog.setCancelable(false);
-        if(type_request == REQUEST_CODE_REGISTER) {
-            new RestAPI.PostDataUrl(null, new RestAPI.RestAPIListenner() {
-                @Override
-                public void OnInit() {
-                    dialog.setMessage("waiting");
-                    dialog.show();
-                }
-
-                @Override
-                public void OnComplete(String error, String s) {
-                    JSONObject mainObject = null;
-                    try {
-                        if (dialog != null && dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
-                        mainObject = new JSONObject(s);
-                        JSONObject uniObject = mainObject.getJSONObject("data");
-                        int status = mainObject.getInt("status");
-                        if (status == 1) {
-                            username = uniObject.getString("jid");
-                            password = uniObject.getString("xmppPass");
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }).execute(RestAPI.POST_REGISTER);
         }
     }
     @Override
@@ -143,53 +118,33 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         password = PatternUtils.patternToString(pattern);
         if(type_request == REQUEST_CODE_REGISTER) {
 
-            // password = PatternUtils.patternToString(pattern);
-
-            JsonArray jsonArray = new JsonArray();
-
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("UserName", username);
-            jsonObject.addProperty("PassWord", password);
-
-
-            jsonArray.add(jsonObject);
-
-            new RestAPI.PutDataUrl(jsonArray.toString(), new RestAPI.RestAPIListenner() {
-                @Override
-                public void OnInit() {
-                    dialog.setMessage("waiting");
-                    dialog.show();
-                }
-
-                @Override
-                public void OnComplete(String error, String s) {
-                    JSONObject mainObject = null;
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
-                    try {
-                        mainObject = new JSONObject(s);
-                        if (mainObject.getInt("status") == STATUS_SUCCESS) {
-                            //  doExistingAccountRegister(username, password);
-                            showQuestionScreen();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).execute(RestAPI.PUT_UPDATEPASS);
+            showQuestionScreen();
         }
 
         else if(type_request == REQUEST_CODE_LOGIN)
         {
+            String url = RestAPI.loginUrl(username,password);
+            RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
-            doExistingAccountRegister(username,password);
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    try {
+                        if (!RestAPI.checkHttpCode(httpCode)) {
+                            AppFuncs.alert(getApplicationContext(),s,true);
+                            return;
+                        }
+                        JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                        Gson gson = new Gson();
+                        WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+                        wpkToken.saveToken(getApplicationContext());
+                        doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+            });
         }
-
-     //   Intent returnIntent = new Intent();
-      //  returnIntent.putExtra("result", PatternUtils.patternToString(pattern));
-      //  setResult(this.RESULT_OK,returnIntent);
-       // finish();
     }
 
 
@@ -208,10 +163,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     {
 
         Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
-        Bundle arg = new Bundle();
-        arg.putString("username",username);
-        arg.putString("password",password);
-        intent.putExtras(arg);
+        WpKAuthDto wpKAuthDto = new WpKAuthDto(password);
+        intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
@@ -227,6 +180,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             dialog.show();
         }
     }
+
+
 
     private class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 
@@ -251,7 +206,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
                 if(account!=null) {
                     XmppConnection t = new XmppConnection(PatternActivity.this);
-                    status =  t.check_login(password,result.accountId,result.providerId);
+                    status =  t.check_login(account[1],result.accountId,result.providerId);
                     if(status == 200)
                     {
                         ImApp mApp = (ImApp)getApplication();
