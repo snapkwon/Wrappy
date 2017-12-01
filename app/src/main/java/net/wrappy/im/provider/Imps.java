@@ -2526,6 +2526,24 @@ public class Imps {
         return result;
     }
 
+    public static int updateMessageBodyInDb(ContentResolver resolver, long threadId, String msgId, String body) {
+        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
+        builder.appendPath(String.valueOf(threadId));
+
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        int result = resolver.update(builder.build(), values, Messages._ID + "=?", new String[] {msgId});
+
+        if (result == 0)
+        {
+            builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
+            builder.appendPath(msgId);
+            result = resolver.update(builder.build(), values, null, null);
+        }
+
+        return result;
+    }
+
     public static boolean messageExists (ContentResolver resolver, String id)
     {
         boolean result = false;
