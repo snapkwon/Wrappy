@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <net.ironrabbit.type.CustomTypefaceEditText
+        android:id="@+id/edt_search_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/search_background"
+        android:drawableLeft="@drawable/ic_search_white_24dp"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:hint="@string/search_username"
+        android:imeOptions="actionSearch"
+        android:lines="1"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lstContacts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

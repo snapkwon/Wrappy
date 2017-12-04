@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -38,11 +37,11 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.KeyPair;
@@ -161,7 +160,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                     Gson gson = new Gson();
                                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                                     wpkToken.saveToken(getApplicationContext());
-                                    doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
+                                    doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
                                 }catch (Exception ex) {
                                     if (dialog != null && dialog.isShowing()) {
                                         dialog.dismiss();
@@ -251,7 +250,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
+            mExistingAccountTask.execute(username, password, edUsername.getText().toString());
         }
     }
 
@@ -264,7 +263,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
 
                 String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1]);
+                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1], account[2]);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

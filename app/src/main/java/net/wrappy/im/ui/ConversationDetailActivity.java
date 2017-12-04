@@ -18,14 +18,17 @@ package net.wrappy.im.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -52,9 +55,22 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-//import com.bumptech.glide.Glide;
-
+import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.BuildConfig;
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.tasks.AddContactAsyncTask;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.SecureMediaStore;
+import net.wrappy.im.util.SystemServices;
+
+import org.apache.commons.codec.DecoderException;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,22 +82,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import net.wrappy.im.service.IChatSession;
+import butterknife.OnClick;
 
-import net.ironrabbit.type.CustomTypefaceManager;
-import net.wrappy.im.BuildConfig;
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.util.SecureMediaStore;
-
-import net.wrappy.im.util.SystemServices;
-
-import org.apache.commons.codec.DecoderException;
-import org.ocpsoft.prettytime.PrettyTime;
+//import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity {
+
+    public static Intent getStartIntent(Context context) {
+        return new Intent(context, ConversationDetailActivity.class);
+    }
 
     private long mChatId = -1;
     private String mAddress = null;
@@ -138,11 +147,10 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.awesome_activity_detail);
         super.onCreate(savedInstanceState);
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        setContentView(R.layout.awesome_activity_detail);
 
         mApp = (ImApp) getApplication();
 
@@ -174,14 +182,12 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     public void applyStyleForToolbar() {
-
-
         getSupportActionBar().setTitle(mConvoView.getTitle());
         mApp = ((ImApp) getApplicationContext());
         Drawable avatar = null;
         try {
 
-            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + "@im.proteusiondev.com", ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
+            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + Constant.EMAIL_DOMAIN, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
         } catch (DecoderException e) {
             e.printStackTrace();
         }
@@ -264,21 +270,36 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp) getApplication();
 
-        mChatId = intent.getIntExtra("id", -1);
         if (mChatId == -1)
             mChatId = intent.getLongExtra("id", -1);
-
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 
-        if (mChatId != -1) {
-            mConvoView.bindChat(mChatId, mAddress, mNickname);
-            mConvoView.startListening();
-            applyStyleForToolbar();
-        } else {
-            finish();
-        }
+//        if (mChatId != -1) {
+        android.app.LoaderManager loaderManager = getLoaderManager();
+        MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
+        loaderManager.initLoader(1, null, loaderCallbacks);
+//        } else {
+//            finish();
+//        }
 
+    }
+
+    @OnClick({R.id.btnAddFriend})
+    protected void onClickAddFriend(View v) {
+        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mAddress), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                mConvoView.updateStatusAddContact();
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null);
+            }
+        });
+    }
+
+    private void startChatting() {
+        mConvoView.bindChat(mChatId, mNickname);
+        mConvoView.startListening();
+        applyStyleForToolbar();
     }
 
     public void collapseToolbar() {
@@ -369,7 +390,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_conference, menu);
+
         if (mConvoView.isGroupChat()) {
             getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
@@ -842,4 +863,49 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+
+    class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+        @Override
+        public android.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            StringBuilder buf = new StringBuilder();
+            buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
+            buf.append(" and ");
+            buf.append(Imps.Contacts.NICKNAME).append(" = '").append(mNickname).append("'");
+
+            Uri baseUri = Imps.Contacts.CONTENT_URI;
+            Uri.Builder builder = baseUri.buildUpon();
+            CursorLoader loader = new CursorLoader(ConversationDetailActivity.this, builder.build(), CHAT_PROJECTION,
+                    buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
+
+            return loader;
+        }
+
+        @Override
+        public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
+
+            if (data == null || data.getCount() == 0) {
+                mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
+            } else {
+                if(mChatId == -1 && data.moveToFirst())
+                    mChatId = data.getLong(0);
+                startChatting();
+            }
+        }
+
+        @Override
+        public void onLoaderReset(android.content.Loader<Cursor> loader) {
+
+        }
+
+        public final String[] CHAT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
+                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
+                Imps.Contacts.SUBSCRIPTION_TYPE,
+                Imps.Contacts.SUBSCRIPTION_STATUS,
+                Imps.Presence.PRESENCE_STATUS,
+                Imps.Presence.PRESENCE_CUSTOM_STATUS,
+                Imps.Chats.LAST_MESSAGE_DATE,
+                Imps.Chats.LAST_UNREAD_MESSAGE
+        };
+    }
 }

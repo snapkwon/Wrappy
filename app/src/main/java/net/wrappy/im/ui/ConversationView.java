@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -86,9 +85,9 @@ import android.widget.Toast;
 import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
-
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
+import net.wrappy.im.R;
 import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
@@ -110,7 +109,6 @@ import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ISubscriptionListener;
 import net.wrappy.im.service.ImServiceConstants;
-import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.MessageListItem.DeliveryState;
@@ -137,7 +135,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import net.wrappy.im.R;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -165,6 +164,13 @@ public class ConversationView {
     public static final int SUBSCRIPTION_TYPE_COLUMN = 9;
     public static final int SUBSCRIPTION_STATUS_COLUMN = 10;
     public static final int AVATAR_COLUMN = 11;
+
+    @BindView(R.id.txtStatus)
+    TextView txtInviteStatus;
+    @BindView(R.id.imgStatus)
+    ImageView imgStatus;
+    @BindView(R.id.btnAddFriend)
+    Button btnAddContact;
 
     //static final int MIME_TYPE_COLUMN = 9;
 
@@ -228,7 +234,7 @@ public class ConversationView {
     private int mViewType;
 
     private static final int VIEW_TYPE_CHAT = 1;
-    private static final int VIEW_TYPE_INVITATION = 2;
+    public static final int VIEW_TYPE_INVITATION = 2;
     private static final int VIEW_TYPE_SUBSCRIPTION = 3;
 
     //    private static final long SHOW_TIME_STAMP_INTERVAL = 30 * 1000; // 15 seconds
@@ -258,9 +264,15 @@ public class ConversationView {
         }
     }
 
+    public boolean isSelected() {
+        return mIsSelected;
+    }
 
     public void setSelected(boolean isSelected) {
         mIsSelected = isSelected;
+
+        if (mViewType != VIEW_TYPE_CHAT)
+            return;
 
         if (mIsSelected) {
             //  bindChat(mLastChatId);
@@ -346,6 +358,11 @@ public class ConversationView {
             sendTypingStatus(false);
         }
 
+    }
+
+    public void updateStatusAddContact() {
+        btnAddContact.setVisibility(View.GONE);
+        txtInviteStatus.setVisibility(View.VISIBLE);
     }
 
     private int getOtrPolicy() {
@@ -611,7 +628,6 @@ public class ConversationView {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -626,7 +642,6 @@ public class ConversationView {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -751,6 +766,7 @@ public class ConversationView {
 
         mActivity = activity;
         mContext = activity;
+        ButterKnife.bind(this, mActivity);
 
         mApp = (ImApp) mActivity.getApplication();
         mHandler = new ChatViewHandler(mActivity);
@@ -1306,47 +1322,6 @@ public class ConversationView {
 
     }
 
-    private void reapproveSubscription() {
-
-
-        new AsyncTask<String, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(String... strings) {
-
-
-                try {
-                    if (mConn != null) {
-                        IContactListManager listManager = mConn.getContactListManager();
-
-                        if (listManager != null)
-                            listManager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress), mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
-
-                        IChatSessionManager manager = mConn.getChatSessionManager();
-
-                        if (manager != null)
-                            mCurrentChatSession = manager.getChatSession(mRemoteAddress);
-
-                    }
-
-                } catch (RemoteException e) {
-                    Log.e(ImApp.LOG_TAG, "error init otr", e);
-
-                }
-
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-
-                updateWarningView();
-            }
-        }.execute();
-
-
-    }
-
     public String getTitle() {
         return mRemoteNickname;
 
@@ -1413,7 +1388,7 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId, String address, String name) {
+    public void bindChat(long chatId, String name) {
         //log("bind " + this + " " + chatId);
 
         mLastChatId = chatId;
@@ -1497,36 +1472,6 @@ public class ConversationView {
         }.start();
     }
 
-
-    public void bindInvitation(long invitationId) {
-        Uri uri = ContentUris.withAppendedId(Imps.Invitation.CONTENT_URI, invitationId);
-        ContentResolver cr = mActivity.getContentResolver();
-        Cursor cursor = cr.query(uri, INVITATION_PROJECT, null, null, null);
-        try {
-            if (!cursor.moveToFirst()) {
-                if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                    log("Failed to query invitation: " + invitationId);
-                }
-                //  mNewChatActivity.finish();
-            } else {
-                setViewType(VIEW_TYPE_INVITATION);
-
-                mInvitationId = cursor.getLong(INVITATION_ID_COLUMN);
-                mProviderId = cursor.getLong(INVITATION_PROVIDER_COLUMN);
-                String sender = cursor.getString(INVITATION_SENDER_COLUMN);
-
-                TextView mInvitationText = (TextView) mActivity.findViewById(R.id.txtInvitation);
-                mInvitationText.setText(mContext.getString(R.string.invitation_prompt, sender));
-                //  mNewChatActivity.setTitle(mContext.getString(R.string.chat_with, sender));
-            }
-        } finally {
-            cursor.close();
-        }
-
-
-    }
-
-
     /**
      * public void bindSubscription(long providerId, String from) {
      * mProviderId = providerId;
@@ -1545,7 +1490,7 @@ public class ConversationView {
      */
 
 
-    private void setViewType(int type) {
+    public void setViewType(int type) {
         mViewType = type;
         if (type == VIEW_TYPE_CHAT) {
             mActivity.findViewById(R.id.invitationPanel).setVisibility(View.GONE);
@@ -1554,7 +1499,6 @@ public class ConversationView {
         } else if (type == VIEW_TYPE_INVITATION) {
             //setChatViewEnabled(false);
             mActivity.findViewById(R.id.invitationPanel).setVisibility(View.VISIBLE);
-            mActivity.findViewById(R.id.btnAccept).requestFocus();
         } else if (type == VIEW_TYPE_SUBSCRIPTION) {
             //setChatViewEnabled(false);
             //   mActivity.findViewById(R.id.subscription).setVisibility(View.VISIBLE);
@@ -1763,6 +1707,7 @@ public class ConversationView {
 
         mContext.startActivity(intent);
     }
+
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
@@ -3082,7 +3027,7 @@ public class ConversationView {
                 protected void onPostExecute(Long chatId) {
 
                     if (chatId != -1 && true) {
-                        Intent intent = new Intent(mActivity, ConversationDetailActivity.class);
+                        Intent intent = ConversationDetailActivity.getStartIntent(mActivity);
                         intent.putExtra("id", chatId);
                         mActivity.startActivity(intent);
                     }
