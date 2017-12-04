@@ -448,6 +448,7 @@
             android:name="net.wrappy.im.ui.ConversationDetailActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="net.wrappy.im.ui.ContactListActivity"
