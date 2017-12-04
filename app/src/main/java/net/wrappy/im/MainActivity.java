@@ -341,18 +341,18 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         applyStyleColors ();
-         if(mViewPager.getCurrentItem() == 4)
+         if(mViewPager.getCurrentItem() == 3)
          {
-             if(!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(4).equals(mwelcome_wallet_fragment)) {
+             if(!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
                  adapter.mFragments.remove(mwelcome_wallet_fragment);
                  fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
                  mwalletFragment = new WalletFragment();
                  adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
                  adapter.notifyDataSetChanged();
                  mViewPager.setAdapter(adapter);
-                 mViewPager.setCurrentItem(4);
+                 mViewPager.setCurrentItem(3);
              }
-             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(4).equals(mwalletFragment))
+             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment))
              {
                  adapter.mFragments.remove(mwalletFragment);
                  fragmentManager.beginTransaction().remove(mwalletFragment).commit();
@@ -360,7 +360,7 @@ public class MainActivity extends BaseActivity {
                  adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
                  adapter.notifyDataSetChanged();
                  mViewPager.setAdapter(adapter);
-                 mViewPager.setCurrentItem(4);
+                 mViewPager.setCurrentItem(3);
              }
 
          }
