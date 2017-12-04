@@ -7,7 +7,6 @@ package net.wrappy.im.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -175,7 +174,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         finish();
     }
 
-    private void doExistingAccountRegister (String username , String password)
+    private void doExistingAccountRegister (String username , String password, String accountName)
     {
 
         if (mExistingAccountTask == null) {

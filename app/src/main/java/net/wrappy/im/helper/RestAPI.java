@@ -1,9 +1,6 @@
 package net.wrappy.im.helper;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Spinner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -16,28 +13,14 @@ import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.util.GiphyAPI;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
