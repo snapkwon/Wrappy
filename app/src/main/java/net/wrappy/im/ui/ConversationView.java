@@ -85,15 +85,15 @@ import android.widget.Toast;
 import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
-
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
+import net.wrappy.im.R;
 import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
-import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -113,6 +113,7 @@ import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.MessageListItem.DeliveryState;
 import net.wrappy.im.ui.MessageListItem.EncryptionState;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -134,11 +135,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import net.wrappy.im.R;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -362,7 +360,7 @@ public class ConversationView {
 
     }
 
-    public void updateStatusAddContact(){
+    public void updateStatusAddContact() {
         btnAddContact.setVisibility(View.GONE);
         txtInviteStatus.setVisibility(View.VISIBLE);
     }
@@ -2732,7 +2730,9 @@ public class ConversationView {
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
                     messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
-
+                    if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                        doConference(body, id, timestamp);
+                    }
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -3082,5 +3082,53 @@ public class ConversationView {
         }
     }
 
+    public void startAudioConference() {
+        startAudioConference(null);
+    }
 
+    public void startAudioConference(String id) {
+        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.AUDIO);
+        ConferenceActivity.startAudioCall(mContext, roomId);
+    }
+
+    public void startVideoConference() {
+        startVideoConference(null);
+    }
+
+    public void startVideoConference(String id) {
+        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        ConferenceActivity.startVideoCall(mContext, roomId);
+    }
+
+    private String getRoomId(String id, ConferenceMessage.ConferenceType type) {
+        String roomId;
+        if (!TextUtils.isEmpty(id)) {
+            roomId = id;
+        } else {
+            ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
+            sendMessageAsync(message.toString());
+            roomId = message.getRoomId();
+        }
+        return roomId;
+    }
+
+    private void doConference(String body, long id, long timestamp) {
+        ConferenceMessage conference = new ConferenceMessage(body);
+        if (!conference.isEnded()) {
+            conference.endCall();
+            body = conference.toString();
+            Imps.updateMessageBodyInDb(mActivity.getContentResolver(), mLastChatId, String.valueOf(id), body);
+            mMessageAdapter.setNeedRequeryCursor(true);
+            //Skip for expired conference
+            boolean expiredCall = ((System.currentTimeMillis() - timestamp) > SHOW_MEDIA_DELIVERY_INTERVAL);
+            if (!expiredCall) {
+                log("doConference");
+                if (conference.isAudio()) {
+                    startAudioConference(conference.getRoomId());
+                } else {
+                    startVideoConference(conference.getRoomId());
+                }
+            }
+        }
+    }
 }
