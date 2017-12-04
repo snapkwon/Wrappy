@@ -125,7 +125,7 @@ public class RestAPI {
                 .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                Debug.d(url, (result != null) ? result.getResult() : "");
+                Debug.d((result != null) ? result.getResult() : "");
                 listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
             }
         });
@@ -133,7 +133,8 @@ public class RestAPI {
 
     public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context, url);
-        Debug.d(url);
+        Debug.d( header);
+        Debug.d(url, header);
         Ion.with(context).load(url).addHeader("Authorization", header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {

@@ -24,12 +24,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
+import android.os.AsyncTask;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.Contact;
@@ -39,13 +43,17 @@ import net.wrappy.im.model.ContactListManager;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IContactList;
 import net.wrappy.im.service.IContactListListener;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.ISubscriptionListener;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.RemoteImService;
+import net.wrappy.im.util.Constant;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -743,9 +751,54 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
-            // TungNP: auto approve friend
+            // TungNP: added to auto approve friend
+            final String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
 
-//            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+            new AsyncTask<String, Void, Boolean>()
+            {
+                @Override
+                protected Boolean doInBackground(String... strings) {
+
+
+                    try {
+                        if (mConn != null) {
+                            IContactListManager listManager = mConn.getContactListManager();
+
+                            if (listManager != null)
+                                listManager.approveSubscription(new Contact(new XmppAddress(username), username + Constant.EMAIL_DOMAIN, Imps.Contacts.TYPE_NORMAL));
+
+                            IChatSessionManager manager = mConn.getChatSessionManager();
+
+                            if (manager != null) {
+                                IChatSession session = manager.getChatSession(username);
+
+                                if (session != null) {
+
+                                    IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
+
+                                    if (otrChatSession != null) {
+                                        otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
+                                    }
+                                }
+                            }
+
+                        }
+
+                    } catch (RemoteException e) {
+                        Log.e(ImApp.LOG_TAG, "error init otr", e);
+
+                    }
+
+                    return true;
+                }
+
+                @Override
+                protected void onPostExecute(Boolean success) {
+                    super.onPostExecute(success);
+
+
+                }
+            }.execute();
 //            if (!isSubscribed(username)) {
 //
 //                String nickname = from.getName();
@@ -760,19 +813,19 @@ public class ContactListManagerAdapter extends
 //                    }
 //                });
 //
-//                if (!hadListener) {
-//                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
-//                            ContentUris.parseId(uri), username, nickname);
-//                }
+////                if (!hadListener) {
+////                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
+////                            ContentUris.parseId(uri), username, nickname);
+////                }
 //            }
-//            else
-            {
-                try {
-                    Thread.sleep(2000);//wait two seconds
-                }
-                catch(Exception e){}
-                approveSubscription(from);
-            }
+////            else
+//            {
+//                try {
+//                    Thread.sleep(2000);//wait two seconds
+//                }
+//                catch(Exception e){}
+//                approveSubscription(from);
+//            }
         }
 
         public void onUnSubScriptionRequest(final Contact from, long providerId, long accountId) {

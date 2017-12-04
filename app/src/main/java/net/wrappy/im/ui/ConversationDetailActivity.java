@@ -152,7 +152,7 @@ public class ConversationDetailActivity extends BaseActivity {
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        mApp = (ImApp)getApplication();
+        mApp = (ImApp) getApplication();
 
         mConvoView = new ConversationView(this);
 
@@ -270,20 +270,18 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mApp = (ImApp) getApplication();
 
-        mChatId = intent.getLongExtra("id", -1);
         if (mChatId == -1)
             mChatId = intent.getLongExtra("id", -1);
-
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 
-        if (mChatId != -1) {
-            android.app.LoaderManager loaderManager = getLoaderManager();
-            MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
-            loaderManager.initLoader(1, null, loaderCallbacks);
-        } else {
-            finish();
-        }
+//        if (mChatId != -1) {
+        android.app.LoaderManager loaderManager = getLoaderManager();
+        MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
+        loaderManager.initLoader(1, null, loaderCallbacks);
+//        } else {
+//            finish();
+//        }
 
     }
 
@@ -871,6 +869,8 @@ public class ConversationDetailActivity extends BaseActivity {
         public android.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
             buf.append(Imps.Contacts.TYPE).append('=').append(Imps.Contacts.TYPE_NORMAL);
+            buf.append(" and ");
+            buf.append(Imps.Contacts.NICKNAME).append(" = '").append(mNickname).append("'");
 
             Uri baseUri = Imps.Contacts.CONTENT_URI;
             Uri.Builder builder = baseUri.buildUpon();
@@ -886,6 +886,8 @@ public class ConversationDetailActivity extends BaseActivity {
             if (data == null || data.getCount() == 0) {
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
             } else {
+                if(mChatId == -1 && data.moveToFirst())
+                    mChatId = data.getLong(0);
                 startChatting();
             }
         }

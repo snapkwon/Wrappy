@@ -79,7 +79,6 @@ public class ContactAdapter
                 public void onClick(View v) {
                     if (wpKMemberDto.getXMPPAuthDto() != null) {
                         Intent intent = ConversationDetailActivity.getStartIntent(mContext);
-                        intent.putExtra("id", wpKMemberDto.getXMPPAuthDto().getId());
                         intent.putExtra("nickname", wpKMemberDto.getXMPPAuthDto().getAccount());
                         intent.putExtra("address", wpKMemberDto.getIdentifier());
 

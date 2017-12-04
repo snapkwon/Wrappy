@@ -1322,47 +1322,6 @@ public class ConversationView {
 
     }
 
-    private void reapproveSubscription() {
-
-
-        new AsyncTask<String, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(String... strings) {
-
-
-                try {
-                    if (mConn != null) {
-                        IContactListManager listManager = mConn.getContactListManager();
-
-                        if (listManager != null)
-                            listManager.approveSubscription(new Contact(new XmppAddress(mRemoteAddress), mRemoteNickname, Imps.Contacts.TYPE_NORMAL));
-
-                        IChatSessionManager manager = mConn.getChatSessionManager();
-
-                        if (manager != null)
-                            mCurrentChatSession = manager.getChatSession(mRemoteAddress);
-
-                    }
-
-                } catch (RemoteException e) {
-                    Log.e(ImApp.LOG_TAG, "error init otr", e);
-
-                }
-
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-
-                updateWarningView();
-            }
-        }.execute();
-
-
-    }
-
     public String getTitle() {
         return mRemoteNickname;
 
