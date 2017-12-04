@@ -134,7 +134,12 @@ public class RestAPI {
         .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                try {
+                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
             }
         });
     }
