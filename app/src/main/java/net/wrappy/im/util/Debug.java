@@ -129,27 +129,27 @@ public class Debug {
         }
     }
 
-    private static final String TAG = "Hit";
-    public static boolean DEBUGABLE = BuildConfig.DEBUG;
+    private static final String TAG = "Wrappy";
+    public static boolean DEBUGGABLE = BuildConfig.DEBUG;
     public static final String[] FORMAT_STRING = {
             "%d", "%b", "%f", "%l"};
 
 
     public static void d(String msg, Object... objects) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
         d(String.format(wrapSMS(msg), wrapParams(objects)));
     }
 
 
     public static void i(String msg, Object... objects) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
         i(String.format(wrapSMS(msg), wrapParams(objects)));
     }
 
     public static void e(String msg, Object... objects) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
         e(String.format(wrapSMS(msg), wrapParams(objects)));
     }
@@ -162,20 +162,20 @@ public class Debug {
     }
 
     public static final void d(String msg) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
         Log.d(TAG, formatSMS(msg));
     }
 
     public static final void i(String msg) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
 
         Log.i(TAG, formatSMS(msg));
     }
 
     public static final void e(String msg) {
-        if (!DEBUGABLE)
+        if (!DEBUGGABLE)
             return;
 
         Log.e(TAG, formatSMS(msg));

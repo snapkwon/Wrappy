@@ -114,13 +114,18 @@ public class AddContactNewActivity extends BaseActivity {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.d(s);
-                    ArrayList<WpKMemberDto> wpKMemberDtos = new Gson().fromJson(s, new TypeToken<ArrayList<WpKMemberDto>>() {
-                    }.getType());
-                    contactAdapter.setData(wpKMemberDtos);
+                    try {
+                        ArrayList<WpKMemberDto> wpKMemberDtos = new Gson().fromJson(s, new TypeToken<ArrayList<WpKMemberDto>>() {
+                        }.getType());
+                        contactAdapter.setData(wpKMemberDtos);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();

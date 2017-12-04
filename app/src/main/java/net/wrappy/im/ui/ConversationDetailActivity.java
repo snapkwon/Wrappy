@@ -152,8 +152,6 @@ public class ConversationDetailActivity extends BaseActivity {
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        setContentView(R.layout.awesome_activity_detail);
-
         mApp = (ImApp)getApplication();
 
         mConvoView = new ConversationView(this);
@@ -295,7 +293,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN);
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null);
             }
         });
     }

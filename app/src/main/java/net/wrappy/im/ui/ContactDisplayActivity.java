@@ -79,8 +79,12 @@ public class ContactDisplayActivity extends BaseActivity {
         mAccountId = getIntent().getLongExtra("account", -1);
 
         String remoteFingerprint = getIntent().getStringExtra("fingerprint");
-
+    try {// TungNP: finish activity to avoid crash
         mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
+    }catch (Exception e) {
+        e.printStackTrace();
+        finish();
+    }
 
         if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
