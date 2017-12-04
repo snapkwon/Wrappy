@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -42,9 +41,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.ImConnection;
@@ -57,12 +55,9 @@ import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SignoutActivity;
 import net.wrappy.im.util.LogCleaner;
-import net.wrappy.im.util.XmppUriHelper;
 
 import java.util.HashMap;
 import java.util.Locale;
-
-import net.wrappy.im.R;
 
 public class AccountActivity extends BaseActivity {
 
@@ -944,13 +939,6 @@ public class AccountActivity extends BaseActivity {
                 }
             }
         }.execute();
-    }
-
-    public void showQR ()
-    {
-           String localFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(mOriginalUserAccount);
-           String uri = XmppUriHelper.getUri(mOriginalUserAccount, localFingerprint);
-           new IntentIntegrator(this).shareText(uri);
     }
 
     private void setAccountKeepSignedIn(final boolean rememberPass) {

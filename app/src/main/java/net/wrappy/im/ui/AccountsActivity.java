@@ -46,7 +46,8 @@ public class AccountsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_accounts, menu);
+        //Remove add more accounts in wrappy
+        //getMenuInflater().inflate(R.menu.menu_accounts, menu);
         return true;
     }
 

@@ -447,6 +447,7 @@
             android:name=".ui.ConversationDetailActivity"
             android:exported="false"
             android:theme="@style/AppThemeNoAction"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".ui.ContactListActivity"
@@ -495,17 +496,20 @@
         </provider>
 
         <activity
-            android:name=".ui.LauncherActivity"
-            android:label="@string/title_activity_launcher" />
+            android:name="net.wrappy.im.ui.LauncherActivity"
+            android:label="@string/title_activity_launcher"></activity>
+
         <activity
-            android:name=".ui.IntroActivity"
+            android:name="net.wrappy.im.ui.IntroActivity"
             android:label="@string/title_activity_launcher"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/NoActionBar"></activity>
         <activity
-            android:name=".ui.PatternActivity"
-            android:launchMode="singleTop" />
-        <activity android:name=".ui.Welcome_Wallet_Activity" />
-        <activity android:name=".ui.Create_New_Wallet" />
+            android:name="net.wrappy.im.ui.PatternActivity"
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".ui.qr.QrScanFriendActivity" />
+        <activity android:name=".ui.ConferenceActivity"
+            android:launchMode="singleTop"/>
+
         <activity
             android:name=".ui.Wallet_Complete_Activity"
             android:label="@string/title_activity_wallet__complete_" />

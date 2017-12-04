@@ -48,6 +48,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.provider.Imps;
@@ -252,6 +253,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         walletDBHelper = new WalletDBHelper(this.getApplicationContext());
         WalletDatabaseManager.initializeInstance(walletDBHelper);
 
+
+        RestAPI.initIon(getApplicationContext());
 
     }
 
