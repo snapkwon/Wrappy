@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/icon_completed_wallet"
+        android:layout_marginTop="55dp"
+      />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="WALLET CREATED SUCCESSFULLY"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#676767"
+        android:textAlignment="center"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:textSize="16sp"
+        android:text="We hightly recommend you backup the Wallet or keystore immediately." />
+
+    <Button
+        android:id="@+id/buttonbackup"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/regbtn_states"
+        android:layout_height="wrap_content"
+        android:text="BACKUP NOW"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"/>
+
+
+
+
+    <Button
+        android:id="@+id/buttonthanks"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/whitebtn_states"
+        android:textColor="#666666"
+        android:layout_height="wrap_content"
+        android:text="NO, THANKS"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>

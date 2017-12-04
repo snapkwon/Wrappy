@@ -66,6 +66,9 @@
     <color name="zom_primary">#EA657B</color>
     <color name="search_background">#f4f2f4</color>
 
+    <color name="textethereum">#474C73</color>
+    <color name="textproteusion">#F69033</color>
+
     <array name="zom_colors">
         <item>@color/zom_primary</item>
         <item>@color/holo_grey_light</item>

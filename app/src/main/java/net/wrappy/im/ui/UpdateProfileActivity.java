@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -65,7 +66,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ImageView imgHeader;
     boolean isFlag;
     String user,email,phone,gender,password;
-
+    ProgressDialog dialog;
     Registration registrationData;
 
     @Override
@@ -127,6 +128,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
+                dialog = new ProgressDialog(UpdateProfileActivity.this);
+                dialog.setMessage(getString(R.string.waiting_dialog));
+                dialog.show();
                 WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone);
 
                 registrationData.setWpKMemberDto(wpKMemberDto);
@@ -147,6 +151,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                 try {
                                     if (error!=null && !error.isEmpty()) {
                                         AppFuncs.alert(getApplicationContext(),error,true);
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        return;
                                     }
                                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                                     Gson gson = new Gson();
@@ -154,6 +162,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                     wpkToken.saveToken(getApplicationContext());
                                     doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
                                 }catch (Exception ex) {
+                                    if (dialog != null && dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
                                     ex.printStackTrace();
                                 }
                             }
@@ -170,14 +181,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == btnCameraAvatar.getId()) {
                 if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
 
                         AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
 
                     } else {
                         ActivityCompat.requestPermissions(UpdateProfileActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                new String[]{Manifest.permission.CAMERA},
                                 199);
                 }
             }
@@ -272,7 +283,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         protected void onPostExecute(OnboardingAccount account) {
 
             // mUsername = account.username + '@' + account.domain;
-
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
             ImApp mApp = (ImApp)getApplication();
             mApp.setDefaultAccount(account.providerId,account.accountId);
 
@@ -292,12 +305,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (data!=null) {
+                Bitmap photo;
                 if (requestCode==IMAGE_HEADER) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgHeader.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgHeader.setImageBitmap(photo);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgAvatar.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgAvatar.setImageBitmap(photo);
                 }
             }
         }catch (Exception ex) {
@@ -305,9 +327,4 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
 }

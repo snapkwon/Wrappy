@@ -5,6 +5,7 @@
 
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,7 +49,7 @@ import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
 public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
 
-    public static Intent getStartIntent(Context context){
+    public static Intent getStartIntent(Activity context){
         return new Intent(context, PatternActivity.class);
     }
 
@@ -118,14 +119,20 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         else if(type_request == REQUEST_CODE_LOGIN)
         {
+            dialog = new ProgressDialog(PatternActivity.this);
+            dialog.setMessage(getString(R.string.waiting_dialog));
+            dialog.show();
             String url = RestAPI.loginUrl(username,password);
-            RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
 
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
                         if (!RestAPI.checkHttpCode(httpCode)) {
                             AppFuncs.alert(getApplicationContext(),s,true);
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
                             return;
                         }
                         JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
@@ -134,6 +141,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         wpkToken.saveToken(getApplicationContext());
                         doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
                     }catch (Exception ex) {
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
                         ex.printStackTrace();
                     }
 
@@ -165,16 +175,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         finish();
     }
 
-    private void doExistingAccountRegister (String username , String password, String accountName)
+    private void doExistingAccountRegister (String username , String password)
     {
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new PatternActivity.ExistingAccountTask();
             mExistingAccountTask.execute(username, password, accountName);
-            dialog.setMessage(getString(R.string.waiting_dialog));
-            dialog.show();
         }
     }
+
+
 
     private class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 

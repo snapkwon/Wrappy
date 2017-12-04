@@ -1,6 +1,9 @@
 package net.wrappy.im.helper;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Spinner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -13,15 +16,28 @@ import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.GiphyAPI;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
@@ -117,25 +133,26 @@ public class RestAPI {
         return header;
     }
 
-    public static void PostDataWrappy(Context context, JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
-        Debug.d(url, jsonObject != null ? jsonObject.toString() : "");
-        String header = getHeaderHttps(context, url);
-        Ion.with(context).load(url).addHeader("Authorization", header)
-                .setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject)
-                .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+        String header = getHeaderHttps(context,url);
+        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header)
+                .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
+        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                Debug.d((result != null) ? result.getResult() : "");
-                listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                try {
+                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
             }
         });
     }
 
     public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
-        String header = getHeaderHttps(context, url);
-        Debug.d( header);
-        Debug.d(url, header);
-        Ion.with(context).load(url).addHeader("Authorization", header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        String header = getHeaderHttps(context,url);
+        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);

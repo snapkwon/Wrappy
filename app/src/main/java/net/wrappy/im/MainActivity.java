@@ -62,6 +62,7 @@ import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
 import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -82,6 +83,8 @@ import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MoreFragment;
+import net.wrappy.im.ui.WalletFragment;
+import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
@@ -99,6 +102,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
+import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
 /**
  */
@@ -119,6 +123,10 @@ public class MainActivity extends BaseActivity {
     private ContactsListFragment mContactList;
     private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
+    private Welcome_Wallet_Fragment mwelcome_wallet_fragment;
+    private WalletFragment mwalletFragment;
+    Adapter adapter;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,15 +157,29 @@ public class MainActivity extends BaseActivity {
         mMoreFragment = new MoreFragment();
         mAccountFragment = new AccountFragment();
 
-        Adapter adapter = new Adapter(getSupportFragmentManager());
+        fragmentManager = getSupportFragmentManager();
+        adapter = new Adapter(fragmentManager);
         adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
         adapter.addFragment(mMoreFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
 
         mAccountFragment = new AccountFragment();
-      //  fragAccount.setArguments();
+        //  fragAccount.setArguments();
 
         adapter.addFragment(mAccountFragment, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
+
+
+        if(!Wallet.isNewWallet(this.getFilesDir())) {
+            mwalletFragment = new WalletFragment();
+            adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+        }
+        else
+        {
+            mwelcome_wallet_fragment= new Welcome_Wallet_Fragment();
+            adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+
+        }
+
 
         mViewPager.setAdapter(adapter);
 
@@ -179,11 +201,16 @@ public class MainActivity extends BaseActivity {
         tab.setIcon(R.drawable.ic_face_white_24dp);
         mTabLayout.addTab(tab);
 
+        tab = mTabLayout.newTab();
+        tab.setIcon(R.drawable.ic_wallet);
+        mTabLayout.addTab(tab);
+
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mViewPager.setCurrentItem(tab.getPosition());
+
 
                 setToolbarTitle(tab.getPosition());
                 applyStyleColors ();
@@ -311,7 +338,29 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         applyStyleColors ();
+         if(mViewPager.getCurrentItem() == 4)
+         {
+             if(!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(4).equals(mwelcome_wallet_fragment)) {
+                 adapter.mFragments.remove(mwelcome_wallet_fragment);
+                 fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
+                 mwalletFragment = new WalletFragment();
+                 adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+                 adapter.notifyDataSetChanged();
+                 mViewPager.setAdapter(adapter);
+                 mViewPager.setCurrentItem(4);
+             }
+             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(4).equals(mwalletFragment))
+             {
+                 adapter.mFragments.remove(mwalletFragment);
+                 fragmentManager.beginTransaction().remove(mwalletFragment).commit();
+                 mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
+                 adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+                 adapter.notifyDataSetChanged();
+                 mViewPager.setAdapter(adapter);
+                 mViewPager.setCurrentItem(4);
+             }
 
+         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -504,6 +553,9 @@ public class MainActivity extends BaseActivity {
                         Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
                     }
                 }
+            }
+             else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
+                mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
@@ -748,6 +800,11 @@ public class MainActivity extends BaseActivity {
 
         public Adapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public void replaceFragment(int index,Fragment fragment)
+        {
+            mFragments.set(index , fragment);
         }
 
         public void addFragment(Fragment fragment, String title, int icon) {
