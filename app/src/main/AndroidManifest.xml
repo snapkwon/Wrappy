@@ -520,6 +520,7 @@
         <activity android:name=".ui.PackupWalletAccount" />
         <activity android:name=".ui.ChangePasswordAccount" />
         <activity android:name=".ui.TransactionDetailActivity"></activity>
+        <activity android:name=".ui.Create_New_Wallet"></activity>
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
