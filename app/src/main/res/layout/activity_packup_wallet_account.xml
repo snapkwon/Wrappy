@@ -9,14 +9,14 @@
     tools:context="net.wrappy.im.ui.PackupWalletAccount">
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/imageQRcode"
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:layout_gravity="center"
         android:background="@drawable/ic_launcher" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnsaveQRwallet"
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:text="Save QR Wallet" />

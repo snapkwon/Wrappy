@@ -246,12 +246,14 @@
 
             <net.ironrabbit.type.CustomTypefaceButton
                 android:id="@+id/btnAddFriend"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/btn_red"
+                android:layout_gravity="center"
+                android:background="@drawable/regbtn_states"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:text="@string/add_contact" />
+                android:text="@string/add_contact"
+                android:textColor="@color/Color_White" />
 
         </LinearLayout>
 
