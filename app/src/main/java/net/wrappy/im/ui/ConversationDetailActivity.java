@@ -390,7 +390,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        //Add Conference menu item
+        getMenuInflater().inflate(R.menu.menu_conference, menu);
         if (mConvoView.isGroupChat()) {
             getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
