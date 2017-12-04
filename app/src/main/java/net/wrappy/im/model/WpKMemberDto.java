@@ -1,13 +1,17 @@
 package net.wrappy.im.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by ben on 30/11/2017.
  */
 
 public class WpKMemberDto {
+    private Long id;
     private String identifier;
     private String email;
     private String mobile;
+    private ArrayList<WpKAuthDto> wpKAuthDtoList;
 
     public WpKMemberDto(String identifier, String email, String mobile) {
         this.identifier = identifier;
@@ -15,7 +19,16 @@ public class WpKMemberDto {
         this.mobile = mobile;
     }
 
-    public WpKMemberDto() {}
+    public WpKMemberDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getIdentifier() {
         return identifier;
@@ -39,5 +52,20 @@ public class WpKMemberDto {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public ArrayList<WpKAuthDto> getWpKAuthDtoList() {
+        return wpKAuthDtoList != null ? wpKAuthDtoList : new ArrayList<WpKAuthDto>();
+    }
+
+    public void setWpKAuthDtoList(ArrayList<WpKAuthDto> wpKAuthDtoList) {
+        this.wpKAuthDtoList = wpKAuthDtoList;
+    }
+
+    public WpKAuthDto getXMPPAuthDto() {
+        for (WpKAuthDto wpKAuthDto : getWpKAuthDtoList())
+            if ("XMPP".equals(wpKAuthDto.getMethod()))
+                return wpKAuthDto;
+        return null;
     }
 }

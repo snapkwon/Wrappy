@@ -192,6 +192,8 @@ public class Imps {
          * <P>Type: INTEGER</P>
          */
         String LAST_LOGIN_STATE = "last_login_state";
+
+        String ACCOUNT_NAME = "account_name";
     }
 
     /** This table contains the IM accounts. */
@@ -240,6 +242,24 @@ public class Imps {
                 try {
                     if (cursor.moveToFirst()) {
                         ret = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
+            return ret;
+        }
+
+        public static final String getAccountName(ContentResolver cr, long accountId) {
+            Cursor cursor = cr.query(CONTENT_URI, new String[] { ACCOUNT_NAME }, _ID + "=" + accountId,
+                    null /* selection args */, null /* sort order */);
+            String ret = null;
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(ACCOUNT_NAME));
                     }
                 } finally {
                     cursor.close();

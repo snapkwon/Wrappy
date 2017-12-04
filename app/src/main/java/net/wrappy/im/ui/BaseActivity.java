@@ -16,6 +16,8 @@ import net.ironrabbit.type.CustomTypefaceManager;
 
 import net.wrappy.im.R;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by n8fr8 on 5/7/16.
  */
@@ -25,6 +27,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ButterKnife.bind(this);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (settings.getBoolean("prefBlockScreenshots",false))

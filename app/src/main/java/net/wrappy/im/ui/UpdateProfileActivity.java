@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,7 +21,6 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -37,11 +37,11 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.KeyPair;
@@ -66,7 +66,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ImageView imgHeader;
     boolean isFlag;
     String user,email,phone,gender,password;
-
+    ProgressDialog dialog;
     Registration registrationData;
 
     @Override
@@ -128,6 +128,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
+                dialog = new ProgressDialog(UpdateProfileActivity.this);
+                dialog.setMessage(getString(R.string.waiting_dialog));
+                dialog.show();
                 WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone);
 
                 registrationData.setWpKMemberDto(wpKMemberDto);
@@ -148,13 +151,20 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                 try {
                                     if (error!=null && !error.isEmpty()) {
                                         AppFuncs.alert(getApplicationContext(),error,true);
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        return;
                                     }
                                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                                     Gson gson = new Gson();
                                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                                     wpkToken.saveToken(getApplicationContext());
-                                    doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
+                                    doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
                                 }catch (Exception ex) {
+                                    if (dialog != null && dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
                                     ex.printStackTrace();
                                 }
                             }
@@ -171,14 +181,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == btnCameraAvatar.getId()) {
                 if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
 
                         AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
 
                     } else {
                         ActivityCompat.requestPermissions(UpdateProfileActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                new String[]{Manifest.permission.CAMERA},
                                 199);
                 }
             }
@@ -240,7 +250,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
+            mExistingAccountTask.execute(username, password, edUsername.getText().toString());
         }
     }
 
@@ -253,7 +263,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
 
                 String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1]);
+                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1], account[2]);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;
@@ -273,7 +283,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         protected void onPostExecute(OnboardingAccount account) {
 
             // mUsername = account.username + '@' + account.domain;
-
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
             ImApp mApp = (ImApp)getApplication();
             mApp.setDefaultAccount(account.providerId,account.accountId);
 
@@ -293,12 +305,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (data!=null) {
+                Bitmap photo;
                 if (requestCode==IMAGE_HEADER) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgHeader.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgHeader.setImageBitmap(photo);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgAvatar.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgAvatar.setImageBitmap(photo);
                 }
             }
         }catch (Exception ex) {
@@ -306,9 +327,4 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
 }

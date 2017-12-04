@@ -1,11 +1,11 @@
 package net.wrappy.im.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -78,5 +78,44 @@ public class Create_New_Wallet extends BaseActivity {
             }
         });
 
+        // show/hide password
+        showHidePassword();
+
+    }
+
+    /**
+     * Show/hide password when click visible icon
+     */
+    private void showHidePassword() {
+        password.setOnTouchListener(new View.OnTouchListener() {
+
+            boolean isShow = false;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    if (motionEvent.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                        if (!isShow) {
+                            // show password
+                            password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            isShow = true;
+                        } else {
+                            // hide password
+                            password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+                            isShow = false;
+                        }
+                        password.setSelection(password.getText().length());
+                        return false;
+                    }
+                }
+                return false;
+            }
+        });
     }
 }

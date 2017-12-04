@@ -53,6 +53,8 @@
         android:textColor="@android:color/black"
         android:background="@drawable/button_border"
         android:textStyle="bold"
+        android:inputType="text"
+        android:imeOptions="actionDone"
         android:gravity="left"
         android:drawableLeft="@drawable/logo_register"
         />

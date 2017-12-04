@@ -49,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -66,8 +67,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import net.wrappy.im.R;
 
 
 public class AddContactActivity extends BaseActivity {
@@ -108,6 +107,7 @@ public class AddContactActivity extends BaseActivity {
         TextView label = (TextView) findViewById(R.id.input_contact_label);
 
         mNewAddress = (EditText) findViewById(R.id.email);
+        mNewAddress.setText("w2qqu70f@im.proteusiondev.com");
         mNewAddress.addTextChangedListener(mTextWatcher);
 
         mNewAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {

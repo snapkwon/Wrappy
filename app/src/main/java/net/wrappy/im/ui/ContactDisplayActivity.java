@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.model.Contact;
@@ -40,18 +41,17 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrDisplayActivity;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
+
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.wrappy.im.R;
-
 
 public class ContactDisplayActivity extends BaseActivity {
 
-    private int mContactId = -1;
+    private long mContactId = -1;
     private String mNickname = null;
     private String mUsername = null;
     private long mProviderId = -1;
@@ -71,7 +71,7 @@ public class ContactDisplayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mContactId = (int) getIntent().getLongExtra("contactId", -1);
+        mContactId = getIntent().getLongExtra("contactId", -1);
 
         mNickname = getIntent().getStringExtra("nickname");
         mUsername = getIntent().getStringExtra("address");
@@ -79,8 +79,12 @@ public class ContactDisplayActivity extends BaseActivity {
         mAccountId = getIntent().getLongExtra("account", -1);
 
         String remoteFingerprint = getIntent().getStringExtra("fingerprint");
-
+    try {// TungNP: finish activity to avoid crash
         mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
+    }catch (Exception e) {
+        e.printStackTrace();
+        finish();
+    }
 
         if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
@@ -346,7 +350,7 @@ public class ContactDisplayActivity extends BaseActivity {
         }
         catch (RemoteException re){}
 
-        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        Intent intent = ConversationDetailActivity.getStartIntent(this);
         intent.putExtra("id", mContactId);
         startActivity(intent);
         finish();
