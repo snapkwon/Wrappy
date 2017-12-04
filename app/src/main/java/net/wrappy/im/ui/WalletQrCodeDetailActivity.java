@@ -71,7 +71,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
                     .margin(2)
                     .color(Color.BLACK)
                     .bgColor(Color.WHITE)
-                    .ecc(ErrorCorrectionLevel.H)
+                    .ecc(ErrorCorrectionLevel.L)
                     .overlayAlpha(255)
                     .overlayXfermode(PorterDuff.Mode.SRC)
                     .encode();
@@ -83,13 +83,16 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
     }
 
     void pickFolder() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+       /* Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         //  startActivityForResult(intent, REQUEST_CODE_OPEN_DIRECTORY);
         try {
             startActivityForResult(intent,PICK_FOLDER_RESULT_CODE);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
+       Intent intent = new Intent(this,PackupWalletAccount.class);
+       startActivity(intent);
+
     }
 
     private void writeToFile(String data ,String path) {
@@ -238,7 +241,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
                                         .margin(2)
                                         .color(Color.BLACK)
                                         .bgColor(Color.WHITE)
-                                        .ecc(ErrorCorrectionLevel.H)
+                                        .ecc(ErrorCorrectionLevel.L)
                                         .overlayAlpha(255)
                                         .overlayXfermode(PorterDuff.Mode.SRC)
                                         .encode();

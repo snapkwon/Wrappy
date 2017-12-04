@@ -65,7 +65,9 @@ public class Wallet_Complete_Activity extends Activity {
         backup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               pickFolder();
+                Intent intent = new Intent(Wallet_Complete_Activity.this,PackupWalletAccount.class);
+                startActivity(intent);
+             //  pickFolder();
             }
         });
     }
@@ -116,7 +118,7 @@ public class Wallet_Complete_Activity extends Activity {
                                         .margin(2)
                                         .color(Color.BLACK)
                                         .bgColor(Color.WHITE)
-                                        .ecc(ErrorCorrectionLevel.H)
+                                        .ecc(ErrorCorrectionLevel.L)
                                         .overlayAlpha(255)
                                         .overlayXfermode(PorterDuff.Mode.SRC)
                                         .encode();
