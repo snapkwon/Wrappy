@@ -179,7 +179,8 @@ public class AccountListItem extends LinearLayout {
 
         if (!cursor.isNull(mActiveAccountIdColumn)) {
 
-            final String nickname = cursor.getString(mActiveAccountNickNameColumn);
+//            final String nickname = cursor.getString(mActiveAccountUserNameColumn);
+            final String nickname = Imps.Account.getAccountName(getContext().getContentResolver(), mAccountId);;
 
             final String activeUserName = cursor.getString(mActiveAccountUserNameColumn);
 
@@ -333,30 +334,30 @@ public class AccountListItem extends LinearLayout {
             final Imps.ProviderSettings.QueryMap settings, boolean showPresence) {
         String secondRowText;
         StringBuffer secondRowTextBuffer = new StringBuffer();
+        boolean isShowProvider = false;//remove provider for second line
 
 
         if (showPresence && presenceString.length() > 0)
         {
             secondRowTextBuffer.append(presenceString);
-            secondRowTextBuffer.append(" - ");
+            if (isShowProvider) {
+                secondRowTextBuffer.append(" - ");
+            }
         }
 
+        if (isShowProvider) {
+            if (settings.getServer() != null && settings.getServer().length() > 0) {
 
-        if (settings.getServer() != null && settings.getServer().length() > 0)
-        {
+                secondRowTextBuffer.append(settings.getServer());
 
-            secondRowTextBuffer.append(settings.getServer());
+            } else if (settings.getDomain() != null & settings.getDomain().length() > 0) {
+                secondRowTextBuffer.append(settings.getDomain());
+            }
 
+
+            if (settings.getPort() != 5222 && settings.getPort() != 0)
+                secondRowTextBuffer.append(':').append(settings.getPort());
         }
-        else if (settings.getDomain() != null & settings.getDomain().length() > 0)
-        {
-            secondRowTextBuffer.append(settings.getDomain());
-        }
-
-
-        if (settings.getPort() != 5222 && settings.getPort() != 0)
-            secondRowTextBuffer.append(':').append(settings.getPort());
-
 
         secondRowText = secondRowTextBuffer.toString();
         return secondRowText;
