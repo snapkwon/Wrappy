@@ -54,7 +54,7 @@
         android:id="@+id/buttonthanks"
         android:layout_width="300dp"
         android:layout_gravity="center"
-        android:background="#fff"
+        android:background="@drawable/whitebtn_states"
         android:textColor="#666666"
         android:layout_height="wrap_content"
         android:text="NO, THANKS"

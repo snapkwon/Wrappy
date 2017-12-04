@@ -64,7 +64,7 @@
             android:textAllCaps="true"
             android:textSize="18sp"
             android:gravity="center"
-            android:background="#666666"/>
+            android:background="#DDABABAB"/>
     </LinearLayout>
 
 </LinearLayout>

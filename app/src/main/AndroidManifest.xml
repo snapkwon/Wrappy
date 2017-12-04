@@ -514,7 +514,13 @@
         <activity android:name=".ui.Send_Ethereum_Activity" />
         <activity android:name=".ui.WalletQrCodeDetailActivity" />
         <activity android:name=".ui.PackupWalletAccount" />
-        <activity android:name=".ui.ChangePasswordAccount"></activity>
+        <activity android:name=".ui.ChangePasswordAccount" />
+        <activity android:name=".ui.TransactionDetailActivity"></activity>
+        <activity
+            android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensor"
+            android:theme="@style/FinestWebViewTheme.Light" />
     </application>
 
 </manifest>

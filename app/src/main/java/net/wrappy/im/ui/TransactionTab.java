@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -205,7 +206,7 @@ public class TransactionTab extends AppCompatActivity {
         linearLayoutV.setOrientation(LinearLayout.VERTICAL);
 
         fab =new ImageButton(this);
-        fab.setBackground(getResources().getDrawable(R.drawable.ic_launcher));
+        fab.setBackground(getResources().getDrawable(R.drawable.ic_wallet_send));
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,11 +240,11 @@ public class TransactionTab extends AppCompatActivity {
         ImageView icon = new ImageView(this);
         if(args.getInt("namecoin") == 0)
         {
-            icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+            icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_ethereum));
         }
         else
         {
-            icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+            icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_proteusion));
         }
 
         LinearLayout Leftcontent = new LinearLayout(this);
@@ -264,13 +265,13 @@ public class TransactionTab extends AppCompatActivity {
 
         if(args.getInt("namecoin") == 0)
         {
-        //    EthereumNumber.setTextColor(getResources().getColor(R.color.textethereum));
-          //  EthereumValue.setTextColor(getResources().getColor(R.color.textethereum));
+           EthereumNumber.setTextColor(getResources().getColor(R.color.textethereum));
+           EthereumValue.setTextColor(getResources().getColor(R.color.textethereum));
         }
         else
         {
-           // EthereumNumber.setTextColor(getResources().getColor(R.color.textproteusion));
-           // EthereumValue.setTextColor(getResources().getColor(R.color.textproteusion));
+            EthereumNumber.setTextColor(getResources().getColor(R.color.textproteusion));
+            EthereumValue.setTextColor(getResources().getColor(R.color.textproteusion));
         }
 
         Frameheader.addView(headerContent , LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
@@ -399,8 +400,8 @@ public class TransactionTab extends AppCompatActivity {
             adapter=new RecycleHistoryAdapter(arrWallet, "PRO");
         }
 
-    //    Listview.addItemDecoration(
-              //  new DividerItemDecoration(3));
+        Listview.addItemDecoration(
+                new DividerItemDecoration(this,layoutManager.getOrientation()));
         Listview.setAdapter(adapter);
         linearLayoutV.addView(Listview ,LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT,Gravity.TOP ));
 
@@ -424,12 +425,12 @@ public class TransactionTab extends AppCompatActivity {
                 }catch(Exception e){
                     bundle.putString("time", "");
                 }
-            /*    bundle.putLong("confirmNumber",arrWallet.get(position).getConfirmNumber());
+                bundle.putLong("confirmNumber",arrWallet.get(position).getConfirmNumber());
                 bundle.putString("toUSD",arrWallet.get(position).getToUSD());
                 bundle.putString("txHash",arrWallet.get(position).getTXHash());
                 Intent intent = new Intent(TransactionTab.this, TransactionDetailActivity.class);
                 intent.putExtras(bundle);
-                startActivity(intent);*/
+                startActivity(intent);
             }
 
         });
@@ -607,7 +608,7 @@ public class TransactionTab extends AppCompatActivity {
                                             if (hexAddress.equalsIgnoreCase(form)) {
                                                 model.setTitle("Sent");
                                                 model.setAddress(jsonObject.getString("to"));
-                                             //   model.setIcon(getResources().getDrawable(R.drawable.ic_send_pink));
+                                                model.setIcon(getResources().getDrawable(R.drawable.ic_send_pink));
                                                 model.setNumber(WalletInfo.convertWeiToEther(jsonObject.getString("value")));
                                                 model.setConfirmNumber(jsonObject.getInt("confirmations"));
                                                 model.setDate(new Date(jsonObject.getLong("timeStamp") * 1000));
@@ -616,7 +617,7 @@ public class TransactionTab extends AppCompatActivity {
                                             if (hexAddress.equalsIgnoreCase(to)) {
                                                 model.setTitle("Received");
                                                 model.setAddress(jsonObject.getString("from"));
-                                                //model.setIcon(getResources().getDrawable(R.drawable.ic_receive_pink));
+                                                model.setIcon(getResources().getDrawable(R.drawable.ic_receive_pink));
                                                 model.setNumber(WalletInfo.convertWeiToEther(jsonObject.getString("value")));
                                                 model.setConfirmNumber(jsonObject.getInt("confirmations"));
                                                 model.setDate(new Date(jsonObject.getLong("timeStamp") * 1000));
@@ -652,7 +653,7 @@ public class TransactionTab extends AppCompatActivity {
                                         if (hexAddress.equalsIgnoreCase(form)) {
                                             model.setTitle("Sent");
                                             model.setAddress(jsonAddress);
-                                          //  model.setIcon(getResources().getDrawable(R.drawable.ic_send_pink));
+                                            model.setIcon(getResources().getDrawable(R.drawable.ic_send_pink));
                                             model.setNumber(jsonValue);
                                             model.setConfirmNumber(jsonObject.getInt("confirmations"));
                                             model.setDate(new Date(jsonObject.getLong("timeStamp")*1000));
@@ -667,7 +668,7 @@ public class TransactionTab extends AppCompatActivity {
                                         if (hexAddress.equalsIgnoreCase(jsonAddress)) {
                                             model.setTitle("Received");
                                             model.setAddress(jsonObject.getString("from"));
-                                           // model.setIcon(getResources().getDrawable(R.drawable.ic_receive_pink));
+                                            model.setIcon(getResources().getDrawable(R.drawable.ic_receive_pink));
                                             model.setNumber(jsonValue);
                                             model.setConfirmNumber(jsonObject.getInt("confirmations"));
                                             model.setDate(new Date(jsonObject.getLong("timeStamp")*1000));
