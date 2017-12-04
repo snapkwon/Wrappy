@@ -182,14 +182,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == btnCameraAvatar.getId()) {
                 if (ContextCompat.checkSelfPermission(UpdateProfileActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
 
                         AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
 
                     } else {
                         ActivityCompat.requestPermissions(UpdateProfileActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                new String[]{Manifest.permission.CAMERA},
                                 199);
                 }
             }
@@ -306,12 +306,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (data!=null) {
+                Bitmap photo;
                 if (requestCode==IMAGE_HEADER) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgHeader.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgHeader.setImageBitmap(photo);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    imgAvatar.setImageBitmap(bmpThumbnail);
+                    if (data.getData()!=null) {
+                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
+                    } else {
+                        photo = (Bitmap) data.getExtras().get("data");
+                    }
+                    imgAvatar.setImageBitmap(photo);
                 }
             }
         }catch (Exception ex) {
