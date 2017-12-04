@@ -17,9 +17,18 @@
 
 package net.wrappy.im.service.adapters;
 
-import net.wrappy.im.service.IContactList;
-import net.wrappy.im.service.IContactListListener;
-import net.wrappy.im.service.ISubscriptionListener;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.net.Uri.Builder;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
+import android.text.TextUtils;
+import android.widget.Toast;
+
 import net.wrappy.im.R;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
@@ -31,7 +40,10 @@ import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IContactList;
+import net.wrappy.im.service.IContactListListener;
 import net.wrappy.im.service.IContactListManager;
+import net.wrappy.im.service.ISubscriptionListener;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.RemoteImService;
 
@@ -46,18 +58,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.net.Uri.Builder;
-import android.os.RemoteCallbackList;
-import android.os.RemoteException;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 public class ContactListManagerAdapter extends
         IContactListManager.Stub {
@@ -743,29 +743,29 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
-                        
-            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+            // TungNP: auto approve friend
 
-            if (!isSubscribed(username)) {
-
-                String nickname = from.getName();
-                queryOrInsertContact(from);
-                Uri uri = insertOrUpdateSubscription(username, nickname,
-                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
-                        Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-
-                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
-                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                        listener.onSubScriptionRequest(from, mConn.getProviderId(), mConn.getAccountId());
-                    }
-                });
-
-                if (!hadListener) {
-                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
-                            ContentUris.parseId(uri), username, nickname);
-                }
-            }
-            else
+//            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+//            if (!isSubscribed(username)) {
+//
+//                String nickname = from.getName();
+//                queryOrInsertContact(from);
+//                Uri uri = insertOrUpdateSubscription(username, nickname,
+//                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
+//                        Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+//
+//                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
+//                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
+//                        listener.onSubScriptionRequest(from, mConn.getProviderId(), mConn.getAccountId());
+//                    }
+//                });
+//
+//                if (!hadListener) {
+//                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
+//                            ContentUris.parseId(uri), username, nickname);
+//                }
+//            }
+//            else
             {
                 try {
                     Thread.sleep(2000);//wait two seconds

@@ -133,6 +133,7 @@ public class RestAPI {
 
     public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context, url);
+        Debug.d(url);
         Ion.with(context).load(url).addHeader("Authorization", header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
