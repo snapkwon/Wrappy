@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:isScrollContainer="false">
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textbalancesendethereum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:text="Available Balance"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/textbalance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="32sp"
+                android:textColor="#EC657B"
+                android:text="0.000"
+                android:layout_marginBottom="25dp"
+                android:layout_marginLeft="15dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="To address"
+                android:textColor="#2F3234"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp">
+
+                <EditText
+                    android:id="@+id/editETHadress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:hint="To address"
+                    android:layout_weight="0.3"
+                    android:textColor="#666666"
+                    android:textColorHint="#666666"
+                    android:textSize="14sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.7">
+
+                    <ImageButton
+                        android:id="@+id/buttonWalletAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|right"
+                        android:background="@drawable/icon_wallet_address"
+                        android:layout_marginRight="5dp" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="AMOUNT"
+                android:textColor="#2F3234"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/editETHamount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:hint="0"
+                    android:inputType="numberDecimal"
+                    android:textColor="#666666"
+                    android:textColorHint="#666666"
+                    android:layout_weight="1"
+                    android:textSize="14sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center">
+
+                    <Button
+                        android:id="@+id/buttonETH"
+                        android:background="@drawable/regbtn_states"
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right|center"
+                        android:layout_marginRight="15dp"
+                        android:text="ETH" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:weightSum="2"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp">
+
+
+                <EditText
+                    android:id="@+id/editUSDamount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:hint="0"
+                    android:layout_weight="1"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
+                    android:textIsSelectable="false"
+                    android:textColor="#666666"
+                    android:textColorHint="#666666"
+                    android:textSize="14sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center">
+
+                    <Button
+                        android:id="@+id/buttonUSD"
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="right|center"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/whitebtn_states"
+                        android:text="USD" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="DESCRIPTION"
+                android:textColor="#2F3234"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+
+                <EditText
+                    android:id="@+id/editdescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="top"
+                    android:hint="Description"
+                    android:textColor="#666666"
+                    android:textColorHint="#666666"
+                    android:textSize="14sp"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonSend"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Send" />
+    </LinearLayout>
+</ScrollView>
