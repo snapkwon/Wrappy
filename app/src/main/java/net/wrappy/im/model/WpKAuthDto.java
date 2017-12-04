@@ -10,6 +10,10 @@ import android.os.Parcelable;
 public class WpKAuthDto implements Parcelable {
 
     private String secret;
+    private String account;
+    private String method;
+    private Long member;
+    private Long id;
 
     public WpKAuthDto(String secret) {
         this.secret = secret;
@@ -39,6 +43,38 @@ public class WpKAuthDto implements Parcelable {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public Long getMember() {
+        return member;
+    }
+
+    public void setMember(Long member) {
+        this.member = member;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     @Override

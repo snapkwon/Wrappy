@@ -436,6 +436,8 @@
     <string name="forget_password">Forget Password</string>
     <string name="login">Login</string>
     <string name="waiting_dialog">Waiting...</string>
+    <string name="search_username">Search username</string>
+    <string name="add_contact">ADD CONTACT</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
 
 

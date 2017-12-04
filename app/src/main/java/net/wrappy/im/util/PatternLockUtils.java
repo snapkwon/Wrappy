@@ -1,5 +1,6 @@
 package net.wrappy.im.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -43,7 +44,7 @@ public class PatternLockUtils {
         PreferenceUtils.remove(PreferenceContract.KEY_PATTERN_SHA1, context);
     }
 
-    public static void setPatternByUser(Context context) {
+    public static void setPatternByUser(Activity context) {
         context.startActivity(PatternActivity.getStartIntent(context));
     }
 }

@@ -5,8 +5,8 @@
 
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -31,17 +30,13 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PatternLockUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Field;
 import java.security.KeyPair;
 import java.util.List;
 
@@ -53,7 +48,7 @@ import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
 public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
 
-    public static Intent getStartIntent(Context context){
+    public static Intent getStartIntent(Activity context){
         return new Intent(context, PatternActivity.class);
     }
 
@@ -123,22 +118,31 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         else if(type_request == REQUEST_CODE_LOGIN)
         {
+            dialog = new ProgressDialog(PatternActivity.this);
+            dialog.setMessage(getString(R.string.waiting_dialog));
+            dialog.show();
             String url = RestAPI.loginUrl(username,password);
-            RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
 
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
                         if (!RestAPI.checkHttpCode(httpCode)) {
                             AppFuncs.alert(getApplicationContext(),s,true);
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
                             return;
                         }
                         JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                         Gson gson = new Gson();
                         WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                         wpkToken.saveToken(getApplicationContext());
-                        doExistingAccountRegister(wpkToken.getJid()+"@im.proteusiondev.com",wpkToken.getXmppPassword());
+                        doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
                     }catch (Exception ex) {
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
                         ex.printStackTrace();
                     }
 
@@ -170,14 +174,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         finish();
     }
 
-    private void doExistingAccountRegister (String username , String password)
+    private void doExistingAccountRegister (String username , String password, String accountName)
     {
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new PatternActivity.ExistingAccountTask();
-            mExistingAccountTask.execute(username, password);
-            dialog.setMessage(getString(R.string.waiting_dialog));
-            dialog.show();
+            mExistingAccountTask.execute(username, password, accountName);
         }
     }
 
@@ -197,7 +199,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(PatternActivity.this);
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
                 String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(PatternActivity.this, mHandler, nickname, account[0], account[1]);
+                OnboardingAccount result = OnboardingManager.addExistingAccount(PatternActivity.this, mHandler, nickname, account[0], account[1], account[2]);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

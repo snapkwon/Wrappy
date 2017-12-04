@@ -135,7 +135,7 @@ public class LauncherActivity extends BaseActivity {
     private void showLogin()
     {
 
-        Intent intent = PatternActivity.getStartIntent(this);
+        Intent intent = PatternActivity.getStartIntent(LauncherActivity.this);
         Bundle arg = new Bundle();
         arg.putInt("type",REQUEST_CODE_LOGIN);
         arg.putString("username" , mEditUsername.getText().toString().trim());
