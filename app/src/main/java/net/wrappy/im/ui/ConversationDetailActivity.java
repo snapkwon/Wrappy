@@ -275,13 +275,14 @@ public class ConversationDetailActivity extends BaseActivity {
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 
-//        if (mChatId != -1) {
-        android.app.LoaderManager loaderManager = getLoaderManager();
-        MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
-        loaderManager.initLoader(1, null, loaderCallbacks);
-//        } else {
+        if (mChatId == -1) {
+            android.app.LoaderManager loaderManager = getLoaderManager();
+            MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
+            loaderManager.initLoader(1, null, loaderCallbacks);
+        } else {
 //            finish();
-//        }
+            startChatting();
+        }
 
     }
 
@@ -291,7 +292,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null);
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null, mAddress);
             }
         });
     }
@@ -887,7 +888,7 @@ public class ConversationDetailActivity extends BaseActivity {
             if (data == null || data.getCount() == 0) {
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
             } else {
-                if(mChatId == -1 && data.moveToFirst())
+                if (mChatId == -1 && data.moveToFirst())
                     mChatId = data.getLong(0);
                 startChatting();
             }
