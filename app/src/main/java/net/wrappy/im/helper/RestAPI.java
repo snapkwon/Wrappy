@@ -42,6 +42,7 @@ public class RestAPI {
     public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String PUT_UPDATEPASS = "http://www.mocky.io/v2/5a0becc03200006b22e96545";
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0e8572300000de204335a8";
+    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
@@ -138,7 +139,7 @@ public class RestAPI {
         Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
             }
         });
     }
