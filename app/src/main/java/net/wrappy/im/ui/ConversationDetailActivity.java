@@ -60,10 +60,13 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
+import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
@@ -265,7 +268,7 @@ public class ConversationDetailActivity extends BaseActivity {
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
-
+    MyLoaderCallbacks loaderCallbacks;
     private void processIntent(Intent intent) {
 
         mApp = (ImApp) getApplication();
@@ -277,7 +280,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
-            MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
+            loaderCallbacks = new MyLoaderCallbacks();
             loaderManager.initLoader(1, null, loaderCallbacks);
         } else {
 //            finish();
@@ -292,9 +295,23 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null, mAddress);
+                AddContactAsyncTask task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                    @Override
+                    public void onFinished(Integer code) {
+                        startChat();
+                    }
+                });
+                task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+
             }
         });
+    }
+
+    public void startChat() {
+        if (loaderCallbacks != null) {
+            getLoaderManager().destroyLoader(1);
+            getLoaderManager().initLoader(2, null, loaderCallbacks);
+        }
     }
 
     private void startChatting() {

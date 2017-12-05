@@ -25,6 +25,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     long mProviderId;
     long mAccountId;
     ImApp mApp;
+    AddContactCallback listenner;
 
     public AddContactAsyncTask(long providerId, long accountId, ImApp app)
     {
@@ -32,6 +33,11 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
         mAccountId = accountId;
 
         mApp = app;
+    }
+
+    public AddContactAsyncTask setCallback(AddContactCallback listenner) {
+        this.listenner = listenner;
+        return this;
     }
 
     @Override
@@ -50,7 +56,9 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer response) {
         super.onPostExecute(response);
-
+        if (listenner != null) {
+            listenner.onFinished(response);
+        }
     }
 
     private int addToContactList (String address, String otrFingperint, String nickname)
@@ -113,5 +121,9 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
             // If the service has died, there is no list for now.
             return null;
         }
+    }
+
+    public interface AddContactCallback {
+        void onFinished(Integer code);
     }
 }

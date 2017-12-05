@@ -2070,6 +2070,10 @@ public class ConversationView {
         return mPresenceStatus;
     }
 
+    public String getmRemoteAddress() {
+        return mRemoteAddress;
+    }
+
     /*
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
