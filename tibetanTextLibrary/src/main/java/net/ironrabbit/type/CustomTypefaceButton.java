@@ -36,7 +36,7 @@ public class CustomTypefaceButton extends Button {
 
 	private void init() {
     	
-		if (!mInit)
+		if (!mInit && !isInEditMode())
         {
 			Typeface t = CustomTypefaceManager.getCurrentTypeface(getContext());
 			

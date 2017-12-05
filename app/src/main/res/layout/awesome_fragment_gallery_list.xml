@@ -26,7 +26,7 @@
     android:visibility="visible"
 
     />
-<TextView
+<net.ironrabbit.type.CustomTypefaceTextView
 android:id="@+id/empty_view"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"

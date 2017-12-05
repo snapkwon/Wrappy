@@ -15,9 +15,14 @@
         android:layout_gravity="center"
         android:background="@drawable/ic_launcher" />
 
-    <Button
+    <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/btnsaveQRwallet"
         android:layout_width="300dp"
         android:layout_height="55dp"
-        android:text="Save QR Wallet" />
+        android:text="@string/btn_save_qr_wallet"
+        android:textSize="18dp"
+        android:textAllCaps="true"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:background="@drawable/regbtn_states"/>
 </LinearLayout>

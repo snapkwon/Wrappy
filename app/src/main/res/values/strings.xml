@@ -440,5 +440,13 @@
     <string name="add_contact">ADD CONTACT</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
 
+    <string name="title_create_new_wallet">Create New Wallet</string>
+    <string name="title_new_wallet_created">New Wallet Created</string>
+    <string name="title_wallet_address">Wallet Address</string>
+    <string name="title_backup_wallet">Back Up Wallet</string>
+    <string name="alert_create_new_wallet">This password encrypts your private key. This does not act as a seed to generate your keys. You will need <b>this password</b> and <b>your private key</b> to unlock your wallet.</string>
+    <string name="sub_title_wallet_dialog">Please enter your wallet password for backup</string>
+    <string name="btn_save_qr_wallet">Save QR Wallet</string>
+
 
 </resources>
