@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_receive_pink2x"
         />
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/transaction_detail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_ethereum"/>
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
@@ -60,12 +60,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
             android:textSize="16sp"/>
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,13 +79,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Confirmations"
             android:layout_centerVertical="true"
             android:textSize="16sp"/>
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             >
-            <TextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="VIEW MORE"

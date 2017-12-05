@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="2px"></FrameLayout>
 
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/texttitlealert"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:maxLines="3"
         android:text="Loading"
         android:textColor="#000"
-        android:textSize="15dp"></TextView>
+        android:textSize="15dp"></net.ironrabbit.type.CustomTypefaceTextView>
 
     <FrameLayout
         android:layout_width="match_parent"

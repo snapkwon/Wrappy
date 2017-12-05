@@ -24,14 +24,14 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/IconCoin">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:text="TextView"
             android:textSize="15dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/TVNameCoin" />
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:text="TextView"
             android:textSize="15dp"
 
@@ -55,7 +55,7 @@
         android:layout_toLeftOf="@id/imNext"
         android:layout_centerVertical="true">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:textSize="15dp"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/TVPrice" />
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:text="TextView"
             android:textSize="15dp"
             android:layout_gravity="center"
