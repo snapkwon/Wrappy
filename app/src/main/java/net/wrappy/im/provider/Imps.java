@@ -584,6 +584,24 @@ public class Imps {
         public static final String AVATAR_HASH = "avatars_hash";
 
         public static final String AVATAR_DATA = "avatars_data";
+
+        public static final String getNicknameFromAddress(ContentResolver cr, String address) {
+            String ret = null;
+            String selection = USERNAME + "=?";
+            String[] selectionArgs = {address};
+            String[] projection = {NICKNAME};
+            Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NICKNAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return ret;
+        }
     }
 
     /** Columns from the ContactList table. */
