@@ -3,11 +3,14 @@ package net.wrappy.im.ui.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import net.wrappy.im.R;
 import net.wrappy.im.model.WpKMemberDto;
@@ -76,9 +79,13 @@ public class ContactAdapter
             line1.setText(wpKMemberDto.getIdentifier());
             line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
-            LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
             mAvatar.setVisibility(View.VISIBLE);
-            mAvatar.setImageDrawable(lavatar);
+            if (!TextUtils.isEmpty(wpKMemberDto.getAvatar()))
+                Glide.with(mContext).load(wpKMemberDto.getAvatar()).into(mAvatar);
+            else {
+                LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+                mAvatar.setImageDrawable(lavatar);
+            }
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
