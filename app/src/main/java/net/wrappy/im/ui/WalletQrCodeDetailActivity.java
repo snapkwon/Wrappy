@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +79,14 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
             wallet_qr_img.setImageBitmap(qrCode);
         }catch (Exception ex){
             ex.printStackTrace();
+        }
+
+        // back button at action bar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getResources().getString(R.string.title_wallet_address));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
         }
     }
 
@@ -201,6 +209,8 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
         else if (id == R.id.changepasswallet) {
             Intent intent = new Intent(this, ChangePasswordAccount.class);
             this.startActivity(intent);
+        } else if (id == android.R.id.home) {
+            this.finish();
         }
 
         return super.onOptionsItemSelected(item);
