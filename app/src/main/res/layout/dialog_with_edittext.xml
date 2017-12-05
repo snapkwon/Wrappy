@@ -17,6 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/subtext_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sub_title_wallet_dialog"
+            android:layout_gravity="center_horizontal"/>
+
         <EditText
             android:id="@+id/etinputpass"
             android:layout_width="match_parent"
@@ -25,7 +32,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center_vertical|center_horizontal"
             android:inputType="textPassword"
             android:textColor="#000"
