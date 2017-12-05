@@ -12,6 +12,7 @@ import android.widget.TextView;
 import net.wrappy.im.R;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.ui.ConversationDetailActivity;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 
 import java.util.ArrayList;
 
@@ -62,7 +63,7 @@ public class ContactAdapter
         @BindView(R.id.line2)
         TextView line2;
         @BindView(R.id.avatar)
-        ImageView avatar;
+        ImageView mAvatar;
         @BindView(R.id.message_container)
         View container;
 
@@ -74,6 +75,10 @@ public class ContactAdapter
         public void bind(final WpKMemberDto wpKMemberDto) {
             line1.setText(wpKMemberDto.getIdentifier());
             line2.setText(wpKMemberDto.getEmail());
+            int padding = 24;
+            LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+            mAvatar.setVisibility(View.VISIBLE);
+            mAvatar.setImageDrawable(lavatar);
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
