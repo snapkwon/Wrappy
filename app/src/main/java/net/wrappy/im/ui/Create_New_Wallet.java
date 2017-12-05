@@ -1,10 +1,12 @@
 package net.wrappy.im.ui;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -81,6 +83,22 @@ public class Create_New_Wallet extends BaseActivity {
         // show/hide password
         showHidePassword();
 
+        // back button
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(getResources().getString(R.string.title_create_new_wallet));
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
