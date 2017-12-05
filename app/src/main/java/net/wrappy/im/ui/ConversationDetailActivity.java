@@ -291,7 +291,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null);
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null, mAddress);
             }
         });
     }
