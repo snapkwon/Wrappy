@@ -66,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:background="@color/background_gainsboro"
             >
 
             <ImageView
@@ -89,7 +90,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="12sp"
-                android:text="This password encrypts your private key. This does not act as a seed to generate your keys. You will need this password + your private key to unlock your wallet." />
+                android:text="@string/alert_create_new_wallet"/>
         </LinearLayout>
 
         <Button
