@@ -173,7 +173,8 @@ public class ContactDisplayActivity extends BaseActivity {
 
             ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
 
-            if (!TextUtils.isEmpty(remoteFingerprint)) {
+            boolean removeFingerprint = true;
+            if (!removeFingerprint && !TextUtils.isEmpty(remoteFingerprint)) {
 
                 findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
 
