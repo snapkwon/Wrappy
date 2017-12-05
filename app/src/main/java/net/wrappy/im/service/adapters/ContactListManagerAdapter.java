@@ -1335,23 +1335,20 @@ public class ContactListManagerAdapter extends
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS,subStatus);
 
         final Uri uri = mResolver.insert(mContactUrl, values);
-
-        final ContentValues presenceValues = getPresenceValues(contact);
-        mResolver.insert(Imps.Presence.CONTENT_URI, presenceValues);
         RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() { }.getType());
-                    ContentValues values = new ContentValues();
-                    values.put(Imps.Contacts.NICKNAME, wpKMemberDtos.getIdentifier());
-                    mResolver.update(uri, values, null, null);
+                    setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+        final ContentValues presenceValues = getPresenceValues(contact);
+        mResolver.insert(Imps.Presence.CONTENT_URI, presenceValues);
 
         return uri;
     }
