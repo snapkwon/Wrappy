@@ -83,12 +83,13 @@ public class Create_New_Wallet extends BaseActivity {
         // show/hide password
         showHidePassword();
 
-        // back button
+        // back button action bar
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(getResources().getString(R.string.title_create_new_wallet));
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
-
+        if (actionBar != null) {
+            actionBar.setTitle(getResources().getString(R.string.title_create_new_wallet));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+        }
     }
 
     @Override
