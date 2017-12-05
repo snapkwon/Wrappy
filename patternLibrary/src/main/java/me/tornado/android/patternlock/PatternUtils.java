@@ -39,6 +39,17 @@ public class PatternUtils {
         return bytes;
     }
 
+    public static String  patternToNumberString(List<PatternView.Cell> pattern, int columnCount) {
+        int patternSize = pattern.size();
+        String bytes = "";
+        for (int i = 0; i < patternSize; ++i) {
+            PatternView.Cell cell = pattern.get(i);
+            bytes = bytes + ((cell.getRow()*columnCount)  + cell.getColumn());
+        }
+        return bytes;
+    }
+
+
     public static byte[] patternToBytes(List<PatternView.Cell> pattern) {
         return patternToBytes(pattern, PatternView.PATTERN_SIZE_DEFAULT);
     }
@@ -59,7 +70,8 @@ public class PatternUtils {
      * @deprecated Use {@link #patternToSha1String(List, int)} instead for better security.
      */
     public static String patternToString(List<PatternView.Cell> pattern, int columnCount) {
-        return bytesToString(patternToBytes(pattern, columnCount));
+        return patternToNumberString(pattern,columnCount);
+        //return bytesToString(patternToBytes(pattern, columnCount));
     }
 
     /**
