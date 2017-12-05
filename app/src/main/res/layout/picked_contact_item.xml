@@ -21,7 +21,7 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent" />
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line1"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"

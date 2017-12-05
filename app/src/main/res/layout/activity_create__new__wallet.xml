@@ -8,7 +8,7 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enter a password"
@@ -19,7 +19,7 @@
             android:layout_marginTop="15dp"
             android:textSize="16sp"/>
 
-        <EditText
+        <net.ironrabbit.type.CustomTypefaceEditText
             android:id="@+id/edtpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:drawableRight="@drawable/ic_visibility_black_24dp"
             />
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Repeat password"
@@ -46,7 +46,7 @@
             android:textColor="#444344"
             android:textSize="16sp"/>
 
-        <EditText
+        <net.ironrabbit.type.CustomTypefaceEditText
             android:id="@+id/edtrepassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                 android:background="@drawable/icon_warning"
                 />
 
-            <TextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -93,13 +93,14 @@
                 android:text="@string/alert_create_new_wallet"/>
         </LinearLayout>
 
-        <Button
+        <net.ironrabbit.type.CustomTypefaceButton
             android:id="@+id/btcreatenew"
             android:layout_width="300dp"
             android:layout_gravity="center"
             android:background="@drawable/regbtn_states"
             android:layout_height="wrap_content"
             android:text="Create New Wallet"
+            android:textColor="#fff"
             android:layout_marginTop="25dp"
             android:layout_marginBottom="15dp"/>
 

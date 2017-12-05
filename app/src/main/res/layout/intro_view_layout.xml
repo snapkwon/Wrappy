@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView android:layout_height="wrap_content"
+    <net.ironrabbit.type.CustomTypefaceTextView android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/header_text"
         android:textSize="26dp"
@@ -14,7 +14,7 @@
         android:textColor="#ff343333"
         android:layout_marginTop="224dp"/>
 
-    <TextView android:layout_height="wrap_content"
+    <net.ironrabbit.type.CustomTypefaceTextView android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/message_text"
         android:textSize="15dp"

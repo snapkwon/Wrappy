@@ -17,14 +17,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/subtext_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sub_title_wallet_dialog"
             android:layout_gravity="center_horizontal"/>
 
-        <EditText
+        <net.ironrabbit.type.CustomTypefaceEditText
             android:id="@+id/etinputpass"
             android:layout_width="match_parent"
             android:layout_height="50dp"

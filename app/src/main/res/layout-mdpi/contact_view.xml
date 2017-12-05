@@ -73,7 +73,7 @@
         android:id="@+id/subscriptionBox"
         >
 
-        <Button android:id="@+id/btnApproveSubscription"
+        <net.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnApproveSubscription"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:text="✔"
@@ -84,7 +84,7 @@
             android:layout_toLeftOf="@+id/btnDeclineSubscription"
             android:layout_toStartOf="@+id/btnDeclineSubscription" />
 
-        <Button android:id="@+id/btnDeclineSubscription"
+        <net.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnDeclineSubscription"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:text="✖"
