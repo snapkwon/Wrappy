@@ -741,7 +741,7 @@ public class ContactListManagerAdapter extends
         public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
             //Avoid crash when null adapter
-            if (mAdaptee != null) {
+            if (mAdaptee != null && from != null && from.getAddress() != null) {
                 String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
                 String nickname = from.getName();
                 Uri uri = insertOrUpdateSubscription(username, nickname,
