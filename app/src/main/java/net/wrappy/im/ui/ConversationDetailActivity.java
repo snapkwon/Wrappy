@@ -48,19 +48,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -71,6 +74,7 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -112,7 +116,12 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-    private Handler mHandler = new Handler() {
+	// offset position for popup window
+    private static final int OFFSET_X = 300;
+    private static final int OFFSET_Y = 300;
+
+    private Handler mHandler = new Handler()
+    {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -401,6 +410,9 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
+            case R.id.menu_settings_language:
+                PopupWindow popupWindow = mConvoView.popupDisplay();
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                 return true;
         }
         return super.onOptionsItemSelected(item);
