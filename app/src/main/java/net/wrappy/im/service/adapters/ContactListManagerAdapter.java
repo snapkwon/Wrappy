@@ -220,7 +220,7 @@ public class ContactListManagerAdapter extends
         return ImErrorInfo.NO_ERROR;
     }
 
-    public int setContactName(String address, String name) {
+    public int updateContact(String address, String name, String email) {
         // update the server
         try {
             mAdaptee.setContactName(address,name);
@@ -232,12 +232,19 @@ public class ContactListManagerAdapter extends
         String[] selectionArgs = { address };
         ContentValues values = new ContentValues(1);
         values.put( Imps.Contacts.NICKNAME, name);
+        if (!TextUtils.isEmpty(email)) {
+            values.put( Imps.Contacts.CONTACT_EMAIL, email);
+        }
         int updated = mResolver.update(mContactUrl, values, selection, selectionArgs);
         if( updated != 1 ) {
             return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
         }
 
         return ImErrorInfo.NO_ERROR;
+    }
+
+    public int setContactName(String address, String name) {
+        return updateContact(address, name, null);
     }
 
     public void approveSubscription(Contact address) {
@@ -1341,7 +1348,7 @@ public class ContactListManagerAdapter extends
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() { }.getType());
-                    setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
+                    updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier(), wpKMemberDtos.getEmail());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1356,9 +1363,13 @@ public class ContactListManagerAdapter extends
     private ContentValues getContactContentValues(Contact contact, long listId) {
 
         final String username = mAdaptee.normalizeAddress(contact.getAddress().getAddress());
-        final String nickname = contact.getName();
+        String nickname = contact.getName();
 
         int type = contact.getType();
+
+        if (isSubscribed(username)) {
+            nickname = Imps.Contacts.getNicknameFromAddress(mResolver, username);
+        }
 
         if (isTemporary(username)) {
             type = Imps.Contacts.TYPE_TEMPORARY;

@@ -1,5 +1,7 @@
 package net.wrappy.im.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -12,6 +14,7 @@ public class WpKMemberDto {
     private String email;
     private String mobile;
     private String avatar;
+    @SerializedName("wpKAuthList")
     private ArrayList<WpKAuthDto> wpKAuthDtoList;
 
     public WpKMemberDto(String identifier, String email, String mobile) {

@@ -316,12 +316,14 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[]{PASSWORD}, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
-                if (cursor.moveToFirst()) {
-                    ret = cursor.getString(cursor.getColumnIndexOrThrow(PASSWORD));
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(PASSWORD));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return ret;
@@ -331,12 +333,14 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[]{columnName}, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
-                if (cursor.moveToFirst()) {
-                    ret = cursor.getString(cursor.getColumnIndexOrThrow(columnName));
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(columnName));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return ret;
@@ -581,6 +585,13 @@ public class Imps {
          * </P>
          */
         String OTR = "otr";
+
+        /**
+         * Contact type <P>Type: TEXT</P>
+         */
+        String CONTACT_EMAIL = "email";
+
+
     }
 
     /**
