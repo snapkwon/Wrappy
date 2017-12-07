@@ -446,6 +446,7 @@ public class ContactsListFragment extends Fragment {
             viewHolder.mType =  cursor.getInt(ContactListItem.COLUMN_CONTACT_TYPE);
 
             String nickname =  cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+            viewHolder.email =  cursor.getString(ContactListItem.COLUMN_CONTACT_EMAIL);
 
             if (TextUtils.isEmpty(nickname))
             {
@@ -481,6 +482,7 @@ public class ContactsListFragment extends Fragment {
                     intent.putExtra("provider", viewHolder.mProviderId);
                     intent.putExtra("account", viewHolder.mAccountId);
                     intent.putExtra("contactId", viewHolder.mContactId);
+                    intent.putExtra("email", viewHolder.email);
 
                     mContext.startActivity(intent);
 
@@ -592,9 +594,10 @@ public class ContactsListFragment extends Fragment {
                 Imps.Presence.PRESENCE_STATUS,
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
-                Imps.Chats.LAST_UNREAD_MESSAGE
-        ///        Imps.Contacts.AVATAR_HASH,
-           //     Imps.Contacts.AVATAR_DATA
+                Imps.Chats.LAST_UNREAD_MESSAGE,
+                Imps.Contacts.AVATAR_HASH,
+                Imps.Contacts.AVATAR_DATA,
+                Imps.Contacts.CONTACT_EMAIL
 
         };
 

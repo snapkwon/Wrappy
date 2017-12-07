@@ -33,6 +33,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
 
     public String mAddress;
     public String mNickname;
+    public String email;
     public int mType;
 
     public long mProviderId;

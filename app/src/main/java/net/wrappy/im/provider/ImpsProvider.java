@@ -762,7 +762,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("rejected INTEGER,");
 
             // Off the record status
-            buf.append("otr INTEGER");
+            buf.append("otr INTEGER,");
+
+            //email
+            buf.append("email TEXT");
 
             buf.append(");");
 
@@ -1106,6 +1109,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         sContactsProjectionMap.put(Imps.Contacts.AVATAR_DATA, "quote(avatars.data) AS avatars_data");
 
         sContactsProjectionMap.put(Imps.Contacts.CHAT_TYPE, "chats.chat_type AS chat_type");
+        sContactsProjectionMap.put(Contacts.CONTACT_EMAIL, "contacts.email as email");
 
         // contactList projection map
         sContactListProjectionMap = new HashMap<String, String>();
