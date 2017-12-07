@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -39,7 +40,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -403,7 +403,6 @@ public class ConversationListFragment extends Fragment {
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "111", Toast.LENGTH_SHORT).show();
                         Context context = v.getContext();
                         Intent intent = ConversationDetailActivity.getStartIntent(context);
                         intent.putExtra("id", chatId);
@@ -413,10 +412,11 @@ public class ConversationListFragment extends Fragment {
                     }
                 });
 
+                // long click item to show bottom sheet
                 clItem.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-
+                        new CustomBottomSheetDialogFragment().show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
                         return false;
                     }
                 });
@@ -446,6 +446,15 @@ public class ConversationListFragment extends Fragment {
                                 intent.putExtra("nickname", nickname);
 
                                 context.startActivity(intent);
+                            }
+                        });
+
+                        // long click item to show bottom sheet
+                        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View view) {
+                                new CustomBottomSheetDialogFragment().show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+                                return false;
                             }
                         });
                     }
@@ -561,7 +570,8 @@ public class ConversationListFragment extends Fragment {
                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE,
-                Imps.Chats.CHAT_TYPE
+                Imps.Chats.CHAT_TYPE,
+                Imps.Chats.CHAT_TOP
       //          Imps.Contacts.AVATAR_HASH,
         //        Imps.Contacts.AVATAR_DATA
 
