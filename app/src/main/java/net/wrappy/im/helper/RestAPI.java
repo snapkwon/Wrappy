@@ -35,6 +35,7 @@ public class RestAPI {
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
 
+    public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";

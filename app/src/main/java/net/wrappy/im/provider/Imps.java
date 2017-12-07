@@ -26,9 +26,11 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.model.Registration;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -344,6 +346,27 @@ public class Imps {
             }
 
             return ret;
+        }
+
+        public static final int updateAccountFromDataServer(ContentResolver cr, Registration registration, long accountId) {
+            int id = -1;
+            if (registration != null && registration.getWpKMemberDto() != null) {
+                ContentValues values = new ContentValues();
+
+                setValue(values, Account.ACCOUNT_EMAIL, registration.getWpKMemberDto().getEmail());
+                setValue(values, Account.ACCOUNT_PHONE, registration.getWpKMemberDto().getMobile());
+                setValue(values, Account.ACCOUNT_NAME, registration.getWpKMemberDto().getIdentifier());
+
+                Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+                id = cr.update(accountUri, values, null, null);
+            }
+            return id;
+        }
+
+        //update value for each column of account table
+        private static void setValue(ContentValues values, String column, String value) {
+            if (!TextUtils.isEmpty(value))
+                values.put(column, value);
         }
 
         private static final String[] PROVIDER_PROJECTION = new String[]{PROVIDER};
