@@ -242,7 +242,7 @@ public class XmppConnection extends ImConnection {
     private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
     private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
 
-    private final static String DEFAULT_CONFERENCE_SERVER = "conference.zom.im";
+    private final static String DEFAULT_CONFERENCE_SERVER = "conference.im.proteusiondev.com";
 
     private final static String PRIVACY_LIST_DEFAULT = "defaultprivacylist";
 

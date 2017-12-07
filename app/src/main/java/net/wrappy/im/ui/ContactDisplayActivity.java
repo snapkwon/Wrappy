@@ -88,7 +88,9 @@ public class ContactDisplayActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(mNickname)) {
             mNickname = mUsername;
-            mNickname = mNickname.split("@")[0].split("\\.")[0];
+            String[] splitNickname = mNickname.split("@")[0].split("\\.");
+            if (splitNickname.length > 0)
+            mNickname = splitNickname[0];
         }
 
 
@@ -173,7 +175,8 @@ public class ContactDisplayActivity extends BaseActivity {
 
             ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
 
-            if (!TextUtils.isEmpty(remoteFingerprint)) {
+            boolean removeFingerprint = true;
+            if (!removeFingerprint && !TextUtils.isEmpty(remoteFingerprint)) {
 
                 findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
 

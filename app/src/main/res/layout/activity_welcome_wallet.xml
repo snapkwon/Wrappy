@@ -19,7 +19,7 @@
             android:background="@drawable/icon_welcome_wallet"/>
     </FrameLayout>
 
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,20 +34,21 @@
         android:textColor="@color/background_dark"
         android:textSize="22sp" />
 
-    <net.wrappy.im.helper.layout.AppButton
+    <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/buttoncreatenew"
         android:layout_width="300dp"
         android:layout_gravity="center"
         android:background="@drawable/regbtn_states"
         android:layout_height="wrap_content"
         android:text="Create New Wallet"
+        android:textColor="#fff"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"/>
 
 
 
 
-    <net.wrappy.im.helper.layout.AppButton
+    <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/buttonimport"
         android:layout_width="300dp"
         android:layout_gravity="center"

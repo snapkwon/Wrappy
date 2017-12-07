@@ -3,15 +3,19 @@ package net.wrappy.im.ui.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import net.wrappy.im.R;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.ui.ConversationDetailActivity;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 
 import java.util.ArrayList;
 
@@ -62,7 +66,7 @@ public class ContactAdapter
         @BindView(R.id.line2)
         TextView line2;
         @BindView(R.id.avatar)
-        ImageView avatar;
+        ImageView mAvatar;
         @BindView(R.id.message_container)
         View container;
 
@@ -74,13 +78,21 @@ public class ContactAdapter
         public void bind(final WpKMemberDto wpKMemberDto) {
             line1.setText(wpKMemberDto.getIdentifier());
             line2.setText(wpKMemberDto.getEmail());
+            int padding = 24;
+            mAvatar.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(wpKMemberDto.getAvatar()))
+                Glide.with(mContext).load(wpKMemberDto.getAvatar()).into(mAvatar);
+            else {
+                LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+                mAvatar.setImageDrawable(lavatar);
+            }
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (wpKMemberDto.getXMPPAuthDto() != null) {
                         Intent intent = ConversationDetailActivity.getStartIntent(mContext);
-                        intent.putExtra("nickname", wpKMemberDto.getXMPPAuthDto().getAccount());
-                        intent.putExtra("address", wpKMemberDto.getIdentifier());
+                        intent.putExtra("address", wpKMemberDto.getXMPPAuthDto().getAccount());
+                        intent.putExtra("nickname", wpKMemberDto.getIdentifier());
 
                         mContext.startActivity(intent);
                     }

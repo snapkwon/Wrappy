@@ -13,6 +13,7 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,6 +33,7 @@ import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
@@ -46,6 +48,7 @@ import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ben on 15/11/2017.
@@ -247,23 +250,28 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     private void doExistingAccountRegister (String username , String password)
     {
+        RegistrationAccount account = new RegistrationAccount(username, password);
+        account.setNickname(edUsername.getText().toString());
+        account.setEmail(edEmail.getText().toString());
+        account.setPhone(edPhone.getText().toString());
+        account.setGender(gender);
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new ExistingAccountTask();
-            mExistingAccountTask.execute(username, password, edUsername.getText().toString());
+            mExistingAccountTask.execute(account);
         }
     }
 
-    private class ExistingAccountTask extends AsyncTask<String, Void, OnboardingAccount> {
+    private class ExistingAccountTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
         @Override
-        protected OnboardingAccount doInBackground(String... account) {
+        protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
             try {
 
                 OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(UpdateProfileActivity.this);
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
 
-                String nickname = new XmppAddress(account[0]).getUser();
-                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, nickname, account[0], account[1], account[2]);
+                RegistrationAccount account = accounts[0];
+                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler,account);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;

@@ -1,10 +1,14 @@
 package net.wrappy.im.ui;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -105,5 +109,60 @@ public class ChangePasswordAccount extends AppCompatActivity {
             }
         });
 
+        // back button at action bar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getResources().getString(R.string.title_change_password_wallet));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+        }
+
+        // show/hide password
+        showHidePassword();
+    }
+
+    /**
+     * Show/hide password when click visible icon
+     */
+    private void showHidePassword() {
+        oldpassword.setOnTouchListener(new View.OnTouchListener() {
+
+            boolean isShow = false;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    if (motionEvent.getRawX() >= (oldpassword.getRight() - oldpassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if (!isShow) {
+                            // show password
+                            oldpassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            isShow = true;
+                        } else {
+                            // hide password
+                            oldpassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+                            isShow = false;
+                        }
+                        oldpassword.setSelection(oldpassword.getText().length());
+                        return false;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -31,9 +31,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.Contact;
@@ -43,6 +47,7 @@ import net.wrappy.im.model.ContactListManager;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -54,6 +59,7 @@ import net.wrappy.im.service.ISubscriptionListener;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -735,7 +741,7 @@ public class ContactListManagerAdapter extends
         public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
             //Avoid crash when null adapter
-            if (mAdaptee != null) {
+            if (mAdaptee != null && from != null && from.getAddress() != null) {
                 String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
                 String nickname = from.getName();
                 Uri uri = insertOrUpdateSubscription(username, nickname,
@@ -1321,16 +1327,27 @@ public class ContactListManagerAdapter extends
         }
     }
 
-    Uri insertContactContent(Contact contact, long listId, int type, int subType, int subStatus) {
+    Uri insertContactContent(final Contact contact, final long listId, final int type, int subType, int subStatus) {
 
         ContentValues values = getContactContentValues(contact, listId);
         values.put(Imps.Contacts.TYPE, type);
         values.put(Imps.Contacts.SUBSCRIPTION_TYPE,subType);
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS,subStatus);
 
-        Uri uri = mResolver.insert(mContactUrl, values);
-
-        ContentValues presenceValues = getPresenceValues(contact);
+        final Uri uri = mResolver.insert(mContactUrl, values);
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() { }.getType());
+                    setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        final ContentValues presenceValues = getPresenceValues(contact);
         mResolver.insert(Imps.Presence.CONTENT_URI, presenceValues);
 
         return uri;

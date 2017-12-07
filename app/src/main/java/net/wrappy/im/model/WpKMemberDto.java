@@ -11,6 +11,7 @@ public class WpKMemberDto {
     private String identifier;
     private String email;
     private String mobile;
+    private String avatar;
     private ArrayList<WpKAuthDto> wpKAuthDtoList;
 
     public WpKMemberDto(String identifier, String email, String mobile) {
@@ -44,6 +45,14 @@ public class WpKMemberDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getMobile() {

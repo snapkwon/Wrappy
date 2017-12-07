@@ -5,28 +5,23 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.ui.RegistrationSecurityQuestionActivity;
-import net.wrappy.im.ui.legacy.SignInHelper;
-import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.model.T;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.security.KeyPair;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.FileOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +30,20 @@ import java.util.regex.Pattern;
  */
 
 public class AppFuncs {
+
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
 
     public static void alert(Context context,String s,boolean isLong) {
         Toast.makeText(context,s,isLong? Toast.LENGTH_LONG: Toast.LENGTH_SHORT).show();
@@ -106,6 +115,51 @@ public class AppFuncs {
 
         builder.show();
 
+    }
+
+    public static String bitmapToBase64String(Bitmap bitmap) {
+        String base64String = "";
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return base64String;
+    }
+
+    public static File ConvertBitmapToFile(Context context, Bitmap bitmap) {
+        File f = null;
+        try {
+            f = new File(context.getCacheDir(), "file");
+            f.createNewFile();
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return f;
+    }
+
+    public static JsonObject convertClassToJsonObject(T aClass) {
+        try {
+            Gson gson = new Gson();
+            String jsonObject = gson.toJson(aClass);
+            JsonObject object = (new JsonParser()).parse(jsonObject).getAsJsonObject();
+            return object;
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return new JsonObject();
+        }
     }
 
 }

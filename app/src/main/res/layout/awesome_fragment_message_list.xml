@@ -82,7 +82,7 @@
         android:src="@drawable/olo_welcome_white"
         android:visibility="gone"
         />
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

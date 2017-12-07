@@ -48,12 +48,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
@@ -61,13 +65,16 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
+import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -109,7 +116,12 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-    private Handler mHandler = new Handler() {
+	// offset position for popup window
+    private static final int OFFSET_X = 300;
+    private static final int OFFSET_Y = 300;
+
+    private Handler mHandler = new Handler()
+    {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -265,7 +277,7 @@ public class ConversationDetailActivity extends BaseActivity {
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
-
+    MyLoaderCallbacks loaderCallbacks;
     private void processIntent(Intent intent) {
 
         mApp = (ImApp) getApplication();
@@ -275,13 +287,14 @@ public class ConversationDetailActivity extends BaseActivity {
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
 
-//        if (mChatId != -1) {
-        android.app.LoaderManager loaderManager = getLoaderManager();
-        MyLoaderCallbacks loaderCallbacks = new MyLoaderCallbacks();
-        loaderManager.initLoader(1, null, loaderCallbacks);
-//        } else {
+        if (mChatId == -1) {
+            android.app.LoaderManager loaderManager = getLoaderManager();
+            loaderCallbacks = new MyLoaderCallbacks();
+            loaderManager.initLoader(1, null, loaderCallbacks);
+        } else {
 //            finish();
-//        }
+            startChatting();
+        }
 
     }
 
@@ -291,9 +304,23 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mNickname + Constant.EMAIL_DOMAIN, null);
+                AddContactAsyncTask task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                    @Override
+                    public void onFinished(Integer code) {
+                        startChat();
+                    }
+                });
+                task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+
             }
         });
+    }
+
+    public void startChat() {
+        if (loaderCallbacks != null) {
+            getLoaderManager().destroyLoader(1);
+            getLoaderManager().initLoader(2, null, loaderCallbacks);
+        }
     }
 
     private void startChatting() {
@@ -383,6 +410,9 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
+            case R.id.menu_settings_language:
+                PopupWindow popupWindow = mConvoView.popupDisplay();
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -887,7 +917,7 @@ public class ConversationDetailActivity extends BaseActivity {
             if (data == null || data.getCount() == 0) {
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
             } else {
-                if(mChatId == -1 && data.moveToFirst())
+                if (mChatId == -1 && data.moveToFirst())
                     mChatId = data.getLong(0);
                 startChatting();
             }

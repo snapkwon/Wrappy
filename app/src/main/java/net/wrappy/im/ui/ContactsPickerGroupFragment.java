@@ -23,13 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.util.SecureMediaStore;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +50,12 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     @BindView(R.id.btnGroupPhoto)
     ImageButton btnGroupPhoto;
 
+    @BindView(R.id.edGroupName)
+    AppEditTextView edGroupName;
+
+    @BindView(R.id.imgGroupPhoto)
+    CircleImageView imgGroupPhoto;
+
     @BindView(R.id.lstContacts)
     ListView lstContacts;
     @BindView(R.id.txtGroupNumbers)
@@ -55,6 +66,8 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     private boolean mAwaitingUpdate;
     private MyLoaderCallbacks mLoaderCallbacks;
     private Handler mHandler = new Handler();
+    Bitmap bmpThumbnail;
+    public Cursor cursor;
 
     public static ContactsPickerGroupFragment newsIntance() {
         return new ContactsPickerGroupFragment();
@@ -101,11 +114,11 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     @Override
     public void onClick(View view) {
         if (ContextCompat.checkSelfPermission(mActivity,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
+                Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             AppFuncs.getImageFromDevice(mActivity, IMAGE_AVARTA);
         } else {
-            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 199);
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA}, 199);
         }
     }
 
@@ -115,8 +128,14 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         try {
             if (data != null) {
                 if (requestCode == IMAGE_AVARTA) {
-                    Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), data.getData(), 512);
-                    btnGroupPhoto.setImageBitmap(bmpThumbnail);
+                    bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), data.getData(), 512);
+                    if (bmpThumbnail!=null) {
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT,RelativeLayout.TRUE);
+                        imgGroupPhoto.setLayoutParams(layoutParams);
+                        imgGroupPhoto.requestLayout();
+                        imgGroupPhoto.setImageBitmap(bmpThumbnail);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -125,6 +144,32 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
 
     }
+
+    public String getGroupName() {
+        return edGroupName.getText().toString().trim();
+    }
+
+    public ArrayList<String> getListUsername() {
+        ArrayList<String> arrListMember = new ArrayList<>();
+        try {
+            if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
+                do{
+                    String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME); //column 1 for the current row
+                    arrListMember.add(mName);
+                } while (cursor.moveToNext()); //move to next row in the query result
+            }
+
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return arrListMember;
+    }
+
+    public Bitmap getGroupPhoto() {
+        return bmpThumbnail;
+    }
+
+
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<android.database.Cursor> {
 //        @Override
@@ -177,6 +222,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
         @Override
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor newCursor) {
+            cursor = newCursor;
             mAdapter.swapCursor(newCursor);
 
             if(mActivity != null && isAdded())

@@ -22,7 +22,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:weightSum="3">
         <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight=".5"/>
-        <Button
+        <net.ironrabbit.type.CustomTypefaceButton
             android:id="@+id/wallet_qr_btn_coppy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:weightSum="3">
         <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight=".5"/>
-        <Button
+        <net.ironrabbit.type.CustomTypefaceButton
             android:id="@+id/wallet_qr_btn_backup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
