@@ -213,6 +213,7 @@ public class ContactListItem extends FrameLayout {
         }
 
         statusText = address;
+        statusText = "";//remove address from xmpp
 
         if (type == Imps.Contacts.TYPE_HIDDEN)
         {

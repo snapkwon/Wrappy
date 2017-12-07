@@ -61,6 +61,8 @@ import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
+import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -73,7 +75,7 @@ import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
-import net.wrappy.im.ui.AddContactActivity;
+import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ContactsListFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
@@ -81,13 +83,14 @@ import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MoreFragment;
+import net.wrappy.im.ui.WalletFragment;
+import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.XmppUriHelper;
-import net.ironrabbit.type.CustomTypefaceManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -99,9 +102,9 @@ import java.util.Locale;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
+import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
 /**
- * TODO
  */
 public class MainActivity extends BaseActivity {
 
@@ -120,6 +123,10 @@ public class MainActivity extends BaseActivity {
     private ContactsListFragment mContactList;
     private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
+    private Welcome_Wallet_Fragment mwelcome_wallet_fragment;
+    private WalletFragment mwalletFragment;
+    Adapter adapter;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,15 +157,30 @@ public class MainActivity extends BaseActivity {
         mMoreFragment = new MoreFragment();
         mAccountFragment = new AccountFragment();
 
-        Adapter adapter = new Adapter(getSupportFragmentManager());
+        fragmentManager = getSupportFragmentManager();
+        adapter = new Adapter(fragmentManager);
         adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
-        adapter.addFragment(mMoreFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
+        // remove explore tab
+//        adapter.addFragment(mMoreFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
 
         mAccountFragment = new AccountFragment();
-      //  fragAccount.setArguments();
+        //  fragAccount.setArguments();
 
         adapter.addFragment(mAccountFragment, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
+
+
+        if(!Wallet.isNewWallet(this.getFilesDir())) {
+            mwalletFragment = new WalletFragment();
+            adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+        }
+        else
+        {
+            mwelcome_wallet_fragment= new Welcome_Wallet_Fragment();
+            adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+
+        }
+
 
         mViewPager.setAdapter(adapter);
 
@@ -172,12 +194,17 @@ public class MainActivity extends BaseActivity {
         tab.setIcon(R.drawable.ic_people_white_36dp);
         mTabLayout.addTab(tab);
 
-        tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_explore_white_24dp);
-        mTabLayout.addTab(tab);
+        // remove explore tab
+//        tab = mTabLayout.newTab();
+//        tab.setIcon(R.drawable.ic_explore_white_24dp);
+//        mTabLayout.addTab(tab);
 
         tab = mTabLayout.newTab();
         tab.setIcon(R.drawable.ic_face_white_24dp);
+        mTabLayout.addTab(tab);
+
+        tab = mTabLayout.newTab();
+        tab.setIcon(R.drawable.ic_wallet);
         mTabLayout.addTab(tab);
 
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -185,6 +212,7 @@ public class MainActivity extends BaseActivity {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mViewPager.setCurrentItem(tab.getPosition());
+
 
                 setToolbarTitle(tab.getPosition());
                 applyStyleColors ();
@@ -206,25 +234,25 @@ public class MainActivity extends BaseActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 int tabIdx = mViewPager.getCurrentItem();
 
-                if (tabIdx == 0) {
+                if (tabIdx == 0 || tabIdx == 1) {
 
-                    if (mContactList.getContactCount() > 0) {
+//                    if (mContactList.getContactCount() > 0) {
                         Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
                         startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-                    }
-                    else
-                    {
-                        inviteContact();
-                    }
+//                    }
+//                    else
+//                    {
+//                        inviteContact();
+//                    }
 
-                } else if (tabIdx == 1) {
-                    inviteContact();
-                } else if (tabIdx == 2) {
-                    startPhotoTaker();
+//                } else if (tabIdx == 1) {
+//                    inviteContact();
                 }
+//                else if (tabIdx == 2) {
+//                    startPhotoTaker();
+//                }
 
 
 
@@ -273,10 +301,10 @@ public class MainActivity extends BaseActivity {
                     sb.append(getString(R.string.friends));
 
                 break;
+//            case 2:
+//                sb.append(getString(R.string.title_more));
+//                break;
             case 2:
-                sb.append(getString(R.string.title_more));
-                break;
-            case 3:
                 sb.append(getString(R.string.me_title));
                 break;
         }
@@ -303,7 +331,7 @@ public class MainActivity extends BaseActivity {
 
     public void inviteContact ()
     {
-        Intent i = new Intent(MainActivity.this, AddContactActivity.class);
+        Intent i = new Intent(MainActivity.this, AddContactNewActivity.class);
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
@@ -313,7 +341,29 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         applyStyleColors ();
+         if(mViewPager.getCurrentItem() == 3)
+         {
+             if(!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
+                 adapter.mFragments.remove(mwelcome_wallet_fragment);
+                 fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
+                 mwalletFragment = new WalletFragment();
+                 adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+                 adapter.notifyDataSetChanged();
+                 mViewPager.setAdapter(adapter);
+                 mViewPager.setCurrentItem(3);
+             }
+             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment))
+             {
+                 adapter.mFragments.remove(mwalletFragment);
+                 fragmentManager.beginTransaction().remove(mwalletFragment).commit();
+                 mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
+                 adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+                 adapter.notifyDataSetChanged();
+                 mViewPager.setAdapter(adapter);
+                 mViewPager.setCurrentItem(3);
+             }
 
+         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -394,7 +444,7 @@ public class MainActivity extends BaseActivity {
           if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
 
                 long chatId = ContentUris.parseId(data);
-                Intent intentChat = new Intent(this, ConversationDetailActivity.class);
+                Intent intentChat = ConversationDetailActivity.getStartIntent(this);
                 intentChat.putExtra("id", chatId);
                 startActivity(intentChat);
             }
@@ -506,6 +556,9 @@ public class MainActivity extends BaseActivity {
                         Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
                     }
                 }
+            }
+             else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
+                mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
@@ -752,6 +805,11 @@ public class MainActivity extends BaseActivity {
             super(fm);
         }
 
+        public void replaceFragment(int index,Fragment fragment)
+        {
+            mFragments.set(index , fragment);
+        }
+
         public void addFragment(Fragment fragment, String title, int icon) {
             mFragments.add(fragment);
             mFragmentTitles.add(title);
@@ -791,7 +849,7 @@ public class MainActivity extends BaseActivity {
                 protected void onPostExecute(Long chatId) {
 
                     if (chatId != -1 && openChat) {
-                        Intent intent = new Intent(MainActivity.this, ConversationDetailActivity.class);
+                        Intent intent = ConversationDetailActivity.getStartIntent(MainActivity.this);
                         intent.putExtra("id", chatId);
                         startActivity(intent);
                     }
@@ -996,7 +1054,7 @@ public class MainActivity extends BaseActivity {
 
     private void showChat (long chatId)
     {
-        Intent intent = new Intent(this, ConversationDetailActivity.class);
+        Intent intent = ConversationDetailActivity.getStartIntent(this);
         intent.putExtra("id",chatId);
         startActivity(intent);
     }

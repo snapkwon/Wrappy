@@ -92,7 +92,7 @@
         </FrameLayout>
 
 
-        <TextView
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/messagets"
             android:layout_width="wrap_content"
             android:layout_height="22sp"

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:weightSum="2">
+
+        <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight=".5"/>
+        <ImageView
+            android:id="@+id/wallet_qr_img"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_launcher"
+            android:adjustViewBounds="true"/>
+
+    </LinearLayout>
+
+    <net.ironrabbit.type.CustomTypefaceTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/wallet_qr_address_text"/>
+
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3">
+        <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight=".5"/>
+        <net.ironrabbit.type.CustomTypefaceButton
+            android:id="@+id/wallet_qr_btn_coppy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="#fff"
+            android:text="Copy To Clipboard"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@drawable/regbtn_states"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3">
+        <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight=".5"/>
+        <net.ironrabbit.type.CustomTypefaceButton
+            android:id="@+id/wallet_qr_btn_backup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Back up address"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="#DDABABAB"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
             
-    <TextView
+    <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/contact_address_textview"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -13,7 +13,7 @@
         android:layout_marginRight="8dip"
         android:textAppearance="?android:attr/textAppearanceMedium" />
     
-    <EditText
+    <net.ironrabbit.type.CustomTypefaceEditText
         android:id="@+id/contact_nickname_edittext"
         android:hint="@string/nickname"
         android:layout_height="wrap_content"

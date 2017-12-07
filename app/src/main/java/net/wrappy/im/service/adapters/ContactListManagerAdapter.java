@@ -17,10 +17,27 @@
 
 package net.wrappy.im.service.adapters;
 
-import net.wrappy.im.service.IContactList;
-import net.wrappy.im.service.IContactListListener;
-import net.wrappy.im.service.ISubscriptionListener;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.net.Uri.Builder;
+import android.os.AsyncTask;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.crypto.IOtrChatSession;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.Contact;
@@ -30,10 +47,19 @@ import net.wrappy.im.model.ContactListManager;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionManager;
+import net.wrappy.im.service.IContactList;
+import net.wrappy.im.service.IContactListListener;
 import net.wrappy.im.service.IContactListManager;
+import net.wrappy.im.service.ISubscriptionListener;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.RemoteImService;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,18 +72,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.net.Uri.Builder;
-import android.os.RemoteCallbackList;
-import android.os.RemoteException;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 public class ContactListManagerAdapter extends
         IContactListManager.Stub {
@@ -726,11 +740,14 @@ public class ContactListManagerAdapter extends
 
         public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
-            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
-            String nickname = from.getName();
-            Uri uri = insertOrUpdateSubscription(username, nickname,
-                    subType,
-                    subStatus);
+            //Avoid crash when null adapter
+            if (mAdaptee != null && from != null && from.getAddress() != null) {
+                String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+                String nickname = from.getName();
+                Uri uri = insertOrUpdateSubscription(username, nickname,
+                        subType,
+                        subStatus);
+            }
 
             boolean hadListener = broadcast(new SubscriptionBroadcaster() {
                 public void broadcast(ISubscriptionListener listener) throws RemoteException {
@@ -740,36 +757,81 @@ public class ContactListManagerAdapter extends
         }
 
         public void onSubScriptionRequest(final Contact from, long providerId, long accountId) {
-                        
-            String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+            // TungNP: added to auto approve friend
+            final String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
 
-            if (!isSubscribed(username)) {
-
-                String nickname = from.getName();
-                queryOrInsertContact(from);
-                Uri uri = insertOrUpdateSubscription(username, nickname,
-                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
-                        Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
-
-                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
-                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
-                        listener.onSubScriptionRequest(from, mConn.getProviderId(), mConn.getAccountId());
-                    }
-                });
-
-                if (!hadListener) {
-                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
-                            ContentUris.parseId(uri), username, nickname);
-                }
-            }
-            else
+            new AsyncTask<String, Void, Boolean>()
             {
-                try {
-                    Thread.sleep(2000);//wait two seconds
+                @Override
+                protected Boolean doInBackground(String... strings) {
+
+
+                    try {
+                        if (mConn != null) {
+                            IContactListManager listManager = mConn.getContactListManager();
+
+                            if (listManager != null)
+                                listManager.approveSubscription(new Contact(new XmppAddress(username), username + Constant.EMAIL_DOMAIN, Imps.Contacts.TYPE_NORMAL));
+
+                            IChatSessionManager manager = mConn.getChatSessionManager();
+
+                            if (manager != null) {
+                                IChatSession session = manager.getChatSession(username);
+
+                                if (session != null) {
+
+                                    IOtrChatSession otrChatSession = session.getDefaultOtrChatSession();
+
+                                    if (otrChatSession != null) {
+                                        otrChatSession.verifyKey(otrChatSession.getRemoteUserId());
+                                    }
+                                }
+                            }
+
+                        }
+
+                    } catch (RemoteException e) {
+                        Log.e(ImApp.LOG_TAG, "error init otr", e);
+
+                    }
+
+                    return true;
                 }
-                catch(Exception e){}
-                approveSubscription(from);
-            }
+
+                @Override
+                protected void onPostExecute(Boolean success) {
+                    super.onPostExecute(success);
+
+
+                }
+            }.execute();
+//            if (!isSubscribed(username)) {
+//
+//                String nickname = from.getName();
+//                queryOrInsertContact(from);
+//                Uri uri = insertOrUpdateSubscription(username, nickname,
+//                        Imps.Contacts.SUBSCRIPTION_TYPE_INVITATIONS,
+//                        Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING);
+//
+//                boolean hadListener = broadcast(new SubscriptionBroadcaster() {
+//                    public void broadcast(ISubscriptionListener listener) throws RemoteException {
+//                        listener.onSubScriptionRequest(from, mConn.getProviderId(), mConn.getAccountId());
+//                    }
+//                });
+//
+////                if (!hadListener) {
+////                    mContext.getStatusBarNotifier().notifySubscriptionRequest(mConn.getProviderId(), mConn.getAccountId(),
+////                            ContentUris.parseId(uri), username, nickname);
+////                }
+//            }
+////            else
+//            {
+//                try {
+//                    Thread.sleep(2000);//wait two seconds
+//                }
+//                catch(Exception e){}
+//                approveSubscription(from);
+//            }
         }
 
         public void onUnSubScriptionRequest(final Contact from, long providerId, long accountId) {
@@ -1265,16 +1327,27 @@ public class ContactListManagerAdapter extends
         }
     }
 
-    Uri insertContactContent(Contact contact, long listId, int type, int subType, int subStatus) {
+    Uri insertContactContent(final Contact contact, final long listId, final int type, int subType, int subStatus) {
 
         ContentValues values = getContactContentValues(contact, listId);
         values.put(Imps.Contacts.TYPE, type);
         values.put(Imps.Contacts.SUBSCRIPTION_TYPE,subType);
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS,subStatus);
 
-        Uri uri = mResolver.insert(mContactUrl, values);
-
-        ContentValues presenceValues = getPresenceValues(contact);
+        final Uri uri = mResolver.insert(mContactUrl, values);
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() { }.getType());
+                    setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        final ContentValues presenceValues = getPresenceValues(contact);
         mResolver.insert(Imps.Presence.CONTENT_URI, presenceValues);
 
         return uri;

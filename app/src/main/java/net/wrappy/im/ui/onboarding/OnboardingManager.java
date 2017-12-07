@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
@@ -377,19 +378,31 @@ public class OnboardingManager {
     }
 
     public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password) {
+        return addExistingAccount(context, handler, nickname, jabberId, password, null);
+    }
+
+    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password, String accountName) {
+        RegistrationAccount account = new RegistrationAccount(jabberId, password);
+        account.setNickname(accountName);
+        return addExistingAccount(context, handler, account);
+    }
+    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, RegistrationAccount account) {
 
         OnboardingAccount result = null;
 
-        String[] jabberParts = jabberId.split("@");
+        String[] jabberParts = account.getUsername().split("@");
         String username = jabberParts[0];
         String domain = jabberParts[1];
-        int port = 5222;
+        String nickname = account.getJid();
+        String accountName = account.getNickname();
+        String password = account.getPassword();
+        int port = account.getPort() > 0 ? account.getPort() : 5222;
 
         ContentResolver cr = context.getContentResolver();
         ImPluginHelper helper = ImPluginHelper.getInstance(context);
         long providerId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password);
+        long accountId = ImApp.insertOrUpdateAccount(cr, providerId, -1, nickname, username, password, accountName, account);
 
         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
 

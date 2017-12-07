@@ -20,8 +20,10 @@ package net.wrappy.im.ui;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
@@ -110,7 +112,6 @@ public class MessageListItem extends FrameLayout {
      * This trickery is needed in order to have clickable links that open things
      * in a new {@code Task} rather than in ChatSecure's {@code Task.} Thanks to @commonsware
      * https://stackoverflow.com/a/11417498
-     *
      */
     class NewTaskUrlSpan extends ClickableSpan {
 
@@ -133,16 +134,14 @@ public class MessageListItem extends FrameLayout {
                 intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-            }
-            else
-            {
+            } else {
                 //it is an invite link, so target it back at us!
                 Uri uri = Uri.parse(urlString);
                 Context context = widget.getContext();
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
                 intent.setPackage(context.getPackageName()); //The package name of the app to which intent is to be sent
-               // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         }
@@ -169,12 +168,12 @@ public class MessageListItem extends FrameLayout {
     }
 
 
-    public String getLastMessage () {
+    public String getLastMessage() {
         return lastMessage;
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-            boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -193,7 +192,7 @@ public class MessageListItem extends FrameLayout {
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
-        if( mimeType != null ) {
+        if (mimeType != null) {
 
             Uri mediaUri = Uri.parse(body);
             lastMessage = "";
@@ -211,7 +210,7 @@ public class MessageListItem extends FrameLayout {
 
                 } else {
                     mHolder.mTextViewForMessages.setVisibility(View.GONE);
-                    boolean isJpeg = mimeType.contains("jpg")||mimeType.contains("jpeg");
+                    boolean isJpeg = mimeType.contains("jpg") || mimeType.contains("jpeg");
 
                     showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
 
@@ -220,13 +219,10 @@ public class MessageListItem extends FrameLayout {
                 }
             }
 
-        }
-        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':'))
-        {
+        } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
             boolean cmdSuccess = false;
 
-            if (lastMessage.startsWith("/sticker:"))
-            {
+            if (lastMessage.startsWith("/sticker:")) {
                 String[] cmds = lastMessage.split(":");
 
                 String mimeTypeSticker = "image/png";
@@ -245,16 +241,15 @@ public class MessageListItem extends FrameLayout {
 
                     //now load the thumbnail
                     cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
-                }
-                catch (Exception e)
-                {
-                    Log.e(ImApp.LOG_TAG, "error loading sticker bitmap: " + cmds[1],e);
+                } catch (Exception e) {
+                    Log.e(ImApp.LOG_TAG, "error loading sticker bitmap: " + cmds[1], e);
                     cmdSuccess = false;
                 }
 
-            }
-            else if (lastMessage.startsWith(":"))
-            {
+            } else if (lastMessage.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                bindConference(lastMessage);
+                cmdSuccess = true;
+            } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
 
                 String mimeTypeSticker = "image/png";
@@ -276,50 +271,41 @@ public class MessageListItem extends FrameLayout {
                     cmdSuccess = false;
                 }
             }
-
-            if (!cmdSuccess)
-            {
+            if (!cmdSuccess) {
                 mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
-            }
-            else
-            {
+            } else {
                 mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
                 lastMessage = "";
             }
 
+        } else {
+
+            //  if (isSelected())
+            //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+
+            if (lastMessage.length() > 0) {
+                mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
+            } else {
+                mHolder.mTextViewForMessages.setText(lastMessage);
+            }
         }
 
-      //  if (isSelected())
-        //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
-        if (lastMessage.length() > 0)
-        {
-            mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
-        }
-        else
-        {
-            mHolder.mTextViewForMessages.setText(lastMessage);
-        }
-
-
-        if (date != null)
-        {
+        if (date != null) {
 
             String contact = null;
             if (showContact) {
                 String[] nickParts = nickname.split("/");
-                contact = nickParts[nickParts.length-1];
+                contact = nickParts[nickParts.length - 1];
             }
 
-           CharSequence tsText = formatTimeStamp(date,messageType, null, encryption, contact);
+            CharSequence tsText = formatTimeStamp(date, messageType, null, encryption, contact);
 
 
-         mHolder.mTextViewForTimestamp.setText(tsText);
-         mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
+            mHolder.mTextViewForTimestamp.setText(tsText);
+            mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
-        }
-        else
-        {
+        } else {
 
             mHolder.mTextViewForTimestamp.setText("");
             //mHolder.mTextViewForTimestamp.setVisibility(View.GONE);
@@ -330,8 +316,15 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private boolean showMediaThumbnail (String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop)
-    {
+    private void bindConference(String lastMessage) {
+        ConferenceMessage message = new ConferenceMessage(lastMessage);
+        String callDes = message.getType().getType() + " chat end.";
+        if (mHolder != null) {
+            mHolder.mTextViewForMessages.setText(callDes);
+        }
+    }
+
+    private boolean showMediaThumbnail(String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop) {
         this.mediaUri = mediaUri;
         this.mimeType = mimeType;
 
@@ -356,13 +349,11 @@ public class MessageListItem extends FrameLayout {
         else
             holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        if( mimeType.startsWith("image/") ) {
-            setImageThumbnail( getContext().getContentResolver(), id, holder, mediaUri );
+        if (mimeType.startsWith("image/")) {
+            setImageThumbnail(getContext().getContentResolver(), id, holder, mediaUri);
             holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
 
-        }
-        else
-        {
+        } else {
 
             Glide.clear(holder.mMediaThumbnail);
 
@@ -371,10 +362,8 @@ public class MessageListItem extends FrameLayout {
                         .load(R.drawable.ic_file)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(holder.mMediaThumbnail);
-            }
-            catch (Exception e)
-            {
-                Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+            } catch (Exception e) {
+                Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
             }
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
             holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
@@ -388,8 +377,7 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private void showAudioPlayer (String mimeType, Uri mediaUri, int id, MessageViewHolder holder) throws Exception
-    {
+    private void showAudioPlayer(String mimeType, Uri mediaUri, int id, MessageViewHolder holder) throws Exception {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
             String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
@@ -403,19 +391,17 @@ public class MessageListItem extends FrameLayout {
 
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
         mHolder.mTextViewForMessages.setText("");
-        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView,mHolder.mTextViewForMessages);
+        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView, mHolder.mTextViewForMessages);
         holder.mContainer.setBackgroundResource(android.R.color.transparent);
     }
 
     protected String convertMediaUriToPath(Uri uri) {
         String path = null;
 
-        String [] proj={MediaStore.Images.Media.DATA};
-        Cursor cursor = getContext().getContentResolver().query(uri, proj,  null, null, null);
-        if (cursor != null && (!cursor.isClosed()))
-        {
-            if (cursor.isBeforeFirst())
-            {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContext().getContentResolver().query(uri, proj, null, null, null);
+        if (cursor != null && (!cursor.isClosed())) {
+            if (cursor.isBeforeFirst()) {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
                 path = cursor.getString(column_index);
@@ -441,100 +427,92 @@ public class MessageListItem extends FrameLayout {
 
             context.startActivity(intent);
 
-        }
-        else if (mimeType.startsWith("audio")) {
+        } else if (mimeType.startsWith("audio")) {
 
-                if (mAudioPlayer.getDuration() != -1)
-                    mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration()/1000) + "secs");
+            if (mAudioPlayer.getDuration() != -1)
+                mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration() / 1000) + "secs");
 
-                if (mAudioPlayer.isPlaying())
-                {
-                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
-                    mAudioPlayer.pause();
-                }
-                else
-                {
-                    mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
-                    mAudioPlayer.play();
-                }
+            if (mAudioPlayer.isPlaying()) {
+                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+                mAudioPlayer.pause();
+            } else {
+                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
+                mAudioPlayer.play();
+            }
 
 
-        }
-        else
-        {
+        } else {
             exportMediaFile();
             /**
-            String body = convertMediaUriToPath(mediaUri);
+             String body = convertMediaUriToPath(mediaUri);
 
-            if (body == null)
-                body = new File(mediaUri.getPath()).getAbsolutePath();
-
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (Build.VERSION.SDK_INT >= 11)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            //set a general mime type not specific
-            intent.setDataAndType(Uri.parse(body), mimeType);
+             if (body == null)
+             body = new File(mediaUri.getPath()).getAbsolutePath();
 
 
-            Context context = getContext().getApplicationContext();
+             Intent intent = new Intent(Intent.ACTION_VIEW);
+             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             if (Build.VERSION.SDK_INT >= 11)
+             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-            if (isIntentAvailable(context, intent))
-            {
-                context.startActivity(intent);
-            }
-            else
-            {
+             //set a general mime type not specific
+             intent.setDataAndType(Uri.parse(body), mimeType);
 
-                intent = new Intent(Intent.ACTION_SEND);
-                intent.setDataAndType(Uri.parse(body), mimeType);
 
-                if (isIntentAvailable(context, intent))
-                {
-                    context.startActivity(intent);
-                }
-                else {
-                    Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
-                }
-            }**/
+             Context context = getContext().getApplicationContext();
+
+             if (isIntentAvailable(context, intent))
+             {
+             context.startActivity(intent);
+             }
+             else
+             {
+
+             intent = new Intent(Intent.ACTION_SEND);
+             intent.setDataAndType(Uri.parse(body), mimeType);
+
+             if (isIntentAvailable(context, intent))
+             {
+             context.startActivity(intent);
+             }
+             else {
+             Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+             }
+             }**/
         }
     }
 
 
     /**
-    protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
+     * protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
+     * <p>
+     * final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
+     * <p>
+     * new AlertDialog.Builder(context)
+     * .setTitle(context.getString(R.string.export_media))
+     * .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
+     * .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
+     *
+     * @Override public void onClick(DialogInterface dialogInterface, int i) {
+     * reshareMediaFile(mimeType, mediaUri);
+     * }
+     * })
+     * .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
+     * @Override public void onClick(DialogInterface dialog, int whichButton) {
+     * exportMediaFile(mimeType, mediaUri, exportPath);
+     * return;
+     * }
+     * })
+     * .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+     * @Override public void onClick(DialogInterface dialog, int whichButton) {
+     * return;
+     * }
+     * })
+     * .create().show();
+     * }
+     */
 
-        final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-
-        new AlertDialog.Builder(context)
-        .setTitle(context.getString(R.string.export_media))
-        .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
-                .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        reshareMediaFile(mimeType, mediaUri);
-                    }
-                })
-        .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int whichButton) {
-                exportMediaFile(mimeType, mediaUri, exportPath);
-                return;
-            }
-        })
-        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int whichButton) {
-                return;
-            }
-        })
-        .create().show();
-    }*/
-
-    private void forwardMediaFile (String mimeType, Uri mediaUri)
-    {
+    private void forwardMediaFile(String mimeType, Uri mediaUri) {
 
         String resharePath = "vfs:/" + mediaUri.getPath();
         Intent shareIntent = new Intent(context, ImUrlActivity.class);
@@ -545,13 +523,10 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    public void forwardMediaFile ()
-    {
+    public void forwardMediaFile() {
         if (mimeType != null && mediaUri != null) {
             forwardMediaFile(mimeType, mediaUri);
-        }
-        else
-        {
+        } else {
             Intent shareIntent = new Intent(context, ImUrlActivity.class);
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_TEXT, lastMessage);
@@ -560,44 +535,40 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
-    public void exportMediaFile ()
-    {
+    public void exportMediaFile() {
         if (mimeType != null && mediaUri != null) {
             java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
             exportMediaFile(mimeType, mediaUri, exportPath, true);
-        }
-        else
-        {
+        } else {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT,lastMessage);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, lastMessage);
             shareIntent.setType("text/plain");
             context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
         }
 
-    };
+    }
 
-    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath, boolean doView)
-    {
+    ;
+
+    private void exportMediaFile(String mimeType, Uri mediaUri, java.io.File exportPath, boolean doView) {
         try {
 
             SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
             Intent shareIntent = new Intent();
 
             if (doView) {
-                shareIntent.setDataAndType(Uri.fromFile(exportPath),mimeType);
+                shareIntent.setDataAndType(Uri.fromFile(exportPath), mimeType);
                 shareIntent.setAction(Intent.ACTION_VIEW);
                 context.startActivity(shareIntent);
-            }
-            else
-            {
+            } else {
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportPath));
                 shareIntent.setType(mimeType);
                 shareIntent.setAction(Intent.ACTION_SEND);
                 context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
 
             }
-            } catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
@@ -631,34 +602,26 @@ public class MessageListItem extends FrameLayout {
         // if a content uri - already scanned
 
         Glide.clear(aHolder.mMediaThumbnail);
-        if(SecureMediaStore.isVfsUri(mediaUri))
-        {
+        if (SecureMediaStore.isVfsUri(mediaUri)) {
             try {
                 info.guardianproject.iocipher.File fileImage = new info.guardianproject.iocipher.File(mediaUri.getPath());
-                if (fileImage.exists())
-                {
+                if (fileImage.exists()) {
                     Glide.with(context)
                             .load(new info.guardianproject.iocipher.FileInputStream(fileImage))
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(aHolder.mMediaThumbnail);
                 }
+            } catch (Exception e) {
+                Log.w(ImApp.LOG_TAG, "unable to load thumbnail: " + mediaUri.toString());
             }
-            catch (Exception e)
-            {
-                Log.w(ImApp.LOG_TAG,"unable to load thumbnail: " + mediaUri.toString());
-            }
-        }
-        else if (mediaUri.getScheme() != null
-        && mediaUri.getScheme().equals("asset"))
-        {
+        } else if (mediaUri.getScheme() != null
+                && mediaUri.getScheme().equals("asset")) {
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(context)
                     .load(assetPath)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(aHolder.mMediaThumbnail);
-        }
-        else
-        {
+        } else {
             Glide.with(context)
                     .load(mediaUri)
                     .into(aHolder.mMediaThumbnail);
@@ -668,14 +631,12 @@ public class MessageListItem extends FrameLayout {
     }
 
 
-    private String formatMessage (String body)
-    {
+    private String formatMessage(String body) {
 
         if (body != null)
             try {
                 return (android.text.Html.fromHtml(body).toString()); //this happens on Xiaomi sometimes
-            }
-            catch (RuntimeException re){
+            } catch (RuntimeException re) {
                 return "";
             }
         else
@@ -683,7 +644,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
-            DeliveryState delivery, EncryptionState encryption) {
+                                    DeliveryState delivery, EncryptionState encryption) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -700,7 +661,7 @@ public class MessageListItem extends FrameLayout {
 
         lastMessage = body;
 
-        if( mimeType != null ) {
+        if (mimeType != null) {
 
             lastMessage = "";
 
@@ -709,32 +670,27 @@ public class MessageListItem extends FrameLayout {
             if (body.contains(" "))
                 mediaPath = body.split(" ")[0];
 
-            Uri mediaUri = Uri.parse( mediaPath ) ;
+            Uri mediaUri = Uri.parse(mediaPath);
 
-            if (mimeType.startsWith("audio"))
-            {
+            if (mimeType.startsWith("audio")) {
                 try {
                     mHolder.mAudioContainer.setVisibility(View.VISIBLE);
                     showAudioPlayer(mimeType, mediaUri, id, mHolder);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     mHolder.mAudioContainer.setVisibility(View.GONE);
                 }
 
-            }
-            else {
+            } else {
                 mHolder.mTextViewForMessages.setVisibility(View.GONE);
 
                 mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
-                boolean isJpeg = mimeType.contains("jpg")||mimeType.contains("jpeg");
+                boolean isJpeg = mimeType.contains("jpg") || mimeType.contains("jpeg");
                 showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
 
             }
 
-        }
-        else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/'||lastMessage.charAt(0) == ':')) {
+        } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
 //            String cmd = lastMessage.toString().substring(1);
             boolean cmdSuccess = false;
 
@@ -757,9 +713,10 @@ public class MessageListItem extends FrameLayout {
                     cmdSuccess = false;
                 }
 
-            }
-            else if (lastMessage.startsWith(":"))
-            {
+            } else if (lastMessage.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                bindConference(lastMessage);
+                cmdSuccess = true;
+            } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
 
                 String mimeTypeSticker = "image/png";
@@ -782,36 +739,29 @@ public class MessageListItem extends FrameLayout {
                 }
             }
 
-            if (!cmdSuccess)
-            {
+            if (!cmdSuccess) {
                 mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
-            }
-            else
-            {
+            } else {
                 holder.mContainer.setBackgroundResource(android.R.color.transparent);
                 lastMessage = "";
             }
 
-        }
-        else {
+        } else {
             mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
         }
 
         //if (isSelected())
-          //  mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
+        //  mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
-        if (date != null)
-        {
+        if (date != null) {
 
-            CharSequence tsText = formatTimeStamp(date,messageType, delivery, encryption, null);
+            CharSequence tsText = formatTimeStamp(date, messageType, delivery, encryption, null);
 
             mHolder.mTextViewForTimestamp.setText(tsText);
 
             mHolder.mTextViewForTimestamp.setVisibility(View.VISIBLE);
 
-        }
-        else
-        {
+        } else {
             mHolder.mTextViewForTimestamp.setText("");
 
         }
@@ -820,32 +770,29 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showAvatar (String address, String nickname, boolean isLeft, int presenceStatus)
-    {
+    private void showAvatar(String address, String nickname, boolean isLeft, int presenceStatus) {
         if (mHolder.mAvatar == null)
             return;
 
         mHolder.mAvatar.setVisibility(View.GONE);
 
-        if (address != null && isLeft)
-        {
+        if (address != null && isLeft) {
 
             RoundedAvatarDrawable avatar = null;
 
-            try { avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);}
-            catch (Exception e){}
+            try {
+                avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+            } catch (Exception e) {
+            }
 
-            if (avatar != null)
-            {
+            if (avatar != null) {
                 mHolder.mAvatar.setVisibility(View.VISIBLE);
                 mHolder.mAvatar.setImageDrawable(avatar);
 
                 //setAvatarBorder(presenceStatus, avatar);
 
-            }
-            else
-            {
-              //  int color = getAvatarBorder(presenceStatus);
+            } else {
+                //  int color = getAvatarBorder(presenceStatus);
                 int padding = 24;
 
                 if (nickname.length() > 0) {
@@ -859,27 +806,28 @@ public class MessageListItem extends FrameLayout {
     }
 
     /**
-    public int getAvatarBorder(int status) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            return (getResources().getColor(R.color.holo_green_light));
-
-        case Presence.IDLE:
-            return (getResources().getColor(R.color.holo_green_dark));
-        case Presence.AWAY:
-            return (getResources().getColor(R.color.holo_orange_light));
-
-        case Presence.DO_NOT_DISTURB:
-            return(getResources().getColor(R.color.holo_red_dark));
-
-        case Presence.OFFLINE:
-            return(getResources().getColor(R.color.holo_grey_dark));
-
-        default:
-        }
-
-        return Color.TRANSPARENT;
-    }**/
+     * public int getAvatarBorder(int status) {
+     * switch (status) {
+     * case Presence.AVAILABLE:
+     * return (getResources().getColor(R.color.holo_green_light));
+     * <p>
+     * case Presence.IDLE:
+     * return (getResources().getColor(R.color.holo_green_dark));
+     * case Presence.AWAY:
+     * return (getResources().getColor(R.color.holo_orange_light));
+     * <p>
+     * case Presence.DO_NOT_DISTURB:
+     * return(getResources().getColor(R.color.holo_red_dark));
+     * <p>
+     * case Presence.OFFLINE:
+     * return(getResources().getColor(R.color.holo_grey_dark));
+     * <p>
+     * default:
+     * }
+     * <p>
+     * return Color.TRANSPARENT;
+     * }
+     **/
 
     public void bindPresenceMessage(MessageViewHolder holder, String contact, int type, Date date, boolean isGroupChat, boolean scrolling) {
 
@@ -896,7 +844,7 @@ public class MessageListItem extends FrameLayout {
 
     public void bindErrorMessage(int errCode) {
 
-        mHolder = (MessageViewHolder)getTag();
+        mHolder = (MessageViewHolder) getTag();
 
         mHolder.mTextViewForMessages.setText(R.string.msg_sent_failed);
         mHolder.mTextViewForMessages.setTextColor(getResources().getColor(R.color.error));
@@ -908,8 +856,7 @@ public class MessageListItem extends FrameLayout {
 
         StringBuilder deliveryText = new StringBuilder();
 
-        if (nickname != null)
-        {
+        if (nickname != null) {
             deliveryText.append(nickname);
             deliveryText.append(' ');
         }
@@ -920,23 +867,19 @@ public class MessageListItem extends FrameLayout {
 
         spanText = new SpannableString(deliveryText.toString());
 
-        if (delivery != null)
-        {
+        if (delivery != null) {
             deliveryText.append(' ');
             //this is for delivery
 
-            if (messageType == Imps.MessageType.QUEUED)
-            {
+            if (messageType == Imps.MessageType.QUEUED) {
                 //do nothing
                 deliveryText.append("X");
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
-                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_message_wait_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            else if (delivery == DeliveryState.DELIVERED) {
+                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_message_wait_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else if (delivery == DeliveryState.DELIVERED) {
 
-                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                {
+                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
                     deliveryText.append("XX");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
@@ -944,76 +887,65 @@ public class MessageListItem extends FrameLayout {
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                } else{
+                } else {
                     deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 }
-
 
 
             } else if (delivery == DeliveryState.UNDELIVERED) {
 
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
+                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
                     deliveryText.append("XX");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                else
-                {
+                } else {
                     deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-1,len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 }
 
 
-            }
-            else if (delivery == DeliveryState.NEUTRAL) {
+            } else if (delivery == DeliveryState.NEUTRAL) {
 
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
+                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
                     deliveryText.append("XX");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-2,len-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                else
-                {
+                } else {
                     deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey),len-1,len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 }
 
             }
 
 
-        }
-        else
-        {
-            if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-            {
+        } else {
+            if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED) {
                 deliveryText.append('X');
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
 
-                if (encryptionState == EncryptionState.ENCRYPTED||encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            else if (messageType == Imps.MessageType.OUTGOING)
-            {
+                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else if (messageType == Imps.MessageType.OUTGOING) {
                 //do nothing
                 deliveryText.append("X");
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
-                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_message_wait_grey), len-1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_message_wait_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
 
@@ -1021,36 +953,36 @@ public class MessageListItem extends FrameLayout {
     }
 
     private CharSequence formatPresenceUpdates(String contact, int type, Date date, boolean isGroupChat,
-            boolean scrolling) {
+                                               boolean scrolling) {
         String body;
 
-        Resources resources =getResources();
+        Resources resources = getResources();
 
         switch (type) {
-        case Imps.MessageType.PRESENCE_AVAILABLE:
-            body = resources.getString(isGroupChat ? R.string.contact_joined
-                                                   : R.string.contact_online, contact);
-            break;
+            case Imps.MessageType.PRESENCE_AVAILABLE:
+                body = resources.getString(isGroupChat ? R.string.contact_joined
+                        : R.string.contact_online, contact);
+                break;
 
-        case Imps.MessageType.PRESENCE_AWAY:
-            body = resources.getString(R.string.contact_away, contact);
-            break;
+            case Imps.MessageType.PRESENCE_AWAY:
+                body = resources.getString(R.string.contact_away, contact);
+                break;
 
-        case Imps.MessageType.PRESENCE_DND:
-            body = resources.getString(R.string.contact_busy, contact);
-            break;
+            case Imps.MessageType.PRESENCE_DND:
+                body = resources.getString(R.string.contact_busy, contact);
+                break;
 
-        case Imps.MessageType.PRESENCE_UNAVAILABLE:
-            body = resources.getString(isGroupChat ? R.string.contact_left
-                                                   : R.string.contact_offline, contact);
-            break;
+            case Imps.MessageType.PRESENCE_UNAVAILABLE:
+                body = resources.getString(isGroupChat ? R.string.contact_left
+                        : R.string.contact_offline, contact);
+                break;
 
-        default:
-            return null;
+            default:
+                return null;
         }
 
         body += " - ";
-        body += formatTimeStamp(date,type, null, EncryptionState.NONE, null);
+        body += formatTimeStamp(date, type, null, EncryptionState.NONE, null);
 
         if (scrolling) {
             return body;
@@ -1066,43 +998,43 @@ public class MessageListItem extends FrameLayout {
     }
 
     /**
-    public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            break;
+     * public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
+     * switch (status) {
+     * case Presence.AVAILABLE:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
+     * break;
+     * <p>
+     * case Presence.IDLE:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
+     * <p>
+     * break;
+     * <p>
+     * case Presence.AWAY:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
+     * break;
+     * <p>
+     * case Presence.DO_NOT_DISTURB:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
+     * <p>
+     * break;
+     * <p>
+     * case Presence.OFFLINE:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_grey_light));
+     * <p>
+     * break;
+     * <p>
+     * <p>
+     * default:
+     * }
+     * }
+     **/
 
-        case Presence.IDLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-
-            break;
-
-        case Presence.AWAY:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            break;
-
-        case Presence.DO_NOT_DISTURB:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-
-            break;
-
-        case Presence.OFFLINE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_grey_light));
-
-            break;
-
-
-        default:
-        }
-    }**/
-
-    public void applyStyleColors ()
-    {
+    public void applyStyleColors() {
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorText = settings.getInt("themeColorText", -1);
+        int themeColorBg = settings.getInt("themeColorBg", -1);
 
         if (mHolder != null) {
             if (themeColorText != -1) {
@@ -1114,20 +1046,17 @@ public class MessageListItem extends FrameLayout {
 
             }
 
-            if (themeColorBg != -1)
-            {
+            if (themeColorBg != -1) {
 
                 int textBubbleBg = getContrastColor(themeColorText);
-                 if (textBubbleBg == Color.BLACK)
+                if (textBubbleBg == Color.BLACK)
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
-                 else
+                else
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
                 //mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
                 //mHolder.mContainer.setBackgroundColor(themeColorBg);
-            }
-            else
-            {
+            } else {
                 mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
 
             }
@@ -1141,10 +1070,10 @@ public class MessageListItem extends FrameLayout {
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public Locale getCurrentLocale(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+    public Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
-        } else{
+        } else {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }

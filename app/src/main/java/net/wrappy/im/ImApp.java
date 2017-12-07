@@ -45,9 +45,13 @@ import android.util.Log;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.wrappy.im.GethService.db.WalletDBHelper;
+import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
+import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.service.Broadcaster;
@@ -113,7 +117,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final String NO_CREATE_KEY = "nocreate";
 
     public static final String PREFERENCE_KEY_TEMP_PASS = "temppass";
-    
+
     //ACCOUNT SETTINGS Imps defaults
     public static final String DEFAULT_XMPP_RESOURCE = "ChatSecureZom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
@@ -129,7 +133,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     private static IRemoteImService mImService;
 
-   // HashMap<Long, IImConnection> mConnections;
+    // HashMap<Long, IImConnection> mConnections;
     MyConnListener mConnectionListener;
     HashMap<Long, ProviderDef> mProviders;
 
@@ -141,13 +145,17 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
      */
     ArrayList<Message> mQueue = new ArrayList<Message>();
 
-    /** A flag indicates that we have called tomServiceStarted start the service. */
+    /**
+     * A flag indicates that we have called tomServiceStarted start the service.
+     */
 //    private boolean mServiceStarted;
     private Context mApplicationContext;
 
     private CacheWordHandler mCacheWord;
 
     public static Executor sThreadPoolExecutor = null;
+
+    private static WalletDBHelper walletDBHelper;
 
     private SharedPreferences settings = null;
 
@@ -165,22 +173,24 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final int EVENT_USER_PRESENCE_UPDATED = 300;
     public static final int EVENT_UPDATE_USER_PRESENCE_ERROR = 301;
 
-    private static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
-                                                         Imps.Provider.FULLNAME,
-                                                         Imps.Provider.SIGNUP_URL, };
+    private static final String[] PROVIDER_PROJECTION = {Imps.Provider._ID, Imps.Provider.NAME,
+            Imps.Provider.FULLNAME,
+            Imps.Provider.SIGNUP_URL,};
 
-    private static final String[] ACCOUNT_PROJECTION = { Imps.Account._ID, Imps.Account.PROVIDER,
-                                                        Imps.Account.NAME, Imps.Account.USERNAME,
-                                                        Imps.Account.PASSWORD, };
+    private static final String[] ACCOUNT_PROJECTION = {Imps.Account._ID, Imps.Account.PROVIDER,
+            Imps.Account.NAME, Imps.Account.USERNAME,
+            Imps.Account.PASSWORD, Imps.Account.ACCOUNT_NAME,};
 
     static final void log(String log) {
         Log.d(LOG_TAG, log);
     }
-/**
-    protected void attachBaseContext(Context base) {
-                super.attachBaseContext(base);
-                MultiDex.install(this);
-            }*/
+
+    /**
+     * protected void attachBaseContext(Context base) {
+     * super.attachBaseContext(base);
+     * MultiDex.install(this);
+     * }
+     */
 
     @Override
     public ContentResolver getContentResolver() {
@@ -211,14 +221,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         SQLiteDatabase.loadLibs(getApplicationContext());
         VirtualFileSystem.get().isMounted();
 
-       // mConnections = new HashMap<Long, IImConnection>();
+        // mConnections = new HashMap<Long, IImConnection>();
         mApplicationContext = this;
 
         //initTrustManager();
 
         mBroadcaster = new Broadcaster();
 
-        setAppTheme(null,null);
+        setAppTheme(null, null);
 
         // ChatSecure-Push needs to do initial setup as soon as Cacheword is ready
         mCacheWord = new CacheWordHandler(this, this);
@@ -236,63 +246,60 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkConnectivityReceiver(), intentFilter);
 
-        if(Build.VERSION.SDK_INT>=24){
-            try{
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
                 m.invoke(null);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
+        WalletDatabaseManager.initializeInstance(walletDBHelper);
+
+
+        RestAPI.initIon(getApplicationContext());
+
     }
 
-    public boolean isThemeDark ()
-    {
+    public boolean isThemeDark() {
         return mThemeDark;
     }
-    
-    public void setAppTheme (Activity activity)
-    {
+
+    public void setAppTheme(Activity activity) {
         setAppTheme(activity, null);
     }
 
-    public void setAppTheme (Activity activity, Toolbar toolbar)
-    {
+    public void setAppTheme(Activity activity, Toolbar toolbar) {
 
         mThemeDark = settings.getBoolean("themeDark", false);
 
-        if (mThemeDark)
-        {
+        if (mThemeDark) {
             setTheme(R.style.AppThemeDark);
 
 
-            if (activity != null)
-            {
+            if (activity != null) {
                 activity.setTheme(R.style.AppThemeDark);
-                
-            }      
-      
-        }
-        else
-        {
+
+            }
+
+        } else {
             setTheme(R.style.AppTheme);
 
 
-            if (activity != null)
-            {
+            if (activity != null) {
                 activity.setTheme(R.style.AppTheme);
-               
+
             }
-            
-            
+
+
         }
 
         Configuration config = getResources().getConfiguration();
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-        if (mImService != null)
-        {
+        if (mImService != null) {
             boolean debugOn = settings.getBoolean("prefDebug", false);
             try {
                 mImService.enableDebugLogging(debugOn);
@@ -311,7 +318,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             Preferences.setLanguage(language);
             Languages.forceChangeLanguage(activity);
 
-            CustomTypefaceManager.loadFromAssets(activity,language.equals("bo"));
+            CustomTypefaceManager.loadFromAssets(activity, language.equals("bo"));
 
 
         }
@@ -341,13 +348,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public boolean hasActiveConnections ()
-    {
+    public boolean hasActiveConnections() {
         try {
             return !mImService.getActiveConnections().isEmpty();
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
             return false;
         }
 
@@ -357,13 +361,13 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         //todo we don't wnat to do this right now
         /**
-        if (!hasActiveConnections()) {
-            if (Log.isLoggable(LOG_TAG, Log.DEBUG))
-                log("stop ImService because there's no active connections");
+         if (!hasActiveConnections()) {
+         if (Log.isLoggable(LOG_TAG, Log.DEBUG))
+         log("stop ImService because there's no active connections");
 
-            forceStopImService();
+         forceStopImService();
 
-        }*/
+         }*/
     }
 
 
@@ -375,10 +379,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         if (mImServiceConn != null) {
             try {
                 if (mImService != null)
-                 mImService.shutdownAndLock();
-            }
-            catch (RemoteException re)
-            {
+                    mImService.shutdownAndLock();
+            } catch (RemoteException re) {
 
             }
             mApplicationContext.unbindService(mImServiceConn);
@@ -400,7 +402,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 log("service connected");
 
             mImService = IRemoteImService.Stub.asInterface(service);
-         //   fetchActiveConnections();
+            //   fetchActiveConnections();
 
             synchronized (mQueue) {
                 for (Message msg : mQueue) {
@@ -422,7 +424,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG))
                 log("service disconnected");
 
-           // mConnections.clear();
+            // mConnections.clear();
             mImService = null;
         }
     };
@@ -432,9 +434,19 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
-            String pw) {
+                                             String pw) {
+        return insertOrUpdateAccount(cr, providerId, accountId, nickname, username, pw, null, null);
+    }
+
+    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
+                                             String pw, String account_name) {
+        return insertOrUpdateAccount(cr, providerId, accountId, nickname, username, pw, account_name, null);
+    }
+
+    public static long insertOrUpdateAccount(ContentResolver cr, long providerId, long accountId, String nickname, String username,
+                                             String pw, String account_name, RegistrationAccount account) {
         String selection = Imps.Account.PROVIDER + "=? AND (" + Imps.Account._ID + "=?" + " OR " + Imps.Account.USERNAME + "=?)";
-        String[] selectionArgs = { Long.toString(providerId), Long.toString(accountId), username };
+        String[] selectionArgs = {Long.toString(providerId), Long.toString(accountId), username};
 
         Cursor c = cr.query(Imps.Account.CONTENT_URI, ACCOUNT_PROJECTION, selection, selectionArgs,
                 null);
@@ -453,6 +465,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (!TextUtils.isEmpty(pw))
                 values.put(Imps.Account.PASSWORD, pw);
 
+            if (!TextUtils.isEmpty(account_name))
+                values.put(Imps.Account.ACCOUNT_NAME, account_name);
+
+            if (account != null && !TextUtils.isEmpty(account.getEmail()))
+                values.put(Imps.Account.ACCOUNT_EMAIL, account.getEmail());
+
+            if (account != null && !TextUtils.isEmpty(account.getPhone()))
+                values.put(Imps.Account.ACCOUNT_PHONE, account.getPhone());
+
+            if (account != null && !TextUtils.isEmpty(account.getEmail()))
+                values.put(Imps.Account.ACCOUNT_GENDER, account.getGender());
+
             Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, id);
             cr.update(accountUri, values, null, null);
 
@@ -464,6 +488,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             values.put(Imps.Account.NAME, nickname);
             values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
+            values.put(Imps.Account.ACCOUNT_NAME, account_name);
+            if (account != null) {
+                values.put(Imps.Account.ACCOUNT_EMAIL, account.getEmail());
+                values.put(Imps.Account.ACCOUNT_PHONE, account.getPhone());
+                values.put(Imps.Account.ACCOUNT_GENDER, account.getGender());
+            }
 
             if (pw != null && pw.length() > 0) {
                 values.put(Imps.Account.KEEP_SIGNED_IN, true);
@@ -485,7 +515,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         selectionArgs[0] = ImApp.IMPS_CATEGORY;
 
         Cursor c = cr.query(Imps.Provider.CONTENT_URI, PROVIDER_PROJECTION, Imps.Provider.CATEGORY
-                                                                            + "=?", selectionArgs,
+                        + "=?", selectionArgs,
                 null);
         if (c == null) {
             return;
@@ -534,7 +564,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         return conn;
     }
 
-    public static IImConnection getConnection(long providerId,long accountId) {
+    public static IImConnection getConnection(long providerId, long accountId) {
 
         try {
 
@@ -554,12 +584,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 }
 
                 return im;
-            }
-            else
+            } else
                 return null;
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
             return null;
         }
     }
@@ -569,9 +596,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         try {
             return mImService.getActiveConnections();
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
             return null;
         }
     }
@@ -588,8 +613,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
-    public static void deleteAccount (ContentResolver resolver, long accountId, long providerId)
-    {
+    public static void deleteAccount(ContentResolver resolver, long accountId, long providerId) {
 
         IImConnection conn = getConnection(providerId, accountId);
 
@@ -603,7 +627,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ContentUris.appendId(builder, providerId);
         ContentUris.appendId(builder, accountId);
         resolver.delete(builder.build(), null, null);
-
 
 
     }
@@ -672,40 +695,41 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     /**
-    private void fetchActiveConnections() {
-        if (mImService != null)
-        {
-            try {
-                // register the listener before fetch so that we won't miss any connection.
-                mImService.addConnectionCreatedListener(mConnCreationListener);
-                synchronized (mConnections) {
-                    for (IBinder binder : (List<IBinder>) mImService.getActiveConnections()) {
-                        IImConnection conn = IImConnection.Stub.asInterface(binder);
-                        long providerId = conn.getProviderId();
-                        if (!mConnections.containsKey(providerId)) {
-                            mConnections.put(providerId, conn);
-                            conn.registerConnectionListener(mConnectionListener);
-                     }
-                    }
-                }
-            } catch (RemoteException e) {
-                Log.e(LOG_TAG, "fetching active connections", e);
-            }
-        }
-    }*/
+     * private void fetchActiveConnections() {
+     * if (mImService != null)
+     * {
+     * try {
+     * // register the listener before fetch so that we won't miss any connection.
+     * mImService.addConnectionCreatedListener(mConnCreationListener);
+     * synchronized (mConnections) {
+     * for (IBinder binder : (List<IBinder>) mImService.getActiveConnections()) {
+     * IImConnection conn = IImConnection.Stub.asInterface(binder);
+     * long providerId = conn.getProviderId();
+     * if (!mConnections.containsKey(providerId)) {
+     * mConnections.put(providerId, conn);
+     * conn.registerConnectionListener(mConnectionListener);
+     * }
+     * }
+     * }
+     * } catch (RemoteException e) {
+     * Log.e(LOG_TAG, "fetching active connections", e);
+     * }
+     * }
+     * }
+     */
 
     private final IConnectionCreationListener mConnCreationListener = new IConnectionCreationListener.Stub() {
         public void onConnectionCreated(IImConnection conn) throws RemoteException {
             long providerId = conn.getProviderId();
-             conn.registerConnectionListener(mConnectionListener);
+            conn.registerConnectionListener(mConnectionListener);
 
             /**
-            synchronized (mConnections) {
-                if (!mConnections.containsKey(providerId)) {
-                    mConnections.put(providerId, conn);
-                    conn.registerConnectionListener(mConnectionListener);
-                }
-            }*/
+             synchronized (mConnections) {
+             if (!mConnections.containsKey(providerId)) {
+             mConnections.put(providerId, conn);
+             conn.registerConnectionListener(mConnectionListener);
+             }
+             }*/
             broadcastConnEvent(EVENT_CONNECTION_CREATED, providerId, null);
         }
     };
@@ -728,32 +752,32 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 int what = -1;
                 long providerId = conn.getProviderId();
                 switch (state) {
-                case ImConnection.LOGGED_IN:
-                    what = EVENT_CONNECTION_LOGGED_IN;
-                    break;
+                    case ImConnection.LOGGED_IN:
+                        what = EVENT_CONNECTION_LOGGED_IN;
+                        break;
 
-                case ImConnection.LOGGING_IN:
-                    what = EVENT_CONNECTION_LOGGING_IN;
-                    break;
+                    case ImConnection.LOGGING_IN:
+                        what = EVENT_CONNECTION_LOGGING_IN;
+                        break;
 
-                case ImConnection.LOGGING_OUT:
-                    // NOTE: if this logic is changed, the logic in ImConnectionAdapter.ConnectionAdapterListener must be changed to match
-                    what = EVENT_CONNECTION_LOGGING_OUT;
+                    case ImConnection.LOGGING_OUT:
+                        // NOTE: if this logic is changed, the logic in ImConnectionAdapter.ConnectionAdapterListener must be changed to match
+                        what = EVENT_CONNECTION_LOGGING_OUT;
 
-                    break;
+                        break;
 
-                case ImConnection.DISCONNECTED:
-                    // NOTE: if this logic is changed, the logic in ImConnectionAdapter.ConnectionAdapterListener must be changed to match
-                    what = EVENT_CONNECTION_DISCONNECTED;
-               //     mConnections.remove(providerId);
-                    // stop the service if there isn't an active connection anymore.
-                    stopImServiceIfInactive();
+                    case ImConnection.DISCONNECTED:
+                        // NOTE: if this logic is changed, the logic in ImConnectionAdapter.ConnectionAdapterListener must be changed to match
+                        what = EVENT_CONNECTION_DISCONNECTED;
+                        //     mConnections.remove(providerId);
+                        // stop the service if there isn't an active connection anymore.
+                        stopImServiceIfInactive();
 
-                    break;
+                        break;
 
-                case ImConnection.SUSPENDED:
-                    what = EVENT_CONNECTION_SUSPENDED;
-                    break;
+                    case ImConnection.SUSPENDED:
+                        what = EVENT_CONNECTION_SUSPENDED;
+                        break;
                 }
                 if (what != -1) {
                     broadcastConnEvent(what, providerId, error);
@@ -792,7 +816,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public IChatSession getChatSession(long providerId, long accountId, String remoteAddress) {
 
-        IImConnection conn = getConnection(providerId,accountId);
+        IImConnection conn = getConnection(providerId, accountId);
 
         IChatSessionManager chatSessionManager = null;
         if (conn != null) {
@@ -816,13 +840,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public void maybeInit(Activity activity) {
         startImServiceIfNeed();
-        setAppTheme(activity,null);
+        setAppTheme(activity, null);
         ImPluginHelper.getInstance(this).loadAvailablePlugins();
     }
 
 
-    public boolean setDefaultAccount (long providerId, long accountId)
-    {
+    public boolean setDefaultAccount(long providerId, long accountId) {
 
         final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
         String[] PROVIDER_PROJECTION = {
@@ -847,7 +870,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mDefaultUsername = cursorProviders.getString(2);
             mDefaultNickname = cursorProviders.getString(3);
 
-            settings.edit().putLong("defaultAccountId",mDefaultAccountId).commit();
+            settings.edit().putLong("defaultAccountId", mDefaultAccountId).commit();
 
             Cursor pCursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mDefaultProviderId)}, null);
 
@@ -870,10 +893,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         return false;
     }
 
-    public boolean initAccountInfo ()
-    {
+    public boolean initAccountInfo() {
 
-        long lastAccountId = settings.getLong("defaultAccountId",-1);
+        long lastAccountId = settings.getLong("defaultAccountId", -1);
 
         if (mDefaultProviderId == -1 || mDefaultAccountId == -1) {
 
@@ -892,7 +914,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                     Imps.Provider.DEFAULT_SORT_ORDER);
 
             if (cursorProviders != null && cursorProviders.getCount() > 0) {
-                while(cursorProviders.moveToNext()) {
+                while (cursorProviders.moveToNext()) {
 
                     long providerId = cursorProviders.getLong(0);
                     long accountId = cursorProviders.getLong(1);
@@ -909,31 +931,25 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                     String otrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(username);
 
                     if ((!mNeedsAccountUpgrade)
-                            && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
-                    {
+                            && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn) {
                         mNeedsAccountUpgrade = true;
                     }
 
                     settings.close();
 
-                    if (lastAccountId == -1 && keepSignedIn)
-                    {
+                    if (lastAccountId == -1 && keepSignedIn) {
                         mDefaultProviderId = providerId;
                         mDefaultAccountId = accountId;
                         mDefaultUsername = username;
                         mDefaultNickname = nickname;
                         mDefaultOtrFingerprint = otrFingerprint;
-                    }
-                    else if (lastAccountId == accountId)
-                    {
+                    } else if (lastAccountId == accountId) {
                         mDefaultProviderId = providerId;
                         mDefaultAccountId = accountId;
                         mDefaultUsername = username;
                         mDefaultNickname = nickname;
                         mDefaultOtrFingerprint = otrFingerprint;
-                    }
-                    else if (mDefaultProviderId == -1)
-                    {
+                    } else if (mDefaultProviderId == -1) {
                         mDefaultProviderId = providerId;
                         mDefaultAccountId = accountId;
                         mDefaultUsername = username;
@@ -952,8 +968,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public boolean checkUpgrade ()
-    {
+    public boolean checkUpgrade() {
 
         final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
         String[] PROVIDER_PROJECTION = {
@@ -970,7 +985,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Imps.Provider.DEFAULT_SORT_ORDER);
 
         if (cursorProviders != null && cursorProviders.getCount() > 0) {
-            while(cursorProviders.moveToNext()) {
+            while (cursorProviders.moveToNext()) {
 
                 long providerId = cursorProviders.getLong(0);
                 long accountId = cursorProviders.getLong(1);
@@ -987,8 +1002,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 String otrFingerprint = OtrAndroidKeyManagerImpl.getInstance(this).getLocalFingerprint(username);
 
                 if ((!mNeedsAccountUpgrade)
-                        && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
-                {
+                        && settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn) {
                     mNeedsAccountUpgrade = true;
                 }
 
@@ -1011,28 +1025,23 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     private String mDefaultOtrFingerprint = null;
     private String mDefaultNickname = null;
 
-    public String getDefaultUsername ()
-    {
+    public String getDefaultUsername() {
         return mDefaultUsername;
     }
 
-    public String getDefaultNickname ()
-    {
+    public String getDefaultNickname() {
         return mDefaultNickname;
     }
 
-    public String getDefaultOtrKey ()
-    {
+    public String getDefaultOtrKey() {
         return mDefaultOtrFingerprint;
     }
 
-    public long getDefaultProviderId ()
-    {
+    public long getDefaultProviderId() {
         return mDefaultProviderId;
     }
 
-    public long getDefaultAccountId ()
-    {
+    public long getDefaultAccountId() {
         return mDefaultAccountId;
     }
 
@@ -1040,10 +1049,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        Languages.setLanguage(this, Preferences.getLanguage(),true);
+        Languages.setLanguage(this, Preferences.getLanguage(), true);
 
     }
-
 
 
     @Override
@@ -1072,23 +1080,20 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }).start();
     }
 
-    public boolean needsAccountUpgrade ()
-    {
+    public boolean needsAccountUpgrade() {
         return mNeedsAccountUpgrade;
     }
 
-    public void notifyAccountUpgrade ()
-    {
+    public void notifyAccountUpgrade() {
         StatusBarNotifier notifier = new StatusBarNotifier(this);
 
     }
 
-    public boolean doUpgrade (Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener)
-    {
+    public boolean doUpgrade(Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener) {
 
         boolean result = false;
 
-        long lastAccountId = settings.getLong("defaultAccountId",-1);
+        long lastAccountId = settings.getLong("defaultAccountId", -1);
 
         final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
         String[] PROVIDER_PROJECTION = {
@@ -1105,7 +1110,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Imps.Provider.DEFAULT_SORT_ORDER);
 
         if (cursorProviders != null && cursorProviders.getCount() > 0) {
-            while(cursorProviders.moveToNext()) {
+            while (cursorProviders.moveToNext()) {
 
                 long providerId = cursorProviders.getLong(0);
                 long accountId = cursorProviders.getLong(1);
@@ -1120,8 +1125,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
                 username = username + '@' + settings.getDomain();
 
-                if (settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn)
-                {
+                if (settings.getDomain().equalsIgnoreCase("dukgo.com") && keepSignedIn) {
                     new MigrateAccountTask(activity, this, providerId, accountId, listener).execute(newDomain);
                 }
 

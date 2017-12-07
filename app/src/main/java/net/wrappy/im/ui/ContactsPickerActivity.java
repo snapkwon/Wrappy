@@ -163,7 +163,7 @@ public class ContactsPickerActivity extends BaseActivity {
         btnAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ContactsPickerActivity.this, AddContactActivity.class);
+                Intent i = new Intent(ContactsPickerActivity.this, AddContactNewActivity.class);
                 startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
             }
         });
