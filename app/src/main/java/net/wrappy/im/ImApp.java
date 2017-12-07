@@ -49,15 +49,18 @@ import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.service.Broadcaster;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IConnectionCreationListener;
+import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.IRemoteImService;
 import net.wrappy.im.service.ImServiceConstants;
@@ -70,6 +73,7 @@ import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Languages;
+import net.wrappy.im.util.LogCleaner;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -1141,6 +1145,22 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         return result;
 
+    }
+
+    public static void approveSubscription(Contact contact) {
+        long providerId = sImApp.getDefaultProviderId();
+        long accountId = sImApp.getDefaultAccountId();
+        if (providerId != -1 && accountId != -1) {
+            IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            if (mConn != null) {
+                try {
+                    IContactListManager manager = mConn.getContactListManager();
+                    manager.approveSubscription(contact);
+                } catch (RemoteException e) {
+                    LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
+                }
+            }
+        }
     }
 
 
