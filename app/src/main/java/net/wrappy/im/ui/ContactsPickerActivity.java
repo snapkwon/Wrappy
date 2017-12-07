@@ -17,11 +17,13 @@
 
 package net.wrappy.im.ui;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,11 +46,21 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.WpKChatGroup;
+import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.widgets.FlowLayout;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -65,6 +77,8 @@ public class ContactsPickerActivity extends BaseActivity {
     public final static String EXTRA_RESULT_PROVIDER = "provider";
     public final static String EXTRA_RESULT_ACCOUNT = "account";
     public final static String EXTRA_RESULT_MESSAGE = "message";
+    public final static String EXTRA_RESULT_GROUP_NAME = "groupname";
+    public final static String EXTRA_RESULT_GROUP_ID = "groupid";
 
     private int REQUEST_CODE_ADD_CONTACT = 9999;
 
@@ -91,6 +105,7 @@ public class ContactsPickerActivity extends BaseActivity {
     ListView mListView = null;
     private MenuItem mMenuStartGroupChat;
     private boolean isClickedMenu;
+    ProgressDialog dialog;
 
     // The loader's unique id. Loader ids are specific to the Activity or
     // Fragment in which they reside.
@@ -263,31 +278,120 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void multiFinish() {
         if (mSelection.size() > 0) {
-            ArrayList<String> users = new ArrayList<>();
-            ArrayList<Integer> providers = new ArrayList<>();
-            ArrayList<Integer> accounts = new ArrayList<>();
-
-            for (int i = 0; i < mSelection.size(); i++) {
-                SelectedContact contact = mSelection.valueAt(i);
-                users.add(contact.username);
-                providers.add(contact.provider);
-                accounts.add(contact.account);
+            ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+            final String groupName = groupFragment.getGroupName();
+            final ArrayList<String> members = groupFragment.getListUsername();
+            Bitmap bitmap = groupFragment.getGroupPhoto();
+            String error = "";
+            if (groupName.isEmpty()) {
+                error = "Group Name is empty";
+            } else if (members.size()==0) {
+                error = "No member in group";
             }
 
-            Intent data = new Intent();
-            data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
-            data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
-            data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);
-            setResult(RESULT_OK, data);
-            finish();
+            if (error.isEmpty()) {
+                showWaitinDialog();
+                if (bitmap!=null) {
+                    File file = AppFuncs.ConvertBitmapToFile(getApplicationContext(),bitmap);
+                    RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
+                        @Override
+                        public void OnComplete(int httpCode, String error, String s) {
+                            String reference = "";
+                            try {
+                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+                                WpKIcon icon = new WpKIcon();
+                                icon.setReference(reference);
+                                WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
+                                wpKChatGroupDto.setName(groupName);
+                                wpKChatGroupDto.setDescription("");
+                                wpKChatGroupDto.setIcon(icon);
+                                WpKChatGroup wpKChatGroup = new WpKChatGroup();
+                                wpKChatGroup.setMemberIds(members);
+                                wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                                JsonObject json = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+                                createGroupXMPP(groupName,reference, json);
+                            }catch (Exception ex){
+                                dismissWaitinDialog();
+                                AppFuncs.alert(getApplicationContext(),"Upload group photo fail!",true);
+                            }
+                        }
+                    });
+                } else {
+                    try {
+                        WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
+                        wpKChatGroupDto.setName(groupName);
+                        wpKChatGroupDto.setDescription("");
+                        WpKChatGroup wpKChatGroup = new WpKChatGroup();
+                        wpKChatGroup.setMemberIds(members);
+                        wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+                        createGroupXMPP(groupName,"", jsonObject);
+                    }catch (Exception ex) {
+                        dismissWaitinDialog();
+                        AppFuncs.alert(getApplicationContext(),"Upload group photo fail!",true);
+                    }
+                }
+            } else {
+                AppFuncs.alert(getApplicationContext(),error,true);
+            }
+
         }
+    }
+
+    private void showWaitinDialog() {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage(getString(R.string.waiting_dialog));
+        dialog.show();
+    }
+
+    private void dismissWaitinDialog() {
+        if (dialog!=null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    private void createGroupXMPP(final String groupName,final String reference, JsonObject jsonObject){
+        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                dismissWaitinDialog();
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    ArrayList<String> users = new ArrayList<>();
+                    ArrayList<Integer> providers = new ArrayList<>();
+                    ArrayList<Integer> accounts = new ArrayList<>();
+
+                    for (int i = 0; i < mSelection.size(); i++) {
+                        SelectedContact contact = mSelection.valueAt(i);
+                        users.add(contact.username);
+                        providers.add(contact.provider);
+                        accounts.add(contact.account);
+                    }
+                    Store.putStringData(getApplicationContext(),groupName,reference);
+                    Intent data = new Intent();
+                    data.putExtra(EXTRA_RESULT_GROUP_NAME, groupName);
+                    data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
+                    data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
+                    data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);
+                    setResult(RESULT_OK, data);
+                    finish();
+                } else {
+                    AppFuncs.alert(getApplicationContext(),"Create Group Fail",true);
+                }
+            }
+        });
     }
 
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
-
+        try {
+            ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+            groupFragment.onActivityResult(request, response, data);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
         if (response == RESULT_OK)
             if (request == REQUEST_CODE_ADD_CONTACT) {
                 String newContact = data.getExtras().getString(ContactsPickerActivity.EXTRA_RESULT_USERNAME);

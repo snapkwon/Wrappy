@@ -24,7 +24,6 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
@@ -107,7 +106,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     @Override
-    protected void onSetPattern(List<PatternView.Cell> pattern) {
+    protected void onSetPattern(final List<PatternView.Cell> pattern) {
         PatternLockUtils.setPattern(pattern, this);
 
         password = PatternUtils.patternToString(pattern);
@@ -128,7 +127,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
                         if (!RestAPI.checkHttpCode(httpCode)) {
-                            AppFuncs.alert(getApplicationContext(),s,true);
+                            AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("The user name or password is incorrect");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                            //AppFuncs.alert(getApplicationContext(),s,true);
                             if (dialog != null && dialog.isShowing()) {
                                 dialog.dismiss();
                             }
