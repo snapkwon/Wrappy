@@ -43,6 +43,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
@@ -53,7 +56,7 @@ import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.RegistrationAccount;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.service.Broadcaster;
@@ -1147,13 +1150,29 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public static void approveSubscription(Contact contact) {
+    /*
+    * Auto approved contact in list which were loaded from Xmpp server
+    * */
+    public static void approveSubscription(final Contact contact) {
         long providerId = sImApp.getDefaultProviderId();
         long accountId = sImApp.getDefaultAccountId();
         if (providerId != -1 && accountId != -1) {
-            IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
             if (mConn != null) {
                 try {
+                    RestAPI.GetDataWrappy(sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
+                        @Override
+                        public void OnComplete(int httpCode, String error, String s) {
+                            Debug.d(s);
+                            try {
+                                WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                                }.getType());
+                                updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                     IContactListManager manager = mConn.getContactListManager();
                     manager.approveSubscription(contact);
                 } catch (RemoteException e) {
@@ -1163,5 +1182,31 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
-
+    /*
+    * Auto update contact name in list which were loaded from Xmpp server
+    * */
+    public static void updateContact(String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
+        // update the server
+        if (sImApp != null && wpKMemberDto != null && mConn != null) {
+            String name = wpKMemberDto.getIdentifier();
+            String email = wpKMemberDto.getEmail();
+            Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
+            try {
+                ContentUris.appendId(builder, mConn.getProviderId());
+                ContentUris.appendId(builder, mConn.getAccountId());
+                mConn.getContactListManager().setContactName(address, name);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            // update locally
+            String selection = Imps.Contacts.USERNAME + "=?";
+            String[] selectionArgs = {address};
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.Contacts.NICKNAME, name);
+            if (!TextUtils.isEmpty(email)) {
+                values.put(Imps.Contacts.CONTACT_EMAIL, email);
+            }
+            sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
+        }
+    }
 }
