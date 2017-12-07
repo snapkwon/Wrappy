@@ -182,6 +182,17 @@ public class PackupWalletAccount extends AppCompatActivity {
                                     out.close();
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(PackupWalletAccount.this);
+                                    LayoutInflater inflater = PackupWalletAccount.this.getLayoutInflater();
+                                    final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
+                                    builder.setView(dialogView);
+
+                                    final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
+                                    tvTitle.setText(e.toString());
+
+                                    builder.setPositiveButton("OK",null);
+                                    builder.show();
+                                    return;
                                 }
 
                                 //  FileUtil.copyDirectory(sourceLocation,targetLocation);

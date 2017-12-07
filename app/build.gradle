@@ -19,6 +19,8 @@ android {
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
+
+        buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
     }
 
     dexOptions {
@@ -85,6 +87,17 @@ android {
 
 ext {
     smackVersion = "4.2.1-beta1"
+}
+
+def getProps(String propName) {
+    def propsFile = rootProject.file('local.properties')
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        return props[propName]
+    } else {
+        return "inapptranslation.google_translate_apikey";
+    }
 }
 
 repositories {
