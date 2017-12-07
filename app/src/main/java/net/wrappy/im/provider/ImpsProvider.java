@@ -1110,6 +1110,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         sContactsProjectionMap.put(Imps.Contacts.CHAT_TYPE, "chats.chat_type AS chat_type");
 
+        sContactsProjectionMap.put(Contacts.CHAT_FAVORITE, "chats.chat_favorite AS chat_favorite");
+
         // contactList projection map
         sContactListProjectionMap = new HashMap<String, String>();
         sContactListProjectionMap.put(Imps.ContactList._ID, "contactList._id AS _id");
