@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@color/background_gainsboro"
+            android:background="@drawable/alert_password_wallet_background"
             >
 
             <ImageView
@@ -90,7 +90,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="12sp"
-                android:text="@string/alert_create_new_wallet"/>
+                android:text="@string/alert_password_wallet"/>
         </LinearLayout>
 
         <net.ironrabbit.type.CustomTypefaceButton
