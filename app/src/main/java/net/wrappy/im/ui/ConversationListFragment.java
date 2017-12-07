@@ -39,6 +39,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -401,12 +403,21 @@ public class ConversationListFragment extends Fragment {
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Toast.makeText(mContext, "111", Toast.LENGTH_SHORT).show();
                         Context context = v.getContext();
                         Intent intent = ConversationDetailActivity.getStartIntent(context);
                         intent.putExtra("id", chatId);
 //                        intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
                         context.startActivity(intent);
+                    }
+                });
+
+                clItem.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+
+                        return false;
                     }
                 });
             }
@@ -427,6 +438,7 @@ public class ConversationListFragment extends Fragment {
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                Toast.makeText(mContext, "222", Toast.LENGTH_SHORT).show();
                                 Context context = v.getContext();
                                 Intent intent = ConversationDetailActivity.getStartIntent(context);
                                 intent.putExtra("id", chatId);
