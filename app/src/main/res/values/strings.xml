@@ -449,5 +449,8 @@
     <string name="sub_title_wallet_dialog">Please enter your wallet password for backup</string>
     <string name="btn_save_qr_wallet">Save QR Wallet</string>
 
+    <!--Translate in conversation-->
+    <string name="translate_to">Translate to</string>
+    <string name="turn_off_translate">Off</string>
 
 </resources>
