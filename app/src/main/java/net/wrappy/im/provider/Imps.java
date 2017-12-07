@@ -714,6 +714,11 @@ public class Imps {
         /**
          * The default sort order for this table
          */
+        public static final String PIN_ORDER = "last_message_date DESC";
+
+        /**
+         * The default sort order for this table
+         */
         public static final String TIME_ORDER_ASC = "last_message_date ASC";
 
         /**
@@ -1629,9 +1634,18 @@ public class Imps {
          */
         String CHAT_TYPE = "chat_type";
 
+
+        /**
+         * This is to store a flag related to status like PIN, UNPIN
+         */
+        String CHAT_FAVORITE = "chat_favorite";
+
         int CHAT_TYPE_ACTIVE = -1;
         int CHAT_TYPE_MUTED = 1;
         int CHAT_TYPE_ARCHIVED = 2;
+
+        int CHAT_UNPIN = 0;
+        int CHAT_PIN = 1;
 
     }
 

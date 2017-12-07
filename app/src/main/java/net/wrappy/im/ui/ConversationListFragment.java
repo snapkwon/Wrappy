@@ -29,6 +29,8 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -40,12 +42,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +61,9 @@ import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 
 import net.wrappy.im.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ConversationListFragment extends Fragment {
 
@@ -329,12 +336,27 @@ public class ConversationListFragment extends Fragment {
 
     }
 
+    private void pinConversation(long itemId) {
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_FAVORITE, Imps.Chats.CHAT_PIN);
+        getActivity().getContentResolver().update(chatUri, values, Imps.Chats.CONTACT_ID + "=" + itemId, null);
+    }
+
+    private void unpinConversation(long itemId) {
+        Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
+        ContentValues values = new ContentValues();
+        values.put(Imps.Chats.CHAT_FAVORITE, Imps.Chats.CHAT_UNPIN);
+        getActivity().getContentResolver().update(chatUri, values, Imps.Chats.CONTACT_ID + "=" + itemId, null);
+    }
+
     public static class ConversationListRecyclerViewAdapter
             extends CursorRecyclerViewAdapter<ConversationViewHolder> {
 
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
         private Context mContext;
+        private CustomBottomSheetDialogFragment mBottomSheet = null;
 
 
         public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
@@ -416,7 +438,8 @@ public class ConversationListFragment extends Fragment {
                 clItem.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        new CustomBottomSheetDialogFragment().show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+                        mBottomSheet = new CustomBottomSheetDialogFragment();
+                        mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
                         return false;
                     }
                 });
@@ -453,7 +476,8 @@ public class ConversationListFragment extends Fragment {
                         viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                new CustomBottomSheetDialogFragment().show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+                                mBottomSheet = new CustomBottomSheetDialogFragment();
+                                mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
                                 return false;
                             }
                         });
@@ -571,7 +595,7 @@ public class ConversationListFragment extends Fragment {
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE,
                 Imps.Chats.CHAT_TYPE,
-                Imps.Chats.CHAT_TOP
+                Imps.Chats.CHAT_FAVORITE
       //          Imps.Contacts.AVATAR_HASH,
         //        Imps.Contacts.AVATAR_DATA
 
@@ -652,6 +676,56 @@ public class ConversationListFragment extends Fragment {
 
             ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", mMigrateTaskListener);
 
+        }
+    }
+
+    /**
+     * This class handles bottom sheet at conversation list
+     */
+    public static class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener{
+        @BindView(R.id.bottom_sheet_layout) View mBottomSheetLayout;
+        @BindView(R.id.layout_pin_to_top)
+        LinearLayout mPinToTopLayout;
+        @BindView(R.id.layout_delete_and_exit) LinearLayout mDeleteAndExitLayout;
+        @BindView(R.id.layout_clean_history) LinearLayout mCleanHistoryLayout;
+
+        private BottomSheetBehavior mBottomSheetBehavior;
+
+        public CustomBottomSheetDialogFragment() {
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.dialog_bottom_sheet_conversation, container, false);
+
+            ButterKnife.bind(this, view);
+
+            mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheetLayout);
+
+            mPinToTopLayout.setOnClickListener(this);
+            mDeleteAndExitLayout.setOnClickListener(this);
+            mCleanHistoryLayout.setOnClickListener(this);
+
+            return view;
+        }
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.layout_pin_to_top:
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    Toast.makeText(getContext(), "Pin to top", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.layout_delete_and_exit:
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    Toast.makeText(getContext(), "Delete and exit", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.layout_clean_history:
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    Toast.makeText(getContext(), "Clean history", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
     }
 }
