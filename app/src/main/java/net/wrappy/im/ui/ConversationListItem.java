@@ -41,10 +41,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.koushikdutta.ion.Ion;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
@@ -53,12 +56,11 @@ import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.SecureMediaStore;
+
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Date;
 import java.util.Locale;
-
-import net.wrappy.im.R;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -93,8 +95,11 @@ public class ConversationListItem extends FrameLayout {
     static Drawable AVATAR_DEFAULT_GROUP = null;
     private PrettyTime sPrettyTime = null;
 
+    Context context;
+
     public ConversationListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         sPrettyTime = new PrettyTime(getCurrentLocale());
     }
 
@@ -151,9 +156,22 @@ public class ConversationListItem extends FrameLayout {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {
-                    String groupId = address.split("@")[0];
-                    Drawable avatar = new GroupAvatar(groupId);
-                    holder.mAvatar.setImageDrawable(avatar);
+
+                    String reference = Store.getStringData(context,nickname);
+                    if (!reference.isEmpty()) {
+                        Ion.with(context)
+                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/"+reference)
+                                .withBitmap()
+                                .placeholder(R.drawable.group_chat)
+                                .error(R.drawable.group_chat)
+                                .intoImageView(holder.mAvatar);
+                    } else {
+                        String groupId = address.split("@")[0];
+                        Drawable avatar = new GroupAvatar(groupId);
+                        holder.mAvatar.setImageDrawable(avatar);
+                    }
+
+                    //
                 } catch (Exception ignored) {
                     if (AVATAR_DEFAULT_GROUP == null)
                         AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
