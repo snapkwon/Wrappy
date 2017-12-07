@@ -59,6 +59,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.BuildConfig;
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -70,6 +75,9 @@ import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
+
+import org.apache.commons.codec.DecoderException;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
 import java.io.IOException;
