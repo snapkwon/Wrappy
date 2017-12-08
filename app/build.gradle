@@ -19,8 +19,12 @@ android {
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
+        if (getProps("google_translate_apikey") == null) {
+            buildConfigField "String", "GoogleTranslateApiKey", "google_translate_apikey"
+        } else {
 
         buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
+        }
     }
 
     dexOptions {
