@@ -220,6 +220,7 @@
             android:name=".ui.UpdateProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction" />
+        <activity android:name=".ui.ForgetPasswordActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction" />
 
         <service
             android:name=".plugin.xmpp.XmppImPlugin"

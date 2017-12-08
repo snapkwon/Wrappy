@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -61,6 +63,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     private SimpleAlertHandler mHandler;
 
     ExistingAccountTask mExistingAccountTask;
+    String hashResetPassword = "";
 
 
     @Override
@@ -79,6 +82,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         if (arg!=null) {
             type_request = arg.getInt("type", 0);
             username = arg.getString("username", "");
+            hashResetPassword = arg.getString(ForgetPasswordActivity.FORGET_PASSWORD,"");
         }
 
         if(type_request == REQUEST_CODE_LOGIN)
@@ -90,8 +94,20 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         else
         {
             this.setTypePattern(TYPE_CONFIRM);
-            actionbar.setTitle("Registration");
+
+            if (hashResetPassword.isEmpty()) {
+                actionbar.setTitle("Registration");
+            } else {
+                actionbar.setTitle("FORGET PASSWORD");
+            }
         }
+
+        bottomText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ForgetPasswordActivity.init(PatternActivity.this);
+            }
+        });
     }
     @Override
     protected void onCanceled() {
@@ -112,51 +128,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         password = PatternUtils.patternToString(pattern);
         if(type_request == REQUEST_CODE_REGISTER) {
 
-            showQuestionScreen();
+            showQuestionScreen(password);
         }
 
         else if(type_request == REQUEST_CODE_LOGIN)
         {
-            dialog = new ProgressDialog(PatternActivity.this);
-            dialog.setMessage(getString(R.string.waiting_dialog));
-            dialog.show();
-            String url = RestAPI.loginUrl(username,password);
-            RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
-
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        if (!RestAPI.checkHttpCode(httpCode)) {
-                            AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("The user name or password is incorrect");
-                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            alertDialog.show();
-                            //AppFuncs.alert(getApplicationContext(),s,true);
-                            if (dialog != null && dialog.isShowing()) {
-                                dialog.dismiss();
-                            }
-                            return;
-                        }
-                        JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-                        Gson gson = new Gson();
-                        WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-                        wpkToken.saveToken(getApplicationContext());
-                        doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
-                    }catch (Exception ex) {
-                        if (dialog != null && dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
-                        ex.printStackTrace();
-                    }
-
-                }
-            });
+            login(password);
         }
     }
 
@@ -172,15 +149,74 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         }
     }
 
-    private void showQuestionScreen ()
+    private void showQuestionScreen (String pass)
     {
+        if (hashResetPassword.isEmpty()) {
+            Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
+            WpKAuthDto wpKAuthDto = new WpKAuthDto(password);
+            intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            resetPassword(pass);
+        }
 
-        Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
-        WpKAuthDto wpKAuthDto = new WpKAuthDto(password);
-        intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
         finish();
+    }
+
+    private void resetPassword(final String pass) {
+        String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
+        RestAPI.GetDataWrappy(getApplicationContext(), url, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    login(pass);
+                }
+            }
+        });
+    }
+
+    private void login(String pass) {
+        dialog = new ProgressDialog(PatternActivity.this);
+        dialog.setMessage(getString(R.string.waiting_dialog));
+        dialog.show();
+        String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME),password);
+        RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
+
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (!RestAPI.checkHttpCode(httpCode)) {
+                        AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("The user name or password is incorrect");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                        //AppFuncs.alert(getApplicationContext(),s,true);
+                        if (dialog != null && dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        return;
+                    }
+                    JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                    Gson gson = new Gson();
+                    WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+                    wpkToken.saveToken(getApplicationContext());
+                    doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
+                }catch (Exception ex) {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    ex.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private void doExistingAccountRegister (String username , String password, String accountName)

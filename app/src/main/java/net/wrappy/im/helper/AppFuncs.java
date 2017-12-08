@@ -2,6 +2,7 @@ package net.wrappy.im.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,29 @@ import java.util.regex.Pattern;
  */
 
 public class AppFuncs {
+
+    private static AppFuncs _ins;
+
+    public static AppFuncs getInstance() {
+        if (_ins==null) {
+            _ins = new AppFuncs();
+        }
+        return _ins;
+    }
+
+    ProgressDialog dialog;
+    public void showProgressWaiting(Activity activity) {
+        dialog = new ProgressDialog(activity);
+        dialog.setTitle("Waiting...");
+        dialog.show();
+    }
+
+    public void dismissProgressWaiting() {
+        if (dialog!=null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
 
     public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
