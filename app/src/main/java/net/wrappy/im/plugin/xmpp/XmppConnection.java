@@ -174,6 +174,8 @@ import javax.net.ssl.SSLContext;
 import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
 
+import static net.wrappy.im.util.Constant.OMEMO_ENABLED;
+
 public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
@@ -1537,7 +1539,7 @@ public class XmppConnection extends ImConnection {
 
     private synchronized Omemo initOmemo(XMPPTCPConnection conn) throws Exception {
 
-        if (conn != null && conn.isConnected()) {
+        if (conn != null && conn.isConnected() && OMEMO_ENABLED) {
 
             mOmemoInstance = new Omemo(conn, mUserJid);
             mOmemoInstance.getManager().addOmemoMessageListener(new OmemoMessageListener() {
@@ -2417,14 +2419,7 @@ public class XmppConnection extends ImConnection {
                     mContactListManager.refreshPresence(address);
 
                     qAvatar.put(jid.asBareJid().toString(), "");
-
-                    BareJid bareJid = jid.asBareJid();
-                    if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
-                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
-                        getOmemo().getManager().buildSessionsWith(bareJid);
-                    }
-
-
+                    buildOmemoSession(jid.asBareJid());
                 }
 
             }
@@ -2630,21 +2625,19 @@ public class XmppConnection extends ImConnection {
 
         @Override
         public boolean resourceSupportsOmemo(Jid jid) {
+            if (OMEMO_ENABLED) {
+                try {
+                    if (getOmemo().resourceSupportsOmemo(jid)) {
+                        if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
+                            getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
+                            return false;
+                        }
 
-            try {
-
-                if (getOmemo().resourceSupportsOmemo(jid)) {
-
-                    //      if (getOmemo().getFingerprints(jid.asBareJid(), false).size() == 0) {
-                    //     getOmemo().getManager().requestDeviceListUpdateFor(jid.asBareJid());
-                    //    return false;
-                    //    }
-
-                    return true;
+                        return true;
+                    }
+                } catch (Exception e) {
+                    debug("OMEMO", "There was a problem checking the resource", e);
                 }
-
-            } catch (Exception e) {
-                debug("OMEMO", "There was a problem checking the resource", e);
             }
 
             return false;
@@ -3271,11 +3264,7 @@ public class XmppConnection extends ImConnection {
 
                     requestPresenceRefresh(contact.getAddress().getBareAddress());
                     qAvatar.put(contact.getAddress().getAddress(), "");
-
-                    if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
-                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
-                        getOmemo().getManager().buildSessionsWith(bareJid);
-                    }
+                    buildOmemoSession(bareJid);
                 }
             } catch (Exception e) {
                 debug(TAG, "error responding to subscription approval: " + e.getLocalizedMessage());
@@ -4138,12 +4127,7 @@ public class XmppConnection extends ImConnection {
 
                 mContactListManager.doAddContactToListAsync(contact, getContactListManager().getDefaultContactList(), false);
                 mContactListManager.getSubscriptionRequestListener().onSubscriptionApproved(contact, mProviderId, mAccountId);
-
-                if (getOmemo().getManager().contactSupportsOmemo(jid)) {
-                    getOmemo().getManager().requestDeviceListUpdateFor(jid);
-                    getOmemo().getManager().buildSessionsWith(jid);
-                }
-
+                buildOmemoSession(jid);
             } catch (Exception e) {
                 Log.e(TAG, "remote exception on subscription handling", e);
             }
@@ -4593,5 +4577,18 @@ public class XmppConnection extends ImConnection {
         org.jivesoftware.smack.packet.Message oldMessage = null;
         while ((oldMessage = muc.nextMessage(2000)) != null)
             handleMessage(oldMessage, false);
+    }
+
+    private void buildOmemoSession(BareJid bareJid) {
+        if (OMEMO_ENABLED) {
+            try {
+                if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
+                    getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                    getOmemo().getManager().buildSessionsWith(bareJid);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
