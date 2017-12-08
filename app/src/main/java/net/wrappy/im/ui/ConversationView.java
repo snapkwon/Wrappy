@@ -290,6 +290,7 @@ public class ConversationView {
 
             updateWarningView();
             mComposeMessage.requestFocus();
+            mMessageAdapter.setNeedRequeryCursor(false);
             userActionDetected();
             updateGroupTitle();
 
