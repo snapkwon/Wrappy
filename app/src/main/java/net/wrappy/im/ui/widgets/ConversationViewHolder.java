@@ -20,6 +20,7 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
     public ImageView mStatusIcon;
     public View mContainer;
     public ImageView mMediaThumb;
+    public ImageView mPinIcon;
 
     public ConversationViewHolder(View view)
     {
@@ -35,6 +36,8 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
         mContainer = view.findViewById(R.id.message_container);
 
         mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
+
+        mPinIcon = (ImageView)view.findViewById(R.id.pinIcon);
 
     }
 

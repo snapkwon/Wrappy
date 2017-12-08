@@ -748,7 +748,7 @@ public class Imps {
         /**
          * The default sort order for this table
          */
-        public static final String PIN_ORDER = "last_message_date DESC";
+        public static final String PIN_ORDER = "chat_favorite DESC, last_message_date DESC";
 
         /**
          * The default sort order for this table
@@ -1319,6 +1319,7 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "date ASC";
         public static final String REVERSE_SORT_ORDER = "date DESC";
+        public static final String FAVORITE_SORT_ORDER = "chat_favorite DESC, date DESC";
 
         /**
          * The "contact" column. This is not a real column in the messages

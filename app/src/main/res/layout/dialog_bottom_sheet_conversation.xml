@@ -30,6 +30,7 @@
                 android:layout_marginRight="16dp"/>
 
             <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/txt_pin_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pin_to_top"/>
