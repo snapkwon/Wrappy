@@ -500,12 +500,24 @@ public class MainActivity extends BaseActivity {
                     startChat(providerId, accountId, username, true, true);
                 }
                 else {
-
+                    String groupName = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_GROUP_NAME);
+                    if (groupName==null){
+                        groupName = "groupchat" + UUID.randomUUID().toString().substring(0,8);
+                    }
                     ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
                     if (users != null)
                     {
-                        //start group and do invite here
-                        startGroupChat(users);
+                        //start group and do invite hereartGrou
+                        try {
+                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
+                            if (conn.getState() == ImConnection.LOGGED_IN)
+                            {
+                                startGroupChat(groupName ,users, conn);
+                            }
+                        }catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
                     }
 
                 }
@@ -563,22 +575,17 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void startGroupChat (ArrayList<String> invitees)
+    private void startGroupChat (String groupName, ArrayList<String> invitees, IImConnection conn)
     {
 
 
-        String chatRoom = "groupchat" + UUID.randomUUID().toString().substring(0,8);
+        String chatRoom = groupName;
         String chatServer = ""; //use the default
         String nickname = mApp.getDefaultUsername().split("@")[0];
         try
         {
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
-            if (conn.getState() == ImConnection.LOGGED_IN)
-            {
-                this.startGroupChat(chatRoom, chatServer, nickname, invitees, conn);
-
-            }
-        } catch (RemoteException re) {
+            this.startGroupChat(chatRoom, chatServer, nickname, invitees, conn);
+        } catch (Exception re) {
 
         }
     }
@@ -976,7 +983,7 @@ public class MainActivity extends BaseActivity {
             protected String doInBackground(String... params) {
 
                 String subject = params[0];
-                String chatRoom = "group" + UUID.randomUUID().toString().substring(0,8);
+                String chatRoom = "group" + subject;
                 String server = params[1];
 
 

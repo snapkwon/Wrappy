@@ -11,20 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:weightSum="1">
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/rounded_shape">
             <net.wrappy.im.helper.layout.CircleImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@android:color/holo_blue_bright"/>
+                android:id="@+id/imgGroupPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_camera_profile"/>
             <ImageButton
                 android:id="@+id/btnGroupPhoto"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_camera_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@android:color/transparent"/>
         </RelativeLayout>
         <RelativeLayout
@@ -33,6 +35,7 @@
             android:layout_gravity="center_vertical"
             android:padding="10dp">
             <net.wrappy.im.helper.layout.AppEditTextView
+                android:id="@+id/edGroupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter group name"
