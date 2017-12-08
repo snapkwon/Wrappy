@@ -198,7 +198,7 @@ public class MessageListItem extends FrameLayout {
             lastMessage = "";
 
             if (mediaUri != null && mediaUri.getScheme() != null) {
-                if (mimeType.startsWith("audio")) {
+                if (mimeType.startsWith("audio") || mimeType.equals("application/octet-stream")) {
                     mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
                     try {
