@@ -13,6 +13,7 @@
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:background="@drawable/ic_launcher" />
 
     <net.ironrabbit.type.CustomTypefaceButton
