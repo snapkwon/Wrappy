@@ -28,7 +28,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -52,17 +51,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import net.ironrabbit.type.CustomTypefaceTextView;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
-
-import net.wrappy.im.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,13 +91,13 @@ public class ConversationListFragment extends Fragment {
         View view = inflater.inflate(
                 R.layout.awesome_fragment_message_list, container, false);
 
-        mRecView =  (RecyclerView)view.findViewById(R.id.recyclerview);
+        mRecView = (RecyclerView) view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
 
         mUpgradeView = view.findViewById(R.id.upgrade_view);
-        mUpgradeImage = (ImageView)view.findViewById(R.id.upgrade_view_image);
-        mUpgradeDesc = (TextView)view.findViewById(R.id.upgrade_view_text);
-        mUpgradeAction = (Button)view.findViewById(R.id.upgrade_action);
+        mUpgradeImage = (ImageView) view.findViewById(R.id.upgrade_view_image);
+        mUpgradeDesc = (TextView) view.findViewById(R.id.upgrade_view_text);
+        mUpgradeAction = (Button) view.findViewById(R.id.upgrade_action);
 
         mUpgradeAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,15 +106,12 @@ public class ConversationListFragment extends Fragment {
             }
         });
 
-
-
-
         mEmptyViewImage = view.findViewById(R.id.empty_view_image);
         mEmptyViewImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ((MainActivity)getActivity()).inviteContact();
+                ((MainActivity) getActivity()).inviteContact();
             }
         });
 
@@ -125,10 +119,10 @@ public class ConversationListFragment extends Fragment {
 
         //not set color
         /**
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorBg = settings.getInt("themeColorBg",-1);
-        view.setBackgroundColor(themeColorBg);
-            */
+         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+         int themeColorBg = settings.getInt("themeColorBg",-1);
+         view.setBackgroundColor(themeColorBg);
+         */
 
         checkUpgrade();
 
@@ -154,12 +148,12 @@ public class ConversationListFragment extends Fragment {
         mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
         Cursor cursor = null;
-        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(),cursor);
+        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor);
 
         // init swipe to dismiss logic
 
         ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-               ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
+                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
 
             public static final float ALPHA_FULL = 1.0f;
 
@@ -200,7 +194,6 @@ public class ConversationListFragment extends Fragment {
                         p.setARGB(255, 150, 150, 150);
 
 
-
                         // Draw Rect with varying right side, equal to displacement dX
                         c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
                                 (float) itemView.getBottom(), p);
@@ -208,7 +201,7 @@ public class ConversationListFragment extends Fragment {
                         // Set the image icon for Right swipe
                         c.drawBitmap(icon,
                                 (float) itemView.getLeft() + convertDpToPx(16),
-                                (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight())/2,
+                                (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight()) / 2,
                                 p);
                     }
                     // Fade out the view as it is swiped out of the parent's bounds
@@ -220,7 +213,7 @@ public class ConversationListFragment extends Fragment {
                 }
             }
 
-            private int convertDpToPx(int dp){
+            private int convertDpToPx(int dp) {
                 return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
             }
 
@@ -244,8 +237,6 @@ public class ConversationListFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-
                 // callback for swipe to dismiss, removing item from data and adapter
                 int position = viewHolder.getAdapterPosition();
 
@@ -263,7 +254,6 @@ public class ConversationListFragment extends Fragment {
                     }
                 });
                 snack.show();
-
             }
 
             @Override
@@ -278,31 +268,23 @@ public class ConversationListFragment extends Fragment {
         });
         swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
 
-
         if (mAdapter.getItemCount() == 0) {
             mRecView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mEmptyViewImage.setVisibility(View.VISIBLE);
-        }
-        else if (mRecView.getVisibility() == View.GONE) {
+        } else if (mRecView.getVisibility() == View.GONE) {
             mRecView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mEmptyViewImage.setVisibility(View.GONE);
         }
-
     }
 
-
-    public boolean getArchiveFilter ()
-    {
+    public boolean getArchiveFilter() {
         return mFilterArchive;
     }
 
-
-    public void setArchiveFilter (boolean filterAchive)
-    {
+    public void setArchiveFilter(boolean filterAchive) {
         mFilterArchive = filterAchive;
-
 
         if (mFilterArchive)
             mChatType = Imps.Chats.CHAT_TYPE_ARCHIVED;
@@ -313,29 +295,24 @@ public class ConversationListFragment extends Fragment {
             mLoaderManager.restartLoader(mLoaderId, null, mLoaderCallbacks);
     }
 
-    private void endConversation (long itemId)
-    {
+    private void endConversation(long itemId) {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
         getActivity().getContentResolver().delete(chatUri, null, null);
 
     }
 
-    private void archiveConversation (long itemId)
-    {
+    private void archiveConversation(long itemId) {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
         ContentValues values = new ContentValues();
-        values.put(Imps.Chats.CHAT_TYPE,Imps.Chats.CHAT_TYPE_ARCHIVED);
-        getActivity().getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + itemId,null);
-
+        values.put(Imps.Chats.CHAT_TYPE, Imps.Chats.CHAT_TYPE_ARCHIVED);
+        getActivity().getContentResolver().update(chatUri, values, Imps.Chats.CONTACT_ID + "=" + itemId, null);
     }
 
-    private void unarchiveConversation (long itemId)
-    {
+    private void unarchiveConversation(long itemId) {
         Uri chatUri = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, itemId);
         ContentValues values = new ContentValues();
-        values.put(Imps.Chats.CHAT_TYPE,Imps.Chats.CHAT_TYPE_ACTIVE);
-        getActivity().getContentResolver().update(chatUri,values,Imps.Chats.CONTACT_ID + "=" + itemId,null);
-
+        values.put(Imps.Chats.CHAT_TYPE, Imps.Chats.CHAT_TYPE_ACTIVE);
+        getActivity().getContentResolver().update(chatUri, values, Imps.Chats.CONTACT_ID + "=" + itemId, null);
     }
 
     public void pinConversation(long itemId, Context context) {
@@ -366,7 +343,7 @@ public class ConversationListFragment extends Fragment {
 
 
         public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
-            super(context,cursor);
+            super(context, cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
@@ -374,8 +351,7 @@ public class ConversationListFragment extends Fragment {
             setHasStableIds(true);
         }
 
-        public long getItemId (int position)
-        {
+        public long getItemId(int position) {
             Cursor c = getCursor();
             c.moveToPosition(position);
             long chatId = c.getLong(ConversationListItem.COLUMN_CONTACT_ID);
@@ -389,7 +365,7 @@ public class ConversationListFragment extends Fragment {
                     .inflate(R.layout.conversation_view, parent, false);
             view.setBackgroundResource(mBackground);
 
-            ConversationViewHolder viewHolder = (ConversationViewHolder)view.getTag();
+            ConversationViewHolder viewHolder = (ConversationViewHolder) view.getTag();
 
             if (viewHolder == null) {
                 viewHolder = new ConversationViewHolder(view);
@@ -426,7 +402,7 @@ public class ConversationListFragment extends Fragment {
                         lastMsgType = "audio/*";
                 }
 
-                ConversationListItem clItem = ((ConversationListItem)viewHolder.itemView.findViewById(R.id.convoitemview));
+                ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite);
 
@@ -450,9 +426,7 @@ public class ConversationListFragment extends Fragment {
                         return false;
                     }
                 });
-            }
-            else
-            {
+            } else {
                 final long chatId = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.THREAD_ID));
                 final String nickname = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
                 final String address = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.CONTACT));
@@ -462,7 +436,7 @@ public class ConversationListFragment extends Fragment {
 
                 if (address != null) {
 
-                    if (viewHolder.itemView instanceof  ConversationListItem) {
+                    if (viewHolder.itemView instanceof ConversationListItem) {
                         ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -487,15 +461,14 @@ public class ConversationListFragment extends Fragment {
         private void showBottomSheetDialog(String address, long chatId, int chatFavorite) {
             String account = address.split("@")[0].split("\\.")[0];
             mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account);
-            mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+            mBottomSheet.show(((FragmentActivity) mContext).getSupportFragmentManager(), "Dialog");
         }
 
     }
 
     static String mSearchString = null;
 
-    public void doSearch (String searchString)
-    {
+    public void doSearch(String searchString) {
         mSearchString = searchString;
 
         if (mLoaderManager != null)
@@ -518,19 +491,17 @@ public class ConversationListFragment extends Fragment {
 
                 mUri = Imps.Messages.CONTENT_URI_MESSAGES_BY_SEARCH;
 
-           //     buf.append("contacts." + Imps.Contacts.NICKNAME);
-            //    buf.append(" LIKE ");
-            //    DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
-             //     buf.append(" OR ");
+                //     buf.append("contacts." + Imps.Contacts.NICKNAME);
+                //    buf.append(" LIKE ");
+                //    DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+                //     buf.append(" OR ");
                 buf.append(Imps.Messages.BODY);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
 
                 loader = new CursorLoader(getActivity(), mUri, null,
                         buf == null ? null : buf.toString(), null, Imps.Messages.FAVORITE_SORT_ORDER);
-            }
-            else
-            {
+            } else {
                 mUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
 
                 if (mFilterArchive)
@@ -560,14 +531,12 @@ public class ConversationListFragment extends Fragment {
                 mRecView.setAdapter(mAdapter);
 
 
-            if (mLastCount == 0 && mAdapter.getItemCount() > 0)
-            {
+            if (mLastCount == 0 && mAdapter.getItemCount() > 0) {
                 mRecView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyViewImage.setVisibility(View.GONE);
 
-            }
-            else if (mAdapter.getItemCount() == 0) {
+            } else if (mAdapter.getItemCount() == 0) {
                 mRecView.setVisibility(View.GONE);
                 mEmptyView.setVisibility(View.VISIBLE);
                 mEmptyViewImage.setVisibility(View.VISIBLE);
@@ -585,7 +554,7 @@ public class ConversationListFragment extends Fragment {
 
         }
 
-        public final String[] CHAT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+        public final String[] CHAT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
                 Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
                 Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
                 Imps.Contacts.SUBSCRIPTION_TYPE,
@@ -596,8 +565,8 @@ public class ConversationListFragment extends Fragment {
                 Imps.Chats.LAST_UNREAD_MESSAGE,
                 Imps.Chats.CHAT_TYPE,
                 Imps.Chats.CHAT_FAVORITE
-      //          Imps.Contacts.AVATAR_HASH,
-        //        Imps.Contacts.AVATAR_DATA
+                //          Imps.Contacts.AVATAR_HASH,
+                //        Imps.Contacts.AVATAR_DATA
 
         };
 
@@ -610,10 +579,8 @@ public class ConversationListFragment extends Fragment {
 
     }
 
-    private void checkUpgrade ()
-    {
-        if (((ImApp)getActivity().getApplication()).needsAccountUpgrade())
-        {
+    private void checkUpgrade() {
+        if (((ImApp) getActivity().getApplication()).needsAccountUpgrade()) {
             mUpgradeView.setVisibility(View.VISIBLE);
         }
 
@@ -621,7 +588,7 @@ public class ConversationListFragment extends Fragment {
 
     private MigrateAccountTask.MigrateAccountListener mMigrateTaskListener;
 
-    private synchronized void doUpgrade () {
+    private synchronized void doUpgrade() {
 
         if (mMigrateTaskListener == null) {
 
@@ -682,18 +649,22 @@ public class ConversationListFragment extends Fragment {
     /**
      * This class handles bottom sheet at conversation list
      */
-    public static class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener{
-        @BindView(R.id.bottom_sheet_layout) View mBottomSheetLayout;
+    public static class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
+        @BindView(R.id.bottom_sheet_layout)
+        View mBottomSheetLayout;
         @BindView(R.id.layout_pin_to_top)
         LinearLayout mPinToTopLayout;
-        @BindView(R.id.layout_delete_and_exit) LinearLayout mDeleteAndExitLayout;
-        @BindView(R.id.layout_clean_history) LinearLayout mCleanHistoryLayout;
-        @BindView(R.id.txt_pin_top) CustomTypefaceTextView mTextPin;
+        @BindView(R.id.layout_delete_and_exit)
+        LinearLayout mDeleteAndExitLayout;
+        @BindView(R.id.layout_clean_history)
+        LinearLayout mCleanHistoryLayout;
+        @BindView(R.id.txt_pin_top)
+        CustomTypefaceTextView mTextPin;
 
         private BottomSheetBehavior mBottomSheetBehavior;
         private ConversationListFragment mConversationListFragment;
 
-        public static CustomBottomSheetDialogFragment getInstance(long chatId, int chatFavorite, String account){
+        public static CustomBottomSheetDialogFragment getInstance(long chatId, int chatFavorite, String account) {
             CustomBottomSheetDialogFragment dialogFragment = new CustomBottomSheetDialogFragment();
 
             Bundle args = new Bundle();
@@ -721,6 +692,16 @@ public class ConversationListFragment extends Fragment {
             mDeleteAndExitLayout.setOnClickListener(this);
             mCleanHistoryLayout.setOnClickListener(this);
 
+            if (getArguments() != null) {
+                int chatFavorite = getArguments().getInt("chatFavorite");
+
+                if (chatFavorite == Imps.Chats.CHAT_UNPIN) {
+                    mTextPin.setText(getResources().getString(R.string.pin_to_top));
+                } else {
+                    mTextPin.setText(getResources().getString(R.string.unpin_from_top));
+                }
+            }
+
             return view;
         }
 
@@ -737,8 +718,6 @@ public class ConversationListFragment extends Fragment {
 
                         if (chatFavorite == Imps.Chats.CHAT_UNPIN) {
                             // pin to top
-                            mTextPin.setText(getResources().getString(R.string.pin_to_top));
-
                             mConversationListFragment.pinConversation(chatId, getContext());
 
                             RestAPI.PostDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPI.RestAPIListenner() {
@@ -750,8 +729,6 @@ public class ConversationListFragment extends Fragment {
 
                         } else {
                             // unpin from top
-                            mTextPin.setText(getResources().getString(R.string.unpin_from_top));
-
                             mConversationListFragment.unpinConversation(chatId, getContext());
 
                             RestAPI.DeleteDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPI.RestAPIListenner() {
@@ -761,9 +738,7 @@ public class ConversationListFragment extends Fragment {
                                 }
                             });
                         }
-
                         dismiss();
-
                     }
                     break;
                 case R.id.layout_delete_and_exit:

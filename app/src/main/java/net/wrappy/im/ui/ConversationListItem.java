@@ -63,17 +63,17 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ConversationListItem extends FrameLayout {
-    public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
-                                                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
-                                                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_STATUS,
-                                                Imps.Presence.PRESENCE_STATUS,
-                                                Imps.Presence.PRESENCE_CUSTOM_STATUS,
-                                                Imps.Chats.LAST_MESSAGE_DATE,
-                                                Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Chats.CHAT_TYPE,
-                                                Imps.Chats.CHAT_FAVORITE
+    public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+            Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
+            Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
+            Imps.Contacts.SUBSCRIPTION_TYPE,
+            Imps.Contacts.SUBSCRIPTION_STATUS,
+            Imps.Presence.PRESENCE_STATUS,
+            Imps.Presence.PRESENCE_CUSTOM_STATUS,
+            Imps.Chats.LAST_MESSAGE_DATE,
+            Imps.Chats.LAST_UNREAD_MESSAGE,
+            Imps.Chats.CHAT_TYPE,
+            Imps.Chats.CHAT_FAVORITE
 
     };
 
@@ -105,31 +105,28 @@ public class ConversationListItem extends FrameLayout {
         sPrettyTime = new PrettyTime(getCurrentLocale());
     }
 
-/**
-    public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
-        bind(holder, cursor, underLineText, true, scrolling);
-    }
-*/
+    /**
+     * public void bind(ConversationViewHolder holder, Cursor cursor, String underLineText, boolean scrolling) {
+     * bind(holder, cursor, underLineText, true, scrolling);
+     * }
+     */
 
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite) {
 
         //applyStyleColors(holder);
 
-        if (nickname == null)
-        {
+        if (nickname == null) {
             nickname = address.split("@")[0].split("\\.")[0];
-        }
-        else
-        {
+        } else {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
         /**
-        if (Imps.Contacts.TYPE_GROUP == contactType) {
+         if (Imps.Contacts.TYPE_GROUP == contactType) {
 
-            String groupCountString = getGroupCount(getContext().getContentResolver(), contactId);
-            nickname += groupCountString;
-        }**/
+         String groupCountString = getGroupCount(getContext().getContentResolver(), contactId);
+         nickname += groupCountString;
+         }**/
 
         if (!TextUtils.isEmpty(underLineText)) {
             // highlight/underline the word being searched 
@@ -142,27 +139,24 @@ public class ConversationListItem extends FrameLayout {
 
                 holder.mLine1.setText(str);
 
-            }
-            else
+            } else
                 holder.mLine1.setText(nickname);
 
-        }
-        else
+        } else
             holder.mLine1.setText(nickname);
 
         holder.mStatusIcon.setVisibility(View.GONE);
 
-        if (holder.mAvatar != null)
-        {
+        if (holder.mAvatar != null) {
             if (Imps.Contacts.TYPE_GROUP == contactType) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {
 
-                    String reference = Store.getStringData(context,nickname);
+                    String reference = Store.getStringData(context, nickname);
                     if (!reference.isEmpty()) {
                         Ion.with(context)
-                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/"+reference)
+                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/" + reference)
                                 .withBitmap()
                                 .placeholder(R.drawable.group_chat)
                                 .error(R.drawable.group_chat)
@@ -181,46 +175,37 @@ public class ConversationListItem extends FrameLayout {
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
                 }
             }
-         //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
-           else {
+            //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
+            else {
 //                holder.mAvatar.setVisibility(View.GONE);
 
                 Drawable avatar = null;
 
-                try
-                {
+                try {
                     avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                  // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                }
-                catch (Exception e)
-                {
+                    // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                } catch (Exception e) {
                     //problem decoding avatar
-                    Log.e(ImApp.LOG_TAG,"error decoding avatar",e);
+                    Log.e(ImApp.LOG_TAG, "error decoding avatar", e);
                 }
 
-                try
-                {
-                    if (avatar != null)
-                    {
+                try {
+                    if (avatar != null) {
                         //if (avatar instanceof RoundedAvatarDrawable)
-                          //  setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+                        //  setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
 
                         holder.mAvatar.setImageDrawable(avatar);
-                    }
-                    else
-                    {
-                       // int color = getAvatarBorder(presence);
+                    } else {
+                        // int color = getAvatarBorder(presence);
                         int padding = 24;
                         LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-                        
+
                         holder.mAvatar.setImageDrawable(lavatar);
 
                     }
 
                     holder.mAvatar.setVisibility(View.VISIBLE);
-                }
-                catch (OutOfMemoryError ome)
-                {
+                } catch (OutOfMemoryError ome) {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
 
@@ -230,52 +215,40 @@ public class ConversationListItem extends FrameLayout {
         if (showChatMsg && message != null) {
 
 
-            if (holder.mLine2 != null)
-            {
+            if (holder.mLine2 != null) {
                 String vPath = message.split(" ")[0];
 
-                if (SecureMediaStore.isVfsUri(vPath))
-                {
+                if (SecureMediaStore.isVfsUri(vPath)) {
 
-                    if (messageType == null || messageType.startsWith("image"))
-                    {
-                        
-                        if (holder.mMediaThumb != null)
-                        {
+                    if (messageType == null || messageType.startsWith("image")) {
+
+                        if (holder.mMediaThumb != null) {
                             holder.mMediaThumb.setVisibility(View.VISIBLE);
 
-                            if (messageType != null && messageType.equals("image/png"))
-                            {
+                            if (messageType != null && messageType.equals("image/png")) {
                                 holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            }
-                            else
-                            {
+                            } else {
                                 holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                             }
 
                             setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
 
-                                    holder.mLine2.setVisibility(View.GONE);
-                                    
+                            holder.mLine2.setVisibility(View.GONE);
+
                         }
-                    }
-                    else
-                    {
+                    } else {
                         holder.mLine2.setText("");
                     }
 
-                }
-                else if ((!TextUtils.isEmpty(message)) && message.startsWith("/"))
-                {
+                } else if ((!TextUtils.isEmpty(message)) && message.startsWith("/")) {
                     String cmd = message.toString().substring(1);
 
-                    if (cmd.startsWith("sticker"))
-                    {
+                    if (cmd.startsWith("sticker")) {
                         String[] cmds = cmd.split(":");
 
                         String mimeTypeSticker = "image/png";
-                        Uri mediaUri = Uri.parse("asset://"+cmds[1]);
+                        Uri mediaUri = Uri.parse("asset://" + cmds[1]);
 
                         setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setVisibility(View.GONE);
@@ -285,9 +258,7 @@ public class ConversationListItem extends FrameLayout {
 
                     }
 
-                }
-                else if ((!TextUtils.isEmpty(message)) && message.startsWith(":"))
-                {
+                } else if ((!TextUtils.isEmpty(message)) && message.startsWith(":")) {
                     String[] cmds = message.split(":");
 
                     try {
@@ -308,37 +279,29 @@ public class ConversationListItem extends FrameLayout {
                     } catch (Exception e) {
 
                     }
-                }
-                else
-                {
+                } else {
                     if (holder.mMediaThumb != null)
                         holder.mMediaThumb.setVisibility(View.GONE);
-                    
-                    holder.mLine2.setVisibility(View.VISIBLE);
 
+                    holder.mLine2.setVisibility(View.VISIBLE);
 
 
                     try {
                         holder.mLine2.setText(android.text.Html.fromHtml(message).toString());
+                    } catch (RuntimeException re) {
                     }
-                    catch (RuntimeException re){}
                 }
             }
 
-            if (messageDate != -1)
-            {
+            if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
                 holder.mStatusText.setText(sPrettyTime.format(dateLast));
 
-            }
-            else
-            {
+            } else {
                 holder.mStatusText.setText("");
             }
 
-        }
-        else if (holder.mLine2 != null)
-        {
+        } else if (holder.mLine2 != null) {
             holder.mLine2.setText(address);
 
             if (holder.mMediaThumb != null)
@@ -348,34 +311,29 @@ public class ConversationListItem extends FrameLayout {
         holder.mLine1.setVisibility(View.VISIBLE);
 
         if (providerId != -1)
-            getEncryptionState (providerId, accountId, address, holder);
+            getEncryptionState(providerId, accountId, address, holder);
 
-        if (chatFavorite != -1) {
-            if (chatFavorite == Imps.Chats.CHAT_PIN) {
-                holder.mPinIcon.setVisibility(VISIBLE);
-            } else {
-                holder.mPinIcon.setVisibility(GONE);
-            }
+        if (chatFavorite == Imps.Chats.CHAT_PIN) {
+            holder.mPinIcon.setVisibility(VISIBLE);
+        } else {
+            holder.mPinIcon.setVisibility(GONE);
         }
     }
 
-    private void getEncryptionState (long providerId, long accountId, String address, ConversationViewHolder holder)
-    {
+    private void getEncryptionState(long providerId, long accountId, String address, ConversationViewHolder holder) {
 
-         try {
+        try {
 
-             ImApp app = ((ImApp)((Activity) getContext()).getApplication());
+            ImApp app = ((ImApp) ((Activity) getContext()).getApplication());
 
-             IImConnection conn = app.getConnection(providerId,accountId);
-             if (conn == null || conn.getChatSessionManager() == null)
-                 return;
+            IImConnection conn = app.getConnection(providerId, accountId);
+            if (conn == null || conn.getChatSessionManager() == null)
+                return;
 
             IChatSession chatSession = conn.getChatSessionManager().getChatSession(address);
 
-            if (chatSession != null)
-            {
-                if (chatSession.isEncrypted())
-                {
+            if (chatSession != null) {
+                if (chatSession.isEncrypted()) {
                     holder.mStatusIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_encrypted_grey));
                     holder.mStatusIcon.setVisibility(View.VISIBLE);
                 }
@@ -387,58 +345,58 @@ public class ConversationListItem extends FrameLayout {
         }
 
 
-
-                //mCurrentChatSession.getOtrChatSession();
+        //mCurrentChatSession.getOtrChatSession();
 
     }
 
     /**
-    public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
-        switch (status) {
-        case Presence.AVAILABLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            break;
+     * public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
+     * switch (status) {
+     * case Presence.AVAILABLE:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
+     * break;
+     * <p>
+     * case Presence.IDLE:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
+     * <p>
+     * break;
+     * <p>
+     * case Presence.AWAY:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
+     * break;
+     * <p>
+     * case Presence.DO_NOT_DISTURB:
+     * avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
+     * <p>
+     * break;
+     * <p>
+     * case Presence.OFFLINE:
+     * avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
+     * break;
+     * <p>
+     * <p>
+     * default:
+     * }
+     * }
+     **/
 
-        case Presence.IDLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
-
-            break;
-
-        case Presence.AWAY:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            break;
-
-        case Presence.DO_NOT_DISTURB:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
-
-            break;
-
-        case Presence.OFFLINE:
-            avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            break;
-
-
-        default:
-        }
-    }**/
-    
     public int getAvatarBorder(int status) {
         switch (status) {
-        case Presence.AVAILABLE:
-            return (getResources().getColor(R.color.holo_green_light));
+            case Presence.AVAILABLE:
+                return (getResources().getColor(R.color.holo_green_light));
 
-        case Presence.IDLE:
-            return (getResources().getColor(R.color.holo_green_dark));
-        case Presence.AWAY:
-            return (getResources().getColor(R.color.holo_orange_light));
+            case Presence.IDLE:
+                return (getResources().getColor(R.color.holo_green_dark));
+            case Presence.AWAY:
+                return (getResources().getColor(R.color.holo_orange_light));
 
-        case Presence.DO_NOT_DISTURB:
-            return(getResources().getColor(R.color.holo_red_dark));
+            case Presence.DO_NOT_DISTURB:
+                return (getResources().getColor(R.color.holo_red_dark));
 
-        case Presence.OFFLINE:
-            return(getResources().getColor(R.color.holo_grey_dark));
+            case Presence.OFFLINE:
+                return (getResources().getColor(R.color.holo_grey_dark));
 
-        default:
+            default:
         }
 
         return Color.TRANSPARENT;
@@ -460,33 +418,25 @@ public class ConversationListItem extends FrameLayout {
 
         Glide.clear(aHolder.mMediaThumb);
 
-        if(SecureMediaStore.isVfsUri(mediaUri))
-        {
+        if (SecureMediaStore.isVfsUri(mediaUri)) {
             info.guardianproject.iocipher.File fileMedia = new info.guardianproject.iocipher.File(mediaUri.getPath());
-            if (fileMedia.exists())
-            {
+            if (fileMedia.exists()) {
                 try {
                     Glide.with(getContext())
                             .load(new info.guardianproject.iocipher.FileInputStream(fileMedia))
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(aHolder.mMediaThumb);
-                }
-                catch (Exception e)
-                {
-                    Log.e(ImApp.LOG_TAG,"unable to load thumbnail",e);
+                } catch (Exception e) {
+                    Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
                 }
             }
-        }
-        else if (mediaUri.getScheme().equals("asset"))
-        {
+        } else if (mediaUri.getScheme().equals("asset")) {
             String assetPath = "file:///android_asset/" + mediaUri.getPath().substring(1);
             Glide.with(getContext())
                     .load(assetPath)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(aHolder.mMediaThumb);
-        }
-        else
-        {
+        } else {
             Glide.with(getContext())
                     .load(mediaUri)
                     .into(aHolder.mMediaThumb);
@@ -495,7 +445,7 @@ public class ConversationListItem extends FrameLayout {
     }
 
     private String getGroupCount(ContentResolver resolver, long groupId) {
-        String[] projection = { Imps.GroupMembers.NICKNAME };
+        String[] projection = {Imps.GroupMembers.NICKNAME};
         Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
         Cursor c = resolver.query(uri, projection, null, null, null);
         StringBuilder buf = new StringBuilder();
@@ -512,50 +462,50 @@ public class ConversationListItem extends FrameLayout {
     }
 
     /**
-    public void applyStyleColors (ConversationViewHolder holder)
-    {
-        //not set color
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
+     public void applyStyleColors (ConversationViewHolder holder)
+     {
+     //not set color
+     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+     int themeColorHeader = settings.getInt("themeColor",-1);
+     int themeColorText = settings.getInt("themeColorText",-1);
+     int themeColorBg = settings.getInt("themeColorBg",-1);
 
 
-        if (themeColorText != -1)
-        {
-            if (holder.mLine1 != null)
-                holder.mLine1.setTextColor(themeColorText);
+     if (themeColorText != -1)
+     {
+     if (holder.mLine1 != null)
+     holder.mLine1.setTextColor(themeColorText);
 
-            if (holder.mLine2 != null)
-                holder.mLine2.setTextColor(themeColorText);
+     if (holder.mLine2 != null)
+     holder.mLine2.setTextColor(themeColorText);
 
-            //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
+     //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
 
-        }
+     }
 
-    }*/
+     }*/
 
     /**
      * Returns darker version of specified <code>color</code>.
      */
-    public static int darker (int color, float factor) {
-        int a = Color.alpha( color );
-        int r = Color.red( color );
-        int g = Color.green( color );
-        int b = Color.blue( color );
+    public static int darker(int color, float factor) {
+        int a = Color.alpha(color);
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
 
-        return Color.argb( a,
-                Math.max( (int)(r * factor), 0 ),
-                Math.max( (int)(g * factor), 0 ),
-                Math.max( (int)(b * factor), 0 ) );
+        return Color.argb(a,
+                Math.max((int) (r * factor), 0),
+                Math.max((int) (g * factor), 0),
+                Math.max((int) (b * factor), 0));
     }
 
 
     @TargetApi(Build.VERSION_CODES.N)
-    public Locale getCurrentLocale(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+    public Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
-        } else{
+        } else {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
