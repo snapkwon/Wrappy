@@ -482,7 +482,6 @@ public class ContactsListFragment extends Fragment {
                     intent.putExtra("provider", viewHolder.mProviderId);
                     intent.putExtra("account", viewHolder.mAccountId);
                     intent.putExtra("contactId", viewHolder.mContactId);
-                    intent.putExtra("email", viewHolder.email);
 
                     mContext.startActivity(intent);
 

@@ -3112,6 +3112,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             + CHATS_CONTACT_ID + '=' + CONTACT_ID
             + " where " + CONTACT_ID + " IS NULL)";
 
+    public static final String GROUP_MEMBER_NICKNAME = TABLE_GROUP_MEMBERS + '.'
+            + Imps.GroupMembers.NICKNAME;
     private static final String GROUP_MEMBER_ID = TABLE_GROUP_MEMBERS + '.'
             + Imps.GroupMembers.GROUP;
     private static final String DELETE_GROUP_MEMBER_SELECTION = Imps.GroupMembers.GROUP
@@ -3897,6 +3899,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 changedItemId = url.getPathSegments().get(1);
                 break;
 
+            case MATCH_GROUP_MEMBERS:
+                tableToChange = TABLE_GROUP_MEMBERS;
+                break;
             case MATCH_GROUP_MEMBERS_BY_GROUP:
                 tableToChange = TABLE_GROUP_MEMBERS;
                 String groupId = url.getPathSegments().get(1);
