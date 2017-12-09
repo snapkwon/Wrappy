@@ -352,7 +352,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         member.nickname = c.getString(colNickname);
                         member.role = c.getString(colRole);
                         member.affiliation = c.getString(colAffiliation);
-                        member.email = getEmail(member.username);
+                        member.email = ImApp.getEmail(member.username);
                         try {
                             member.avatar = DatabaseUtils.getAvatarFromAddress(cr, member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                         } catch (DecoderException e) {
@@ -394,16 +394,6 @@ public class GroupDisplayActivity extends BaseActivity {
             }
         });
         mThreadUpdate.start();
-    }
-
-    private String getEmail(String username) {
-        String email = "";
-        if (username.equals(ImApp.sImApp.getDefaultUsername())) {
-            email = Imps.Account.getString(getContentResolver(), Imps.Account.ACCOUNT_EMAIL, ImApp.sImApp.getDefaultAccountId());
-        } else {
-            email = Imps.Contacts.getString(getContentResolver(), Imps.Contacts.CONTACT_EMAIL, username);
-        }
-        return email;
     }
 
     public void inviteContacts (ArrayList<String> invitees)
