@@ -410,6 +410,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
+                return true;
             case R.id.menu_settings_language:
                 PopupWindow popupWindow = mConvoView.popupDisplay();
                 popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);

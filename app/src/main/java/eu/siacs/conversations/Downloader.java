@@ -2,11 +2,12 @@ package eu.siacs.conversations;
 
 import android.webkit.URLUtil;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import net.wrappy.im.util.SecureMediaStore;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.io.CipherOutputStream;
 import org.bouncycastle.crypto.io.CipherInputStream;
+import org.bouncycastle.crypto.io.CipherOutputStream;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;

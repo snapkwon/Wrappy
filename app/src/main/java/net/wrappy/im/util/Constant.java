@@ -7,4 +7,5 @@ package net.wrappy.im.util;
 public class Constant {
 
     public static String EMAIL_DOMAIN = "@im.proteusiondev.com";
+    public final static boolean OMEMO_ENABLED = false;
 }

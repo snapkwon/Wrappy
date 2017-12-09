@@ -490,7 +490,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             c.close();
             return id;
         } else {
-            ContentValues values = new ContentValues(4);
+            ContentValues values = new ContentValues(6);
             values.put(Imps.Account.PROVIDER, providerId);
             values.put(Imps.Account.NAME, nickname);
             values.put(Imps.Account.USERNAME, username);
