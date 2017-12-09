@@ -27,6 +27,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.internal.http.HttpMethod;
+
 /**
  * Created by ben on 13/11/2017.
  */
@@ -49,6 +51,7 @@ public class RestAPI {
     public static String PHOTO_BRAND = "BRAND";
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0e8572300000de204335a8";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
+    public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
 
 
     public static String loginUrl(String user, String pass) {
@@ -127,6 +130,23 @@ public class RestAPI {
     public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);
         Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header)
+                .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
+        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                try {
+                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    public static void DeleteDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+        String header = getHeaderHttps(context,url);
+        Ion.with(context).load("DELETE", url).setTimeout(10000).addHeader("Authorization",header)
                 .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
         .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override

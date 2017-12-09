@@ -72,7 +72,8 @@ public class ConversationListItem extends FrameLayout {
                                                 Imps.Presence.PRESENCE_CUSTOM_STATUS,
                                                 Imps.Chats.LAST_MESSAGE_DATE,
                                                 Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Chats.CHAT_TYPE
+                                                Imps.Chats.CHAT_TYPE,
+                                                Imps.Chats.CHAT_FAVORITE
 
     };
 
@@ -90,6 +91,7 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE_DATE = 10;
     public static final int COLUMN_LAST_MESSAGE = 11;
     public static final int COLUMN_CHAT_TYPE = 12;
+    public static final int COLUMN_CHAT_FAVORITE = 13;
 
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
@@ -109,7 +111,7 @@ public class ConversationListItem extends FrameLayout {
     }
 */
 
-    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite) {
 
         //applyStyleColors(holder);
 
@@ -347,6 +349,14 @@ public class ConversationListItem extends FrameLayout {
 
         if (providerId != -1)
             getEncryptionState (providerId, accountId, address, holder);
+
+        if (chatFavorite != -1) {
+            if (chatFavorite == Imps.Chats.CHAT_PIN) {
+                holder.mPinIcon.setVisibility(VISIBLE);
+            } else {
+                holder.mPinIcon.setVisibility(GONE);
+            }
+        }
     }
 
     private void getEncryptionState (long providerId, long accountId, String address, ConversationViewHolder holder)

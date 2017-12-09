@@ -28,6 +28,7 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
+import android.util.Log;
 
 import net.sqlcipher.database.SQLiteConstraintException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -860,7 +861,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("last_message_date INTEGER,"); // in seconds
             buf.append("unsent_composed_message TEXT,"); // a composed, but not sent message
             buf.append("shortcut INTEGER,"); // which of 10 slots (if any) this chat occupies
-            buf.append("chat_type INTEGER);"); // chat type for filtering
+            buf.append("chat_type INTEGER,"); // chat type for filtering
+            buf.append("chat_favorite INTEGER);"); // chat favorite for filtering
 
 
             // chat sessions, including single person chats and group chats
@@ -1110,6 +1112,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
         sContactsProjectionMap.put(Imps.Contacts.CHAT_TYPE, "chats.chat_type AS chat_type");
         sContactsProjectionMap.put(Contacts.CONTACT_EMAIL, "contacts.email as email");
+
+        sContactsProjectionMap.put(Contacts.CHAT_FAVORITE, "chats.chat_favorite AS chat_favorite");
 
         // contactList projection map
         sContactListProjectionMap = new HashMap<String, String>();
