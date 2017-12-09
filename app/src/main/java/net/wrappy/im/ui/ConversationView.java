@@ -2643,7 +2643,10 @@ public class ConversationView {
             int messageType = cursor.getInt(mTypeColumn);
 
             String address = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteAddress;
-            String nickname = isGroupChat() ? new XmppAddress(cursor.getString(mNicknameColumn)).getUser() : mRemoteNickname;
+            String nickname = mRemoteNickname;
+            if (!TextUtils.isEmpty(address) && isGroupChat()) {
+                nickname = Imps.Contacts.getNicknameFromAddress(mActivity.getContentResolver(), new XmppAddress(address).getBareAddress());
+            }
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
