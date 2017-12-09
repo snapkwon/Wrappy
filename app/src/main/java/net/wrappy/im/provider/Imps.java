@@ -31,6 +31,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -1222,6 +1223,21 @@ public class Imps {
         }
 
         /**
+         * Get nick name by address
+         */
+        public static String getNicknameFromMessage(ContentResolver cr, String packId) {
+            Cursor c = cr.query(Messages.CONTENT_URI,
+                    new String[]{NICKNAME}, PACKET_ID + "=? AND " + IS_GROUP_CHAT + "=?", new String[]{packId, String.valueOf(1)}, null);
+            String ret = null;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getString(c.getColumnIndexOrThrow(NICKNAME));
+                }
+            }
+            return ret;
+        }
+
+        /**
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI = Uri
@@ -1372,6 +1388,32 @@ public class Imps {
          * group member.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/imps-groupMembers";
+
+        public static final String getNicknameFromGroup(ContentResolver cr, String address) {
+            String ret = null;
+            String selection = USERNAME + " like '" + address + "%' and " + NICKNAME + " !='" + address + "'";
+            String[] selectionArgs = {};
+            String[] projection = {NICKNAME};
+            Cursor cursor = cr.query(Imps.GroupMembers.CONTENT_URI, projection, selection, selectionArgs, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NICKNAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return ret;
+        }
+
+        public static int updateNicknameFromGroup(ContentResolver cr, String address, String nickname) {
+            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" +address + "'";
+            ContentValues values = new ContentValues();
+            values.put(NICKNAME, nickname);
+            int ret = cr.update(Imps.GroupMembers.CONTENT_URI, values, selection, null);
+            return ret;
+        }
     }
 
     /**
@@ -2924,6 +2966,13 @@ public class Imps {
             values.put(Imps.Messages.MIME_TYPE, mimeType);
 
         return resolver.update(builder.build(), values, null, null);
+    }
+
+    public static int updateMessageNickname(ContentResolver resolver, Uri uri, String nickname) {
+        ContentValues values = new ContentValues();
+        values.put(Messages.NICKNAME, nickname);
+
+        return resolver.update(uri, values, null, null);
     }
 
     public static int deleteMessageInDb(ContentResolver resolver, String id) {
