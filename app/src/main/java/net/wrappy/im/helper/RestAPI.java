@@ -27,6 +27,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.internal.http.HttpMethod;
+
 /**
  * Created by ben on 13/11/2017.
  */
@@ -36,6 +38,7 @@ public class RestAPI {
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
+    public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
@@ -52,6 +55,7 @@ public class RestAPI {
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
     public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
+    public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
 
 
     public static String loginUrl(String user, String pass) {
@@ -141,6 +145,23 @@ public class RestAPI {
         Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header)
                 .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
                 .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                try {
+                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    public static void DeleteDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+        String header = getHeaderHttps(context,url);
+        Ion.with(context).load("DELETE", url).setTimeout(10000).addHeader("Authorization",header)
+                .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
+        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {

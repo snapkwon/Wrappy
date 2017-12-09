@@ -26,9 +26,12 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.model.Registration;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -344,6 +347,27 @@ public class Imps {
             }
 
             return ret;
+        }
+
+        public static final int updateAccountFromDataServer(ContentResolver cr, Registration registration, long accountId) {
+            int id = -1;
+            if (registration != null && registration.getWpKMemberDto() != null) {
+                ContentValues values = new ContentValues();
+
+                setValue(values, Account.ACCOUNT_EMAIL, registration.getWpKMemberDto().getEmail());
+                setValue(values, Account.ACCOUNT_PHONE, registration.getWpKMemberDto().getMobile());
+                setValue(values, Account.ACCOUNT_NAME, registration.getWpKMemberDto().getIdentifier());
+
+                Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+                id = cr.update(accountUri, values, null, null);
+            }
+            return id;
+        }
+
+        //update value for each column of account table
+        private static void setValue(ContentValues values, String column, String value) {
+            if (!TextUtils.isEmpty(value))
+                values.put(column, value);
         }
 
         private static final String[] PROVIDER_PROJECTION = new String[]{PROVIDER};
@@ -725,6 +749,11 @@ public class Imps {
         /**
          * The default sort order for this table
          */
+        public static final String PIN_ORDER = "chat_favorite DESC, last_message_date DESC";
+
+        /**
+         * The default sort order for this table
+         */
         public static final String TIME_ORDER_ASC = "last_message_date ASC";
 
         /**
@@ -763,6 +792,25 @@ public class Imps {
                     cursor.close();
                 }
             }
+            return ret;
+        }
+
+        public static final String getString(ContentResolver cr, String columnName, String address) {
+            String selection = USERNAME + "=?";
+            String[] selectionArgs = {address};
+            Cursor cursor = cr.query(CONTENT_URI, new String[]{columnName}, selection,
+                    selectionArgs /* selection args */, null /* sort order */);
+            String ret = null;
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(columnName));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
             return ret;
         }
     }
@@ -1199,6 +1247,21 @@ public class Imps {
         }
 
         /**
+         * Get nick name by address
+         */
+        public static String getNicknameFromMessage(ContentResolver cr, String packId) {
+            Cursor c = cr.query(Messages.CONTENT_URI,
+                    new String[]{NICKNAME}, PACKET_ID + "=? AND " + IS_GROUP_CHAT + "=?", new String[]{packId, String.valueOf(1)}, null);
+            String ret = null;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getString(c.getColumnIndexOrThrow(NICKNAME));
+                }
+            }
+            return ret;
+        }
+
+        /**
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI = Uri
@@ -1291,6 +1354,7 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "date ASC";
         public static final String REVERSE_SORT_ORDER = "date DESC";
+        public static final String FAVORITE_SORT_ORDER = "chat_favorite DESC, date DESC";
 
         /**
          * The "contact" column. This is not a real column in the messages
@@ -1349,6 +1413,32 @@ public class Imps {
          * group member.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/imps-groupMembers";
+
+        public static final String getNicknameFromGroup(ContentResolver cr, String address) {
+            String ret = null;
+            String selection = USERNAME + " like '" + address + "%' and " + NICKNAME + " !='" + address + "'";
+            String[] selectionArgs = {};
+            String[] projection = {NICKNAME};
+            Cursor cursor = cr.query(Imps.GroupMembers.CONTENT_URI, projection, selection, selectionArgs, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NICKNAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return ret;
+        }
+
+        public static int updateNicknameFromGroup(ContentResolver cr, String address, String nickname) {
+            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" +address + "'";
+            ContentValues values = new ContentValues();
+            values.put(NICKNAME, nickname);
+            int ret = cr.update(Imps.GroupMembers.CONTENT_URI, values, selection, null);
+            return ret;
+        }
     }
 
     /**
@@ -1640,9 +1730,18 @@ public class Imps {
          */
         String CHAT_TYPE = "chat_type";
 
+
+        /**
+         * This is to store a flag related to status like PIN, UNPIN
+         */
+        String CHAT_FAVORITE = "chat_favorite";
+
         int CHAT_TYPE_ACTIVE = -1;
         int CHAT_TYPE_MUTED = 1;
         int CHAT_TYPE_ARCHIVED = 2;
+
+        int CHAT_UNPIN = 0;
+        int CHAT_PIN = 1;
 
     }
 
@@ -2901,6 +3000,13 @@ public class Imps {
             values.put(Imps.Messages.MIME_TYPE, mimeType);
 
         return resolver.update(builder.build(), values, null, null);
+    }
+
+    public static int updateMessageNickname(ContentResolver resolver, Uri uri, String nickname) {
+        ContentValues values = new ContentValues();
+        values.put(Messages.NICKNAME, nickname);
+
+        return resolver.update(uri, values, null, null);
     }
 
     public static int deleteMessageInDb(ContentResolver resolver, String id) {

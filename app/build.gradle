@@ -19,6 +19,8 @@ android {
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
+
+        buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
     }
 
     dexOptions {
@@ -87,6 +89,17 @@ ext {
     smackVersion = "4.2.1-beta1"
 }
 
+def getProps(String propName) {
+    def propsFile = rootProject.file('local.properties')
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        return props[propName]
+    } else {
+        return "inapptranslation.google_translate_apikey";
+    }
+}
+
 repositories {
     jcenter()
     maven { url 'https://github.com/jitsi/jitsi-maven-repository/raw/master/releases' }
@@ -146,14 +159,13 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:8.8.1'
-    compile 'me.ydcool.lib:qrmodule:latest.integration'
+   /* compile 'me.ydcool.lib:qrmodule:latest.integration'*/
     compile 'com.thefinestartist:finestwebview:1.2.7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.koushikdutta.ion:ion:2.2.1'
     implementation project(':geth')
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
-
     compile 'com.facebook.react:react-native:0.49.5'
-
+    implementation project(':qrmodule')
 }

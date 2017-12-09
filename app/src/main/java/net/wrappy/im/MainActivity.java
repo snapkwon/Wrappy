@@ -983,7 +983,7 @@ public class MainActivity extends BaseActivity {
             protected String doInBackground(String... params) {
 
                 String subject = params[0];
-                String chatRoom = "group" + UUID.randomUUID().toString().substring(0,8);
+                String chatRoom = "group" + subject;
                 String server = params[1];
 
 

@@ -25,6 +25,7 @@ import net.java.otr4j.session.SessionStatus;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.util.Constant;
 
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -90,7 +91,7 @@ public class ChatSession {
             if (mParticipant instanceof Contact) {
                 //if we can't omemo, check it again to be sure
                 if (!mCanOmemo) {
-                    //mCanOmemo = mManager.resourceSupportsOmemo(mJid);
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
             }
 
@@ -125,10 +126,7 @@ public class ChatSession {
 
     public boolean canOmemo ()
     {
-
-        //return mCanOmemo;
-        return false;
-
+        return Constant.OMEMO_ENABLED && mCanOmemo;
     }
 
 
@@ -173,8 +171,7 @@ public class ChatSession {
             if (mParticipant instanceof Contact) {
                 //if we can't omemo, check it again to be sure
                 if (!mCanOmemo) {
-                    //mCanOmemo = mManager.resourceSupportsOmemo(mJid);
-                    mCanOmemo = false;
+                    mCanOmemo = mManager.resourceSupportsOmemo(mJid);
                 }
             }
 
