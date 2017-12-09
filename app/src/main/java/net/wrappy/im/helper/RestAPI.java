@@ -36,6 +36,7 @@ import okhttp3.internal.http.HttpMethod;
 public class RestAPI {
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
+    public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
@@ -43,6 +44,7 @@ public class RestAPI {
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
     public static String POST_REFRESH_TOKEN = root_url + "/oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
+    public static String POST_REGISTER_DEV = root_url_dev + "member/registration";
     public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     public static String POST_PHOTO = root_url + "kernal/asset/retain/";
@@ -51,11 +53,21 @@ public class RestAPI {
     public static String PHOTO_BRAND = "BRAND";
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0e8572300000de204335a8";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
+    public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
+    public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
 
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
+    }
+
+    public static String resetPasswordUrl(String hash, String newPass) {
+        return String.format(GET_RESET_PASSWORD,hash,newPass);
+    }
+
+    public static String getHashStringResetPassUrl(String username, String answer01, String answer02 , String answer03) {
+        return String.format(GET_HASH_RESET_PASS,username,answer01,answer02,answer03);
     }
 
     private static String refreshTokenUrl(Context context) {
@@ -66,6 +78,7 @@ public class RestAPI {
     public interface RestAPIListenner {
         public void OnComplete(int httpCode, String error, String s);
     }
+
 
     public static JsonElement getData(JsonObject jsonObject) {
         return jsonObject.get("data");
@@ -131,7 +144,7 @@ public class RestAPI {
         String header = getHeaderHttps(context,url);
         Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header)
                 .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
-        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+                .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {

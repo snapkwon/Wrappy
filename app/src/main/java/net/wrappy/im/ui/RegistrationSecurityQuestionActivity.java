@@ -2,10 +2,8 @@ package net.wrappy.im.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,22 +17,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.SecurityQuestions;
 import net.wrappy.im.model.WpKAuthDto;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.ui.legacy.SignInHelper;
-import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
 
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -106,6 +96,8 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
             public void OnComplete(int httpCode, String error, String s) {
                 try {
                     if (!RestAPI.checkHttpCode(httpCode)) {
+                        AppFuncs.alert(getApplicationContext(),"Connection fail", true);
+                        finish();
                         return;
                     }
                     JsonArray jsonArray = (new JsonParser()).parse(s).getAsJsonArray();
@@ -129,7 +121,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                     }
                     questionsAdapter = new ArrayAdapter<String>(RegistrationSecurityQuestionActivity.this,R.layout.registration_activity_security_question_item_textview,stringQuestions);
                     securityQuestionLayout.removeAllViews();
-                    for (int i=0 ; i < stringQuestions.size(); i++) {
+                    for (int i=0 ; i < 3; i++) {
                         View questionLayoutView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.registration_activity_security_question_item,null);
                         securityQuestionLayout.addView(questionLayoutView);
                         AppTextView txtQuestionTitle = (AppTextView) questionLayoutView.findViewById(R.id.txtQuestionTitle);
@@ -165,15 +157,32 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                 if (spinnersQuestion.size() > 0) {
                     String errorString = "";
                     ArrayList<String> strings = new ArrayList<>();
+                    ArrayList<String> stringQuestions = new ArrayList<>();
                     ArrayList<SecurityQuestions> securityQuestions = new ArrayList<>();
                     for (int i=0; i < spinnersQuestion.size(); i++) {
                         Spinner spinner = spinnersQuestion.get(i);
                         String question = spinner.getSelectedItem().toString();
                         EditText editTextView = appEditTextViewsAnswers.get(i);
                         String answer = editTextView.getText().toString().trim();
+                        if (stringQuestions.size() > 0) {
+                            if (stringQuestions.contains(question)) {
+                                errorString = "Your question have duplicated";
+                                break;
+                            }
+                        }
                         // validate answer text
                         if (answer.isEmpty()) {
                             errorString = String.format("Your answer of question %d is empty", (i+1));
+                            break;
+                        }
+
+                        if (answer.length() < 3) {
+                            errorString = String.format("Your answer of question %d must have at least 3 letter", (i+1));
+                            break;
+                        }
+
+                        if (AppFuncs.detectSpecialCharacters(answer)) {
+                            errorString = String.format("Your answer of question %d have special characters", (i+1));
                             break;
                         }
 
@@ -184,6 +193,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                             }
                         }
                         strings.add(answer);
+                        stringQuestions.add(question);
                         SecurityQuestions questions = new SecurityQuestions(i+1,question,answer);
                         securityQuestions.add(questions);
                     }

@@ -2,6 +2,7 @@ package net.wrappy.im.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -30,6 +33,29 @@ import java.util.regex.Pattern;
  */
 
 public class AppFuncs {
+
+    private static AppFuncs _ins;
+
+    public static AppFuncs getInstance() {
+        if (_ins==null) {
+            _ins = new AppFuncs();
+        }
+        return _ins;
+    }
+
+    ProgressDialog dialog;
+    public void showProgressWaiting(Activity activity) {
+        dialog = new ProgressDialog(activity);
+        dialog.setMessage("Waiting...");
+        dialog.show();
+    }
+
+    public void dismissProgressWaiting() {
+        if (dialog!=null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
 
     public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
@@ -160,6 +186,19 @@ public class AppFuncs {
             ex.printStackTrace();
             return new JsonObject();
         }
+    }
+
+    public static void dismissKeyboard(Activity activity) {
+        try {
+            View view = activity.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
 }

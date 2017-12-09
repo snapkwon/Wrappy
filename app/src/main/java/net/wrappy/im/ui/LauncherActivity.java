@@ -13,10 +13,7 @@ import android.widget.EditText;
 import android.widget.ViewFlipper;
 
 import net.wrappy.im.R;
-import net.wrappy.im.helper.RestAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.wrappy.im.provider.Store;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +77,7 @@ public class LauncherActivity extends BaseActivity {
                     alertDialog.show();
                 }
                 else {
+                    Store.putStringData(getApplicationContext(),Store.USERNAME,mEditUsername.getText().toString().trim());
                     showLogin();
                 }
             }

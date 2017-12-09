@@ -13,7 +13,6 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,10 +34,10 @@ import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
+import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkToken;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -48,7 +47,6 @@ import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.KeyPair;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by ben on 15/11/2017.
@@ -142,18 +140,51 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
 
 
-                RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
+                RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
 
                     @Override
                     public void OnComplete(int httpCode, String error, String s) {
+                        if (error!=null && !error.isEmpty()) {
+                            AppFuncs.alert(getApplicationContext(),error,true);
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            return;
+                        }
+                        if (!RestAPI.checkHttpCode(httpCode)) {
+                            if (s!=null) {
+                                String er = WpErrors.getErrorMessage(s);
+                                if (!er.isEmpty()) {
+                                    AppFuncs.alert(getApplicationContext(),er,true);
+                                } else {
+                                    AppFuncs.alert(getApplicationContext(),"Registration fail. Try Again!",true);
+                                }
+                            }
+
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                            return;
+                        }
                         String url = RestAPI.loginUrl(user,password);
                         RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
                                 try {
+
                                     if (error!=null && !error.isEmpty()) {
                                         AppFuncs.alert(getApplicationContext(),error,true);
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        return;
+                                    }
+                                    if (!RestAPI.checkHttpCode(httpCode)) {
+                                        String er = WpErrors.getErrorMessage(s);
+                                        if (!er.isEmpty()) {
+                                            AppFuncs.alert(getApplicationContext(),er,true);
+                                        }
                                         if (dialog != null && dialog.isShowing()) {
                                             dialog.dismiss();
                                         }

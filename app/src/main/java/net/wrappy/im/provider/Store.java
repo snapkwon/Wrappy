@@ -10,6 +10,8 @@ import android.preference.PreferenceManager;
 
 public class Store {
 
+    public final static String USERNAME = "wr_username";
+
     public static void putStringData(Context context, String key, String data) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
