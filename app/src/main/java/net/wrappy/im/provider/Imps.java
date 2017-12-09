@@ -789,6 +789,25 @@ public class Imps {
             }
             return ret;
         }
+
+        public static final String getString(ContentResolver cr, String columnName, String address) {
+            String selection = USERNAME + "=?";
+            String[] selectionArgs = {address};
+            Cursor cursor = cr.query(CONTENT_URI, new String[]{columnName}, selection,
+                    selectionArgs /* selection args */, null /* sort order */);
+            String ret = null;
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(columnName));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
+            return ret;
+        }
     }
 
     /**

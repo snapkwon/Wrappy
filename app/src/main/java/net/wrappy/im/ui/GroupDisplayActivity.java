@@ -67,6 +67,7 @@ public class GroupDisplayActivity extends BaseActivity {
     private class GroupMemberDisplay {
         public String username;
         public String nickname;
+        public String email;
         public String role;
         public String affiliation;
         public Drawable avatar;
@@ -238,18 +239,11 @@ public class GroupDisplayActivity extends BaseActivity {
                     final GroupMemberDisplay member = mMembers.get(idxMember);
 
                     String nickname = member.nickname;
-                    if (TextUtils.isEmpty(nickname)) {
-                        nickname = member.username.split("@")[0].split("\\.")[0];
-                    } else {
-                        nickname = nickname.split("@")[0].split("\\.")[0];
-                    }
-
                     h.line1.setText(nickname);
 
                     boolean hasRoleNone = TextUtils.isEmpty(member.role) || "none".equalsIgnoreCase(member.role);
                     h.line1.setTextColor(hasRoleNone ? Color.GRAY : colorTextPrimary);
-
-                    h.line2.setText(member.username);
+                    h.line2.setText(member.email);
                     if (member.affiliation != null && (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin"))) {
                         h.avatarCrown.setVisibility(View.VISIBLE);
                     } else {
@@ -358,6 +352,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         member.nickname = c.getString(colNickname);
                         member.role = c.getString(colRole);
                         member.affiliation = c.getString(colAffiliation);
+                        member.email = getEmail(member.username);
                         try {
                             member.avatar = DatabaseUtils.getAvatarFromAddress(cr, member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                         } catch (DecoderException e) {
@@ -370,6 +365,7 @@ public class GroupDisplayActivity extends BaseActivity {
                                     mIsOwner = true;
                             }
                         }
+
 
 
                         /**
@@ -398,6 +394,16 @@ public class GroupDisplayActivity extends BaseActivity {
             }
         });
         mThreadUpdate.start();
+    }
+
+    private String getEmail(String username) {
+        String email = "";
+        if (username.equals(ImApp.sImApp.getDefaultUsername())) {
+            email = Imps.Account.getString(getContentResolver(), Imps.Account.ACCOUNT_EMAIL, ImApp.sImApp.getDefaultAccountId());
+        } else {
+            email = Imps.Contacts.getString(getContentResolver(), Imps.Contacts.CONTACT_EMAIL, username);
+        }
+        return email;
     }
 
     public void inviteContacts (ArrayList<String> invitees)
