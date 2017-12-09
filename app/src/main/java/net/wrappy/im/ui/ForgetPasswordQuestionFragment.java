@@ -130,13 +130,18 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
 
     private void postResultToServer(String an1,String an2) {
-        String url = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/" + "member/"+ Store.getStringData(getActivity(),Store.USERNAME)+"/security/"+stringQuestions.get(0).getIndex()+"/"+an1+"/"+stringQuestions.get(1).getIndex()+"/"+an2+"/3/kfdsklfjds/password/reset";
+        String url = RestAPI.getHashStringResetPassUrl(Store.getStringData(getActivity(),Store.USERNAME),an1,an2,"ada");
         RestAPI.GetDataWrappy(getActivity(), url, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
                     if (!s.isEmpty()) {
                         appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
+                    }
+                } else {
+                    if (s!=null) {
+
+                        AppFuncs.alert(getActivity(), "Connection Server Fail", true);
                     }
                 }
 

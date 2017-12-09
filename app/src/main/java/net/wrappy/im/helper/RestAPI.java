@@ -50,7 +50,8 @@ public class RestAPI {
     public static String PHOTO_BRAND = "BRAND";
     public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0e8572300000de204335a8";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
-    public static String GET_RESET_PASSWORD = root_url+ "member/%s/password/%s";
+    public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
+    public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
 
 
     public static String loginUrl(String user, String pass) {
@@ -59,6 +60,10 @@ public class RestAPI {
 
     public static String resetPasswordUrl(String hash, String newPass) {
         return String.format(GET_RESET_PASSWORD,hash,newPass);
+    }
+
+    public static String getHashStringResetPassUrl(String username, String answer01, String answer02 , String answer03) {
+        return String.format(GET_HASH_RESET_PASS,username,answer01,answer02,answer03);
     }
 
     private static String refreshTokenUrl(Context context) {

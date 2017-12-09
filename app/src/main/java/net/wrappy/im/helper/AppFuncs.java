@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -44,7 +46,7 @@ public class AppFuncs {
     ProgressDialog dialog;
     public void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
-        dialog.setTitle("Waiting...");
+        dialog.setMessage("Waiting...");
         dialog.show();
     }
 
@@ -184,6 +186,19 @@ public class AppFuncs {
             ex.printStackTrace();
             return new JsonObject();
         }
+    }
+
+    public static void dismissKeyboard(Activity activity) {
+        try {
+            View view = activity.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
 }

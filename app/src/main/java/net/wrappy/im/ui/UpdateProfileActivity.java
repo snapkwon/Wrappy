@@ -172,17 +172,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
                                 try {
-                                    if (dialog != null && dialog.isShowing()) {
-                                        dialog.dismiss();
-                                    }
+
                                     if (error!=null && !error.isEmpty()) {
                                         AppFuncs.alert(getApplicationContext(),error,true);
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
                                         return;
                                     }
                                     if (!RestAPI.checkHttpCode(httpCode)) {
                                         String er = WpErrors.getErrorMessage(s);
                                         if (!er.isEmpty()) {
                                             AppFuncs.alert(getApplicationContext(),er,true);
+                                        }
+                                        if (dialog != null && dialog.isShowing()) {
+                                            dialog.dismiss();
                                         }
                                         return;
                                     }

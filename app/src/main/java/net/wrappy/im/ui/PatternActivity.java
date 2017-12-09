@@ -6,9 +6,9 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -23,9 +23,10 @@ import com.google.gson.JsonParser;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
-import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -49,14 +50,16 @@ import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
 public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
 
+    public static final String TAG = "PatternActivity";
+
     public static Intent getStartIntent(Activity context){
         return new Intent(context, PatternActivity.class);
     }
 
     String username;
     String password;
-    ProgressDialog dialog;
     int type_request;
+    AppFuncs appFuncs;
 
     public static final int STATUS_SUCCESS = 1;
 
@@ -75,7 +78,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         ActionBar actionbar = getSupportActionBar();
         actionbar.setHomeButtonEnabled(true);
         actionbar.setDisplayHomeAsUpEnabled(true);
-
+        appFuncs = AppFuncs.getInstance();
         mHandler = new SimpleAlertHandler(this);
 
         Bundle arg= getIntent().getExtras();
@@ -101,11 +104,13 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 actionbar.setTitle("FORGET PASSWORD");
             }
         }
-
+        Intent in = getIntent();
+        Uri data = in.getData();
         bottomText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForgetPasswordActivity.init(PatternActivity.this);
+                ForgetPasswordActivity.start(PatternActivity.this);
+                finish();
             }
         });
     }
@@ -157,11 +162,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+            finish();
         } else {
             resetPassword(pass);
         }
 
-        finish();
+
     }
 
     private void resetPassword(final String pass) {
@@ -171,25 +177,28 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
                     login(pass);
+                } else {
+                    Log.i(TAG,WpErrors.getErrorMessage(s));
+                    AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
+                    finish();
                 }
             }
         });
     }
 
     private void login(String pass) {
-        dialog = new ProgressDialog(PatternActivity.this);
-        dialog.setMessage(getString(R.string.waiting_dialog));
-        dialog.show();
-        String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME),password);
+        appFuncs.showProgressWaiting(this);
+        String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME),pass);
         RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
                     if (!RestAPI.checkHttpCode(httpCode)) {
+                        appFuncs.dismissProgressWaiting();
                         AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
                         alertDialog.setTitle("Error");
-                        alertDialog.setMessage("The user name or password is incorrect");
+                        alertDialog.setMessage("The username or password is incorrect");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -198,9 +207,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                                 });
                         alertDialog.show();
                         //AppFuncs.alert(getApplicationContext(),s,true);
-                        if (dialog != null && dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
+
                         return;
                     }
                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
@@ -209,9 +216,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     wpkToken.saveToken(getApplicationContext());
                     doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
                 }catch (Exception ex) {
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
+                    appFuncs.dismissProgressWaiting();
                     ex.printStackTrace();
                 }
 
@@ -279,9 +284,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         @Override
         protected void onPostExecute(Integer account) {
 
-            if (dialog != null && dialog.isShowing()) {
-                dialog.dismiss();
-            }
+            appFuncs.dismissProgressWaiting();
             // mUsername = account.username + '@' + account.domain;
             if(account==200) {
                     Intent intent = new Intent(PatternActivity.this, MainActivity.class);

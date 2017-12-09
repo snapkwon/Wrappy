@@ -27,7 +27,7 @@ public class ForgetPasswordActivity extends Activity implements AppDelegate {
 
 
 
-    public static void init(Activity activity) {
+    public static void start(Activity activity) {
         Intent intent = new Intent(activity,ForgetPasswordActivity.class);
         activity.startActivity(intent);
     }
@@ -71,6 +71,7 @@ public class ForgetPasswordActivity extends Activity implements AppDelegate {
                 if (data.isEmpty()) {
                     goToResetEmailFragment();
                 } else {
+                    data = data.replaceAll("\"","");
                     Intent intent= PatternActivity.getStartIntent(this);
                     Bundle arg = new Bundle();
                     arg.putInt("type",LauncherActivity.REQUEST_CODE_REGISTER);
