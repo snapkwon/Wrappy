@@ -446,9 +446,7 @@ public class ConversationListFragment extends Fragment {
                 clItem.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        String account = address.split("@")[0].split("\\.")[0];
-                        mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account);
-                        mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+                        showBottomSheetDialog(address, chatId, chatFavorite);
                         return false;
                     }
                 });
@@ -479,16 +477,6 @@ public class ConversationListFragment extends Fragment {
                                 context.startActivity(intent);
                             }
                         });
-
-                        // long click item to show bottom sheet
-                        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View view) {
-                                mBottomSheet = new CustomBottomSheetDialogFragment();
-                                mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
-                                return false;
-                            }
-                        });
                     }
                 }
             }
@@ -496,7 +484,11 @@ public class ConversationListFragment extends Fragment {
 
         }
 
-
+        private void showBottomSheetDialog(String address, long chatId, int chatFavorite) {
+            String account = address.split("@")[0].split("\\.")[0];
+            mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account);
+            mBottomSheet.show(((FragmentActivity)mContext).getSupportFragmentManager(), "Dialog");
+        }
 
     }
 
