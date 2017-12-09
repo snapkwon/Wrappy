@@ -20,7 +20,7 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
 
-        buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
+        buildConfigField "String", "GoogleTranslateApiKey", '""'
     }
 
     dexOptions {
@@ -159,7 +159,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:8.8.1'
-   /* compile 'me.ydcool.lib:qrmodule:latest.integration'*/
+    /* compile 'me.ydcool.lib:qrmodule:latest.integration'*/
     compile 'com.thefinestartist:finestwebview:1.2.7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.koushikdutta.ion:ion:2.2.1'

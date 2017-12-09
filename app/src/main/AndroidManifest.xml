@@ -30,7 +30,6 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <!--
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -295,7 +294,7 @@
             android:exported="false"
             android:label="@string/add_friends" />
         <activity
-            android:name="net.wrappy.im.ui.AddContactNewActivity"
+            android:name=".ui.AddContactNewActivity"
             android:exported="false"
             android:label="@string/add_friends" />
         <activity
@@ -453,8 +452,8 @@
         <activity
             android:name=".ui.ConversationDetailActivity"
             android:exported="false"
-            android:theme="@style/AppThemeNoAction"
             android:launchMode="singleTop"
+            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".ui.ContactListActivity"
@@ -503,20 +502,19 @@
         </provider>
 
         <activity
-            android:name="net.wrappy.im.ui.LauncherActivity"
-            android:label="@string/title_activity_launcher"></activity>
-
+            android:name=".ui.LauncherActivity"
+            android:label="@string/title_activity_launcher" />
         <activity
-            android:name="net.wrappy.im.ui.IntroActivity"
+            android:name=".ui.IntroActivity"
             android:label="@string/title_activity_launcher"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar" />
         <activity
-            android:name="net.wrappy.im.ui.PatternActivity"
-            android:launchMode="singleTop"></activity>
+            android:name=".ui.PatternActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.qr.QrScanFriendActivity" />
-        <activity android:name=".ui.ConferenceActivity"
-            android:launchMode="singleTop"/>
-
+        <activity
+            android:name=".ui.ConferenceActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.Wallet_Complete_Activity"
             android:label="@string/title_activity_wallet__complete_" />
@@ -526,13 +524,14 @@
         <activity android:name=".ui.WalletQrCodeDetailActivity" />
         <activity android:name=".ui.PackupWalletAccount" />
         <activity android:name=".ui.ChangePasswordAccount" />
-        <activity android:name=".ui.TransactionDetailActivity"></activity>
-        <activity android:name=".ui.Create_New_Wallet"></activity>
+        <activity android:name=".ui.TransactionDetailActivity" />
+        <activity android:name=".ui.Create_New_Wallet" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
+        <activity android:name=".ui.SettingConversationActivity"></activity>
     </application>
 
 </manifest>

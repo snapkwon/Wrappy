@@ -400,7 +400,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                mConvoView.showVerifyDialog();
+                mConvoView.startSettingScreen();
                 return true;
             case R.id.menu_group_info:
                 mConvoView.showGroupInfo();
