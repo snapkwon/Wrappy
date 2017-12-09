@@ -43,7 +43,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +51,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import net.ironrabbit.type.CustomTypefaceTextView;
 import net.wrappy.im.ImApp;
@@ -471,7 +470,6 @@ public class ConversationListFragment extends Fragment {
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Toast.makeText(mContext, "222", Toast.LENGTH_SHORT).show();
                                 Context context = v.getContext();
                                 Intent intent = ConversationDetailActivity.getStartIntent(context);
                                 intent.putExtra("id", chatId);

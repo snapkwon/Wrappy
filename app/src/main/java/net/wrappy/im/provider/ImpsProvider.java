@@ -867,7 +867,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             // chat sessions, including single person chats and group chats
             sqlStatement = buf.toString();
-            Log.d("Cuong", "sqlStatement: " + sqlStatement);
 
 
             log("create chat table: " + sqlStatement);
