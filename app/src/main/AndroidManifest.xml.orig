@@ -30,7 +30,6 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <!--
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -511,15 +510,16 @@
             android:label="@string/title_activity_launcher"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name="net.wrappy.im.ui.PatternActivity"
-            android:launchMode="singleTop"></activity>
+<<<<<<< HEAD
+            android:name=".ui.PatternActivity"
+            android:launchMode="singleTop" />
+=======
             android:name="net.wrappy.im.ui.PatternActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop">
 
         </activity>
-            android:name=".ui.PatternActivity"
-            android:launchMode="singleTop" />
+>>>>>>> dev
         <activity android:name=".ui.qr.QrScanFriendActivity" />
         <activity
             android:name=".ui.ConferenceActivity"
