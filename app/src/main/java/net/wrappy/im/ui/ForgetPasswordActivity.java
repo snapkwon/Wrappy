@@ -48,6 +48,7 @@ public class ForgetPasswordActivity extends Activity implements AppDelegate {
 
     @OnClick(R.id.headerbarBack)
     public void headerBack(View v) {
+        LauncherActivity.start(ForgetPasswordActivity.this);
         finish();
     }
 

@@ -151,6 +151,7 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
         }isFlag = true;
         try {
             if (view.getId() == headerbarBack.getId()) {
+                LauncherActivity.start(RegistrationSecurityQuestionActivity.this);
                 finish();
             }
             if (view.getId() == btnQuestionComplete.getId()) {

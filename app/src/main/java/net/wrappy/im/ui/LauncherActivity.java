@@ -1,5 +1,6 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,11 @@ public class LauncherActivity extends BaseActivity {
 
     int type_request;
 
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, LauncherActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
 
     private static final List<PatternView.Cell> LOGO_PATTERN = new ArrayList<>();
 

@@ -1,14 +1,18 @@
 package net.wrappy.im.helper;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -92,54 +96,64 @@ public class AppFuncs {
     public static void getImageFromDevice(final Activity activity, final int requestCode) {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
 
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            builder.setTitle("Add Photo!");
+
+            builder.setItems(options, new DialogInterface.OnClickListener() {
+
+                @Override
+
+                public void onClick(DialogInterface dialog, int item) {
+
+                    if (options[item].equals("Take Photo"))
+
+                    {
+
+                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        //pic = f;
+
+                        activity.startActivityForResult(cameraIntent, requestCode);
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    }
 
-        builder.setTitle("Add Photo!");
+                    else if (options[item].equals("Choose from Gallery"))
 
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+                    {
 
-            @Override
+                        Intent intent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        activity.startActivityForResult(intent, requestCode);
 
-            public void onClick(DialogInterface dialog, int item) {
 
-                if (options[item].equals("Take Photo"))
 
-                {
+                    }
 
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    //pic = f;
+                    else if (options[item].equals("Cancel")) {
 
-                    activity.startActivityForResult(cameraIntent, requestCode);
+                        dialog.dismiss();
 
+                    }
 
                 }
 
-                else if (options[item].equals("Choose from Gallery"))
+            });
 
-                {
+            builder.show();
 
-                    Intent intent = new Intent(Intent.ACTION_PICK,
-                            MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    activity.startActivityForResult(intent, requestCode);
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA},
+                    199);
+        }
 
 
-
-                }
-
-                else if (options[item].equals("Cancel")) {
-
-                    dialog.dismiss();
-
-                }
-
-            }
-
-        });
-
-        builder.show();
 
     }
 
