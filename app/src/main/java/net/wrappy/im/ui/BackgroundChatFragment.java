@@ -6,9 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.layout.CircleImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,6 +23,9 @@ import butterknife.ButterKnife;
 public class BackgroundChatFragment extends Fragment {
     @BindView(R.id.text_chat_background)
     TextView textView;
+    @BindView(R.id.background_grid_view)
+    GridLayout mBackgroundGridLayout;
+
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
@@ -44,6 +50,25 @@ public class BackgroundChatFragment extends Fragment {
         String message = getArguments().getString(EXTRA_MESSAGE);
         textView.setText(message);
 
+        onGridViewClickListener();
+
         return view;
+    }
+
+    private void onGridViewClickListener() {
+        int childCount = mBackgroundGridLayout.getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
+
+            final int position = i;
+
+            CircleImageView imageView = (CircleImageView) mBackgroundGridLayout.getChildAt(position);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getContext(), "" + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
