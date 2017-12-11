@@ -20,7 +20,7 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
 
-        buildConfigField "String", "GoogleTranslateApiKey", '""'
+        buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
     }
 
     dexOptions {
