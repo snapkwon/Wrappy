@@ -120,8 +120,8 @@ public class ConversationDetailActivity extends BaseActivity {
     private PrettyTime mPrettyTime;
 
 	// offset position for popup window
-    private static final int OFFSET_X = 75;
-    private static final int OFFSET_Y = 75;
+    private static final int OFFSET_X = 130;
+    private static final int OFFSET_Y = 80;
 
     private int convertDpToPx(int dp){
         return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
