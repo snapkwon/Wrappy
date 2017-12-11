@@ -117,8 +117,12 @@ public class ConversationDetailActivity extends BaseActivity {
     private PrettyTime mPrettyTime;
 
 	// offset position for popup window
-    private static final int OFFSET_X = 300;
-    private static final int OFFSET_Y = 300;
+    private static final int OFFSET_X = 75;
+    private static final int OFFSET_Y = 75;
+
+    private int convertDpToPx(int dp){
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
 
     private Handler mHandler = new Handler()
     {
@@ -413,7 +417,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_settings_language:
                 PopupWindow popupWindow = mConvoView.popupDisplay();
-                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, convertDpToPx(OFFSET_X), convertDpToPx(OFFSET_Y));
                 return true;
         }
         return super.onOptionsItemSelected(item);
