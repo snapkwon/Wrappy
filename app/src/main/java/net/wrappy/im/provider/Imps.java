@@ -31,7 +31,6 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -1354,7 +1353,6 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "date ASC";
         public static final String REVERSE_SORT_ORDER = "date DESC";
-        public static final String FAVORITE_SORT_ORDER = "chat_favorite DESC, date DESC";
 
         /**
          * The "contact" column. This is not a real column in the messages

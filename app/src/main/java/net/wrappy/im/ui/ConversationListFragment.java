@@ -500,7 +500,7 @@ public class ConversationListFragment extends Fragment {
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
 
                 loader = new CursorLoader(getActivity(), mUri, null,
-                        buf == null ? null : buf.toString(), null, Imps.Messages.FAVORITE_SORT_ORDER);
+                        buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);
             } else {
                 mUri = Imps.Contacts.CONTENT_URI_CHAT_CONTACTS_BY;
 
