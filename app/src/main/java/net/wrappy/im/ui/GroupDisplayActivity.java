@@ -26,11 +26,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.apache.commons.codec.DecoderException;
-
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -46,9 +44,9 @@ import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 
-import java.util.ArrayList;
+import org.apache.commons.codec.DecoderException;
 
-import net.wrappy.im.R;
+import java.util.ArrayList;
 
 public class GroupDisplayActivity extends BaseActivity {
 
@@ -561,8 +559,10 @@ public class GroupDisplayActivity extends BaseActivity {
 
     public void setMuted(boolean muted) {
         try {
-            mSession.setMuted(muted);
+             if (mSession != null)
+                mSession.setMuted(muted);
         } catch (RemoteException re) {
+            
         }
     }
 

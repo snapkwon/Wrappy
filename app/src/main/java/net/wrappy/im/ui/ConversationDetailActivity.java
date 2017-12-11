@@ -29,6 +29,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -55,6 +57,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,8 +120,14 @@ public class ConversationDetailActivity extends BaseActivity {
     private PrettyTime mPrettyTime;
 
 	// offset position for popup window
-    private static final int OFFSET_X = 300;
-    private static final int OFFSET_Y = 300;
+    private static final int OFFSET_X = 130;
+    private static final int OFFSET_Y = 80;
+
+    private int convertDpToPx(int dp){
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+
 
     private Handler mHandler = new Handler()
     {
@@ -400,7 +409,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                mConvoView.showVerifyDialog();
+                startSettingScreen();
                 return true;
             case R.id.menu_group_info:
                 mConvoView.showGroupInfo();
@@ -413,7 +422,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_settings_language:
                 PopupWindow popupWindow = mConvoView.popupDisplay();
-                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, convertDpToPx(OFFSET_X), convertDpToPx(OFFSET_Y));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -729,6 +738,12 @@ public class ConversationDetailActivity extends BaseActivity {
                     mLastPhoto = null;
                 }
 
+            } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
+
+                Bundle extras = resultIntent.getExtras();
+                byte[] b = extras.getByteArray("picture");
+
+                Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             }
 
 
@@ -887,6 +902,11 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    private void startSettingScreen() {
+        Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
+        startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
+    }
+
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
     public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
@@ -895,6 +915,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+    private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override
