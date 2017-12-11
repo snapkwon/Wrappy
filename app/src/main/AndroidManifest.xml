@@ -221,7 +221,10 @@
             android:name=".ui.UpdateProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction" />
-        <activity android:name=".ui.ForgetPasswordActivity" android:screenOrientation="portrait" android:theme="@style/AppThemeNoAction" />
+        <activity
+            android:name=".ui.ForgetPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoAction" />
 
         <service
             android:name=".plugin.xmpp.XmppImPlugin"
@@ -456,7 +459,14 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden|adjustPan">
+
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_place_api_key" />
+
         <activity
             android:name=".ui.ContactListActivity"
             android:exported="false" />
@@ -512,20 +522,29 @@
             android:theme="@style/NoActionBar" />
         <activity
             android:name="net.wrappy.im.ui.PatternActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "example://gizmos” -->
-                <data android:scheme="wrappy" android:host="reset_pass" />
-                <data android:scheme="http" android:host="wrappy.net" android:pathPrefix="/reset_pass" />
-                <data android:scheme="https" android:host="wrappy.net" android:pathPrefix="/reset_pass" />
+                <data
+                    android:host="reset_pass"
+                    android:scheme="wrappy" />
+                <data
+                    android:host="wrappy.net"
+                    android:pathPrefix="/reset_pass"
+                    android:scheme="http" />
+                <data
+                    android:host="wrappy.net"
+                    android:pathPrefix="/reset_pass"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
-            android:name=".ui.PatternActivity"
-            android:launchMode="singleTop" />
+        android:name=".ui.PatternActivity"
+        android:launchMode="singleTop" />
         <activity android:name=".ui.qr.QrScanFriendActivity" />
         <activity
             android:name=".ui.ConferenceActivity"

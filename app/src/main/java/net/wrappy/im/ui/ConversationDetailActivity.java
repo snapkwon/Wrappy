@@ -62,6 +62,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
@@ -119,18 +124,16 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-	// offset position for popup window
+    // offset position for popup window
     private static final int OFFSET_X = 130;
     private static final int OFFSET_Y = 80;
 
-    private int convertDpToPx(int dp){
+    private int convertDpToPx(int dp) {
         return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
 
-
-    private Handler mHandler = new Handler()
-    {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -287,6 +290,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     MyLoaderCallbacks loaderCallbacks;
+
     private void processIntent(Intent intent) {
 
         mApp = (ImApp) getApplication();
@@ -613,6 +617,21 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    void startLocationMessage() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        try {
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            GooglePlayServicesUtil
+                    .getErrorDialog(e.getConnectionStatusCode(), this, 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "Google Play Services is not available.",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
     private boolean isCallable(Intent intent) {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
@@ -916,6 +935,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
     private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
+    private static final int PLACE_PICKER_REQUEST = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override
