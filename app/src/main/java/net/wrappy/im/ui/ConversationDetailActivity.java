@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -121,7 +122,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
 	// offset position for popup window
     private static final int OFFSET_X = 130;
-    private static final int OFFSET_Y = 80;
+    private static final int OFFSET_Y = 100;
 
     private int convertDpToPx(int dp){
         return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
@@ -741,9 +742,11 @@ public class ConversationDetailActivity extends BaseActivity {
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
 
                 Bundle extras = resultIntent.getExtras();
-                byte[] b = extras.getByteArray("picture");
+                Bitmap bmp = (Bitmap) extras.getParcelable("bitmap");
 
-                Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                Drawable drawable = new BitmapDrawable(getResources(), bmp);
+                mRootLayout.setBackground(drawable);
+
             }
 
 

@@ -32,15 +32,8 @@ public class BackgroundChatFragment extends Fragment {
     GridLayout mBackgroundGridLayout;
 
 
-    public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-
-    public static final BackgroundChatFragment newInstance(String message) {
+    public static final BackgroundChatFragment newInstance() {
         BackgroundChatFragment backgroundFragment = new BackgroundChatFragment();
-
-        Bundle args = new Bundle();
-        args.putString(EXTRA_MESSAGE, message);
-
-        backgroundFragment.setArguments(args);
 
         return backgroundFragment;
     }
@@ -69,16 +62,17 @@ public class BackgroundChatFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getContext(), "" + position, Toast.LENGTH_SHORT).show();
-                    Drawable drawable = imageView.getDrawable();
-                    if (drawable != null) {
-                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageView.getId());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                        byte[] b = baos.toByteArray();
+                    imageView.buildDrawingCache();
+
+                    if (imageView.getDrawingCache() != null) {
+                        Bitmap bitmap = imageView.getDrawingCache();
+
+                        Bundle extras = new Bundle();
+                        extras.putParcelable("bitmap", bitmap);
 
                         Intent intent = new Intent();
-                        intent.putExtra("picture", b);
+                        intent.putExtras(extras);
+
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     }

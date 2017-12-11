@@ -16,65 +16,65 @@
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/background_android_1"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/background_android_2"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/background_android_3"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/background_android_4"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/background_android_1"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/background_android_2"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/background_android_3"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
             android:layout_columnSpan="1"
             android:layout_rowSpan="1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/background_android_4"
             android:layout_marginLeft="10dp"/>
 
 
