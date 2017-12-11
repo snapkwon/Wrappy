@@ -3152,4 +3152,11 @@ public class ConversationView {
             }
         }
     }
+
+    public void startSettingScreen() {
+
+        Intent intent = new Intent(mContext, SettingConversationActivity.class);
+        mContext.startActivity(intent);
+
+    }
 }
