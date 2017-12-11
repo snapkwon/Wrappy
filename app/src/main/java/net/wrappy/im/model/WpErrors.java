@@ -34,6 +34,7 @@ public class   WpErrors {
     public static final int OP_K_MEMBER_MOBILE_ALREADY_EXISTS = 8023;
     public static final int OP_K_MEMBER_EMAIL_ALREADY_EXISTS = 8024;
     public static final int OP_K_RESOURCE_NOT_EXISTS = 8025;
+    public static final int OP_K_MEMBER_SECURITY_QUESTIONS_NOT_FOUND = 8026;
 
     public static String getErrorMessage(String e) {
         String error = "";
@@ -116,6 +117,9 @@ public class   WpErrors {
                     break;
                 case OP_K_RESOURCE_NOT_EXISTS:
                     error = "OP_K_RESOURCE_NOT_EXISTS";
+                    break;
+                case OP_K_MEMBER_SECURITY_QUESTIONS_NOT_FOUND:
+                    error = "OP_K_MEMBER_SECURITY_QUESTIONS_NOT_FOUND";
                     break;
             }
         }catch (Exception ex) {

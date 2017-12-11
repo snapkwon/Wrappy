@@ -11,6 +11,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
+import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
 
@@ -26,8 +27,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import okhttp3.internal.http.HttpMethod;
 
 /**
  * Created by ben on 13/11/2017.
@@ -56,6 +55,9 @@ public class RestAPI {
     public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
+    public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
+    public static String GET_FORGET_PASS_SEND_EMAIL = root_url_dev + "member/%s/%s/password/mail";
+    public static String GET_COUNTRY_CODES = root_url_dev + "master/country";
 
 
     public static String loginUrl(String user, String pass) {
@@ -70,9 +72,13 @@ public class RestAPI {
         return String.format(GET_HASH_RESET_PASS,username,answer01,answer02,answer03);
     }
 
-    private static String refreshTokenUrl(Context context) {
+    public static String refreshTokenUrl(Context context) {
         String refreshToken = Store.getStringData(context, WpkToken.STORE_REFRESH_TOKEN);
         return String.format(POST_REFRESH_TOKEN, refreshToken);
+    }
+
+    public static String sendEmailAndUsernameToGetPassUrl(String username, String pass) {
+        return String.format(GET_FORGET_PASS_SEND_EMAIL,username,pass);
     }
 
     public interface RestAPIListenner {
@@ -184,7 +190,15 @@ public class RestAPI {
         });
     }
 
+    public static void GetDataWrappy(Context context, String url, Class<T> aClass) {
+        String header = getHeaderHttps(context,url);
+        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header).as(TypeToken.get(aClass)).withResponse().setCallback(new FutureCallback<Response<T>>() {
+            @Override
+            public void onCompleted(Exception e, Response<T> result) {
 
+            }
+        });
+    }
 
     public static void UploadFile(Context context, String url, String type, File file, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);

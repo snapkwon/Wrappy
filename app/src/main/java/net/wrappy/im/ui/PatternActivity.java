@@ -6,8 +6,6 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,16 +27,15 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
-import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -172,6 +169,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                LauncherActivity.start(PatternActivity.this);
                 this.finish();
                 return true;
             default:
@@ -260,7 +258,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
 
 
-    private static final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
+    private final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 
         WeakReference<PatternActivity> weakReference;
 
