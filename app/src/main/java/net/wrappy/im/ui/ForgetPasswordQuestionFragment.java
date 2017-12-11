@@ -70,7 +70,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
     private void getListQuestion() {
         appFuncs.showProgressWaiting(getActivity());
-        RestAPI.GetDataWrappy(getActivity(), "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/member/security/"+ Store.getStringData(getActivity(),Store.USERNAME) , new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS+ Store.getStringData(getActivity(),Store.USERNAME) , new RestAPI.RestAPIListenner() {
 
 
 
@@ -139,10 +139,8 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                         appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
                     }
                 } else {
-                    if (s!=null) {
-
-                        AppFuncs.alert(getActivity(), "Connection Server Fail", true);
-                    }
+                    AppFuncs.alert(getActivity(), "Answer wrong! Try with email", true);
+                    appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
                 }
 
             }

@@ -149,17 +149,29 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:background="#000"/>
-                        <net.wrappy.im.helper.layout.AppEditTextView
-                            android:id="@+id/edProfilePhone"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Phone"
-                            android:inputType="phone"
-                            android:imeOptions="actionNext"
-                            style="@style/AppText02"
-                            android:textColorHint="#bebebe"
-                            android:textSize="14sp"
-                            android:background="@null"/>
+                            android:orientation="horizontal">
+                            <android.support.v7.widget.AppCompatSpinner
+                                android:id="@+id/spnProfileCountryCodes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <net.wrappy.im.helper.layout.AppEditTextView
+                                android:id="@+id/edProfilePhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Phone"
+                                android:inputType="phone"
+                                android:imeOptions="actionNext"
+                                android:layout_marginLeft="5dp"
+                                style="@style/AppText02"
+                                android:textColorHint="#bebebe"
+                                android:textSize="14sp"
+                                android:background="@null"
+                                android:layout_gravity="center_vertical"/>
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
