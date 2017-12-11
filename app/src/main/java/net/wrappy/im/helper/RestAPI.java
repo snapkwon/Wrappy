@@ -148,7 +148,7 @@ public class RestAPI {
 
     public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header)
+        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header)
                 .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
                 .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
@@ -182,7 +182,7 @@ public class RestAPI {
 
     public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
@@ -192,7 +192,7 @@ public class RestAPI {
 
     public static void GetDataWrappy(Context context, String url, Class<T> aClass) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(10000).addHeader("Authorization",header).as(TypeToken.get(aClass)).withResponse().setCallback(new FutureCallback<Response<T>>() {
+        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).as(TypeToken.get(aClass)).withResponse().setCallback(new FutureCallback<Response<T>>() {
             @Override
             public void onCompleted(Exception e, Response<T> result) {
 
