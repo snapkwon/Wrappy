@@ -3,11 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_chat_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <GridLayout
         android:id="@+id/background_grid_view"
         android:layout_width="match_parent"
@@ -23,7 +18,7 @@
             android:layout_rowSpan="1"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:src="@drawable/background_android_1"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
@@ -31,7 +26,7 @@
             android:layout_rowSpan="1"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:src="@drawable/background_android_2"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
@@ -39,7 +34,7 @@
             android:layout_rowSpan="1"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:src="@drawable/background_android_3"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView
@@ -47,7 +42,7 @@
             android:layout_rowSpan="1"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_wallet_send"
+            android:src="@drawable/background_android_4"
             android:layout_marginLeft="10dp"/>
 
         <net.wrappy.im.helper.layout.CircleImageView

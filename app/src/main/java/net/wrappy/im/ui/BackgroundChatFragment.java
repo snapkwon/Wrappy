@@ -1,5 +1,10 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +18,8 @@ import android.widget.Toast;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.CircleImageView;
 
+import java.io.ByteArrayOutputStream;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -21,8 +28,6 @@ import butterknife.ButterKnife;
  */
 
 public class BackgroundChatFragment extends Fragment {
-    @BindView(R.id.text_chat_background)
-    TextView textView;
     @BindView(R.id.background_grid_view)
     GridLayout mBackgroundGridLayout;
 
@@ -47,9 +52,6 @@ public class BackgroundChatFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        String message = getArguments().getString(EXTRA_MESSAGE);
-        textView.setText(message);
-
         onGridViewClickListener();
 
         return view;
@@ -62,11 +64,24 @@ public class BackgroundChatFragment extends Fragment {
 
             final int position = i;
 
-            CircleImageView imageView = (CircleImageView) mBackgroundGridLayout.getChildAt(position);
+            final CircleImageView imageView = (CircleImageView) mBackgroundGridLayout.getChildAt(position);
+
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "" + position, Toast.LENGTH_SHORT).show();
+                    Drawable drawable = imageView.getDrawable();
+                    if (drawable != null) {
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageView.getId());
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
+
+                        Intent intent = new Intent();
+                        intent.putExtra("picture", b);
+                        getActivity().setResult(Activity.RESULT_OK, intent);
+                        getActivity().finish();
+                    }
                 }
             });
         }

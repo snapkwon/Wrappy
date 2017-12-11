@@ -103,7 +103,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
 
             fList.add(BackgroundChatFragment.newInstance("Fragment 1"));
             fList.add(BackgroundChatFragment.newInstance("Fragment 2"));
-            fList.add(BackgroundChatFragment.newInstance("Fragment 3"));
 
             return fList;
         }
