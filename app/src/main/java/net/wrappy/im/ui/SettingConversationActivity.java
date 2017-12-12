@@ -77,8 +77,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_change_background_setting:
-                Toast.makeText(getApplicationContext(), "Change background",
-                                Toast.LENGTH_SHORT).show();
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
