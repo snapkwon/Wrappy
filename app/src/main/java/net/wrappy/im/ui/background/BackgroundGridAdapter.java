@@ -45,7 +45,7 @@ public class BackgroundGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ImageView i = null;
+        ImageView i;
 
         if (convertView != null && convertView instanceof ImageView) {
             i = (ImageView) convertView;

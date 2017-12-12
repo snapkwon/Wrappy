@@ -21,23 +21,23 @@ import java.util.List;
 public class BackgroundPagerAdapter extends PagerAdapter {
 
     BackgroundGridAdapter[] backgroundGridAdapters;
-    ArrayList<BackgroundItem> mBackgroundItems;
+    ArrayList<BackgroundGroup> mBackgroundGroups;
 
     Context mContext;
     BackgroundSelectListener mListener;
 
-    public BackgroundPagerAdapter(Context mContext, ArrayList<BackgroundItem> mBackgroundItems, BackgroundSelectListener mListener) {
-        this.mBackgroundItems = mBackgroundItems;
+    public BackgroundPagerAdapter(Context mContext, ArrayList<BackgroundGroup> mBackgroundGroups, BackgroundSelectListener mListener) {
+        this.mBackgroundGroups = mBackgroundGroups;
         this.mContext = mContext;
         this.mListener = mListener;
 
-        backgroundGridAdapters = new BackgroundGridAdapter[mBackgroundItems.size()];
+        backgroundGridAdapters = new BackgroundGridAdapter[mBackgroundGroups.size()];
     }
 
     @Override
     public Object instantiateItem(View collection, int position) {
 
-        backgroundGridAdapters[position] = new BackgroundGridAdapter(mContext, mBackgroundItems);
+        backgroundGridAdapters[position] = new BackgroundGridAdapter(mContext, mBackgroundGroups.get(position).items);
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -51,7 +51,7 @@ public class BackgroundPagerAdapter extends PagerAdapter {
 
                 GridView gv = (GridView) adapterView;
 
-                BackgroundItem b = (BackgroundItem) ((BackgroundGridAdapter)gv.getAdapter()).getItem(i);
+                BackgroundItem b = (BackgroundItem) (gv.getAdapter()).getItem(i);
 
                 if (mListener != null) {
                     mListener.onBackgroundSelected(b);
@@ -67,7 +67,7 @@ public class BackgroundPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mBackgroundItems.size();
+        return mBackgroundGroups.size();
     }
 
     @Override

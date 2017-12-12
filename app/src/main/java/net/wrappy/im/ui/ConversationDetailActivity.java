@@ -28,6 +28,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -58,6 +59,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -89,7 +91,9 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -760,11 +764,22 @@ public class ConversationDetailActivity extends BaseActivity {
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
 
-                Bundle extras = resultIntent.getExtras();
-                Bitmap bmp = (Bitmap) extras.getParcelable("bitmap");
+                try {
+                    Bundle extras = resultIntent.getExtras();
+                    Uri uri = extras.getParcelable("imageUri");
 
-                Drawable drawable = new BitmapDrawable(getResources(), bmp);
-                mRootLayout.setBackground(drawable);
+                    InputStream inputStream;
+                    inputStream = getApplicationContext().getAssets().open(uri.getPath());
+
+                    Bitmap b = BitmapFactory.decodeStream(inputStream);
+                    b.setDensity(Bitmap.DENSITY_NONE);
+                    Drawable d = new BitmapDrawable(b);
+
+                    mRootLayout.setBackground(d);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
 

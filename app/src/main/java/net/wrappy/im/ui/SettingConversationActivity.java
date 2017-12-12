@@ -21,7 +21,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.ui.background.BackgroundGroup;
 import net.wrappy.im.ui.background.BackgroundItem;
 import net.wrappy.im.ui.background.BackgroundPagerAdapter;
 import net.wrappy.im.ui.background.BackgroundSelectListener;
@@ -30,6 +32,7 @@ import net.wrappy.im.ui.stickers.Sticker;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -86,8 +89,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
         @BindView(R.id.background_chat_view_pager)
         ViewPager mBackgroundViewPager;
 
-        private BackgroundChatPageAdapter mPageAdapter;
-
         public static final BackgroundBottomSheetFragment getInstance() {
 
             BackgroundBottomSheetFragment backgroundFragment = new BackgroundBottomSheetFragment();
@@ -102,18 +103,18 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
 
             ButterKnife.bind(this, view);
 
-            ArrayList<BackgroundItem> listItem = new ArrayList<>();
-            listItem = getBackgroundItemList();
+            initBackgrounds();
 
-            BackgroundPagerAdapter adapter = new BackgroundPagerAdapter(getContext(), listItem,
+            BackgroundPagerAdapter adapter = new BackgroundPagerAdapter(getContext(), new ArrayList<BackgroundGroup>(groups.values()),
                     new BackgroundSelectListener() {
                         @Override
                         public void onBackgroundSelected(BackgroundItem item) {
-                            Toast.makeText(getContext(), "item: " + item.getAssetUri(),
-                                            Toast.LENGTH_SHORT).show();
+
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("imageUri", item.assetUri);
 
                             Intent intent = new Intent();
-                            intent.putExtra("imagePath", item.getAssetUri());
+                            intent.putExtras(bundle);
 
                             getActivity().setResult(Activity.RESULT_OK, intent);
                             getActivity().finish();
@@ -126,66 +127,59 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
             return view;
         }
 
-        private ArrayList<BackgroundItem> getBackgroundItemList() {
+        private HashMap<String, BackgroundGroup> groups = new HashMap<>();
 
-            ArrayList<BackgroundItem> listItem = new ArrayList<>();
+        private final static String[][] backgroundGroups = new String[][] {
+                {
+                        "backgrounds/page_1",
+                        "page_1"
+                },
+                {
+                        "backgrounds/page_2",
+                        "page_2"
+                }
+        };
+
+        private void initBackgrounds() {
 
             try {
-                String basePath = "backgrounds";
-                AssetManager aMan = getActivity().getAssets();
-                String[] filelist = aMan.list(basePath);
 
-                for (int i = 0; i < filelist.length; i++) {
-                    BackgroundItem item = new BackgroundItem();
-                    item.assetUri = Uri.parse(basePath + '/' + filelist[i]);
-                    item.res = getActivity().getResources();
-
-                    listItem.add(item);
+                for (String[] group : backgroundGroups) {
+                    String basePath = group[0];
+                    String groupName = group[1];
+                    addBackground(groupName, basePath);
                 }
 
-                Log.d("Cuong", "size: " + listItem.size());
+            } catch (Exception e) {
+                Log.e(ImApp.LOG_TAG, "could not load background definition", e);
+            }
+        }
 
-                return listItem;
+        private void addBackground(String groupName, String basePath) {
+            try {
+                AssetManager aMan = getActivity().getAssets();
+                String[] fileList = aMan.list(basePath);
+
+                BackgroundGroup group = new BackgroundGroup();
+
+                for (int i = 0; i < fileList.length; i++) {
+                    BackgroundItem item = new BackgroundItem();
+                    item.assetUri = Uri.parse(basePath + '/' + fileList[i]);
+                    item.res = getActivity().getResources();
+
+                    group.getItems().add(item);
+                }
+
+                groups.put(groupName, group);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            return listItem;
-
-        }
-
-        private List<Fragment> getFragments() {
-            List<Fragment> fList = new ArrayList<>();
-
-            fList.add(BackgroundChatFragment.newInstance());
-            fList.add(BackgroundChatFragment.newInstance());
-
-            return fList;
         }
 
         @Override
         public void onClick(View view) {
 
-        }
-
-        private class BackgroundChatPageAdapter extends FragmentPagerAdapter {
-            private List<Fragment> fragments;
-
-            public BackgroundChatPageAdapter(FragmentManager fm, List<Fragment> fragments) {
-                super(fm);
-                this.fragments = fragments;
-            }
-
-            @Override
-            public Fragment getItem(int position) {
-                return this.fragments.get(position);
-            }
-
-            @Override
-            public int getCount() {
-                return this.fragments.size();
-            }
         }
     }
 
