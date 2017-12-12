@@ -57,7 +57,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +64,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import net.ironrabbit.type.CustomTypefaceManager;
@@ -73,16 +73,14 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
-import net.wrappy.im.tasks.ChatSessionInitTask;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
-
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -621,7 +619,7 @@ public class ConversationDetailActivity extends BaseActivity {
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
         try {
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+            startActivityForResult(builder.build(this), REQUEST_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException e) {
             GooglePlayServicesUtil
                     .getErrorDialog(e.getConnectionStatusCode(), this, 0);
@@ -709,7 +707,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
             if (requestCode == REQUEST_PICK_CONTACTS) {
 
-                ArrayList<String> invitees = new ArrayList<String>();
+                ArrayList<String> invitees = new ArrayList<>();
 
                 String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
 
@@ -728,32 +726,19 @@ public class ConversationDetailActivity extends BaseActivity {
                     return;
                 }
 
-
-                boolean deleteFile = false;
-                boolean resizeImage = true;
-                boolean importContent = true;
-                handleSendDelete(uri, "image/jpeg", deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, "image/jpeg", false, true, true);
             } else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
                 Uri uri = resultIntent.getData();
-
                 if (uri == null) {
                     return;
                 }
 
                 String defaultType = resultIntent.getType();
 
-                boolean deleteFile = false;
-                boolean resizeImage = false;
-                boolean importContent = true;
-
-                handleSendDelete(uri, defaultType, deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, defaultType, false, false, true);
             } else if (requestCode == REQUEST_TAKE_PICTURE) {
                 if (mLastPhoto != null) {
-                    boolean deleteFile = true;
-                    boolean resizeImage = true;
-                    boolean importContent = true;
-
-                    handleSendDelete(mLastPhoto, "image/jpeg", deleteFile, resizeImage, importContent);
+                    handleSendDelete(mLastPhoto, "image/jpeg", true, true, true);
                     mLastPhoto = null;
                 }
 
@@ -763,6 +748,9 @@ public class ConversationDetailActivity extends BaseActivity {
                 byte[] b = extras.getByteArray("picture");
 
                 Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+            } else if (requestCode == REQUEST_PLACE_PICKER) {
+                Place place = PlacePicker.getPlace(resultIntent, this);
+                mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
             }
 
 
@@ -935,7 +923,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
     private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
-    private static final int PLACE_PICKER_REQUEST = REQUEST_CHANGE_BACKGROUND + 1;
+    private static final int REQUEST_PLACE_PICKER = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override

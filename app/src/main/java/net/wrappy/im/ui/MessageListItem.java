@@ -17,31 +17,8 @@
 
 package net.wrappy.im.ui;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.ImUrlActivity;
-import net.wrappy.im.R;
-import net.wrappy.im.model.ConferenceMessage;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.legacy.Markup;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
-import net.wrappy.im.ui.widgets.ImageViewActivity;
-import net.wrappy.im.ui.widgets.LetterAvatar;
-import net.wrappy.im.ui.widgets.MessageViewHolder;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
-import net.wrappy.im.util.LinkifyHelper;
-import net.wrappy.im.util.SecureMediaStore;
-
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.net.URLConnection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -75,6 +52,31 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.ImUrlActivity;
+import net.wrappy.im.R;
+import net.wrappy.im.model.ConferenceMessage;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.ui.legacy.Markup;
+import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.ui.widgets.ImageViewActivity;
+import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.ui.widgets.MessageViewHolder;
+import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.LinkifyHelper;
+import net.wrappy.im.util.SecureMediaStore;
+
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.net.URLConnection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class MessageListItem extends FrameLayout {
 
@@ -249,6 +251,9 @@ public class MessageListItem extends FrameLayout {
             } else if (lastMessage.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 bindConference(lastMessage);
                 cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
+                bindLocation(lastMessage);
+                cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
 
@@ -321,6 +326,40 @@ public class MessageListItem extends FrameLayout {
         String callDes = message.getType().getType() + " chat end.";
         if (mHolder != null) {
             mHolder.mTextViewForMessages.setText(callDes);
+        }
+    }
+
+    private void bindLocation(String lastMessage) {
+        String latLng = lastMessage.replace(ConferenceConstant.SEND_LOCATION_FREFIX, "");
+        final String[] coordinates = latLng.split(":");
+        if (mHolder != null) {
+            Glide.with(context).load(ConferenceUtils.getGoogleMapThumbnail(coordinates[0], coordinates[1])).into(mHolder.mMediaThumbnail);
+            mHolder.mMediaThumbnail.setVisibility(VISIBLE);
+            mHolder.mTextViewForMessages.setVisibility(View.GONE);
+            mHolder.mMediaContainer.setVisibility(View.VISIBLE);
+            mHolder.mContainer.setBackgroundResource(android.R.color.transparent);
+            mHolder.mMediaThumbnail.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openMapIntent(coordinates[0], coordinates[1]);
+                }
+            });
+        }
+    }
+
+    private void openMapIntent(String lat, String lng) {
+        String uri = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setPackage("com.google.android.apps.maps");
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            try {
+                Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                context.startActivity(unrestrictedIntent);
+            } catch (ActivityNotFoundException innerEx) {
+                Toast.makeText(context, "Please install a maps application", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -715,6 +754,9 @@ public class MessageListItem extends FrameLayout {
 
             } else if (lastMessage.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 bindConference(lastMessage);
+                cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
+                bindLocation(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");

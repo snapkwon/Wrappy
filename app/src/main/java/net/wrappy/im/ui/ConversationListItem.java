@@ -249,6 +249,7 @@ public class ConversationListItem extends FrameLayout {
 
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setText(message);
+                        holder.mLine2.setLines(1);
 
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -275,6 +276,7 @@ public class ConversationListItem extends FrameLayout {
                             resultMessage = ConferenceUtils.convertConferenceMessage(message);
                         }
                         holder.mLine2.setText(resultMessage);
+                        holder.mLine2.setLines(1);
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                     } catch (Exception e) {
@@ -285,7 +287,7 @@ public class ConversationListItem extends FrameLayout {
                         holder.mMediaThumb.setVisibility(View.GONE);
 
                     holder.mLine2.setVisibility(View.VISIBLE);
-
+                    holder.mLine2.setLines(1);
 
                     try {
                         holder.mLine2.setText(android.text.Html.fromHtml(message).toString());
