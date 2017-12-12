@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import net.wrappy.im.helper.layout.CircleImageView;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -45,12 +47,12 @@ public class BackgroundGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ImageView i;
+        CircleImageView i;
 
-        if (convertView != null && convertView instanceof ImageView) {
-            i = (ImageView) convertView;
+        if (convertView != null && convertView instanceof CircleImageView) {
+            i = (CircleImageView) convertView;
         } else {
-            i = new ImageView(mContext);
+            i = new CircleImageView(mContext);
         }
 
         try {
@@ -60,9 +62,8 @@ public class BackgroundGridAdapter extends BaseAdapter {
             options.inSampleSize = 2;
             Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
 
-            i = new ImageView(mContext);
+            i = new CircleImageView(mContext);
             i.setLayoutParams(new GridView.LayoutParams(256, 256));
-            i.setScaleType(ImageView.ScaleType.FIT_CENTER);
             i.setImageBitmap(bmp);
 
         } catch (Exception e) {
