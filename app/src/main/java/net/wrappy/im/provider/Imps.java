@@ -31,6 +31,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.util.Constant;
 
 import java.util.HashMap;
@@ -2996,6 +2997,9 @@ public class Imps {
         values.put(Imps.Messages.IS_DELIVERED, 0);
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
+
+        if(body.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || body.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX) || body.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX))
+            values.put(MessageColumns.STATUS, MessageColumns.UPDATE);
 
 //        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
 
