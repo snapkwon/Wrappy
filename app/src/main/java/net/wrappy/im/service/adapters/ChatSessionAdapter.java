@@ -874,8 +874,26 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 values.put(Imps.GroupMembers.ROLE, "none");
                 values.put(Imps.GroupMembers.AFFILIATION, "none");
                 mContentResolver.insert(uri, values);
+                if (username.contains(nickname) || nickname == null) {
+                    updateUnknownFriendInfoInGroup(uri, nickname);
+                }
             }
         }
+    }
+
+    private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    Imps.GroupMembers.updateNicknameFromGroupUri(mContentResolver, uri, wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {

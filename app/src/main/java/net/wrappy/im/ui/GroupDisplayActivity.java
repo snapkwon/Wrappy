@@ -26,10 +26,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatListener;
@@ -43,6 +49,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.util.Debug;
 
 import org.apache.commons.codec.DecoderException;
 
@@ -258,7 +265,7 @@ public class GroupDisplayActivity extends BaseActivity {
                      }**/
 
                     //h.line2.setText(member.username);
-                    if (member.avatar == null) {
+                    if (member.avatar == null && !TextUtils.isEmpty(nickname)) {
                         padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
                         member.avatar = new LetterAvatar(holder.itemView.getContext(), nickname, padding);
                     }
@@ -376,7 +383,12 @@ public class GroupDisplayActivity extends BaseActivity {
                          }
                          catch (RemoteException re){}**/
 
-                        members.add(member);
+
+                        if (member.nickname == null || member.username.contains(member.nickname)) {
+                            updateUnknownFriendInfoInGroup(member);
+                        } else {
+                            members.add(member);
+                        }
                     }
                     c.close();
                 }
@@ -393,6 +405,22 @@ public class GroupDisplayActivity extends BaseActivity {
             }
         });
         mThreadUpdate.start();
+    }
+
+    private void updateUnknownFriendInfoInGroup(final GroupMemberDisplay member) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.nickname).getUser()), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.username, wpKMemberDtos.getIdentifier());
+                    updateMembers();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void inviteContacts(ArrayList<String> invitees) {

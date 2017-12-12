@@ -48,11 +48,13 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -112,11 +114,8 @@ public class ConversationListItem extends FrameLayout {
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite) {
 
         //applyStyleColors(holder);
-
         if (nickname == null) {
-            nickname = address.split("@")[0].split("\\.")[0];
-        } else {
-            nickname = nickname.split("@")[0].split("\\.")[0];
+            nickname = ImApp.getNickname(address);
         }
 
         /**
@@ -250,6 +249,7 @@ public class ConversationListItem extends FrameLayout {
 
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         holder.mLine2.setText(message);
+                        holder.mLine2.setLines(1);
 
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -271,7 +271,12 @@ public class ConversationListItem extends FrameLayout {
                         //now setup the new URI for loading local sticker asset
 //                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
-                        holder.mLine2.setText(message);
+                        String resultMessage = message;
+                        if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                            resultMessage = ConferenceUtils.convertConferenceMessage(message);
+                        }
+                        holder.mLine2.setText(resultMessage);
+                        holder.mLine2.setLines(1);
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                     } catch (Exception e) {
@@ -282,7 +287,7 @@ public class ConversationListItem extends FrameLayout {
                         holder.mMediaThumb.setVisibility(View.GONE);
 
                     holder.mLine2.setVisibility(View.VISIBLE);
-
+                    holder.mLine2.setLines(1);
 
                     try {
                         holder.mLine2.setText(android.text.Html.fromHtml(message).toString());
