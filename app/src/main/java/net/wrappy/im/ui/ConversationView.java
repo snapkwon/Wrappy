@@ -361,7 +361,8 @@ public class ConversationView {
                 }
 
 
-            } catch (RemoteException re) {
+            } catch (Exception re) {
+                re.printStackTrace();
             }
 
         } else {
@@ -3128,6 +3129,7 @@ public class ConversationView {
 
     public void startVideoConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
