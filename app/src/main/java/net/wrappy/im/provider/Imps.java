@@ -1430,6 +1430,13 @@ public class Imps {
             return ret;
         }
 
+        public static int updateNicknameFromGroupUri(ContentResolver cr, Uri uri, String nickname) {
+            ContentValues values = new ContentValues();
+            values.put(NICKNAME, nickname);
+            int ret = cr.update(uri, values, null, null);
+            return ret;
+        }
+
         public static int updateNicknameFromGroup(ContentResolver cr, String address, String nickname) {
             String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" +address + "'";
             ContentValues values = new ContentValues();
