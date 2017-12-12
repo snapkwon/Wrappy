@@ -418,10 +418,8 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                startSettingScreen();
-                return true;
             case R.id.menu_group_info:
-                mConvoView.showGroupInfo();
+                startSettingScreen();
                 return true;
             case R.id.menu_video_call:
                 mConvoView.startVideoConference();

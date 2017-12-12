@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -127,7 +128,7 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
             return view;
         }
 
-        private HashMap<String, BackgroundGroup> groups = new HashMap<>();
+        private TreeMap<String, BackgroundGroup> groups = new TreeMap<>();
 
         private final static String[][] backgroundGroups = new String[][] {
                 {
