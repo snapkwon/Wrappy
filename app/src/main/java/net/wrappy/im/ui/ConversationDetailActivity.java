@@ -52,6 +52,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -87,6 +88,7 @@ import net.wrappy.im.util.SystemServices;
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -201,6 +203,9 @@ public class ConversationDetailActivity extends BaseActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
+
+        // set background for this screen
+        loadBitmapPreferences();
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -755,8 +760,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
                     Bitmap b = BitmapFactory.decodeStream(inputStream);
                     b.setDensity(Bitmap.DENSITY_NONE);
-                    Drawable d = new BitmapDrawable(b);
+                    saveBitmapPreferences(b);
 
+                    Drawable d = new BitmapDrawable(b);
                     mRootLayout.setBackground(d);
 
                     mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
@@ -772,6 +778,40 @@ public class ConversationDetailActivity extends BaseActivity {
 
         }
     }
+
+    /**
+     * saving bitmap to SharedPreferences
+     * @param bitmap
+     */
+    private void saveBitmapPreferences(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+
+        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = shre.edit();
+        edit.putString("imageData", encodedImage);
+        edit.commit();
+    }
+
+    /**
+     * loading bitmap to set background this screen
+     */
+    private void loadBitmapPreferences() {
+        SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(this);
+        String previousEncodedImage = shre.getString("imageData", "");
+
+        if (!previousEncodedImage.equalsIgnoreCase("")) {
+            byte[] b = Base64.decode(previousEncodedImage, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+
+            Drawable d = new BitmapDrawable(bitmap);
+            mRootLayout.setBackground(d);
+        }
+    }
+
 
     public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
         try {
