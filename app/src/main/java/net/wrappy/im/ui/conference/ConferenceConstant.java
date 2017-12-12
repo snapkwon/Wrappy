@@ -14,4 +14,6 @@ public class ConferenceConstant {
 
 
     public static final String SEND_LOCATION_FREFIX = ":wrappylocation:";// lat:lng
+
+    public static final String SEND_BACKGROUND_CHAT_PREFIX = ":wrappychangebackground:"; // image uri
 }
