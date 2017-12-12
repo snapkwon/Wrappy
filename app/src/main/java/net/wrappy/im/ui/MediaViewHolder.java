@@ -27,5 +27,7 @@ public class MediaViewHolder extends RecyclerView.ViewHolder  {
         mContainer = view.findViewById(R.id.message_container);
 
     }
+
+
 }
 

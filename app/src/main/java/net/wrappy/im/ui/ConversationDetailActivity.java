@@ -55,6 +55,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,6 +115,8 @@ public class ConversationDetailActivity extends BaseActivity {
     private View mRootLayout;
     private Toolbar mToolbar;
 
+    FrameLayout popupWindow ;
+
     private PrettyTime mPrettyTime;
 
 	// offset position for popup window
@@ -171,6 +174,13 @@ public class ConversationDetailActivity extends BaseActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
+
+        popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+
+        popupWindow.setVisibility(View.GONE);
+
+        FrameLayout main = (FrameLayout)findViewById(R.id.container);
+        main.addView(popupWindow);
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
@@ -411,8 +421,22 @@ public class ConversationDetailActivity extends BaseActivity {
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
             case R.id.menu_settings_language:
-                PopupWindow popupWindow = mConvoView.popupDisplay();
-                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+             //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+              /*  new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+                    }
+                });*/
+              if(popupWindow.getVisibility() == View.GONE)
+              {
+                  popupWindow.setVisibility(View.VISIBLE);
+              }
+              else
+              {
+                  popupWindow.setVisibility(View.GONE);
+              }
+
                 return true;
         }
         return super.onOptionsItemSelected(item);

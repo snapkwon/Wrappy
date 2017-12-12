@@ -39,6 +39,7 @@
         android:paddingLeft="16dp"
         android:orientation="vertical"
         >
+
         <LinearLayout
             android:id="@+id/audio_container"
             android:layout_width="wrap_content"
@@ -74,6 +75,18 @@
                     android:layout_marginLeft="24dp"
                     android:color="?messageTextPrimary"
                      />
+
+
+        <TextView
+            android:id="@+id/btntranslate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="TextView" />
+
+
+
 
 
         <FrameLayout

@@ -71,7 +71,12 @@
                      />
 
 
-
+        <TextView
+            android:id="@+id/btntranslate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="TextView" />
 
         <FrameLayout
             android:id="@+id/media_thumbnail_container"

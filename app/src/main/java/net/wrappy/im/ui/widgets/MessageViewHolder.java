@@ -23,6 +23,9 @@ public class MessageViewHolder extends MediaViewHolder
     public View mAudioContainer;
     public VisualizerView mVisualizerView;
     public ImageView mAudioButton;
+    public TextView btntranslate;
+
+    int Pos;
     // save the media uri while the MediaScanner is creating the thumbnail
     // if the holder was reused, the pair is broken
 
@@ -36,9 +39,11 @@ public class MessageViewHolder extends MediaViewHolder
         mAudioContainer = view.findViewById(R.id.audio_container);
         mVisualizerView = (VisualizerView) view.findViewById(R.id.audio_view);
         mAudioButton = (ImageView) view.findViewById(R.id.audio_button);
+        btntranslate = (TextView) view.findViewById(R.id.btntranslate);
 
         // disable built-in autoLink so we can add custom ones
         mTextViewForMessages.setAutoLinkMask(0);
+
         //mContainer.setBackgroundResource(R.drawable.message_view_rounded_light);
     }
 
@@ -67,10 +72,20 @@ public class MessageViewHolder extends MediaViewHolder
         }
 
     }
+    public void setPosition(int position){
+        this.Pos = position;
+    }
+
+    public int getPos()
+    {
+        return this.Pos;
+    }
 
     public void resetOnClickListenerMediaThumbnail() {
         mMediaThumbnail.setOnClickListener( null );
     }
 
     long mTimeDiff = -1;
+
 }
+

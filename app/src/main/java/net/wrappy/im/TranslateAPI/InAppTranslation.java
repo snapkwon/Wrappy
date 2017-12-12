@@ -55,7 +55,7 @@ public class InAppTranslation {
         //getInstance().translate(text, null, null, view, TargetTextType.Hint);
     }
 
-    public void detectlanguage(String query) {
+    public void detectlanguage(final String query, final int position) {
         if(query == null){
             return;
         }
@@ -65,14 +65,14 @@ public class InAppTranslation {
             protected void onPostExecute(String result) {
                 if(result != null){;
                     m_result = result;
-                    callback.onTaskDetectComplete(result);
+                    callback.onTaskDetectComplete(result,query,position);
                 }
             }
         };
         task.execute(query);
     }
 
-    public void translate(String query, String source, String target) {
+    public void translate(String query, String source, String target , final int position) {
         if(source == null){
             source = this.source;
         }
@@ -87,14 +87,14 @@ public class InAppTranslation {
                 if(result != null){
                     Log.d(TAG, "Translated test is " + result);
                     m_result = result;
-                    callback.onTaskTranslateComplete(result);
+                    callback.onTaskTranslateComplete(result, position);
                 }
             }
         };
         task.execute(query, source, target);
     }
 
-    public void translate(List<String> query, String source, String target) {
+    public void translate(List<String> query, String source, String target,int position) {
         if(source == null){
             source = this.source;
         }
@@ -117,8 +117,8 @@ public class InAppTranslation {
 
 
     public interface CompleteTransaction {
-        public void onTaskTranslateComplete(String result);
-        public void onTaskDetectComplete(String result);
+        public void onTaskTranslateComplete(String result, int position);
+        public void onTaskDetectComplete(String result,String src,int position);
         public void onTaskLListTranslateComplete(List<String> result);
     }
 
