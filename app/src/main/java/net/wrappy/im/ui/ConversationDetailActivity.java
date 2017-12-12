@@ -759,6 +759,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
                     mRootLayout.setBackground(d);
 
+                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
