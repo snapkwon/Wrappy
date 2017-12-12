@@ -28,11 +28,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -86,7 +88,9 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -411,10 +415,8 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                startSettingScreen();
-                return true;
             case R.id.menu_group_info:
-                mConvoView.showGroupInfo();
+                startSettingScreen();
                 return true;
             case R.id.menu_video_call:
                 mConvoView.startVideoConference();
@@ -744,10 +746,24 @@ public class ConversationDetailActivity extends BaseActivity {
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
 
-                Bundle extras = resultIntent.getExtras();
-                byte[] b = extras.getByteArray("picture");
+                try {
+                    Bundle extras = resultIntent.getExtras();
+                    Uri uri = extras.getParcelable("imageUri");
 
-                Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    InputStream inputStream;
+                    inputStream = getApplicationContext().getAssets().open(uri.getPath());
+
+                    Bitmap b = BitmapFactory.decodeStream(inputStream);
+                    b.setDensity(Bitmap.DENSITY_NONE);
+                    Drawable d = new BitmapDrawable(b);
+
+                    mRootLayout.setBackground(d);
+
+                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);

@@ -3430,6 +3430,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_OTR_MESSAGE:
                 tableToChange = TABLE_IN_MEMORY_MESSAGES;
+                tableToChange2 = MESSAGE_JOIN_CONTACT_TABLE;
                 changedItemId = url.getPathSegments().get(1);
                 notifyMessagesContentUri = true;
                 break;
