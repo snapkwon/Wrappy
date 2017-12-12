@@ -1219,4 +1219,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
         return email;
     }
+
+    public static String getNickname(String address) {
+        String email = "";
+        if (address.equals(sImApp.getDefaultUsername())) {
+            email = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_NAME, ImApp.sImApp.getDefaultAccountId());
+        } else {
+            email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
+        }
+        return email;
+    }
 }
