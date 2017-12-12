@@ -94,6 +94,14 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             hashResetPassword = arg.getString(ForgetPasswordActivity.FORGET_PASSWORD,"");
         }
 
+        Intent in = getIntent();
+        Uri data = in.getData();
+        if (data!=null) {
+            type_request = REQUEST_CODE_REGISTER;
+            hashResetPassword = data.getLastPathSegment();
+        }
+
+
         if(type_request == REQUEST_CODE_LOGIN)
         {
             this.setTypePattern(TYPE_NOCONFIRM);
@@ -110,8 +118,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 actionbar.setTitle("FORGET PASSWORD");
             }
         }
-        Intent in = getIntent();
-        Uri data = in.getData();
+
         bottomText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1036,13 +1036,14 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            final String bareAddress = new XmppAddress(nickname).getBareAddress();
-            Contact contact = null;
+            String bareAddress = new XmppAddress(nickname).getBareAddress();
+            Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                if (contact != null) {
+                if (contact != null && !contact.getAddress().getAddress().contains(contact.getName())) {
                     nickname = contact.getName();
                 } else {
+                    if (contact != null) bareAddress = bareUsername;
                     nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
@@ -1111,14 +1112,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     if (isGroupChatSession()) {
                         if (!isMuted()) {
                             ChatGroup group = (ChatGroup) ses.getParticipant();
-                            try {
-                                contact = mConnection.getContactListManager().getContactByAddress(nickname);
-                                nickname = contact.getName();
-                            } catch (Exception e) {
-                            }
-
-                            nickname = nickname.split("@")[0];
-
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                     getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
                         }

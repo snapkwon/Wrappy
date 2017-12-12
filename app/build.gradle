@@ -20,7 +20,7 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
 
-        buildConfigField "String", "GoogleTranslateApiKey", '""'
+        buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
     }
 
     dexOptions {
@@ -34,10 +34,12 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
+            resValue "string", "google_place_api_key", "[YOUR PROD KEY]"
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
+            resValue "string", "google_place_api_key", "[YOUR DEV KEY]"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }
@@ -167,5 +169,6 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.facebook.react:react-native:0.49.5'
+    compile 'com.google.android.gms:play-services-places:11.6.2'
     implementation project(':qrmodule')
 }

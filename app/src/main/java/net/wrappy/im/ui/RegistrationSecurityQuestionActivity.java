@@ -182,11 +182,6 @@ public class RegistrationSecurityQuestionActivity extends AppCompatActivity impl
                             break;
                         }
 
-                        if (AppFuncs.detectSpecialCharacters(answer)) {
-                            errorString = String.format("Your answer of question %d have special characters", (i+1));
-                            break;
-                        }
-
                         if (strings.size() > 0) {
                             if (strings.contains(answer)) {
                                 errorString = "Your answer have duplicated";

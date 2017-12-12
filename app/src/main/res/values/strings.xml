@@ -467,5 +467,6 @@
     <string name="setting_report_spam">Report spam</string>
     <string name="setting_notification">Notifications</string>
     <string name="setting_change_background">Change background</string>
+    <string name="incoming_attachment">1 attachment</string>
 
 </resources>

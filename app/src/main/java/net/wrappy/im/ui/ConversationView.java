@@ -877,6 +877,14 @@ public class ConversationView {
 
         });
 
+        mActivity.findViewById(R.id.btnAttachLocation).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startLocationMessage();
+            }
+        });
+
 
         mMicButton.setOnClickListener(new View.OnClickListener() {
 
@@ -3062,8 +3070,10 @@ public class ConversationView {
     public void startAudioConference() {
         startAudioConference(null);
     }
+
     /**
      * Showing popup menu item translate
+     *
      * @return
      */
     public PopupWindow popupDisplay() {
@@ -3075,12 +3085,12 @@ public class ConversationView {
         View view = inflater.inflate(R.layout.menu_popup_translate, null);
 
         // setting up Spinner
-        arraySpinner = new String[] {
+        arraySpinner = new String[]{
                 "English", "Japanese", "Vietnamese"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity,
-                        R.layout.spinner_language_item, arraySpinner);
+                R.layout.spinner_language_item, arraySpinner);
         spinner.setAdapter(adapter);
 
         final TextView textTurnOnOff = (TextView) view.findViewById(R.id.text_turn_on_off_translate);

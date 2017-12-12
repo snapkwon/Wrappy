@@ -322,6 +322,15 @@
                         android:padding="6dp"
                         android:src="@drawable/ic_insert_drive_file_white_36dp"
                         app:circleColor="@android:color/holo_red_light" />
+
+                <net.wrappy.im.ui.CircleColorImageView
+                        android:id="@+id/btnAttachLocation"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_margin="3dp"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_location_on_white_36dp"
+                        app:circleColor="@android:color/holo_purple" />
                 </LinearLayout>
             </HorizontalScrollView>
 
