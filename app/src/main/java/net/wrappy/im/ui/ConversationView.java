@@ -1564,7 +1564,7 @@ public class ConversationView {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            CursorLoader loader = new CursorLoader(mActivity, mUri, null, null, null, Imps.Messages.DEFAULT_SORT_ORDER);
+            CursorLoader loader = new CursorLoader(mActivity, mUri, null, Imps.MessageColumns.STATUS + " = " + Imps.MessageColumns.VISIBLE, null, Imps.Messages.DEFAULT_SORT_ORDER);
 
             return loader;
         }

@@ -55,11 +55,9 @@ import net.wrappy.im.model.GroupMemberListener;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImEntity;
 import net.wrappy.im.model.ImErrorInfo;
-import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Message;
 import net.wrappy.im.model.MessageListener;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -407,8 +405,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             sendTime = msg.getDateTime().getTime();
 
         updateMessageInDb(msg.getID(), newType, sendTime, null);
-
-
     }
 
     private Message storeMediaMessage(String localUrl, String mimeType) {
@@ -887,7 +883,8 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
                 try {
-                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                    }.getType());
                     Imps.GroupMembers.updateNicknameFromGroupUri(mContentResolver, uri, wpKMemberDtos.getIdentifier());
                 } catch (Exception e) {
                     e.printStackTrace();

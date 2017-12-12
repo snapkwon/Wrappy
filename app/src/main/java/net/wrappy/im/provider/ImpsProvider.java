@@ -28,7 +28,6 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteConstraintException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -36,7 +35,6 @@ import net.sqlcipher.database.SQLiteOpenHelper;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.provider.Imps.Contacts;
-
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LogCleaner;
 
@@ -841,6 +839,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             }
             buf.append(",is_delivered INTEGER");
             buf.append(",mime_type TEXT");
+            buf.append(",status INTEGER NOT NULL DEFAULT 0");
 
             buf.append(");");
 
@@ -900,7 +899,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     + "err_code INTEGER NOT NULL DEFAULT 0," + "err_msg TEXT,"
                     + "is_muc INTEGER," + "show_ts INTEGER," +
                     "is_delivered INTEGER," +
-                    "mime_type TEXT" +
+                    "mime_type TEXT," +
+                    "status INTEGER NOT NULL DEFAULT 0" +
                     ");");
 
         }

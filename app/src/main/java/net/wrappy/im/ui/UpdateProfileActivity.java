@@ -38,6 +38,7 @@ import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.lang.reflect.Type;
@@ -149,12 +150,13 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
                 Gson gson = new Gson();
                 JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
-
+                Debug.d(dataJson.toString());
 
                 RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
 
                     @Override
                     public void OnComplete(int httpCode, String error, String s) {
+                        Debug.d(s);
                         if (error!=null && !error.isEmpty()) {
                             AppFuncs.alert(getApplicationContext(),error,true);
                             appFuncs.dismissProgressWaiting();

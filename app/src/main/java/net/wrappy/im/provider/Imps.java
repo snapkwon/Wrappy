@@ -31,9 +31,12 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.util.Constant;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The IM provider stores all information about roster contacts, chat messages,
@@ -1134,6 +1137,14 @@ public class Imps {
          * Mime type.  If non-null, body is a URI.
          */
         String MIME_TYPE = "mime_type";
+
+        /**
+         * Status.  0: visible, other: invisible
+         */
+        String STATUS = "status";
+
+        int VISIBLE = 0;
+        int UPDATE = 1;// edit, delete, change background: update later
     }
 
     /**
@@ -1438,7 +1449,7 @@ public class Imps {
         }
 
         public static int updateNicknameFromGroup(ContentResolver cr, String address, String nickname) {
-            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" +address + "'";
+            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" + address + "'";
             ContentValues values = new ContentValues();
             values.put(NICKNAME, nickname);
             int ret = cr.update(Imps.GroupMembers.CONTENT_URI, values, selection, null);
@@ -2987,6 +2998,9 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
 
+        if(body.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || body.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX) || body.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX))
+            values.put(MessageColumns.STATUS, MessageColumns.UPDATE);
+
 //        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
 
         return resolver.insert(Messages.getOtrMessagesContentUriByThreadId(contactId), values);
@@ -3026,6 +3040,11 @@ public class Imps {
             result = resolver.delete(builder.build(), null, null);
         }
         return result;
+    }
+
+    public static int deleteMessageInDbByTime(ContentResolver resolver) {
+        String where = Messages.DATE + "<= (CURRENT_TIMESTAMP - " + TimeUnit.DAYS.toMillis(Constant.TIME_DELETE_MESSAGE) + ")";
+        return resolver.delete(Messages.OTR_MESSAGES_CONTENT_URI, where, null);
     }
 
     public static int updateMessageInDb(ContentResolver resolver, String id, int type, long time, long contactId) {
