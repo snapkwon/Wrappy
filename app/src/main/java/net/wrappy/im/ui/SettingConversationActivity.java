@@ -6,9 +6,6 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -27,21 +23,19 @@ import net.wrappy.im.ui.background.BackgroundGroup;
 import net.wrappy.im.ui.background.BackgroundItem;
 import net.wrappy.im.ui.background.BackgroundPagerAdapter;
 import net.wrappy.im.ui.background.BackgroundSelectListener;
-import net.wrappy.im.ui.stickers.Sticker;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SettingConversationActivity extends AppCompatActivity implements View.OnClickListener {
-    @BindView(R.id.layout_search_setting) LinearLayout mSearchLayout;
-    @BindView(R.id.layout_change_background_setting) LinearLayout mChangeBackgroundLayout;
+    @BindView(R.id.layout_search_setting)
+    LinearLayout mSearchLayout;
+    @BindView(R.id.layout_change_background_setting)
+    LinearLayout mChangeBackgroundLayout;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
@@ -83,16 +77,31 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
         }
     }
 
-    public static class BackgroundBottomSheetFragment extends BottomSheetDialogFragment
-            implements View.OnClickListener {
+    /**
+     * Showing bottom sheet to change background
+     */
+    public static class BackgroundBottomSheetFragment extends BottomSheetDialogFragment {
         @BindView(R.id.background_chat_view_pager)
         ViewPager mBackgroundViewPager;
+
+        private TreeMap<String, BackgroundGroup> groups = new TreeMap<>();
+
+        private final static String[][] backgroundGroups = new String[][]{
+                {
+                        "backgrounds/page_1",
+                        "page_1"
+                },
+                {
+                        "backgrounds/page_2",
+                        "page_2"
+                }
+        };
 
         public static final BackgroundBottomSheetFragment getInstance() {
 
             BackgroundBottomSheetFragment backgroundFragment = new BackgroundBottomSheetFragment();
 
-            return  backgroundFragment;
+            return backgroundFragment;
         }
 
         @Nullable
@@ -104,11 +113,12 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
 
             initBackgrounds();
 
-            BackgroundPagerAdapter adapter = new BackgroundPagerAdapter(getContext(), new ArrayList<BackgroundGroup>(groups.values()),
+            BackgroundPagerAdapter adapter = new BackgroundPagerAdapter(getContext(), new ArrayList<>(groups.values()),
                     new BackgroundSelectListener() {
                         @Override
                         public void onBackgroundSelected(BackgroundItem item) {
 
+                            // send image Uri to ConversationDetailActivity
                             Bundle bundle = new Bundle();
                             bundle.putParcelable("imageUri", item.assetUri);
 
@@ -121,26 +131,14 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
                     });
 
             mBackgroundViewPager.setAdapter(adapter);
-            mBackgroundViewPager.setOffscreenPageLimit(1);
 
             return view;
         }
 
-        private TreeMap<String, BackgroundGroup> groups = new TreeMap<>();
-
-        private final static String[][] backgroundGroups = new String[][] {
-                {
-                        "backgrounds/page_1",
-                        "page_1"
-                },
-                {
-                        "backgrounds/page_2",
-                        "page_2"
-                }
-        };
-
+        /**
+         * looping for each pager
+         */
         private void initBackgrounds() {
-
             try {
 
                 for (String[] group : backgroundGroups) {
@@ -154,6 +152,12 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
             }
         }
 
+        /**
+         * adding background to each group pager
+         *
+         * @param groupName
+         * @param basePath
+         */
         private void addBackground(String groupName, String basePath) {
             try {
                 AssetManager aMan = getActivity().getAssets();
@@ -174,11 +178,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        @Override
-        public void onClick(View view) {
-
         }
     }
 

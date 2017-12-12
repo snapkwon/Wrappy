@@ -57,11 +57,13 @@ public class BackgroundGridAdapter extends BaseAdapter {
 
         try {
 
+            // getting path from asset and converting to bitmap
             InputStream is = mBackgroundItems.get(position).res.getAssets().open(mBackgroundItems.get(position).assetUri.getPath());
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 2;
             Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
 
+            // set bitmap for image view
             i = new CircleImageView(mContext);
             i.setLayoutParams(new GridView.LayoutParams(256, 256));
             i.setImageBitmap(bmp);

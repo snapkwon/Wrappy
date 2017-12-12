@@ -6,5 +6,5 @@ package net.wrappy.im.ui.background;
 
 public interface BackgroundSelectListener {
 
-    public void onBackgroundSelected(BackgroundItem item);
+    void onBackgroundSelected(BackgroundItem item);
 }

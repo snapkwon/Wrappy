@@ -11,12 +11,4 @@ public class BackgroundItem {
 
     public Uri assetUri;
     public Resources res;
-
-    public Uri getAssetUri() {
-        return assetUri;
-    }
-
-    public Resources getRes() {
-        return res;
-    }
 }
