@@ -172,12 +172,12 @@ public class MainActivity extends BaseActivity {
 
         if(!Wallet.isNewWallet(this.getFilesDir())) {
             mwalletFragment = new WalletFragment();
-            adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+            adapter.addFragment(mwalletFragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
         }
         else
         {
             mwelcome_wallet_fragment= new Welcome_Wallet_Fragment();
-            adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+            adapter.addFragment(mwelcome_wallet_fragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
 
         }
 
@@ -306,6 +306,9 @@ public class MainActivity extends BaseActivity {
 //                break;
             case 2:
                 sb.append(getString(R.string.me_title));
+                break;
+            case 3:
+                sb.append(getString(R.string.title_wallet));
                 break;
         }
 
