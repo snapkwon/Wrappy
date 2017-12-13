@@ -132,6 +132,7 @@ import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -1864,7 +1865,6 @@ public class ConversationView {
 
 
     boolean sendMessage(String msg, boolean isResend) {
-
         //don't send empty messages
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1883,6 +1883,16 @@ public class ConversationView {
 
         if (session != null) {
             try {
+                // delete own message
+                if (msg.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
+                    String packet_id = msg.replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
+                    session.deleteMessageInDb(packet_id);
+                } else if (msg.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {// update own message
+                    String[] message_edit = ConferenceUtils.getEditedMessage(msg);
+                    session.updateMessageInDb(message_edit[0], message_edit[1]);
+                    session.deleteMessageInDb(message_edit[0]);
+                }
+
                 session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();

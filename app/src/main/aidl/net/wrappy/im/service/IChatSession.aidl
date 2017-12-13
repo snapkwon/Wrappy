@@ -85,6 +85,16 @@ interface IChatSession {
      */
     void sendMessage(String text, boolean isResend);
 
+    /**
+     * delete message from local DB
+     */
+    int deleteMessageInDb(String packet_id);
+
+    /**
+     * delete message from local DB
+     */
+    int updateMessageInDb(String packet_id, String message);
+
 
 
 

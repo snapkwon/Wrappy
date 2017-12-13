@@ -33,6 +33,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -3101,6 +3102,25 @@ public class Imps {
             result = resolver.update(builder.build(), values, null, null);
         }
 
+        return result;
+    }
+
+    public static int updateMessageBodyInDbByPacketId(ContentResolver resolver, String msgId, String body) {
+        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
+        builder.appendPath(String.valueOf(msgId));
+
+        Debug.d("uri " + builder.toString());
+
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        int result = resolver.update(builder.build(), values, null, null);
+        Debug.d("result " +result);
+        if (result == 0) {
+            builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
+            builder.appendPath(msgId);
+            result = resolver.update(builder.build(), values, Messages.PACKET_ID + "=?", new String[]{msgId});
+        }
+        Debug.d("result2 " +result);
         return result;
     }
 
