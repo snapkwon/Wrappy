@@ -1890,7 +1890,7 @@ public class ConversationView {
                 } else if (msg.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {// update own message
                     String[] message_edit = ConferenceUtils.getEditedMessage(msg);
                     session.updateMessageInDb(message_edit[0], message_edit[1]);
-                    session.deleteMessageInDb(message_edit[0]);
+//                    session.deleteMessageInDb(message_edit[0]);
                 }
 
                 session.sendMessage(msg, isResend);

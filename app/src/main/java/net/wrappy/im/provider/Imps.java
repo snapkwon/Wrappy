@@ -3106,19 +3106,19 @@ public class Imps {
     }
 
     public static int updateMessageBodyInDbByPacketId(ContentResolver resolver, String msgId, String body) {
-        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_PACKET_ID.buildUpon();
-        builder.appendPath(String.valueOf(msgId));
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
+        String where = Messages.PACKET_ID + "=?";
+        String[] args = new String[]{msgId};
 
         Debug.d("uri " + builder.toString());
 
         ContentValues values = new ContentValues(1);
         values.put(Messages.BODY, body);
-        int result = resolver.update(builder.build(), values, null, null);
+        int result = resolver.update(builder.build(), values, where, args);
         Debug.d("result " +result);
         if (result == 0) {
             builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
-            builder.appendPath(msgId);
-            result = resolver.update(builder.build(), values, Messages.PACKET_ID + "=?", new String[]{msgId});
+            result = resolver.update(builder.build(), values, where, args);
         }
         Debug.d("result2 " +result);
         return result;
