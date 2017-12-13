@@ -24,6 +24,7 @@ public class MessageViewHolder extends MediaViewHolder
     public VisualizerView mVisualizerView;
     public ImageView mAudioButton;
     public TextView btntranslate;
+    public TextView txttranslate;
 
     int Pos;
     // save the media uri while the MediaScanner is creating the thumbnail
@@ -40,6 +41,7 @@ public class MessageViewHolder extends MediaViewHolder
         mVisualizerView = (VisualizerView) view.findViewById(R.id.audio_view);
         mAudioButton = (ImageView) view.findViewById(R.id.audio_button);
         btntranslate = (TextView) view.findViewById(R.id.btntranslate);
+        txttranslate = (TextView) view.findViewById(R.id.txttranslate);
 
         // disable built-in autoLink so we can add custom ones
         mTextViewForMessages.setAutoLinkMask(0);

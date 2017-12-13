@@ -56,6 +56,7 @@ public class ContactDisplayActivity extends BaseActivity {
     private String mUsername = null;
     private long mProviderId = -1;
     private long mAccountId = -1;
+    private String email = null;
     private IImConnection mConn;
 
     private String mRemoteOtrFingerprint;
@@ -77,6 +78,7 @@ public class ContactDisplayActivity extends BaseActivity {
         mUsername = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
+        email = ImApp.getEmail(mUsername);
 
         String remoteFingerprint = getIntent().getStringExtra("fingerprint");
     try {// TungNP: finish activity to avoid crash
@@ -99,9 +101,8 @@ public class ContactDisplayActivity extends BaseActivity {
         TextView tv = (TextView) findViewById(R.id.tvNickname);
         tv = (TextView) findViewById(R.id.tvNickname);
         tv.setText(mNickname);
-
         tv = (TextView) findViewById(R.id.tvUsername);
-        tv.setText(mUsername);
+        tv.setText(email);
 
         if (!TextUtils.isEmpty(mUsername)) {
             try {

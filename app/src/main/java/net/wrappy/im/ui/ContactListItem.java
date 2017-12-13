@@ -63,7 +63,8 @@ public class ContactListItem extends FrameLayout {
                                                 Imps.Chats.LAST_MESSAGE_DATE,
                                                 Imps.Chats.LAST_UNREAD_MESSAGE,
                                                 Imps.Contacts.AVATAR_HASH,
-                                                Imps.Contacts.AVATAR_DATA
+                                                Imps.Contacts.AVATAR_DATA,
+                                                Imps.Contacts.CONTACT_EMAIL
 
     };
 
@@ -82,10 +83,12 @@ public class ContactListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE = 11;
     public static final int COLUMN_AVATAR_HASH = 12;
     public static final int COLUMN_AVATAR_DATA = 13;
+    public static final int COLUMN_CONTACT_EMAIL = 14;
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
 
     private String address;
+    private String email;
     private String nickname;
 
     private ContactViewHolder mHolder;
@@ -110,6 +113,7 @@ public class ContactListItem extends FrameLayout {
 
         address = cursor.getString(COLUMN_CONTACT_USERNAME);
         nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
+        email = cursor.getString(COLUMN_CONTACT_EMAIL);
 
         final int type = cursor.getInt(COLUMN_CONTACT_TYPE);
         final String lastMsg = cursor.getString(COLUMN_LAST_MESSAGE);
@@ -213,7 +217,7 @@ public class ContactListItem extends FrameLayout {
         }
 
         statusText = address;
-        statusText = "";//remove address from xmpp
+        statusText = email;//remove address from xmpp
 
         if (type == Imps.Contacts.TYPE_HIDDEN)
         {

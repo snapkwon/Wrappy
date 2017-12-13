@@ -30,6 +30,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
@@ -41,6 +44,7 @@ import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.crypto.otr.OtrChatSessionAdapter;
 import net.wrappy.im.crypto.otr.OtrDataHandler;
 import net.wrappy.im.crypto.otr.OtrDebugLogger;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -55,6 +59,8 @@ import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Message;
 import net.wrappy.im.model.MessageListener;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.T;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatListener;
@@ -62,6 +68,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IDataListener;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
@@ -867,8 +874,26 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 values.put(Imps.GroupMembers.ROLE, "none");
                 values.put(Imps.GroupMembers.AFFILIATION, "none");
                 mContentResolver.insert(uri, values);
+                if (username.contains(nickname) || nickname == null) {
+                    updateUnknownFriendInfoInGroup(uri, nickname);
+                }
             }
         }
+    }
+
+    private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    Imps.GroupMembers.updateNicknameFromGroupUri(mContentResolver, uri, wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {
@@ -1029,10 +1054,19 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            Contact contact = null;
+            String bareAddress = new XmppAddress(nickname).getBareAddress();
+            Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                nickname = contact.getName();
+                if (contact != null && !contact.getAddress().getAddress().contains(contact.getName())) {
+                    nickname = contact.getName();
+                } else {
+                    if (contact != null) bareAddress = bareUsername;
+                    nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
+                    if (TextUtils.isEmpty(nickname)) {
+                        nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
+                    }
+                }
             } catch (Exception e) {
             }
 
@@ -1061,6 +1095,11 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
                 if (messageUri == null) //couldn't write to the database, so return false
                     return false;
+
+
+                if (TextUtils.isEmpty(nickname)) {
+                    updateUnknownFriendInfoInGroup(messageUri, bareAddress, msg.getFrom().getResource());
+                }
 
                 try {
                     synchronized (mRemoteListeners) {
@@ -1091,14 +1130,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     if (isGroupChatSession()) {
                         if (!isMuted()) {
                             ChatGroup group = (ChatGroup) ses.getParticipant();
-                            try {
-                                contact = mConnection.getContactListManager().getContactByAddress(nickname);
-                                nickname = contact.getName();
-                            } catch (Exception e) {
-                            }
-
-                            nickname = nickname.split("@")[0];
-
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                     getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
                         }
@@ -1179,6 +1210,23 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
             mHasUnreadMessages = true;
             return true;
+        }
+
+        private void updateUnknownFriendInfoInGroup(final Uri uri, final String bareAddress, String jid) {
+            RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    Debug.d(s);
+                    try {
+                        WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                        }.getType());
+                        Imps.updateMessageNickname(mContentResolver, uri, wpKMemberDtos.getIdentifier());
+                        Imps.GroupMembers.updateNicknameFromGroup(mContentResolver, bareAddress, wpKMemberDtos.getIdentifier());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         public void onSendMessageError(ChatSession ses, final Message msg, final ImErrorInfo error) {

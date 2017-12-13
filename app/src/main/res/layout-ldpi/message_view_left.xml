@@ -72,11 +72,23 @@
 
 
         <TextView
+            android:id="@+id/txttranslate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="6dp"
+            android:gravity="left"
+            android:textColor="@color/grey_hex_7b"
+            android:text="" />
+
+        <TextView
             android:id="@+id/btntranslate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:text="TextView" />
+            android:padding="2dp"
+            android:text="TextView"
+            android:textColor="@color/Color_Blue"/>
 
         <FrameLayout
             android:id="@+id/media_thumbnail_container"
@@ -88,8 +100,8 @@
             >
             <ImageView
                 android:id="@+id/media_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
                 android:scaleType="centerCrop"
                 android:focusableInTouchMode="true"
                 />

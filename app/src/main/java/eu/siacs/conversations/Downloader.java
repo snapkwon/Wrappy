@@ -1,12 +1,14 @@
 package eu.siacs.conversations;
 
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import net.wrappy.im.util.SecureMediaStore;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.io.CipherOutputStream;
 import org.bouncycastle.crypto.io.CipherInputStream;
+import org.bouncycastle.crypto.io.CipherOutputStream;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
@@ -30,21 +32,20 @@ public class Downloader {
 
     private String mMimeType = null;
 
-    public Downloader()
-    {}
+    public Downloader() {
+    }
 
-    public boolean get (String urlString, OutputStream storageStream) throws IOException
-    {
+    public boolean get(String urlString, OutputStream storageStream) throws IOException {
         try {
             if (urlString.startsWith("aesgcm"))
-                urlString = urlString.replace("aesgcm","https");
+                urlString = urlString.replace("aesgcm", "https");
 
             final URL url = new URL(urlString);
             OutputStream os = setupOutputStream(storageStream, url.getRef());
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();
             connection.connect();
-            mMimeType = connection.getContentType();
+            mMimeType = getMimeType(urlString);
 
             byte[] buffer = new byte[4096];
             int count;
@@ -60,8 +61,15 @@ public class Downloader {
         }
     }
 
-    public String getMimeType ()
-    {
+    public String getMimeType(String url) {
+        String mimeType = null;
+        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(url);
+        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                fileExtension.toLowerCase());
+        return mimeType;
+    }
+
+    public String getMimeType() {
         return mMimeType;
     }
 
@@ -78,6 +86,7 @@ public class Downloader {
             return is;
         }
     }
+
     public static OutputStream setupOutputStream(OutputStream os, String reference) {
         if (reference != null && reference.length() == 96) {
             byte[] keyAndIv = hexToBytes(reference);
@@ -99,9 +108,7 @@ public class Downloader {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             new HexEncoder().encode(keyAndIv, 0, keyAndIv.length, baos);
             return baos.toString();
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
@@ -121,7 +128,7 @@ public class Downloader {
 
         String filename = getFilenameFromUrl(url);
         String localFilename = SecureMediaStore.getDownloadFilename(sessionId, filename);
-      //  debug( "openFile: localFilename " + localFilename) ;
+        //  debug( "openFile: localFilename " + localFilename) ;
         info.guardianproject.iocipher.File fileNew = new info.guardianproject.iocipher.File(localFilename);
         fileNew.getParentFile().mkdirs();
 

@@ -8,7 +8,6 @@ package me.tornado.android.patternlock;
 import android.os.Bundle;
 import android.view.View;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +129,8 @@ public class SetPatternActivity extends BasePatternActivity
 
         mLeftButton.setVisibility(View.GONE);
         mRightButton.setVisibility(View.GONE);
+
+
 
 
         if (savedInstanceState == null) {

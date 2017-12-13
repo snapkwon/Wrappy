@@ -453,4 +453,20 @@
     <string name="translate_to">Translate to</string>
     <string name="turn_off_translate">Off</string>
 
+    <!-- Dialog bottom sheet conversation -->
+    <string name="pin_to_top">Pin to top</string>
+    <string name="unpin_from_top">Unpin from top</string>
+    <string name="delete_and_exit">Delete and exit</string>
+    <string name="clean_history">Clean history</string>
+
+    <!-- Settings conversation -->
+    <string name="setting_screen">Setting</string>
+    <string name="setting_search">Search</string>
+    <string name="setting_clear">Clear history</string>
+    <string name="setting_delete_and_leave_group">Delete and leave group</string>
+    <string name="setting_report_spam">Report spam</string>
+    <string name="setting_notification">Notifications</string>
+    <string name="setting_change_background">Change background</string>
+    <string name="incoming_attachment">1 attachment</string>
+
 </resources>

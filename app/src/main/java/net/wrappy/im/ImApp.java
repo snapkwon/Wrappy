@@ -43,21 +43,27 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.service.Broadcaster;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IConnectionCreationListener;
+import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.IRemoteImService;
 import net.wrappy.im.service.ImServiceConstants;
@@ -70,6 +76,7 @@ import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Languages;
+import net.wrappy.im.util.LogCleaner;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -1143,5 +1150,83 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
+    /*
+    * Auto approved contact in list which were loaded from Xmpp server
+    * */
+    public static void approveSubscription(final Contact contact) {
+        long providerId = sImApp.getDefaultProviderId();
+        long accountId = sImApp.getDefaultAccountId();
+        if (providerId != -1 && accountId != -1) {
+            final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            if (mConn != null) {
+                try {
+                    RestAPI.GetDataWrappy(sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
+                        @Override
+                        public void OnComplete(int httpCode, String error, String s) {
+                            Debug.d(s);
+                            try {
+                                WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                                }.getType());
+                                updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    IContactListManager manager = mConn.getContactListManager();
+                    manager.approveSubscription(contact);
+                } catch (RemoteException e) {
+                    LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
+                }
+            }
+        }
+    }
 
+    /*
+    * Auto update contact name in list which were loaded from Xmpp server
+    * */
+    public static void updateContact(String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
+        // update the server
+        if (sImApp != null && wpKMemberDto != null && mConn != null) {
+            String name = wpKMemberDto.getIdentifier();
+            String email = wpKMemberDto.getEmail();
+            Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
+            try {
+                ContentUris.appendId(builder, mConn.getProviderId());
+                ContentUris.appendId(builder, mConn.getAccountId());
+                mConn.getContactListManager().setContactName(address, name);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            // update locally
+            String selection = Imps.Contacts.USERNAME + "=?";
+            String[] selectionArgs = {address};
+            ContentValues values = new ContentValues(1);
+            values.put(Imps.Contacts.NICKNAME, name);
+            if (!TextUtils.isEmpty(email)) {
+                values.put(Imps.Contacts.CONTACT_EMAIL, email);
+            }
+            sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
+        }
+    }
+
+    public static String getEmail(String username) {
+        String email = "";
+        if (username.equals(sImApp.getDefaultUsername())) {
+            email = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_EMAIL, ImApp.sImApp.getDefaultAccountId());
+        } else {
+            email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.CONTACT_EMAIL, username);
+        }
+        return email;
+    }
+
+    public static String getNickname(String address) {
+        String email = "";
+        if (address.equals(sImApp.getDefaultUsername())) {
+            email = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_NAME, ImApp.sImApp.getDefaultAccountId());
+        } else {
+            email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
+        }
+        return email;
+    }
 }

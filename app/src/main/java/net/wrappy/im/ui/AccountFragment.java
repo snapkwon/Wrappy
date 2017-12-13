@@ -112,6 +112,7 @@ public class AccountFragment extends Fragment {
         mUserKey = mApp.getDefaultOtrKey();
         mNickname = Imps.Account.getNickname(getContext().getContentResolver(), mAccountId);
         mAccountName = Imps.Account.getAccountName(getContext().getContentResolver(), mAccountId);
+        String email = Imps.Account.getString(getContext().getContentResolver(), Imps.Account.ACCOUNT_EMAIL, mAccountId);
 
        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
@@ -173,8 +174,10 @@ public class AccountFragment extends Fragment {
             } catch (Exception e) {
                 Log.w(ImApp.LOG_TAG, "error getting avatar", e);
             }
-
-            tvUsername.setText(mUserAddress);
+            if (!TextUtils.isEmpty(email)) {
+                tvUsername.setVisibility(View.VISIBLE);
+                tvUsername.setText(email);
+            }
             mTvNickname.setText(mAccountName);
 
             IImConnection conn = mApp.getConnection(mProviderId, mAccountId);

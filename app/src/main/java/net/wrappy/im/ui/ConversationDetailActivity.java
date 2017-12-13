@@ -18,6 +18,7 @@ package net.wrappy.im.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,6 +30,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -47,6 +50,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -54,17 +58,25 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -119,12 +131,16 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-	// offset position for popup window
-    private static final int OFFSET_X = 300;
-    private static final int OFFSET_Y = 300;
+    // offset position for popup window
+    private static final int OFFSET_X = 130;
+    private static final int OFFSET_Y = 80;
 
-    private Handler mHandler = new Handler()
-    {
+    private int convertDpToPx(int dp) {
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -179,8 +195,11 @@ public class ConversationDetailActivity extends BaseActivity {
 
         popupWindow.setVisibility(View.GONE);
 
+        popupWindow.setBackgroundColor(0xfff);
+
+
         FrameLayout main = (FrameLayout)findViewById(R.id.container);
-        main.addView(popupWindow);
+        main.addView(popupWindow,new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT , LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
@@ -197,6 +216,26 @@ public class ConversationDetailActivity extends BaseActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
+
+        mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(popupWindow.getVisibility() == View.VISIBLE)
+                {
+                    popupWindow.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(popupWindow.getVisibility() == View.VISIBLE)
+                {
+                    popupWindow.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -288,6 +327,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     MyLoaderCallbacks loaderCallbacks;
+
     private void processIntent(Intent intent) {
 
         mApp = (ImApp) getApplication();
@@ -410,7 +450,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                mConvoView.showVerifyDialog();
+                startSettingScreen();
                 return true;
             case R.id.menu_group_info:
                 mConvoView.showGroupInfo();
@@ -420,6 +460,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
+                return true;
             case R.id.menu_settings_language:
              //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
@@ -627,6 +668,21 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    void startLocationMessage() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        try {
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            GooglePlayServicesUtil
+                    .getErrorDialog(e.getConnectionStatusCode(), this, 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "Google Play Services is not available.",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
     private boolean isCallable(Intent intent) {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
@@ -752,6 +808,12 @@ public class ConversationDetailActivity extends BaseActivity {
                     mLastPhoto = null;
                 }
 
+            } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
+
+                Bundle extras = resultIntent.getExtras();
+                byte[] b = extras.getByteArray("picture");
+
+                Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             }
 
 
@@ -910,6 +972,11 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    private void startSettingScreen() {
+        Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
+        startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
+    }
+
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
     public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
@@ -918,6 +985,8 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+    private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
+    private static final int PLACE_PICKER_REQUEST = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override

@@ -296,6 +296,7 @@ public class ConversationView {
 
             updateWarningView();
             mComposeMessage.requestFocus();
+            mMessageAdapter.setNeedRequeryCursor(false);
             userActionDetected();
             updateGroupTitle();
 
@@ -366,7 +367,8 @@ public class ConversationView {
                 }
 
 
-            } catch (RemoteException re) {
+            } catch (Exception re) {
+                re.printStackTrace();
             }
 
         } else {
@@ -880,6 +882,14 @@ public class ConversationView {
                 showStickers();
             }
 
+        });
+
+        mActivity.findViewById(R.id.btnAttachLocation).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startLocationMessage();
+            }
         });
 
 
@@ -2735,29 +2745,34 @@ public class ConversationView {
             int messageType = cursor.getInt(mTypeColumn);
 
             String address = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteAddress;
-            String nickname = isGroupChat() ? new XmppAddress(cursor.getString(mNicknameColumn)).getUser() : mRemoteNickname;
+            String nickname = mRemoteNickname;
+            if (!TextUtils.isEmpty(address) && isGroupChat()) {
+                nickname = Imps.Contacts.getNicknameFromAddress(mActivity.getContentResolver(), new XmppAddress(address).getBareAddress());
+            }
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = "" ;
+            String body = cursor.getString(mBodyColumn) ;
             if(istranslate ==false || cursor.getString(mMimeTypeColumn)!=null
                     || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX))
             {
                 viewHolder.btntranslate.setVisibility(View.GONE);
-                body =cursor.getString(mBodyColumn);
+                viewHolder.txttranslate.setVisibility(View.GONE);
+               // body =cursor.getString(mBodyColumn);
             }
             else
             {
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
                 if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
-                        body = bodytranslate.get(viewHolder.getPos()).mTexttranslate;
+                        viewHolder.txttranslate.setVisibility(View.VISIBLE);
+                        viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
                     viewHolder.btntranslate.setText("close translate");
                 }
                 else
                 {
-                    body =cursor.getString(mBodyColumn);
+                    viewHolder.txttranslate.setVisibility(View.GONE);
                     viewHolder.btntranslate.setText("see translate");
                 }
 
@@ -3174,8 +3189,10 @@ public class ConversationView {
     public void startAudioConference() {
         startAudioConference(null);
     }
+
     /**
      * Showing popup menu item translate
+     *
      * @return
      */
     public FrameLayout popupDisplay(ConversationDetailActivity activity) {
@@ -3191,12 +3208,12 @@ public class ConversationView {
         View view = inflater.inflate(R.layout.menu_popup_translate, null);
 
         // setting up Spinner
-        arraySpinner = new String[] {
+        arraySpinner = new String[]{
                 "English", "Japanese", "Vietnamese"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
-                        R.layout.spinner_language_item, arraySpinner);
+                R.layout.spinner_language_item, arraySpinner);
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
@@ -3256,6 +3273,7 @@ public class ConversationView {
 
     public void startVideoConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
@@ -3289,5 +3307,12 @@ public class ConversationView {
                 }
             }
         }
+    }
+
+    public void startSettingScreen() {
+
+        Intent intent = new Intent(mContext, SettingConversationActivity.class);
+        mContext.startActivity(intent);
+
     }
 }

@@ -27,10 +27,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.apache.commons.codec.DecoderException;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatListener;
@@ -44,10 +49,11 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.util.Debug;
+
+import org.apache.commons.codec.DecoderException;
 
 import java.util.ArrayList;
-
-import net.wrappy.im.R;
 
 public class GroupDisplayActivity extends BaseActivity {
 
@@ -67,6 +73,7 @@ public class GroupDisplayActivity extends BaseActivity {
     private class GroupMemberDisplay {
         public String username;
         public String nickname;
+        public String email;
         public String role;
         public String affiliation;
         public Drawable avatar;
@@ -115,8 +122,8 @@ public class GroupDisplayActivity extends BaseActivity {
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
             }
+        } catch (RemoteException e) {
         }
-        catch (RemoteException e){}
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvRoot);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -149,7 +156,7 @@ public class GroupDisplayActivity extends BaseActivity {
             @Override
             public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
                 if (holder instanceof HeaderViewHolder) {
-                    HeaderViewHolder h = (HeaderViewHolder)holder;
+                    HeaderViewHolder h = (HeaderViewHolder) holder;
                     GroupAvatar avatar = new GroupAvatar(mAddress.split("@")[0]);
                     avatar.setRounded(false);
                     h.avatar.setImageDrawable(avatar);
@@ -183,7 +190,7 @@ public class GroupDisplayActivity extends BaseActivity {
                     });
 
                     mActionAddFriends = h.actionAddFriends;
-                    showAddFriends ();
+                    showAddFriends();
 
                     h.actionMute.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -193,8 +200,8 @@ public class GroupDisplayActivity extends BaseActivity {
                         }
                     });
                     boolean muted = isMuted();
-                   h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
-             //       h.actionMute.setText(muted ? "turn on" : " t")
+                    h.actionMute.setText(muted ? R.string.turn_notifications_on : R.string.turn_notifications_off);
+                    //       h.actionMute.setText(muted ? "turn on" : " t")
                     TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(h.actionMute,
                             muted ? R.drawable.ic_notifications_active_black_24dp : R.drawable.ic_notifications_off_black_24dp,
                             0, 0, 0);
@@ -210,7 +217,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         });
                     }
                 } else if (holder instanceof FooterViewHolder) {
-                    FooterViewHolder h = (FooterViewHolder)holder;
+                    FooterViewHolder h = (FooterViewHolder) holder;
 
                     // Tint the "leave" text and drawable(s)
                     int colorAccent = ResourcesCompat.getColor(getResources(), R.color.holo_orange_light, getTheme());
@@ -238,18 +245,11 @@ public class GroupDisplayActivity extends BaseActivity {
                     final GroupMemberDisplay member = mMembers.get(idxMember);
 
                     String nickname = member.nickname;
-                    if (TextUtils.isEmpty(nickname)) {
-                        nickname = member.username.split("@")[0].split("\\.")[0];
-                    } else {
-                        nickname = nickname.split("@")[0].split("\\.")[0];
-                    }
-
                     h.line1.setText(nickname);
 
                     boolean hasRoleNone = TextUtils.isEmpty(member.role) || "none".equalsIgnoreCase(member.role);
                     h.line1.setTextColor(hasRoleNone ? Color.GRAY : colorTextPrimary);
-
-                    h.line2.setText(member.username);
+                    h.line2.setText(member.email);
                     if (member.affiliation != null && (member.affiliation.contentEquals("owner") || member.affiliation.contentEquals("admin"))) {
                         h.avatarCrown.setVisibility(View.VISIBLE);
                     } else {
@@ -257,15 +257,15 @@ public class GroupDisplayActivity extends BaseActivity {
                     }
 
                     /**
-                    if (!member.online)
-                    {
-                        h.line1.setEnabled(false);
-                        h.line2.setEnabled(false);
-                        h.avatar.setBackgroundColor(getResources().getColor(R.color.holo_grey_light));
+                     if (!member.online)
+                     {
+                     h.line1.setEnabled(false);
+                     h.line2.setEnabled(false);
+                     h.avatar.setBackgroundColor(getResources().getColor(R.color.holo_grey_light));
                      }**/
 
                     //h.line2.setText(member.username);
-                    if (member.avatar == null) {
+                    if (member.avatar == null && !TextUtils.isEmpty(nickname)) {
                         padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
                         member.avatar = new LetterAvatar(holder.itemView.getContext(), nickname, padding);
                     }
@@ -339,8 +339,8 @@ public class GroupDisplayActivity extends BaseActivity {
                     if (mConn != null) {
                         contactManager = mConn.getContactListManager();
                     }
+                } catch (RemoteException re) {
                 }
-                catch (RemoteException re){}
 
                 String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME, Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
@@ -358,6 +358,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         member.nickname = c.getString(colNickname);
                         member.role = c.getString(colRole);
                         member.affiliation = c.getString(colAffiliation);
+                        member.email = ImApp.getEmail(member.username);
                         try {
                             member.avatar = DatabaseUtils.getAvatarFromAddress(cr, member.username, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                         } catch (DecoderException e) {
@@ -373,24 +374,30 @@ public class GroupDisplayActivity extends BaseActivity {
 
 
                         /**
-                        try {
-                            if (contactManager != null) {
-                                Contact contact = contactManager.getContactByAddress(member.username);
-                                if (contact != null)
-                                    member.online = contact.getPresence().isOnline();
-                            }
-                        }
-                        catch (RemoteException re){}**/
+                         try {
+                         if (contactManager != null) {
+                         Contact contact = contactManager.getContactByAddress(member.username);
+                         if (contact != null)
+                         member.online = contact.getPresence().isOnline();
+                         }
+                         }
+                         catch (RemoteException re){}**/
 
-                        members.add(member);
+
+                        if (member.nickname == null || member.username.contains(member.nickname)) {
+                            updateUnknownFriendInfoInGroup(member);
+                        } else {
+                            members.add(member);
+                        }
                     }
                     c.close();
                 }
+                mMembers.clear();
+                mMembers.addAll(members);
                 if (!Thread.currentThread().isInterrupted()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mMembers = members;
                             mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     });
@@ -400,8 +407,23 @@ public class GroupDisplayActivity extends BaseActivity {
         mThreadUpdate.start();
     }
 
-    public void inviteContacts (ArrayList<String> invitees)
-    {
+    private void updateUnknownFriendInfoInGroup(final GroupMemberDisplay member) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.nickname).getUser()), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.username, wpKMemberDtos.getIdentifier());
+                    updateMembers();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void inviteContacts(ArrayList<String> invitees) {
         if (mConn == null)
             return;
 
@@ -425,10 +447,8 @@ public class GroupDisplayActivity extends BaseActivity {
 
             mRecyclerView.getAdapter().notifyDataSetChanged();
 
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error inviting contacts to group",e);
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error inviting contacts to group", e);
         }
 
     }
@@ -546,13 +566,12 @@ public class GroupDisplayActivity extends BaseActivity {
         alert.show();
     }
 
-    private void changeGroupSubject (String subject)
-    {
+    private void changeGroupSubject(String subject) {
         try {
             IChatSession session = mConn.getChatSessionManager().getChatSession(mAddress);
             session.setGroupChatSubject(subject);
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
     }
 
     boolean isMuted() {
@@ -561,22 +580,21 @@ public class GroupDisplayActivity extends BaseActivity {
                 return mSession.isMuted();
             else
                 return false;
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
             return false;
         }
     }
 
     public void setMuted(boolean muted) {
         try {
-            mSession.setMuted(muted);
+             if (mSession != null)
+                mSession.setMuted(muted);
+        } catch (RemoteException re) {
+            
         }
-        catch (RemoteException re){}
     }
 
-    private void confirmLeaveGroup ()
-    {
+    private void confirmLeaveGroup() {
         new android.support.v7.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.action_leave))
                 .setMessage(getString(R.string.confirm_leave_group))
@@ -594,14 +612,13 @@ public class GroupDisplayActivity extends BaseActivity {
                 .show();
     }
 
-    private void leaveGroup ()
-    {
+    private void leaveGroup() {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
 
             if (session == null)
-                session = manager.createChatSession(mAddress,true);
+                session = manager.createChatSession(mAddress, true);
 
             if (session != null) {
                 session.leave();
@@ -612,10 +629,8 @@ public class GroupDisplayActivity extends BaseActivity {
                 startActivity(intent);
             }
 
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error leaving group",e);
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error leaving group", e);
         }
     }
 
@@ -639,8 +654,7 @@ public class GroupDisplayActivity extends BaseActivity {
         }
     };
 
-    private void showAddFriends ()
-    {
+    private void showAddFriends() {
         if (mActionAddFriends != null) {
             if (!mIsOwner)
                 mActionAddFriends.setVisibility(View.GONE);
