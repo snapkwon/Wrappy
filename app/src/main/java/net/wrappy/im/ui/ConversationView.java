@@ -361,7 +361,8 @@ public class ConversationView {
                 }
 
 
-            } catch (RemoteException re) {
+            } catch (Exception re) {
+                re.printStackTrace();
             }
 
         } else {
@@ -875,6 +876,14 @@ public class ConversationView {
                 showStickers();
             }
 
+        });
+
+        mActivity.findViewById(R.id.btnAttachLocation).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startLocationMessage();
+            }
         });
 
 
@@ -3062,8 +3071,10 @@ public class ConversationView {
     public void startAudioConference() {
         startAudioConference(null);
     }
+
     /**
      * Showing popup menu item translate
+     *
      * @return
      */
     public PopupWindow popupDisplay() {
@@ -3075,12 +3086,12 @@ public class ConversationView {
         View view = inflater.inflate(R.layout.menu_popup_translate, null);
 
         // setting up Spinner
-        arraySpinner = new String[] {
+        arraySpinner = new String[]{
                 "English", "Japanese", "Vietnamese"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity,
-                        R.layout.spinner_language_item, arraySpinner);
+                R.layout.spinner_language_item, arraySpinner);
         spinner.setAdapter(adapter);
 
         final TextView textTurnOnOff = (TextView) view.findViewById(R.id.text_turn_on_off_translate);
@@ -3118,6 +3129,7 @@ public class ConversationView {
 
     public void startVideoConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
@@ -3151,5 +3163,12 @@ public class ConversationView {
                 }
             }
         }
+    }
+
+    public void startSettingScreen() {
+
+        Intent intent = new Intent(mContext, SettingConversationActivity.class);
+        mContext.startActivity(intent);
+
     }
 }

@@ -28,9 +28,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -59,28 +63,34 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
-import net.wrappy.im.tasks.ChatSessionInitTask;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
-
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -116,12 +126,16 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-	// offset position for popup window
-    private static final int OFFSET_X = 300;
-    private static final int OFFSET_Y = 300;
+    // offset position for popup window
+    private static final int OFFSET_X = 130;
+    private static final int OFFSET_Y = 80;
 
-    private Handler mHandler = new Handler()
-    {
+    private int convertDpToPx(int dp) {
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -278,6 +292,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     MyLoaderCallbacks loaderCallbacks;
+
     private void processIntent(Intent intent) {
 
         mApp = (ImApp) getApplication();
@@ -400,10 +415,8 @@ public class ConversationDetailActivity extends BaseActivity {
                 finish();
                 return true;*/
             case R.id.menu_verify_or_view:
-                mConvoView.showVerifyDialog();
-                return true;
             case R.id.menu_group_info:
-                mConvoView.showGroupInfo();
+                startSettingScreen();
                 return true;
             case R.id.menu_video_call:
                 mConvoView.startVideoConference();
@@ -413,7 +426,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;
             case R.id.menu_settings_language:
                 PopupWindow popupWindow = mConvoView.popupDisplay();
-                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, convertDpToPx(OFFSET_X), convertDpToPx(OFFSET_Y));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -604,6 +617,21 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    void startLocationMessage() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        try {
+            startActivityForResult(builder.build(this), REQUEST_PLACE_PICKER);
+        } catch (GooglePlayServicesRepairableException e) {
+            GooglePlayServicesUtil
+                    .getErrorDialog(e.getConnectionStatusCode(), this, 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "Google Play Services is not available.",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
     private boolean isCallable(Intent intent) {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
@@ -681,7 +709,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
             if (requestCode == REQUEST_PICK_CONTACTS) {
 
-                ArrayList<String> invitees = new ArrayList<String>();
+                ArrayList<String> invitees = new ArrayList<>();
 
                 String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
 
@@ -700,35 +728,45 @@ public class ConversationDetailActivity extends BaseActivity {
                     return;
                 }
 
-
-                boolean deleteFile = false;
-                boolean resizeImage = true;
-                boolean importContent = true;
-                handleSendDelete(uri, "image/jpeg", deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, "image/jpeg", false, true, true);
             } else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
                 Uri uri = resultIntent.getData();
-
                 if (uri == null) {
                     return;
                 }
 
                 String defaultType = resultIntent.getType();
 
-                boolean deleteFile = false;
-                boolean resizeImage = false;
-                boolean importContent = true;
-
-                handleSendDelete(uri, defaultType, deleteFile, resizeImage, importContent);
+                handleSendDelete(uri, defaultType, false, false, true);
             } else if (requestCode == REQUEST_TAKE_PICTURE) {
                 if (mLastPhoto != null) {
-                    boolean deleteFile = true;
-                    boolean resizeImage = true;
-                    boolean importContent = true;
-
-                    handleSendDelete(mLastPhoto, "image/jpeg", deleteFile, resizeImage, importContent);
+                    handleSendDelete(mLastPhoto, "image/jpeg", true, true, true);
                     mLastPhoto = null;
                 }
 
+            } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
+
+                try {
+                    Bundle extras = resultIntent.getExtras();
+                    Uri uri = extras.getParcelable("imageUri");
+
+                    InputStream inputStream;
+                    inputStream = getApplicationContext().getAssets().open(uri.getPath());
+
+                    Bitmap b = BitmapFactory.decodeStream(inputStream);
+                    b.setDensity(Bitmap.DENSITY_NONE);
+                    Drawable d = new BitmapDrawable(b);
+
+                    mRootLayout.setBackground(d);
+
+                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (requestCode == REQUEST_PLACE_PICKER) {
+                Place place = PlacePicker.getPlace(resultIntent, this);
+                mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
             }
 
 
@@ -887,6 +925,11 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
+    private void startSettingScreen() {
+        Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
+        startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
+    }
+
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
     public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
@@ -895,6 +938,8 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
+    private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
+    private static final int REQUEST_PLACE_PICKER = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override

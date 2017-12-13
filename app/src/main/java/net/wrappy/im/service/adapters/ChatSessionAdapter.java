@@ -874,8 +874,26 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 values.put(Imps.GroupMembers.ROLE, "none");
                 values.put(Imps.GroupMembers.AFFILIATION, "none");
                 mContentResolver.insert(uri, values);
+                if (username.contains(nickname) || nickname == null) {
+                    updateUnknownFriendInfoInGroup(uri, nickname);
+                }
             }
         }
+    }
+
+    private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    Imps.GroupMembers.updateNicknameFromGroupUri(mContentResolver, uri, wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {
@@ -1036,13 +1054,14 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            final String bareAddress = new XmppAddress(nickname).getBareAddress();
-            Contact contact = null;
+            String bareAddress = new XmppAddress(nickname).getBareAddress();
+            Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                if (contact != null) {
+                if (contact != null && !contact.getAddress().getAddress().contains(contact.getName())) {
                     nickname = contact.getName();
                 } else {
+                    if (contact != null) bareAddress = bareUsername;
                     nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
@@ -1111,14 +1130,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     if (isGroupChatSession()) {
                         if (!isMuted()) {
                             ChatGroup group = (ChatGroup) ses.getParticipant();
-                            try {
-                                contact = mConnection.getContactListManager().getContactByAddress(nickname);
-                                nickname = contact.getName();
-                            } catch (Exception e) {
-                            }
-
-                            nickname = nickname.split("@")[0];
-
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
                                     getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
                         }

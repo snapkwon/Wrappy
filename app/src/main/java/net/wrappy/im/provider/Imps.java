@@ -32,10 +32,12 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.WpkRoster;
+import net.wrappy.im.util.Constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The IM provider stores all information about roster contacts, chat messages,
@@ -1455,7 +1457,6 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "date ASC";
         public static final String REVERSE_SORT_ORDER = "date DESC";
-        public static final String FAVORITE_SORT_ORDER = "chat_favorite DESC, date DESC";
 
         /**
          * The "contact" column. This is not a real column in the messages
@@ -1533,8 +1534,15 @@ public class Imps {
             return ret;
         }
 
+        public static int updateNicknameFromGroupUri(ContentResolver cr, Uri uri, String nickname) {
+            ContentValues values = new ContentValues();
+            values.put(NICKNAME, nickname);
+            int ret = cr.update(uri, values, null, null);
+            return ret;
+        }
+
         public static int updateNicknameFromGroup(ContentResolver cr, String address, String nickname) {
-            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" +address + "'";
+            String selection = ImpsProvider.GROUP_MEMBER_NICKNAME + "='" + address + "'";
             ContentValues values = new ContentValues();
             values.put(NICKNAME, nickname);
             int ret = cr.update(Imps.GroupMembers.CONTENT_URI, values, selection, null);
@@ -3122,6 +3130,11 @@ public class Imps {
             result = resolver.delete(builder.build(), null, null);
         }
         return result;
+    }
+
+    public static int deleteMessageInDbByTime(ContentResolver resolver) {
+        String where = Messages.DATE + "<= (CURRENT_TIMESTAMP - " + TimeUnit.DAYS.toMillis(Constant.TIME_DELETE_MESSAGE) + ")";
+        return resolver.delete(Messages.OTR_MESSAGES_CONTENT_URI, where, null);
     }
 
     public static int updateMessageInDb(ContentResolver resolver, String id, int type, long time, long contactId) {

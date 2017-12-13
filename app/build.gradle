@@ -34,10 +34,12 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
+            resValue "string", "google_place_api_key", "[YOUR PROD KEY]"
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
+            resValue "string", "google_place_api_key", "[YOUR DEV KEY]"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }
@@ -159,7 +161,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:8.8.1'
-   /* compile 'me.ydcool.lib:qrmodule:latest.integration'*/
+    /* compile 'me.ydcool.lib:qrmodule:latest.integration'*/
     compile 'com.thefinestartist:finestwebview:1.2.7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.koushikdutta.ion:ion:2.2.1'
@@ -167,5 +169,6 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.facebook.react:react-native:0.49.5'
+    compile 'com.google.android.gms:play-services-places:11.6.2'
     implementation project(':qrmodule')
 }

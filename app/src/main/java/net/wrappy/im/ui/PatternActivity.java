@@ -324,9 +324,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         @Override
         protected void onPostExecute(Integer account) {
-            appFuncs.dismissProgressWaiting();
             if (getActivity() != null) {
                 // mUsername = account.username + '@' + account.domain;
+                getActivity().appFuncs.dismissProgressWaiting();
                 if (account == 200) {
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

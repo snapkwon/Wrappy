@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -37,7 +36,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -50,11 +48,13 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -114,11 +114,8 @@ public class ConversationListItem extends FrameLayout {
     public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite) {
 
         //applyStyleColors(holder);
-
         if (nickname == null) {
-            nickname = address.split("@")[0].split("\\.")[0];
-        } else {
-            nickname = nickname.split("@")[0].split("\\.")[0];
+            nickname = ImApp.getNickname(address);
         }
 
         /**
@@ -223,18 +220,18 @@ public class ConversationListItem extends FrameLayout {
                     if (messageType == null || messageType.startsWith("image")) {
 
                         if (holder.mMediaThumb != null) {
-                            holder.mMediaThumb.setVisibility(View.VISIBLE);
+                            holder.mMediaThumb.setVisibility(View.GONE);
 
-                            if (messageType != null && messageType.equals("image/png")) {
-                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            } else {
-                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//                            if (messageType != null && messageType.equals("image/png")) {
+//                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                            } else {
+//                                holder.mMediaThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//
+//                            }
 
-                            }
-
-                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
-
-                            holder.mLine2.setVisibility(View.GONE);
+//                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
+                                holder.mLine2.setText(R.string.incoming_attachment);
+//                            holder.mLine2.setVisibility(View.GONE);
 
                         }
                     } else {
@@ -247,34 +244,40 @@ public class ConversationListItem extends FrameLayout {
                     if (cmd.startsWith("sticker")) {
                         String[] cmds = cmd.split(":");
 
-                        String mimeTypeSticker = "image/png";
-                        Uri mediaUri = Uri.parse("asset://" + cmds[1]);
+//                        String mimeTypeSticker = "image/png";
+//                        Uri mediaUri = Uri.parse("asset://" + cmds[1]);
 
-                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
-                        holder.mLine2.setVisibility(View.GONE);
+//                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        holder.mLine2.setText(message);
+                        holder.mLine2.setLines(1);
 
-                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
 
                     }
 
                 } else if ((!TextUtils.isEmpty(message)) && message.startsWith(":")) {
-                    String[] cmds = message.split(":");
+//                    String[] cmds = message.split(":");
 
                     try {
-                        String[] stickerParts = cmds[1].split("-");
-                        String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+//                        String[] stickerParts = cmds[1].split("-");
+//                        String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
 
                         //make sure sticker exists
-                        AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                        afd.getLength();
-                        afd.close();
+//                        AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+//                        afd.getLength();
+//                        afd.close();
 
                         //now setup the new URI for loading local sticker asset
-                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
-                        holder.mLine2.setVisibility(View.GONE);
-                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
+//                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
+                        String resultMessage = message;
+                        if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                            resultMessage = ConferenceUtils.convertConferenceMessage(message);
+                        }
+                        holder.mLine2.setText(resultMessage);
+                        holder.mLine2.setLines(1);
+//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                     } catch (Exception e) {
 
@@ -284,7 +287,7 @@ public class ConversationListItem extends FrameLayout {
                         holder.mMediaThumb.setVisibility(View.GONE);
 
                     holder.mLine2.setVisibility(View.VISIBLE);
-
+                    holder.mLine2.setLines(1);
 
                     try {
                         holder.mLine2.setText(android.text.Html.fromHtml(message).toString());
