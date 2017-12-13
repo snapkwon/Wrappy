@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -174,6 +175,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         return 0.00;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +184,14 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         valueBalance = 0.0;
 
         setContentView(R.layout.activity_send__ethereum);
+
+        ActionBar actionbar = getSupportActionBar();
+
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+        }
+
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         //actionBar.setDisplayHomeAsUpEnabled(true);
         IntentFilter mIntentFilter = new IntentFilter();
@@ -191,6 +201,18 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
 
 
         nameCoin = getIntent().getStringExtra("nameCoin");
+
+        if(nameCoin.equals("Ethereum")) {
+            if (actionbar != null) {
+                actionbar.setTitle(getResources().getString(R.string.ETH));
+            }
+        }
+        else if(nameCoin.equals("Proteusion"))
+        {
+            if (actionbar != null) {
+                actionbar.setTitle(getResources().getString(R.string.PRO));
+            }
+        }
 
         try {
             KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);

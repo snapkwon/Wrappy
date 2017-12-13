@@ -18,6 +18,7 @@ package net.wrappy.im.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -51,6 +52,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -58,7 +60,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +79,7 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -123,6 +129,8 @@ public class ConversationDetailActivity extends BaseActivity {
     //private AppBarLayout appBarLayout;
     private View mRootLayout;
     private Toolbar mToolbar;
+
+    FrameLayout popupWindow ;
 
     private PrettyTime mPrettyTime;
 
@@ -186,6 +194,16 @@ public class ConversationDetailActivity extends BaseActivity {
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
 
+        popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+
+        popupWindow.setVisibility(View.GONE);
+
+        popupWindow.setBackgroundColor(0xfff);
+
+
+        FrameLayout main = (FrameLayout)findViewById(R.id.container);
+        main.addView(popupWindow,new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT , LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
+
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
         setSupportActionBar(mToolbar);
@@ -201,6 +219,26 @@ public class ConversationDetailActivity extends BaseActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
+
+        mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(popupWindow.getVisibility() == View.VISIBLE)
+                {
+                    popupWindow.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(popupWindow.getVisibility() == View.VISIBLE)
+                {
+                    popupWindow.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -425,8 +463,22 @@ public class ConversationDetailActivity extends BaseActivity {
                 mConvoView.startAudioConference();
                 return true;
             case R.id.menu_settings_language:
-                PopupWindow popupWindow = mConvoView.popupDisplay();
-                popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, convertDpToPx(OFFSET_X), convertDpToPx(OFFSET_Y));
+             //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+              /*  new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
+                    }
+                });*/
+              if(popupWindow.getVisibility() == View.GONE)
+              {
+                  popupWindow.setVisibility(View.VISIBLE);
+              }
+              else
+              {
+                  popupWindow.setVisibility(View.GONE);
+              }
+
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -35,7 +35,6 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     private boolean mDataValid;
 
     private int mRowIdColumn;
-
     private DataSetObserver mDataSetObserver;
 
     public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
@@ -53,6 +52,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         return mCursor;
     }
 
+
     @Override
     public int getItemCount() {
         if (mDataValid && mCursor != null) {
@@ -60,6 +60,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         }
         return 0;
     }
+
 
     @Override
     public long getItemId(int position) {
@@ -69,12 +70,14 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         return 0;
     }
 
+
     @Override
     public void setHasStableIds(boolean hasStableIds) {
         super.setHasStableIds(true);
     }
 
-    public abstract void onBindViewHolder(VH viewHolder, Cursor cursor);
+    public abstract void onBindViewHolder(VH viewHolder, Cursor cursor,int position);
+
 
     @Override
     public void onBindViewHolder(VH viewHolder, int position) {
@@ -84,7 +87,8 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         if (!mCursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
-        onBindViewHolder(viewHolder, mCursor);
+
+        onBindViewHolder(viewHolder, mCursor ,position);
     }
 
     /**
@@ -126,6 +130,11 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
         return oldCursor;
+    }
+
+
+    interface CallBack {
+        void itemClicked(int position);
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {

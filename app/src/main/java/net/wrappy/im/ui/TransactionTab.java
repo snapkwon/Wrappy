@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -90,6 +91,7 @@ public class TransactionTab extends AppCompatActivity {
     Balance balance;
 
     Bundle args ;
+    ActionBar actionbar;
 
     private LocalBroadcastManager mLocalBroadcastManager;
 
@@ -105,10 +107,13 @@ public class TransactionTab extends AppCompatActivity {
                 wallet.setHighestBlock(highestBlock);
                 wallet.setPeerCount(peers);
 
-//                txtPeer.setText("Peers: " + wallet.getPeerCount());
-                double ratio = wallet.getCurrentBlock() / (double) wallet.getHighestBlock();
-                DecimalFormat percentFormat= new DecimalFormat("#.##%");
-             //   txtBlock.setText("| Blocks: " + wallet.getCurrentBlock() + " (" + percentFormat.format(ratio) + ")");
+                if(actionbar !=null) {
+                    String subtext =  "Peers: " + wallet.getPeerCount();
+                    double ratio = wallet.getCurrentBlock() / (double) wallet.getHighestBlock();
+                    DecimalFormat percentFormat = new DecimalFormat("#.##%");
+                    subtext = subtext + " | Blocks: " + wallet.getCurrentBlock() + " (" + percentFormat.format(ratio) + ")";
+                    actionbar.setSubtitle(subtext);
+                }
             }
 
             if (intent.getAction().equals(TRANSACTION_TAB_FINISHED)) {
@@ -117,9 +122,11 @@ public class TransactionTab extends AppCompatActivity {
 
                 wallet.setCurrentBlock(currentBlock);
                 wallet.setPeerCount(peers);
-
-              //  txtPeer.setText("Peers: " + wallet.getPeerCount());
-               // txtBlock.setText("| Blocks: " + wallet.getCurrentBlock() + " (100%)");
+                if(actionbar !=null) {
+                    String subtext =  "Peers: " + wallet.getPeerCount();
+                    subtext = subtext +  " | Blocks: " + wallet.getCurrentBlock() + " (100%)";
+                    actionbar.setSubtitle(subtext);
+                }
 
             }
 
@@ -154,6 +161,9 @@ public class TransactionTab extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_tab);
+
+        actionbar = getSupportActionBar();
+
         args =   getIntent().getExtras();
 
         viewMain = new FrameLayout(this);
@@ -166,11 +176,24 @@ public class TransactionTab extends AppCompatActivity {
         if(args.getInt("namecoin") == 0)
         {
             viewBarContentHeader.setText("Ethereum");
+            if (actionbar != null) {
+                actionbar.setTitle(getResources().getString(R.string.ETH));
+            }
+            //actionbar.setSubtitle(getResources().getString(R.string.mySubTitle));
         }
         else
         {
             viewBarContentHeader.setText("Proteusion Coin");
+            if (actionbar != null) {
+                actionbar.setTitle(getResources().getString(R.string.PRO));
+            }
+           // actionbar.setSubtitle(getResources().getString(R.string.PRO));
         }
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+        }
+
         viewBarContentHeader.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
         viewBarContentHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         LinearLayout viewBarContentDetail = new LinearLayout(this);
@@ -464,6 +487,17 @@ public class TransactionTab extends AppCompatActivity {
         mIntentFilter.addAction(TRANSACTION_TAB);
         mIntentFilter.addAction(TRANSACTION_TAB_FINISHED);
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class UpdateUITasks extends AsyncTask<Void, Void, Void> {
