@@ -135,6 +135,7 @@ import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -470,10 +471,17 @@ public class ConversationView {
         } catch (RemoteException e) {
             Log.d(ImApp.LOG_TAG, "error getting remote activity", e);
         }
-
-
     }
 
+    public void sendDeleteChat(String msgId){
+        sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
+    }
+
+    public void sendEditChat(String msgId, String newMsg){
+        StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
+        buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
+        sendMessageAsync(buffer.toString());
+    }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1570,7 +1578,7 @@ public class ConversationView {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            CursorLoader loader = new CursorLoader(mActivity, mUri, null, null, null, Imps.Messages.DEFAULT_SORT_ORDER);
+            CursorLoader loader = new CursorLoader(mActivity, mUri, null, Imps.MessageColumns.STATUS + " = " + Imps.MessageColumns.VISIBLE, null, Imps.Messages.DEFAULT_SORT_ORDER);
 
             return loader;
         }
@@ -1870,7 +1878,6 @@ public class ConversationView {
 
 
     boolean sendMessage(String msg, boolean isResend) {
-
         //don't send empty messages
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1889,6 +1896,16 @@ public class ConversationView {
 
         if (session != null) {
             try {
+                // delete own message
+                if (msg.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
+                    String packet_id = msg.replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
+                    session.deleteMessageInDb(packet_id);
+                } else if (msg.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {// update own message
+                    String[] message_edit = ConferenceUtils.getEditedMessage(msg);
+                    session.updateMessageInDb(message_edit[0], message_edit[1]);
+//                    session.deleteMessageInDb(message_edit[0]);
+                }
+
                 session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();

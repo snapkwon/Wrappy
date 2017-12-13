@@ -12,8 +12,9 @@ public class ConferenceConstant {
     public static final String CONFERENCE_BRIDGE = "video-bridge-name-";
     public static final int NUM_OF_FIELDS = 4;
 
-
     public static final String SEND_LOCATION_FREFIX = ":wrappylocation:";// lat:lng
+    public static final String DELETE_CHAT_FREFIX = ":wrappydelete:";// chat ID
+    public static final String EDIT_CHAT_FREFIX = ":wrappyedit:";//id length:text length:chat ID, new text
 
     public static final String SEND_BACKGROUND_CHAT_PREFIX = ":wrappychangebackground:"; // image uri
 }

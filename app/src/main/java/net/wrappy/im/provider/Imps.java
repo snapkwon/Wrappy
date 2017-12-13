@@ -31,8 +31,10 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1238,6 +1240,14 @@ public class Imps {
          * Mime type.  If non-null, body is a URI.
          */
         String MIME_TYPE = "mime_type";
+
+        /**
+         * Status.  0: visible, other: invisible
+         */
+        String STATUS = "status";
+
+        int VISIBLE = 0;
+        int UPDATE = 1;// edit, delete, change background: update later
     }
 
     /**
@@ -3091,6 +3101,9 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
 
+        if(body.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || body.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX) || body.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX))
+            values.put(MessageColumns.STATUS, MessageColumns.UPDATE);
+
 //        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
 
         return resolver.insert(Messages.getOtrMessagesContentUriByThreadId(contactId), values);
@@ -3178,7 +3191,7 @@ public class Imps {
     }
 
     public static int updateMessageBodyInDb(ContentResolver resolver, long threadId, String msgId, String body) {
-        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
         builder.appendPath(String.valueOf(threadId));
 
         ContentValues values = new ContentValues(1);
@@ -3191,6 +3204,25 @@ public class Imps {
             result = resolver.update(builder.build(), values, null, null);
         }
 
+        return result;
+    }
+
+    public static int updateMessageBodyInDbByPacketId(ContentResolver resolver, String msgId, String body) {
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
+        String where = Messages.PACKET_ID + "=?";
+        String[] args = new String[]{msgId};
+
+        Debug.d("uri " + builder.toString());
+
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        int result = resolver.update(builder.build(), values, where, args);
+        Debug.d("result " +result);
+        if (result == 0) {
+            builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
+            result = resolver.update(builder.build(), values, where, args);
+        }
+        Debug.d("result2 " +result);
         return result;
     }
 
