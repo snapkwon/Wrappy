@@ -7,9 +7,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.koushikdutta.ion.builder.Builders;
 
 import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
@@ -33,6 +35,8 @@ import javax.net.ssl.X509TrustManager;
  */
 
 public class RestAPI {
+
+    private static int TIME_OUT = 12000;
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
@@ -58,6 +62,7 @@ public class RestAPI {
     public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
     public static String GET_FORGET_PASS_SEND_EMAIL = root_url_dev + "member/%s/%s/password/mail";
     public static String GET_COUNTRY_CODES = root_url_dev + "master/country";
+    public static String GET_TYPE_ROSTER = root_url_dev + "chat/roster/group/type";
 
 
     public static String loginUrl(String user, String pass) {
@@ -146,11 +151,25 @@ public class RestAPI {
         return header;
     }
 
-    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+    private static Builders.Any.B getIon(Context context, String url, String method) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header)
-                .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
-                .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        return Ion.with(context).load(method,url).setTimeout(TIME_OUT).addHeader("Authorization",header);
+    }
+
+    public static Future<Response<String>> apiGET(Context context, String url) {
+        return getIon(context,url,"GET").asString().withResponse();
+    }
+
+    public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
+        return getIon(context,url,"POST").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+    }
+
+    public static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
+        return getIon(context,url,"DELETE").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+    }
+
+    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+        apiPOST(context,url,jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
@@ -164,10 +183,7 @@ public class RestAPI {
     }
 
     public static void DeleteDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
-        String header = getHeaderHttps(context,url);
-        Ion.with(context).load("DELETE", url).setTimeout(10000).addHeader("Authorization",header)
-                .setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject)
-        .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        apiDELETE(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
@@ -181,8 +197,7 @@ public class RestAPI {
     }
 
     public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
-        String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        apiGET(context,url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);

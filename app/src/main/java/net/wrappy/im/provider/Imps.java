@@ -31,7 +31,6 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -822,6 +821,31 @@ public class Imps {
         String NAME = "name";
         String PROVIDER = "provider";
         String ACCOUNT = "account";
+    }
+
+    /* Roster column */
+    public interface RosterColumns {
+        String ID = "_id";
+        String REFERENCE = "reference";
+        String IDENTIFIER = "identifier";
+        String NAME = "name";
+        String DESCRIPTION = "description";
+        String TYPE = "type";
+    }
+
+    public static final class Roster implements RosterColumns {
+        public Roster() {}
+        public static final Uri CONTENT_URI = Uri.parse("content://net.wrappy.im.provider.Imps/roster");
+        public static final Uri CONTENT_URI_INSERT = Uri.parse("content://net.wrappy.im.provider.Imps/roster_insert");
+        public static void insert(ContentResolver contentResolver, ContentValues values) {
+            contentResolver.insert(CONTENT_URI, values);
+        }
+     public static Cursor getRoster(ContentResolver contentResolver) {
+            String[] projection = new String[]{"*"};
+//            String where = "id =?";
+//            String[] selectAgr = new String[]{String.valueOf(rosterId)};
+            return contentResolver.query(CONTENT_URI, projection, null, null, null);
+        }
     }
 
     /**

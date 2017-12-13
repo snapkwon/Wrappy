@@ -28,7 +28,6 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteConstraintException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -36,7 +35,6 @@ import net.sqlcipher.database.SQLiteOpenHelper;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.provider.Imps.Contacts;
-
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LogCleaner;
 
@@ -87,6 +85,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String TABLE_IN_MEMORY_MESSAGES = "inMemoryMessages";
     private static final String TABLE_ACCOUNT_STATUS = "accountStatus";
     private static final String TABLE_BRANDING_RESOURCE_MAP_CACHE = "brandingResMapCache";
+    private static final String TABLE_ROSTER = "roster";
 
     // tables for mcs and rmq
     private static final String TABLE_OUTGOING_RMQ_MESSAGES = "outgoingRmqMessages";
@@ -185,6 +184,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     protected static final int MATCH_CSP_DEVICE = 303;
     protected static final int MATCH_CSP_TOKENS = 304;
     protected static final int MATCH_CSP_TOKEN = 305;
+
+    //Roster
+    protected static final int MATCH_CONTACTS_ROSTER = 400;
 
     protected final UriMatcher mUrlMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private String mTransientDbName;
@@ -704,6 +706,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_ACCOUNTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_DEVICES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_TOKENS);
+
+            //roster
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROSTER);
         }
 
         private void createAccountTable(SQLiteDatabase db) {
@@ -796,6 +801,21 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("name TEXT,");
             buf.append("provider INTEGER,");
             buf.append("account INTEGER");
+            buf.append(");");
+
+            db.execSQL(buf.toString());
+
+            buf.delete(0, buf.length());
+
+            buf.append("CREATE TABLE IF NOT EXISTS ");
+            buf.append(TABLE_ROSTER);
+            buf.append(" (");
+            buf.append("id INTEGER PRIMARY KEY,");
+            buf.append("reference TEXT,");
+            buf.append("identifier INTEGER,");
+            buf.append("name TEXT,");
+            buf.append("description TEXT,");
+            buf.append("type TEXT,");
             buf.append(");");
 
             db.execSQL(buf.toString());
@@ -1226,6 +1246,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         mUrlMatcher.addURI(authority, "contactLists", MATCH_CONTACTLISTS);
         mUrlMatcher.addURI(authority, "contactLists/#/#", MATCH_CONTACTLISTS_BY_PROVIDER);
         mUrlMatcher.addURI(authority, "contactLists/#", MATCH_CONTACTLIST);
+
+        mUrlMatcher.addURI(authority, "roster", MATCH_CONTACTS_ROSTER);
+
+
         mUrlMatcher.addURI(authority, "blockedList", MATCH_BLOCKEDLIST);
         mUrlMatcher.addURI(authority, "blockedList/#/#", MATCH_BLOCKEDLIST_BY_PROVIDER);
 
@@ -1611,6 +1635,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             case MATCH_CONTACTLIST:
                 qb.setTables(TABLE_CONTACT_LIST);
                 appendWhere(whereClause, Imps.ContactList._ID, "=", url.getPathSegments().get(1));
+                break;
+
+            case MATCH_CONTACTS_ROSTER:
+                qb.setTables(TABLE_ROSTER);
                 break;
 
             case MATCH_BLOCKEDLIST:
@@ -2668,6 +2696,15 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             case MATCH_CONTACTS_BAREBONE:
                 // Insert into the contacts table
                 rowID = db.insert(TABLE_CONTACTS, USERNAME, initialValues);
+                if (rowID > 0) {
+                    resultUri = Uri.parse(Imps.Contacts.CONTENT_URI + "/" + rowID);
+                }
+
+                notifyContactContentUri = true;
+                break;
+
+            case MATCH_CONTACTS_ROSTER:
+                rowID = db.insert(TABLE_ROSTER,"name",initialValues);
                 if (rowID > 0) {
                     resultUri = Uri.parse(Imps.Contacts.CONTENT_URI + "/" + rowID);
                 }

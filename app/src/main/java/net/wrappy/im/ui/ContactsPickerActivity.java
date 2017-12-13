@@ -53,6 +53,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
@@ -103,7 +104,7 @@ public class ContactsPickerActivity extends BaseActivity {
     View mLayoutContactSelect;
     View mLayoutGroupSelect;
     ListView mListView = null;
-    private MenuItem mMenuStartGroupChat;
+    private MenuItem mMenuStartGroupChat,mMenuContactsList,mMenuContactsAdd;
     private boolean isClickedMenu;
     ProgressDialog dialog;
 
@@ -113,21 +114,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
-
-    // TODO - Maybe extend the Contact class with provider and account instead?
-    public class SelectedContact {
-        public long id;
-        public String username;
-        public Integer account;
-        public Integer provider;
-
-        SelectedContact(long id, String username, int account, int provider) {
-            this.id = id;
-            this.username = username;
-            this.account = account;
-            this.provider = provider;
-        }
-    }
 
     private LongSparseArray<SelectedContact> mSelection = new LongSparseArray<>();
 
@@ -292,7 +278,7 @@ public class ContactsPickerActivity extends BaseActivity {
             if (error.isEmpty()) {
                 showWaitinDialog();
                 if (bitmap!=null) {
-                    File file = AppFuncs.ConvertBitmapToFile(getApplicationContext(),bitmap);
+                    File file = AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap);
                     RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
@@ -420,6 +406,8 @@ public class ContactsPickerActivity extends BaseActivity {
         inflater.inflate(R.menu.contact_list_menu, menu);
 
         mMenuStartGroupChat = menu.findItem(R.id.action_start_chat);
+        mMenuContactsList = menu.findItem(R.id.action_contacts_list);
+        mMenuContactsAdd = menu.findItem(R.id.action_contacts_add);
         updateStartGroupChatMenu();
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -452,8 +440,10 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void updateStartGroupChatMenu() {
-        if (mMenuStartGroupChat != null) {
+        if (mMenuStartGroupChat != null && mMenuContactsList!=null && mMenuContactsAdd!=null) {
             mMenuStartGroupChat.setVisible(isGroupMode());
+            mMenuContactsList.setVisible(!isGroupMode());
+            mMenuContactsAdd.setVisible(!isGroupMode());
             mMenuStartGroupChat.setEnabled(mSelection.size() > 0);
         }
     }
@@ -470,6 +460,13 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else
                         getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                    return true;
+                case R.id.action_contacts_list:
+                    ContactsPickerRosterActivity.start(this);
+                    return true;
+                case R.id.action_contacts_add:
+                    Intent i = new Intent(ContactsPickerActivity.this, AddContactNewActivity.class);
+                    startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
 

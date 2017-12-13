@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginLeft="@dimen/fab_margin">
+
+    <net.wrappy.im.helper.layout.CircleImageView
+        android:id="@+id/imgPhotoAvatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/avatar"/>
+    <ImageButton
+        android:id="@+id/btnPhotoCameraAvatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_camera_profile"
+        android:background="@null"/>
+
+</RelativeLayout>

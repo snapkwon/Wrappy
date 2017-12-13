@@ -511,6 +511,8 @@
             android:name="net.wrappy.im.ui.IntroActivity"
             android:label="@string/title_activity_launcher"
             android:theme="@style/NoActionBar"></activity>
+        <activity android:name=".ui.ContactsPickerRosterActivity" android:theme="@style/NoActionBar" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.ContactsPickerRosterCreateActivity" android:theme="@style/NoActionBar" android:screenOrientation="portrait"/>
         <activity
             android:name="net.wrappy.im.ui.PatternActivity"
             android:screenOrientation="portrait"
