@@ -67,7 +67,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     @BindView(R.id.spnProfileCountryCodes) AppCompatSpinner spnProfileCountryCodes;
     @BindView(R.id.headerbarTitle) AppTextView headerbarTitle;
-    @BindView(R.id.imgProfileAvatar) CircleImageView imgAvatar;
+    @BindView(R.id.imgPhotoAvatar) CircleImageView imgAvatar;
     @BindView(R.id.imgProfileHeader) ImageView imgHeader;
     @BindView(R.id.edProfileUsername) EditText edUsername;
     @BindView(R.id.edProfileEmail) EditText edEmail;
@@ -125,7 +125,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
 
     @Optional
-    @OnClick({R.id.headerbarBack, R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnProfileCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.headerbarBack, R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
     @Override
     public void onClick(View view) {
         if (isFlag) {
@@ -214,7 +214,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 startActivity(intent);
                 finish();
             }
-            if (view.getId() == R.id.btnProfileCameraAvatar) {
+            if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
@@ -325,18 +325,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (data!=null) {
                 Bitmap photo;
                 if (requestCode==IMAGE_HEADER) {
-                    if (data.getData()!=null) {
-                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    } else {
-                        photo = (Bitmap) data.getExtras().get("data");
-                    }
+                    photo = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
                     imgHeader.setImageBitmap(photo);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    if (data.getData()!=null) {
-                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    } else {
-                        photo = (Bitmap) data.getExtras().get("data");
-                    }
+                    photo = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
                     imgAvatar.setImageBitmap(photo);
                 }
             }

@@ -85,6 +85,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String TABLE_IN_MEMORY_MESSAGES = "inMemoryMessages";
     private static final String TABLE_ACCOUNT_STATUS = "accountStatus";
     private static final String TABLE_BRANDING_RESOURCE_MAP_CACHE = "brandingResMapCache";
+    private static final String TABLE_ROSTER = "roster";
 
     // tables for mcs and rmq
     private static final String TABLE_OUTGOING_RMQ_MESSAGES = "outgoingRmqMessages";
@@ -183,6 +184,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     protected static final int MATCH_CSP_DEVICE = 303;
     protected static final int MATCH_CSP_TOKENS = 304;
     protected static final int MATCH_CSP_TOKEN = 305;
+
+    //Roster
+    protected static final int MATCH_CONTACTS_ROSTER = 400;
 
     protected final UriMatcher mUrlMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private String mTransientDbName;
@@ -702,6 +706,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_ACCOUNTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_DEVICES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CSP_TOKENS);
+
+            //roster
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROSTER);
         }
 
         private void createAccountTable(SQLiteDatabase db) {
@@ -794,6 +801,21 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("name TEXT,");
             buf.append("provider INTEGER,");
             buf.append("account INTEGER");
+            buf.append(");");
+
+            db.execSQL(buf.toString());
+
+            buf.delete(0, buf.length());
+
+            buf.append("CREATE TABLE IF NOT EXISTS ");
+            buf.append(TABLE_ROSTER);
+            buf.append(" (");
+            buf.append("_id INTEGER PRIMARY KEY,");
+            buf.append("groupId INTEGER,");
+            buf.append("name TEXT,");
+            buf.append("type TEXT,");
+            buf.append("reference TEXT,");
+            buf.append("username TEXT");
             buf.append(");");
 
             db.execSQL(buf.toString());
@@ -1226,6 +1248,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         mUrlMatcher.addURI(authority, "contactLists", MATCH_CONTACTLISTS);
         mUrlMatcher.addURI(authority, "contactLists/#/#", MATCH_CONTACTLISTS_BY_PROVIDER);
         mUrlMatcher.addURI(authority, "contactLists/#", MATCH_CONTACTLIST);
+
+        mUrlMatcher.addURI(authority, "roster", MATCH_CONTACTS_ROSTER);
+
+
         mUrlMatcher.addURI(authority, "blockedList", MATCH_BLOCKEDLIST);
         mUrlMatcher.addURI(authority, "blockedList/#/#", MATCH_BLOCKEDLIST_BY_PROVIDER);
 
@@ -1613,6 +1639,11 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 appendWhere(whereClause, Imps.ContactList._ID, "=", url.getPathSegments().get(1));
                 break;
 
+            case MATCH_CONTACTS_ROSTER:
+                qb.setTables(TABLE_ROSTER);
+//                groupBy = Imps.RosterColumns.GROUP_ID;
+                break;
+
             case MATCH_BLOCKEDLIST:
                 qb.setTables(BLOCKEDLIST_JOIN_AVATAR_TABLE);
                 qb.setProjectionMap(sBlockedListProjectionMap);
@@ -1927,6 +1958,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
 
     }
+
+
 
     static class MyCrossProcessCursorWrapper extends net.sqlcipher.CrossProcessCursorWrapper {
         public MyCrossProcessCursorWrapper(net.sqlcipher.Cursor cursor) {
@@ -2673,6 +2706,15 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 }
 
                 notifyContactContentUri = true;
+                break;
+
+            case MATCH_CONTACTS_ROSTER:
+                rowID = db.insert(TABLE_ROSTER,"name",initialValues);
+                if (rowID > 0) {
+                    resultUri = Uri.parse(Imps.Contacts.CONTENT_URI + "/" + rowID);
+                }
+
+                notifyContactContentUri = false;
                 break;
 
             case MATCH_CONTACTS_BULK:
@@ -3726,6 +3768,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 tableToChange = TABLE_CONTACT_LIST;
                 changedItemId = url.getPathSegments().get(1);
                 notifyContactListContentUri = true;
+                break;
+
+            case MATCH_CONTACTS_ROSTER:
+                tableToChange = TABLE_ROSTER;
                 break;
 
             case MATCH_CONTACTS_ETAGS:
