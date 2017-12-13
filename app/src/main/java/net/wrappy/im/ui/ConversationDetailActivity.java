@@ -28,13 +28,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -52,7 +48,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -64,6 +60,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -82,17 +83,16 @@ import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -750,26 +750,14 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
-
-                try {
                     Bundle extras = resultIntent.getExtras();
                     Uri uri = extras.getParcelable("imageUri");
 
-                    InputStream inputStream;
-                    inputStream = getApplicationContext().getAssets().open(uri.getPath());
+                    saveBitmapPreferences(uri);
 
-                    Bitmap b = BitmapFactory.decodeStream(inputStream);
-                    b.setDensity(Bitmap.DENSITY_NONE);
-                    saveBitmapPreferences(b);
-
-                    Drawable d = new BitmapDrawable(b);
-                    mRootLayout.setBackground(d);
+                    loadBitmapPreferences(uri.getPath());
 
                     mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
@@ -779,36 +767,35 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-    /**
-     * saving bitmap to SharedPreferences
-     * @param bitmap
-     */
-    private void saveBitmapPreferences(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
+    private void saveBitmapPreferences(Uri imagePath) {
 
-        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-
-        SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = shre.edit();
-        edit.putString("imageData", encodedImage);
-        edit.commit();
+        PreferenceUtils.putString(mNickname, imagePath.toString(), getApplicationContext());
     }
 
     /**
      * loading bitmap to set background this screen
      */
     private void loadBitmapPreferences() {
-        SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(this);
-        String previousEncodedImage = shre.getString("imageData", "");
+        String imagePath = PreferenceUtils.getString(mNickname, "", getApplicationContext());
+        loadBitmapPreferences(imagePath);
+    }
+    private void loadBitmapPreferences(String imagePath) {
+        if ( !TextUtils.isEmpty(imagePath)) {
+            Debug.d("image Path " + imagePath);
+            Glide.with(this)
+                .load(Uri.parse("file:///android_asset/" + imagePath))
+                .into(new BaseTarget<GlideDrawable>() {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        Debug.d("image Path22 " );
+                        mRootLayout.setBackground(resource.getCurrent());
+                    }
 
-        if (!previousEncodedImage.equalsIgnoreCase("")) {
-            byte[] b = Base64.decode(previousEncodedImage, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    @Override
+                    public void getSize(SizeReadyCallback cb) {
 
-            Drawable d = new BitmapDrawable(bitmap);
-            mRootLayout.setBackground(d);
+                    }
+                });
         }
     }
 
