@@ -132,11 +132,13 @@ import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -520,6 +522,24 @@ public class ConversationView {
         public boolean onIncomingMessage(IChatSession ses,
                                          net.wrappy.im.model.Message msg) {
 
+            if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+
+                try {
+
+                    String imageName = msg.getBody().replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
+                    boolean isHaving = ConferenceUtils.listFiles(mActivity,
+                            "backgrounds/page_1", imageName);
+
+                    Log.d("Cuong", "imageName: " + imageName);
+                    Log.d("Cuong", "isHaving: " + isHaving);
+
+                    String imagePath = (isHaving ? "page_1" : "page_2") + "/" + imageName;
+                    mActivity.saveBitmapPreferences(Uri.parse("backgrounds/" + imagePath));
+                    mActivity.loadBitmapPreferences();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             return mIsSelected;
         }
 
@@ -1861,7 +1881,6 @@ public class ConversationView {
         mComposeMessage.setText("");
         mComposeMessage.requestFocus();
     }
-
 
     boolean sendMessage(String msg, boolean isResend) {
 

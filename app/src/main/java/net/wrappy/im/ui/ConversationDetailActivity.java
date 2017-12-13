@@ -82,6 +82,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -205,6 +206,8 @@ public class ConversationDetailActivity extends BaseActivity {
 
         // set background for this screen
         loadBitmapPreferences();
+
+
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -749,14 +752,14 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
-                    Bundle extras = resultIntent.getExtras();
-                    Uri uri = extras.getParcelable("imageUri");
+                Bundle extras = resultIntent.getExtras();
+                Uri uri = extras.getParcelable("imageUri");
 
-                    saveBitmapPreferences(uri);
+                saveBitmapPreferences(uri);
 
-                    loadBitmapPreferences(uri.getPath());
+                loadBitmapPreferences(uri.getPath());
 
-                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
+                mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1));
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
@@ -766,28 +769,28 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-    private void saveBitmapPreferences(Uri imagePath) {
-
+    public void saveBitmapPreferences(Uri imagePath) {
         PreferenceUtils.putString(mNickname, imagePath.toString(), getApplicationContext());
     }
 
     /**
      * loading bitmap to set background this screen
      */
-    private void loadBitmapPreferences() {
+    public void loadBitmapPreferences() {
         String imagePath = PreferenceUtils.getString(mNickname, "", getApplicationContext());
         loadBitmapPreferences(imagePath);
     }
+
     private void loadBitmapPreferences(String imagePath) {
-        if ( !TextUtils.isEmpty(imagePath)) {
+        if (!TextUtils.isEmpty(imagePath)) {
             Glide.with(this)
-                .load(Uri.parse("file:///android_asset/" + imagePath))
-                .into(new SimpleTarget<GlideDrawable>() {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        mRootLayout.setBackground(resource.getCurrent());
-                    }
-                });
+                    .load(Uri.parse("file:///android_asset/" + imagePath))
+                    .into(new SimpleTarget<GlideDrawable>() {
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            mRootLayout.setBackground(resource.getCurrent());
+                        }
+                    });
         }
     }
 
