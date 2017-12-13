@@ -1,8 +1,6 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -37,6 +35,7 @@ import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.SelectedContact;
+import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.widgets.FlowLayout;
 
@@ -68,8 +67,8 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     Bitmap photo;
     ArrayAdapter<String> arrAdapterType;
     AppFuncs appFuncs;
-
     ArrayList<String> arrType = new ArrayList<>();
+    String rostername;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity,ContactsPickerRosterCreateActivity.class);
@@ -301,6 +300,15 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     }
 
     private void createGroupContacts(){
+        rostername = txtRosterName.getText().toString().trim();
+        if (rostername.isEmpty()) {
+            AppFuncs.alert(getApplicationContext(),"Group's name is empty",true);
+            return;
+        }
+        if (mSelection.size()==0) {
+            AppFuncs.alert(getApplicationContext(),"list's members is empty",true);
+            return;
+        }
         if (photo!=null) {
             postDataToServer("");
         } else {
@@ -322,21 +330,27 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     }
 
     private void postDataToServer(String referenceImage) {
+        ArrayList<String> listUsernames = new ArrayList<>();
         for (int i=0; i < mSelection.size(); i++) {
             if (mSelection.valueAt(i)!=null) {
                 SelectedContact selectedContact = mSelection.valueAt(i);
-                selectedContact.getUsername();
+                listUsernames.add(selectedContact.getUsername());
             }
         }
-        String Type = arrAdapterType.getItem(spnRosterType.getSelectedItemPosition());
-        ContentResolver resolver = getContentResolver();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Imps.Roster.ID,2);
-        contentValues.put(Imps.Roster.NAME,txtRosterName.getText().toString().trim());
-        Imps.Roster.insert(resolver,contentValues);
+        String type = arrAdapterType.getItem(spnRosterType.getSelectedItemPosition());
 
-        Cursor cursor = Imps.Roster.getRoster(resolver);
-        String s = cursor.getString(cursor.getColumnIndex(Imps.Roster.NAME));
-        Log.i("LTH",s);
+        WpkRoster wpkRoster = new WpkRoster();
+        wpkRoster.setId(2);
+        wpkRoster.setName(rostername);
+        wpkRoster.setReference(referenceImage);
+        wpkRoster.setType(type);
+        wpkRoster.setListUsername(listUsernames);
+
+
+        Imps.Roster.insert(getContentResolver(),wpkRoster);
+
+        ArrayList<WpkRoster> wpkRosters = Imps.Roster.getListRoster(getContentResolver());
+
+        Log.i("LTH",wpkRosters.get(0).getName());
     }
 }

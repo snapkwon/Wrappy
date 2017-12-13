@@ -810,12 +810,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("CREATE TABLE IF NOT EXISTS ");
             buf.append(TABLE_ROSTER);
             buf.append(" (");
-            buf.append("id INTEGER PRIMARY KEY,");
-            buf.append("reference TEXT,");
-            buf.append("identifier INTEGER,");
+            buf.append("_id INTEGER PRIMARY KEY,");
+            buf.append("groupId INTEGER,");
             buf.append("name TEXT,");
-            buf.append("description TEXT,");
             buf.append("type TEXT,");
+            buf.append("reference TEXT,");
+            buf.append("username TEXT");
             buf.append(");");
 
             db.execSQL(buf.toString());
@@ -1639,6 +1639,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_CONTACTS_ROSTER:
                 qb.setTables(TABLE_ROSTER);
+//                groupBy = Imps.RosterColumns.GROUP_ID;
                 break;
 
             case MATCH_BLOCKEDLIST:
@@ -1955,6 +1956,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
 
     }
+
+
 
     static class MyCrossProcessCursorWrapper extends net.sqlcipher.CrossProcessCursorWrapper {
         public MyCrossProcessCursorWrapper(net.sqlcipher.Cursor cursor) {
@@ -2709,7 +2712,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     resultUri = Uri.parse(Imps.Contacts.CONTENT_URI + "/" + rowID);
                 }
 
-                notifyContactContentUri = true;
+                notifyContactContentUri = false;
                 break;
 
             case MATCH_CONTACTS_BULK:
@@ -3762,6 +3765,10 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 tableToChange = TABLE_CONTACT_LIST;
                 changedItemId = url.getPathSegments().get(1);
                 notifyContactListContentUri = true;
+                break;
+
+            case MATCH_CONTACTS_ROSTER:
+                tableToChange = TABLE_ROSTER;
                 break;
 
             case MATCH_CONTACTS_ETAGS:

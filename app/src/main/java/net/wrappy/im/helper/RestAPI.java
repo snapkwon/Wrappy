@@ -63,6 +63,7 @@ public class RestAPI {
     public static String GET_FORGET_PASS_SEND_EMAIL = root_url_dev + "member/%s/%s/password/mail";
     public static String GET_COUNTRY_CODES = root_url_dev + "master/country";
     public static String GET_TYPE_ROSTER = root_url_dev + "chat/roster/group/type";
+    public static String POST_ROSTER_CREATE = root_url_dev + "chat/roster/group/add";
 
 
     public static String loginUrl(String user, String pass) {

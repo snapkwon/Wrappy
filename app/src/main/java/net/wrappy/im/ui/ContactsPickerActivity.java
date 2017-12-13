@@ -408,6 +408,7 @@ public class ContactsPickerActivity extends BaseActivity {
         mMenuStartGroupChat = menu.findItem(R.id.action_start_chat);
         mMenuContactsList = menu.findItem(R.id.action_contacts_list);
         mMenuContactsAdd = menu.findItem(R.id.action_contacts_add);
+        mMenuContactsList.setVisible(false);
         updateStartGroupChatMenu();
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -442,7 +443,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private void updateStartGroupChatMenu() {
         if (mMenuStartGroupChat != null && mMenuContactsList!=null && mMenuContactsAdd!=null) {
             mMenuStartGroupChat.setVisible(isGroupMode());
-            mMenuContactsList.setVisible(!isGroupMode());
+            //mMenuContactsList.setVisible(!isGroupMode());
             mMenuContactsAdd.setVisible(!isGroupMode());
             mMenuStartGroupChat.setEnabled(mSelection.size() > 0);
         }
