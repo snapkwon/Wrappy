@@ -63,7 +63,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -83,7 +83,6 @@ import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -781,19 +780,12 @@ public class ConversationDetailActivity extends BaseActivity {
     }
     private void loadBitmapPreferences(String imagePath) {
         if ( !TextUtils.isEmpty(imagePath)) {
-            Debug.d("image Path " + imagePath);
             Glide.with(this)
                 .load(Uri.parse("file:///android_asset/" + imagePath))
-                .into(new BaseTarget<GlideDrawable>() {
+                .into(new SimpleTarget<GlideDrawable>() {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        Debug.d("image Path22 " );
                         mRootLayout.setBackground(resource.getCurrent());
-                    }
-
-                    @Override
-                    public void getSize(SizeReadyCallback cb) {
-
                     }
                 });
         }
