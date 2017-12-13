@@ -267,6 +267,8 @@ public class MainActivity extends BaseActivity {
         installRingtones ();
 
         applyStyle();
+        Imps.deleteMessageInDbByTime(getContentResolver());
+
     }
 
     private void installRingtones ()
