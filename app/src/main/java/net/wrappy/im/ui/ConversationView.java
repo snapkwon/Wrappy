@@ -471,10 +471,17 @@ public class ConversationView {
         } catch (RemoteException e) {
             Log.d(ImApp.LOG_TAG, "error getting remote activity", e);
         }
-
-
     }
 
+    public void sendDeleteChat(String msgId){
+        sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
+    }
+
+    public void sendEditChat(String msgId, String newMsg){
+        StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
+        buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
+        sendMessageAsync(buffer.toString());
+    }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
