@@ -376,7 +376,7 @@ public class ConversationListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor,int position) {
 
             if (TextUtils.isEmpty(mSearchString)) {
 

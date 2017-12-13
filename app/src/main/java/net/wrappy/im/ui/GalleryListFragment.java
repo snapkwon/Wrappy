@@ -157,7 +157,7 @@ public class GalleryListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(GalleryMediaViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(GalleryMediaViewHolder viewHolder, Cursor cursor,int position) {
 
             int id = cursor.getInt(0);
             String mimeType = "image/jpeg";
