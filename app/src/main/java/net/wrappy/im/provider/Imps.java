@@ -3191,7 +3191,7 @@ public class Imps {
     }
 
     public static int updateMessageBodyInDb(ContentResolver resolver, long threadId, String msgId, String body) {
-        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
         builder.appendPath(String.valueOf(threadId));
 
         ContentValues values = new ContentValues(1);
