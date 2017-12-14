@@ -57,11 +57,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +66,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -90,6 +86,7 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -132,7 +129,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private View mRootLayout;
     private Toolbar mToolbar;
 
-    FrameLayout popupWindow ;
+    FrameLayout popupWindow;
 
     private PrettyTime mPrettyTime;
 
@@ -176,8 +173,22 @@ public class ConversationDetailActivity extends BaseActivity {
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 //here define your method to be executed when screen is going to sleep
                 mConvoView.setSelected(true);
-            }
+            } else if (intent.getAction().equals(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+                String msg = intent.getStringExtra("background");
+                if (msg.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+                    try {
+                        String imageName = msg.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
+                        boolean isHaving = ConferenceUtils.listFiles(ConversationDetailActivity.this,
+                                "backgrounds/page_1", imageName);
 
+                        String imagePath = (isHaving ? "page_1" : "page_2") + "/" + imageName;
+                        saveBitmapPreferences(Uri.parse("backgrounds/" + imagePath));
+                        loadBitmapPreferences();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     };
 
@@ -203,8 +214,8 @@ public class ConversationDetailActivity extends BaseActivity {
         popupWindow.setBackgroundColor(0xfff);
 
 
-        FrameLayout main = (FrameLayout)findViewById(R.id.container);
-        main.addView(popupWindow,new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT , LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
+        FrameLayout main = (FrameLayout) findViewById(R.id.container);
+        main.addView(popupWindow, new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
@@ -222,12 +233,15 @@ public class ConversationDetailActivity extends BaseActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
 
+        // set background for this screen
+        loadBitmapPreferences();
+
+
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(popupWindow.getVisibility() == View.VISIBLE)
-                {
+                if (popupWindow.getVisibility() == View.VISIBLE) {
                     popupWindow.setVisibility(View.GONE);
                 }
             }
@@ -235,8 +249,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(popupWindow.getVisibility() == View.VISIBLE)
-                {
+                if (popupWindow.getVisibility() == View.VISIBLE) {
                     popupWindow.setVisibility(View.GONE);
                 }
             }
@@ -406,6 +419,7 @@ public class ConversationDetailActivity extends BaseActivity {
         IntentFilter regFilter = new IntentFilter();
         regFilter.addAction(Intent.ACTION_SCREEN_OFF);
         regFilter.addAction(Intent.ACTION_SCREEN_ON);
+        regFilter.addAction(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
         registerReceiver(receiver, regFilter);
 
 
@@ -468,21 +482,18 @@ public class ConversationDetailActivity extends BaseActivity {
                 mConvoView.startAudioConference();
                 return true;
             case R.id.menu_settings_language:
-             //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+                //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
                     @Override
                     public void run() {
                         popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                     }
                 });*/
-              if(popupWindow.getVisibility() == View.GONE)
-              {
-                  popupWindow.setVisibility(View.VISIBLE);
-              }
-              else
-              {
-                  popupWindow.setVisibility(View.GONE);
-              }
+                if (popupWindow.getVisibility() == View.GONE) {
+                    popupWindow.setVisibility(View.VISIBLE);
+                } else {
+                    popupWindow.setVisibility(View.GONE);
+                }
 
                 return true;
         }
