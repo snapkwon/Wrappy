@@ -4,6 +4,7 @@ package net.wrappy.im.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.util.Log;
 
 import net.wrappy.im.model.ConferenceMessage;
@@ -57,4 +58,9 @@ public final class ConferenceUtils {
         }
         return false;
     }
+
+    public static void saveBitmapPreferences(Uri imagePath, String mNickname, Context context) {
+        PreferenceUtils.putString(mNickname, imagePath.toString(), context);
+    }
+
 }

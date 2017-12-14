@@ -86,7 +86,6 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -174,20 +173,7 @@ public class ConversationDetailActivity extends BaseActivity {
 //here define your method to be executed when screen is going to sleep
                 mConvoView.setSelected(true);
             } else if (intent.getAction().equals(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
-                String msg = intent.getStringExtra("background");
-                if (msg.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
-                    try {
-                        String imageName = msg.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-                        boolean isHaving = ConferenceUtils.listFiles(ConversationDetailActivity.this,
-                                "backgrounds/page_1", imageName);
-
-                        String imagePath = (isHaving ? "page_1" : "page_2") + "/" + imageName;
-                        saveBitmapPreferences(Uri.parse("backgrounds/" + imagePath));
-                        loadBitmapPreferences();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                loadBitmapPreferences();
             }
         }
     };
@@ -816,7 +802,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 Bundle extras = resultIntent.getExtras();
                 Uri uri = extras.getParcelable("imageUri");
 
-                saveBitmapPreferences(uri);
+                ConferenceUtils.saveBitmapPreferences(uri, mNickname, this);
 
                 loadBitmapPreferences(uri.getPath());
 
@@ -828,10 +814,6 @@ public class ConversationDetailActivity extends BaseActivity {
 
 
         }
-    }
-
-    public void saveBitmapPreferences(Uri imagePath) {
-        PreferenceUtils.putString(mNickname, imagePath.toString(), getApplicationContext());
     }
 
     /**

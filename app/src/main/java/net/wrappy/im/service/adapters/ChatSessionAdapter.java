@@ -79,6 +79,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLConnection;
 import java.util.AbstractMap;
@@ -1068,6 +1069,19 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 deleteMessageInDb(msg.getID());
                 return false;
             } else if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+
+                if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+                    try {
+                        String imageName = msg.getBody().replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
+                        boolean isHaving = ConferenceUtils.listFiles(mConnection.getContext(),
+                                "backgrounds/page_1", imageName);
+
+                        String imagePath = (isHaving ? "page_1" : "page_2") + "/" + imageName;
+                        ConferenceUtils.saveBitmapPreferences(Uri.parse("backgrounds/" + imagePath),msg.getFrom().getAddress(), mConnection.getContext());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
                 i.putExtra("background", msg.getBody());
                 mConnection.getContext().sendBroadcast(i);
