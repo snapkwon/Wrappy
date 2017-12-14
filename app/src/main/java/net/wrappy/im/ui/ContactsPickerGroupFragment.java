@@ -30,9 +30,9 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
-import net.wrappy.im.util.SecureMediaStore;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         try {
             if (data != null) {
                 if (requestCode == IMAGE_AVARTA) {
-                    bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), data.getData(), 512);
+                    bmpThumbnail = AppFuncs.getBitmapFromIntentResult(getActivity(), data);
                     if (bmpThumbnail!=null) {
                         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT,RelativeLayout.TRUE);
@@ -203,10 +203,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
             buf.append('(');
             buf.append(ImpsProvider.TABLE_CONTACTS).append('.').append(BaseColumns._ID).append(" in ").append('(');
-            LongSparseArray<ContactsPickerActivity.SelectedContact> contacts = ((ContactsPickerActivity) getActivity()).getSelection();
+            LongSparseArray<SelectedContact> contacts = ((ContactsPickerActivity) getActivity()).getSelection();
             for (int i = 0; i < contacts.size(); i++) {
                 Long key = contacts.keyAt(i);
-                ContactsPickerActivity.SelectedContact contact = contacts.get(key);
+                SelectedContact contact = contacts.get(key);
                 buf.append(contact.id);
                 if (i < contacts.size() - 1)
                     buf.append(',');

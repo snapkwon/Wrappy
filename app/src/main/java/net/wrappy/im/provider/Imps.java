@@ -31,8 +31,12 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -825,6 +829,106 @@ public class Imps {
         String ACCOUNT = "account";
     }
 
+    /* Roster column */
+    public interface RosterColumns {
+        String ID = "_id";
+        String GROUP_ID = "groupId";
+        String NAME = "name";
+        String TYPE = "type";
+        String REFERENCE = "reference";
+        String USERNAME = "username";
+    }
+
+    public static final class Roster implements RosterColumns {
+        public Roster() {}
+        public static final Uri CONTENT_URI = Uri.parse("content://net.wrappy.im.provider.Imps/roster");
+        public static final Uri CONTENT_URI_INSERT = Uri.parse("content://net.wrappy.im.provider.Imps/roster_insert");
+        public static void insert(ContentResolver contentResolver, WpkRoster wpkRoster) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(GROUP_ID,wpkRoster.getId());
+            contentValues.put(NAME,wpkRoster.getName());
+            contentValues.put(REFERENCE,wpkRoster.getReference());
+            contentValues.put(TYPE,wpkRoster.getType());
+            if (wpkRoster.getListUsername()!=null) {
+                for (int i=0; i < wpkRoster.getListUsername().size();i++) {
+                    contentValues.put(USERNAME,wpkRoster.getListUsername().get(i));
+                    contentResolver.insert(CONTENT_URI, contentValues);
+                }
+            }
+        }
+        public static ArrayList<WpkRoster> getListRoster(ContentResolver contentResolver) {
+         ArrayList<WpkRoster> wpkRosters = new ArrayList<>();
+         try {
+             String[] projection = new String[]{GROUP_ID};
+//            String where = "id =?";
+//            String[] selectAgr = new String[]{String.valueOf(rosterId)};
+
+             Cursor cursor = contentResolver.query(CONTENT_URI, projection, null, null, null);
+             int columnGroupID = cursor.getColumnIndex(GROUP_ID);
+             ArrayList<Integer> integers = new ArrayList<>();
+             if (cursor.moveToFirst()){
+                 do{
+                     int groupId = cursor.getInt(columnGroupID);
+                     integers.add(groupId);
+                 }while(cursor.moveToNext());
+             }
+             cursor.close();
+             if (integers.size() > 0) {
+                 for (int i=0; i < integers.size(); i++) {
+                     WpkRoster wpkRoster = getRosterByGroupID(contentResolver,integers.get(i));
+                     if (wpkRoster!=null) {
+                         wpkRosters.add(wpkRoster);
+                     }
+                 }
+
+             }
+         }catch (Exception ex){
+             ex.printStackTrace();
+         }
+
+         return wpkRosters;
+        }
+
+        public static WpkRoster getRosterByGroupID(ContentResolver contentResolver, int groupID) {
+            WpkRoster wpkRoster = null;
+            try {
+                String[] projection = new String[]{"*"};
+                String where = GROUP_ID + "=" + groupID;
+                String[] selectAgr = new String[]{String.valueOf(groupID)};
+
+                Cursor cursor = contentResolver.query(CONTENT_URI, projection, where, null, null);
+                int columnGroupID = cursor.getColumnIndex(GROUP_ID);
+                int columnName = cursor.getColumnIndex(NAME);
+                int columnReference = cursor.getColumnIndex(REFERENCE);
+                int columnType = cursor.getColumnIndex(TYPE);
+                int columnUser = cursor.getColumnIndex(USERNAME);
+                if (cursor.moveToFirst()){
+                    wpkRoster = new WpkRoster();
+                    int groupId = cursor.getInt(columnGroupID);
+                    String name = cursor.getString(columnName);
+                    String reference = cursor.getString(columnReference);
+                    String type = cursor.getString(columnType);
+                    wpkRoster.setId(groupId);
+                    wpkRoster.setName(name);
+                    wpkRoster.setReference(reference);
+                    wpkRoster.setType(type);
+                    ArrayList<String> listUsername = new ArrayList<>();
+                    do{
+                        String username = cursor.getString(columnUser);
+                        listUsername.add(username);
+                        // do what ever you want here
+                    }while(cursor.moveToNext());
+                    wpkRoster.setListUsername(listUsername);
+                }
+                cursor.close();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            return wpkRoster;
+        }
+    }
+
     /**
      * This table contains the contact lists.
      */
@@ -1136,6 +1240,14 @@ public class Imps {
          * Mime type.  If non-null, body is a URI.
          */
         String MIME_TYPE = "mime_type";
+
+        /**
+         * Status.  0: visible, other: invisible
+         */
+        String STATUS = "status";
+
+        int VISIBLE = 0;
+        int UPDATE = 1;// edit, delete, change background: update later
     }
 
     /**
@@ -2989,6 +3101,9 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
 
+        if(body.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || body.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX) || body.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX))
+            values.put(MessageColumns.STATUS, MessageColumns.UPDATE);
+
 //        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
 
         return resolver.insert(Messages.getOtrMessagesContentUriByThreadId(contactId), values);
@@ -3076,7 +3191,7 @@ public class Imps {
     }
 
     public static int updateMessageBodyInDb(ContentResolver resolver, long threadId, String msgId, String body) {
-        Uri.Builder builder = Messages.OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
         builder.appendPath(String.valueOf(threadId));
 
         ContentValues values = new ContentValues(1);
@@ -3089,6 +3204,25 @@ public class Imps {
             result = resolver.update(builder.build(), values, null, null);
         }
 
+        return result;
+    }
+
+    public static int updateMessageBodyInDbByPacketId(ContentResolver resolver, String msgId, String body) {
+        Uri.Builder builder = Messages.CONTENT_URI.buildUpon();
+        String where = Messages.PACKET_ID + "=?";
+        String[] args = new String[]{msgId};
+
+        Debug.d("uri " + builder.toString());
+
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        int result = resolver.update(builder.build(), values, where, args);
+        Debug.d("result " +result);
+        if (result == 0) {
+            builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
+            result = resolver.update(builder.build(), values, where, args);
+        }
+        Debug.d("result2 " +result);
         return result;
     }
 

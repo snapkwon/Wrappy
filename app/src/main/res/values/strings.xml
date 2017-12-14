@@ -469,4 +469,8 @@
     <string name="setting_change_background">Change background</string>
     <string name="incoming_attachment">1 attachment</string>
 
+    <string name="title_wallet">Wallet</string>
+    <string name="ETH">Ethereum</string>
+    <string name="PRO">Proteusion</string>
+
 </resources>

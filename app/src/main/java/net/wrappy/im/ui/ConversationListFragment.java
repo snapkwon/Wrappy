@@ -376,7 +376,7 @@ public class ConversationListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor,int position) {
 
             if (TextUtils.isEmpty(mSearchString)) {
 
@@ -454,8 +454,6 @@ public class ConversationListFragment extends Fragment {
                     }
                 }
             }
-
-
         }
 
         private void showBottomSheetDialog(String address, long chatId, int chatFavorite) {
@@ -498,6 +496,11 @@ public class ConversationListFragment extends Fragment {
                 buf.append(Imps.Messages.BODY);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+
+                buf.append(" AND ");
+                buf.append(Imps.MessageColumns.STATUS);
+                buf.append('=');
+                buf.append(Imps.MessageColumns.VISIBLE);
 
                 loader = new CursorLoader(getActivity(), mUri, null,
                         buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);

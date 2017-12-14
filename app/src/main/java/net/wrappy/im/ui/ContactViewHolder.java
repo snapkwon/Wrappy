@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
+import net.wrappy.im.model.SelectedContact;
 
 /**
  * Created by n8fr8 on 3/29/16.
@@ -53,7 +54,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     public Button mButtonSubApprove;
     public Button mButtonSubDecline;
 
-    public void bindSelectedData(Context context, ContactsPickerActivity.SelectedContact contact) {
+    public void bindSelectedData(Context context, SelectedContact contact) {
         mAvatarCheck.setVisibility(View.VISIBLE);
         mLine1.setTextColor((mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
 //        mLine1.setText(context.getString(R.string.is_already_in_your_group, mLine1.getText()));
