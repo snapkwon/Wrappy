@@ -90,10 +90,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
                 {
                         "backgrounds/page_1",
                         "page_1"
-                },
-                {
-                        "backgrounds/page_2",
-                        "page_2"
                 }
         };
 
