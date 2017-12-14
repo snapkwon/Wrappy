@@ -407,8 +407,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             sendTime = msg.getDateTime().getTime();
 
         // clear deleted message
-        if ((msg.getBody().startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)
-                || msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) && newType != Imps.MessageType.QUEUED) {
+        if (ConferenceUtils.isInvisibleMessage(msg.getBody()) && newType != Imps.MessageType.QUEUED) {
             deleteMessageInDb(msg.getID());
         } else
             updateMessageInDb(msg.getID(), newType, sendTime, null);
@@ -740,17 +739,16 @@ public class ChatSessionAdapter extends IChatSession.Stub {
      */
 
     void insertOrUpdateChat(String message) {
+        if (!ConferenceUtils.isInvisibleMessage(message)) {
+            ContentValues values = new ContentValues(2);
 
-        ContentValues values = new ContentValues(2);
+            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+            values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
 
-        values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
-        values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
-
-        values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
-        // ImProvider.insert() will replace the chat if it already exist.
-        mContentResolver.insert(mChatURI, values);
-
-
+            values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
+            // ImProvider.insert() will replace the chat if it already exist.
+            mContentResolver.insert(mChatURI, values);
+        }
     }
 
     // Pattern for recognizing a URL, based off RFC 3986

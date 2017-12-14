@@ -752,7 +752,7 @@ public class MessageListItem extends FrameLayout {
                     afd.close();
 
                     //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1].toLowerCase());
+                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1]);
 
                     //now load the thumbnail
                     cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
@@ -772,7 +772,7 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
