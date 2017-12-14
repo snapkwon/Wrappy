@@ -1560,7 +1560,7 @@ public class ConversationView {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
 
             if (newCursor != null) {
-
+                //Log.i("Cursor", android.database.DatabaseUtils.dumpCursorToString(newCursor));
                 newCursor.setNotificationUri(mActivity.getApplicationContext().getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
@@ -2535,6 +2535,7 @@ public class ConversationView {
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
+        private String tempPacketIDSelect = "";
 
         public  void setTargetLanguage(String target)
         {
@@ -2663,21 +2664,7 @@ public class ConversationView {
                 }
             });
 
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                // Called when the user long-clicks on someView
-                public boolean onLongClick(View view) {
-                    if (mActionMode != null) {
-                        return false;
-                    }
 
-                    mLastSelectedView = view;
-
-                    // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
-
-                    return true;
-                }
-            });
 
             mvh = new MessageViewHolder(view);
             view.applyStyleColors();
@@ -2719,6 +2706,22 @@ public class ConversationView {
 
 
             viewHolder.setPosition(position);
+
+            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mActionMode != null) {
+                        return false;
+                    }
+
+                    mLastSelectedView = view;
+                    tempPacketIDSelect = cursor.getString(cursor.getColumnIndex(Imps.Messages.PACKET_ID));
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
+
+                    return true;
+                }
+            });
 
             MessageListItem messageView = (MessageListItem) viewHolder.itemView;
             setLinkifyForMessageView(messageView);
@@ -2856,7 +2859,7 @@ public class ConversationView {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_message_context, menu);
+                inflater.inflate(R.menu.menu_each_message, menu);
                 return true;
             }
 
@@ -2872,24 +2875,25 @@ public class ConversationView {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
                 switch (item.getItemId()) {
-                    /**
+
                      case R.id.menu_message_delete:
-                     //shareCurrentItem();
-                     mode.finish(); // Action picked, so close the CAB
+                         if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                             sendDeleteChat(tempPacketIDSelect);
+                         }
+                         mode.finish(); // Action picked, so close the CAB
                      return true;
-                     */
-                    case R.id.menu_message_share:
-                        ((MessageListItem) mLastSelectedView).exportMediaFile();
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
-                    case R.id.menu_message_forward:
-                        ((MessageListItem) mLastSelectedView).forwardMediaFile();
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
-                    case R.id.menu_message_resend:
-                        sendMessageAsync(((MessageListItem) mLastSelectedView).getLastMessage());
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
+//                    case R.id.menu_message_share:
+//                        ((MessageListItem) mLastSelectedView).exportMediaFile();
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
+//                    case R.id.menu_message_forward:
+//                        ((MessageListItem) mLastSelectedView).forwardMediaFile();
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
+//                    case R.id.menu_message_resend:
+//                        sendMessageAsync(((MessageListItem) mLastSelectedView).getLastMessage());
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
 
                     default:
                         return false;
@@ -2905,6 +2909,7 @@ public class ConversationView {
 
 
                 if (mLastSelectedView != null)
+                    tempPacketIDSelect = "";
                     mLastSelectedView.setSelected(false);
 
 
