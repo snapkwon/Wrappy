@@ -57,6 +57,4 @@ public final class ConferenceUtils {
         }
         return false;
     }
-
-//    imagePath = dirFrom + / + imagePath
 }
