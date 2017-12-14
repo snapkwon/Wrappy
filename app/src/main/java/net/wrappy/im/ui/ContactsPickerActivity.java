@@ -46,6 +46,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -346,6 +347,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     ArrayList<String> users = new ArrayList<>();
                     ArrayList<Integer> providers = new ArrayList<>();
                     ArrayList<Integer> accounts = new ArrayList<>();
+                    WpKChatGroupDto chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
 
                     for (int i = 0; i < mSelection.size(); i++) {
                         SelectedContact contact = mSelection.valueAt(i);
@@ -355,7 +357,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                     Store.putStringData(getApplicationContext(),groupName,reference);
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_RESULT_GROUP_NAME, groupName);
+                    data.putExtra(EXTRA_RESULT_GROUP_NAME, chatGroupDto);
                     data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);

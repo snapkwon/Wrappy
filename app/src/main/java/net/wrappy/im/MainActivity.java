@@ -16,23 +16,18 @@
 
 package net.wrappy.im;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -47,14 +42,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.javiersantos.appupdater.AppUpdater;
@@ -65,14 +58,14 @@ import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
+import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactNewActivity;
@@ -82,7 +75,6 @@ import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
-import net.wrappy.im.ui.MoreFragment;
 import net.wrappy.im.ui.WalletFragment;
 import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
@@ -98,7 +90,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
@@ -116,12 +107,11 @@ public class MainActivity extends BaseActivity {
     private ImApp mApp;
 
     public final static int REQUEST_ADD_CONTACT = 9999;
-    public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT+1;
-    public final static int REQUEST_CHANGE_SETTINGS = REQUEST_CHOOSE_CONTACT+1;
+    public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT + 1;
+    public final static int REQUEST_CHANGE_SETTINGS = REQUEST_CHOOSE_CONTACT + 1;
 
     private ConversationListFragment mConversationList;
     private ContactsListFragment mContactList;
-    private MoreFragment mMoreFragment;
     private AccountFragment mAccountFragment;
     private Welcome_Wallet_Fragment mwelcome_wallet_fragment;
     private WalletFragment mwalletFragment;
@@ -135,14 +125,14 @@ public class MainActivity extends BaseActivity {
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (settings.getBoolean("prefBlockScreenshots",false))
+        if (settings.getBoolean("prefBlockScreenshots", false))
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 
 
         setContentView(R.layout.awesome_activity_main);
 
-        mApp = (ImApp)getApplication();
+        mApp = (ImApp) getApplication();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -154,15 +144,12 @@ public class MainActivity extends BaseActivity {
 
         mConversationList = new ConversationListFragment();
         mContactList = new ContactsListFragment();
-        mMoreFragment = new MoreFragment();
         mAccountFragment = new AccountFragment();
 
         fragmentManager = getSupportFragmentManager();
         adapter = new Adapter(fragmentManager);
         adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
         adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
-        // remove explore tab
-//        adapter.addFragment(mMoreFragment, getString(R.string.title_more), R.drawable.ic_more_horiz_white_36dp);
 
         mAccountFragment = new AccountFragment();
         //  fragAccount.setArguments();
@@ -170,13 +157,11 @@ public class MainActivity extends BaseActivity {
         adapter.addFragment(mAccountFragment, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
 
 
-        if(!Wallet.isNewWallet(this.getFilesDir())) {
+        if (!Wallet.isNewWallet(this.getFilesDir())) {
             mwalletFragment = new WalletFragment();
             adapter.addFragment(mwalletFragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
-        }
-        else
-        {
-            mwelcome_wallet_fragment= new Welcome_Wallet_Fragment();
+        } else {
+            mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
             adapter.addFragment(mwelcome_wallet_fragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
 
         }
@@ -215,7 +200,7 @@ public class MainActivity extends BaseActivity {
 
 
                 setToolbarTitle(tab.getPosition());
-                applyStyleColors ();
+                applyStyleColors();
             }
 
             @Override
@@ -226,7 +211,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 setToolbarTitle(tab.getPosition());
-                applyStyleColors ();
+                applyStyleColors();
             }
         });
 
@@ -239,8 +224,8 @@ public class MainActivity extends BaseActivity {
                 if (tabIdx == 0 || tabIdx == 1) {
 
 //                    if (mContactList.getContactCount() > 0) {
-                        Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
-                        startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+                    Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
+                    startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
 //                    }
 //                    else
 //                    {
@@ -255,7 +240,6 @@ public class MainActivity extends BaseActivity {
 //                }
 
 
-
             }
         });
 
@@ -264,24 +248,22 @@ public class MainActivity extends BaseActivity {
         //don't wnat this to happen to often
         checkForUpdates();
 
-        installRingtones ();
+        installRingtones();
 
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
 
     }
 
-    private void installRingtones ()
-    {
-        AssetUtil.installRingtone(getApplicationContext(),R.raw.bell,"Zom Bell");
-        AssetUtil.installRingtone(getApplicationContext(),R.raw.chant,"Zom Chant");
-        AssetUtil.installRingtone(getApplicationContext(),R.raw.yak,"Zom Yak");
-        AssetUtil.installRingtone(getApplicationContext(),R.raw.dranyen,"Zom Dranyen");
+    private void installRingtones() {
+        AssetUtil.installRingtone(getApplicationContext(), R.raw.bell, "Zom Bell");
+        AssetUtil.installRingtone(getApplicationContext(), R.raw.chant, "Zom Chant");
+        AssetUtil.installRingtone(getApplicationContext(), R.raw.yak, "Zom Yak");
+        AssetUtil.installRingtone(getApplicationContext(), R.raw.dranyen, "Zom Dranyen");
 
     }
 
-    private void setToolbarTitle (int tabPosition)
-    {
+    private void setToolbarTitle(int tabPosition) {
         StringBuffer sb = new StringBuffer();
         sb.append(getString(R.string.app_name_zom));
         sb.append(" | ");
@@ -297,7 +279,7 @@ public class MainActivity extends BaseActivity {
                 break;
             case 1:
 
-                if (mContactList.getCurrentType()== Imps.Contacts.TYPE_HIDDEN)
+                if (mContactList.getCurrentType() == Imps.Contacts.TYPE_HIDDEN)
                     sb.append(getString(R.string.action_archive));
                 else
                     sb.append(getString(R.string.friends));
@@ -334,8 +316,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    public void inviteContact ()
-    {
+    public void inviteContact() {
         Intent i = new Intent(MainActivity.this, AddContactNewActivity.class);
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
@@ -345,30 +326,27 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        applyStyleColors ();
-         if(mViewPager.getCurrentItem() == 3)
-         {
-             if(!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
-                 adapter.mFragments.remove(mwelcome_wallet_fragment);
-                 fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
-                 mwalletFragment = new WalletFragment();
-                 adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
-                 adapter.notifyDataSetChanged();
-                 mViewPager.setAdapter(adapter);
-                 mViewPager.setCurrentItem(3);
-             }
-             else if(Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment))
-             {
-                 adapter.mFragments.remove(mwalletFragment);
-                 fragmentManager.beginTransaction().remove(mwalletFragment).commit();
-                 mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
-                 adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
-                 adapter.notifyDataSetChanged();
-                 mViewPager.setAdapter(adapter);
-                 mViewPager.setCurrentItem(3);
-             }
+        applyStyleColors();
+        if (mViewPager.getCurrentItem() == 3) {
+            if (!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
+                adapter.mFragments.remove(mwelcome_wallet_fragment);
+                fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
+                mwalletFragment = new WalletFragment();
+                adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
+                adapter.notifyDataSetChanged();
+                mViewPager.setAdapter(adapter);
+                mViewPager.setCurrentItem(3);
+            } else if (Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment)) {
+                adapter.mFragments.remove(mwalletFragment);
+                fragmentManager.beginTransaction().remove(mwalletFragment).commit();
+                mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
+                adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
+                adapter.notifyDataSetChanged();
+                mViewPager.setAdapter(adapter);
+                mViewPager.setCurrentItem(3);
+            }
 
-         }
+        }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -408,14 +386,10 @@ public class MainActivity extends BaseActivity {
                     sb.show();
 
                     return false;
-                }
-                else if (conn.getState() == ImConnection.LOGGING_IN)
-                {
+                } else if (conn.getState() == ImConnection.LOGGING_IN) {
                     Snackbar sb = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
                     sb.show();
-                }
-                else if (conn.getState() == ImConnection.LOGGING_OUT)
-                {
+                } else if (conn.getState() == ImConnection.LOGGING_OUT) {
                     Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
                     sb.show();
                 }
@@ -437,31 +411,25 @@ public class MainActivity extends BaseActivity {
         handleIntent();
     }
 
-    private void handleIntent ()
-    {
+    private void handleIntent() {
 
         Intent intent = getIntent();
 
-        if (intent != null)
-        {
+        if (intent != null) {
             Uri data = intent.getData();
             String type = intent.getType();
-          if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
+            if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
 
                 long chatId = ContentUris.parseId(data);
                 Intent intentChat = ConversationDetailActivity.getStartIntent(this);
                 intentChat.putExtra("id", chatId);
                 startActivity(intentChat);
-            }
-            else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type))
-            {
-                long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID,mApp.getDefaultProviderId());
-                long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID,mApp.getDefaultAccountId());
+            } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
+                long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());
+                long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mApp.getDefaultAccountId());
                 String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
                 startChat(providerId, accountId, username, true, true);
-            }
-            else if (intent.hasExtra("username"))
-            {
+            } else if (intent.hasExtra("username")) {
                 //launch a new chat based on the intent value
                 startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"), true, true);
             }
@@ -476,26 +444,11 @@ public class MainActivity extends BaseActivity {
 
         if (resultCode == RESULT_OK) {
 
-            if (requestCode == REQUEST_CHANGE_SETTINGS)
-            {
+            if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
-            }
-            else if (requestCode == REQUEST_ADD_CONTACT)
-            {
+            } else if (requestCode == REQUEST_ADD_CONTACT) {
 
-                String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
-
-                if (username != null) {
-                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,-1);
-
-                    startChat(providerId, accountId, username, true, true);
-                }
-
-            }
-            else if (requestCode == REQUEST_CHOOSE_CONTACT)
-            {
                 String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
 
                 if (username != null) {
@@ -504,95 +457,82 @@ public class MainActivity extends BaseActivity {
 
                     startChat(providerId, accountId, username, true, true);
                 }
-                else {
-                    String groupName = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_GROUP_NAME);
-                    if (groupName==null){
-                        groupName = "groupchat" + UUID.randomUUID().toString().substring(0,8);
-                    }
+
+            } else if (requestCode == REQUEST_CHOOSE_CONTACT) {
+                String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+
+                if (username != null) {
+                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
+                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+
+                    startChat(providerId, accountId, username, true, true);
+                } else {
+                    WpKChatGroupDto group = data.getParcelableExtra(ContactsPickerActivity.EXTRA_RESULT_GROUP_NAME);
+//                    if (groupName == null) {
+//                        groupName = "groupchat" + UUID.randomUUID().toString().substring(0, 8);
+//                    }
                     ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
-                    if (users != null)
-                    {
+                    if (users != null) {
                         //start group and do invite hereartGrou
                         try {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(),mApp.getDefaultAccountId());
-                            if (conn.getState() == ImConnection.LOGGED_IN)
-                            {
-                                startGroupChat(groupName ,users, conn);
+                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                            if (conn.getState() == ImConnection.LOGGED_IN) {
+                                startGroupChat(group, users, conn);
                             }
-                        }catch (Exception ex) {
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
 
                     }
 
                 }
-            }
-            else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE)
-            {
+            } else if (requestCode == ConversationDetailActivity.REQUEST_TAKE_PICTURE) {
                 try {
                     if (mLastPhoto != null)
                         importPhoto();
-                }
-                catch (Exception e)
-                {
-                    Log.w(ImApp.LOG_TAG, "error importing photo",e);
+                } catch (Exception e) {
+                    Log.w(ImApp.LOG_TAG, "error importing photo", e);
 
                 }
-            }
-            else if (requestCode == OnboardingManager.REQUEST_SCAN) {
+            } else if (requestCode == OnboardingManager.REQUEST_SCAN) {
 
                 ArrayList<String> resultScans = data.getStringArrayListExtra("result");
-                for (String resultScan : resultScans)
-                {
+                for (String resultScan : resultScans) {
 
                     try {
 
                         String address = null;
 
-                        if (resultScan.startsWith("xmpp:"))
-                        {
+                        if (resultScan.startsWith("xmpp:")) {
                             address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
-                            String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
+                            String fingerprint = XmppUriHelper.getOtrFingerprint(resultScan);
                             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
 
-                        }
-                        else {
+                        } else {
                             //parse each string and if they are for a new user then add the user
                             OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username,diLink.fingerprint,diLink.nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
                         }
 
                         if (address != null)
                             startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), address, true, true);
 
                         //if they are for a group chat, then add the group
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
                     }
                 }
-            }
-             else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
+            } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
                 mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
 
-    private void startGroupChat (String groupName, ArrayList<String> invitees, IImConnection conn)
-    {
-
-
-        String chatRoom = groupName;
+    private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         String chatServer = ""; //use the default
         String nickname = mApp.getDefaultUsername().split("@")[0];
-        try
-        {
-            this.startGroupChat(chatRoom, chatServer, nickname, invitees, conn);
-        } catch (Exception re) {
-
-        }
+        new GroupChatSessionTask(this, group, invitees, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
     }
 
     @Override
@@ -610,12 +550,12 @@ public class MainActivity extends BaseActivity {
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
 
-       String lastPhotoPath =  savedInstanceState.getString("lastphoto");
+        String lastPhotoPath = savedInstanceState.getString("lastphoto");
         if (lastPhotoPath != null)
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
 
-    private void importPhoto () throws FileNotFoundException {
+    private void importPhoto() throws FileNotFoundException {
 
         // import
         SystemServices.FileInfo info = SystemServices.getFileInfoFromURI(this, mLastPhoto);
@@ -634,17 +574,15 @@ public class MainActivity extends BaseActivity {
                     0, offerId, info.type);
 
             mLastPhoto = null;
-        }
-        catch (IOException ioe)
-        {
-            Log.e(ImApp.LOG_TAG,"error importing photo",ioe);
+        } catch (IOException ioe) {
+            Log.e(ImApp.LOG_TAG, "error importing photo", ioe);
         }
 
     }
 
     private boolean delete(Uri uri) {
         if (uri.getScheme().equals("content")) {
-            int deleted = getContentResolver().delete(uri,null,null);
+            int deleted = getContentResolver().delete(uri, null, null);
             return deleted == 1;
         }
         if (uri.getScheme().equals("file")) {
@@ -664,15 +602,12 @@ public class MainActivity extends BaseActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
 
-        if (mSearchView != null )
-        {
+        if (mSearchView != null) {
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             mSearchView.setIconifiedByDefault(false);
 
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
-            {
-                public boolean onQueryTextChange(String query)
-                {
+            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+                public boolean onQueryTextChange(String query) {
                     if (mTabLayout.getSelectedTabPosition() == 0)
                         mConversationList.doSearch(query);
                     else if (mTabLayout.getSelectedTabPosition() == 1)
@@ -681,8 +616,7 @@ public class MainActivity extends BaseActivity {
                     return true;
                 }
 
-                public boolean onQueryTextSubmit(String query)
-                {
+                public boolean onQueryTextSubmit(String query) {
                     if (mTabLayout.getSelectedTabPosition() == 0)
                         mConversationList.doSearch(query);
                     else if (mTabLayout.getSelectedTabPosition() == 1)
@@ -721,7 +655,7 @@ public class MainActivity extends BaseActivity {
 
             case R.id.menu_settings:
                 Intent sintent = new Intent(this, SettingActivity.class);
-                startActivityForResult(sintent,  REQUEST_CHANGE_SETTINGS);
+                startActivityForResult(sintent, REQUEST_CHANGE_SETTINGS);
                 return true;
 
             case R.id.menu_list_normal:
@@ -748,8 +682,7 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void clearFilters ()
-    {
+    private void clearFilters() {
 
         if (mTabLayout.getSelectedTabPosition() == 0)
             mConversationList.setArchiveFilter(false);
@@ -761,8 +694,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void enableArchiveFilter ()
-    {
+    private void enableArchiveFilter() {
 
         if (mTabLayout.getSelectedTabPosition() == 0)
             mConversationList.setArchiveFilter(true);
@@ -774,12 +706,11 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    public void resetPassphrase ()
-    {
+    public void resetPassphrase() {
         /**
-        Intent intent = new Intent(this, LockScreenActivity.class);
-        intent.setAction(LockScreenActivity.ACTION_RESET_PASSPHRASE);
-        startActivity(intent);**/
+         Intent intent = new Intent(this, LockScreenActivity.class);
+         intent.setAction(LockScreenActivity.ACTION_RESET_PASSPHRASE);
+         startActivity(intent);**/
 
         //need to setup new user passphrase
         Intent intent = new Intent(this, LockScreenActivity.class);
@@ -788,17 +719,14 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    public void handleLock ()
-    {
+    public void handleLock() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-        {
+        if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
             //need to setup new user passphrase
             Intent intent = new Intent(this, LockScreenActivity.class);
             intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
             startActivity(intent);
-        }
-        else {
+        } else {
 
             //time to do the lock
             Intent intent = new Intent(this, RouterActivity.class);
@@ -817,9 +745,8 @@ public class MainActivity extends BaseActivity {
             super(fm);
         }
 
-        public void replaceFragment(int index,Fragment fragment)
-        {
-            mFragments.set(index , fragment);
+        public void replaceFragment(int index, Fragment fragment) {
+            mFragments.set(index, fragment);
         }
 
         public void addFragment(Fragment fragment, String title, int icon) {
@@ -840,23 +767,19 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-        return mFragmentTitles.get(position);
+            return mFragmentTitles.get(position);
         }
-
 
 
     }
 
 
-
-    public void startChat (long providerId, long accountId, String username, boolean startCrypto, final boolean openChat)
-    {
+    public void startChat(long providerId, long accountId, String username, boolean startCrypto, final boolean openChat) {
 
         //startCrypto is not actually used anymore, as we move to OMEMO
 
         if (username != null)
-            new ChatSessionInitTask(((ImApp)getApplication()),providerId, accountId, Imps.Contacts.TYPE_NORMAL)
-            {
+            new ChatSessionInitTask(((ImApp) getApplication()), providerId, accountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
 
@@ -869,217 +792,18 @@ public class MainActivity extends BaseActivity {
                     super.onPostExecute(chatId);
                 }
 
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(username)));
-    }
-
-    public void showGroupChatDialog ()
-    {
-
-        // This example shows how to add a custom layout to an AlertDialog
-        LayoutInflater factory = LayoutInflater.from(this);
-
-        final View dialogGroup = factory.inflate(R.layout.alert_dialog_group_chat, null);
-        //TextView tvServer = (TextView) dialogGroup.findViewById(R.id.chat_server);
-        // tvServer.setText(ImApp.DEFAULT_GROUPCHAT_SERVER);// need to make this a list
-
-       // final Spinner listAccounts = (Spinner) dialogGroup.findViewById(R.id.choose_list);
-       // setupAccountSpinner(listAccounts);
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.create_group)
-                .setView(dialogGroup)
-                .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    /* User clicked OK so do some stuff */
-
-                        String chatRoom = null;
-                        String chatServer = "";
-                        String nickname = "";
-
-                        TextView tv = (TextView) dialogGroup.findViewById(R.id.chat_room);
-                        chatRoom = tv.getText().toString();
-
-                        /**
-                         tv = (TextView) dialogGroup.findViewById(R.id.chat_server);
-                         chatServer = tv.getText().toString();
-
-                         tv = (TextView) dialogGroup.findViewById(R.id.nickname);
-                         nickname = tv.getText().toString();
-                         **/
-
-                        try {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                            if (conn.getState() == ImConnection.LOGGED_IN)
-                                startGroupChat(chatRoom, chatServer, nickname, null, conn);
-
-                        } catch (RemoteException re) {
-
-                        }
-
-                        dialog.dismiss();
-
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    /* User clicked cancel so do some stuff */
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
-
-        Typeface typeface;
-
-        if ((typeface = CustomTypefaceManager.getCurrentTypeface(this))!=null) {
-            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-            if (textView != null)
-                textView.setTypeface(typeface);
-
-            textView = (TextView) dialog.findViewById(R.id.alertTitle);
-            if (textView != null)
-                textView.setTypeface(typeface);
-
-            Button btn = (Button)dialog.findViewById(android.R.id.button1);
-            if (btn != null)
-                btn.setTypeface(typeface);
-
-            btn = (Button)dialog.findViewById(android.R.id.button2);
-            if (btn != null)
-                btn.setTypeface(typeface);
-
-
-            btn = (Button)dialog.findViewById(android.R.id.button3);
-            if (btn != null)
-                btn.setTypeface(typeface);
-
-
-        }
-
-
-    }
-
-    private IImConnection mLastConnGroup = null;
-    private long mRequestedChatId = -1;
-
-    public void startGroupChat (String room, String server, String nickname, final ArrayList<String> invitees, IImConnection conn)
-    {
-        mLastConnGroup = conn;
-
-        new AsyncTask<String, Long, String>() {
-
-            private ProgressDialog dialog;
-
-
-            @Override
-            protected void onPreExecute() {
-                dialog = new ProgressDialog(MainActivity.this);
-
-                dialog.setMessage(getString(R.string.connecting_to_group_chat_));
-                dialog.setCancelable(true);
-                dialog.show();
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                String subject = params[0];
-                String chatRoom = "group" + subject;
-                String server = params[1];
-
-
-                try {
-
-                    IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
-
-                    String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
-                    String nickname = params[2];
-
-                    IChatSession session = manager.getChatSession(roomAddress);
-
-                    if (session == null) {
-                        session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
-
-                        if (session != null)
-                        {
-                            mRequestedChatId = session.getId();
-                            publishProgress(mRequestedChatId);
-
-                        } else {
-                            return getString(R.string.unable_to_create_or_join_group_chat);
-
-                        }
-                    } else {
-                        mRequestedChatId = session.getId();
-                        publishProgress(mRequestedChatId);
-                    }
-
-                    if (invitees != null && invitees.size() > 0) {
-
-                        //wait a second for the server to sort itself out
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                        }
-
-                        for (String invitee : invitees)
-                            session.inviteContact(invitee);
-                    }
-
-                    return null;
-
-                } catch (RemoteException e) {
-                    return e.toString();
-                }
-
-            }
-
-            @Override
-            protected void onProgressUpdate(Long... showChatId) {
-                showChat(showChatId[0]);
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-
-                if (result != null)
-                {
-                 //   mHandler.showServiceErrorAlert(result);
-
-                }
-
-
-            }
-        }.executeOnExecutor(ImApp.sThreadPoolExecutor,room, server, nickname);
-
-
-    }
-
-    private void showChat (long chatId)
-    {
-        Intent intent = ConversationDetailActivity.getStartIntent(this);
-        intent.putExtra("id",chatId);
-        startActivity(intent);
+            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-    //    UpdateManager.unregister();
+        //    UpdateManager.unregister();
     }
 
     private void checkForUpdates() {
         // Remove this for store builds!
-     //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
+        //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
 
         //only check github for updates if there is no Google Play
         if (!hasGooglePlay()) {
@@ -1132,7 +856,7 @@ public class MainActivity extends BaseActivity {
 
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  "cs_" + new Date().getTime() + ".jpg");
+        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "cs_" + new Date().getTime() + ".jpg");
         mLastPhoto = Uri.fromFile(photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 mLastPhoto);
@@ -1142,12 +866,12 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.awesome_activity_main);
-
-    }*/
+     * @Override public void onConfigurationChanged(Configuration newConfig) {
+     * super.onConfigurationChanged(newConfig);
+     * setContentView(R.layout.awesome_activity_main);
+     * <p>
+     * }
+     */
 
     public void applyStyle() {
 
@@ -1167,18 +891,17 @@ public class MainActivity extends BaseActivity {
             }
         }
 
-        applyStyleColors ();
+        applyStyleColors();
     }
 
-    private void applyStyleColors ()
-    {
+    private void applyStyleColors() {
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         //not set color
 
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorText = settings.getInt("themeColorText", -1);
+        int themeColorBg = settings.getInt("themeColorBg", -1);
 
         if (themeColorHeader != -1) {
 
@@ -1201,19 +924,18 @@ public class MainActivity extends BaseActivity {
 
         }
 
-        if (themeColorBg != -1)
-        {
+        if (themeColorBg != -1) {
             if (mConversationList != null && mConversationList.getView() != null)
                 mConversationList.getView().setBackgroundColor(themeColorBg);
 
-            if (mContactList != null &&  mContactList.getView() != null)
+            if (mContactList != null && mContactList.getView() != null)
                 mContactList.getView().setBackgroundColor(themeColorBg);
-
-            if (mMoreFragment != null && mMoreFragment.getView() != null)
-                mMoreFragment.getView().setBackgroundColor(themeColorBg);
 
             if (mAccountFragment != null && mAccountFragment.getView() != null)
                 mAccountFragment.getView().setBackgroundColor(themeColorBg);
+
+            if (mwalletFragment != null && mwalletFragment.getView() != null)
+                mwalletFragment.getView().setBackgroundColor(themeColorBg);
 
 
         }
@@ -1225,16 +947,12 @@ public class MainActivity extends BaseActivity {
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
-    private void checkCustomFont ()
-    {
+    private void checkCustomFont() {
 
-        if (Preferences.isLanguageTibetan())
-        {
-            CustomTypefaceManager.loadFromAssets(this,true);
+        if (Preferences.isLanguageTibetan()) {
+            CustomTypefaceManager.loadFromAssets(this, true);
 
-        }
-        else
-        {
+        } else {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
