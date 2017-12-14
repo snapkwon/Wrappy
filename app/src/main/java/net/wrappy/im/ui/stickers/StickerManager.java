@@ -1,16 +1,5 @@
 package net.wrappy.im.ui.stickers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +16,17 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StickerManager {
 
 
@@ -40,6 +40,12 @@ public class StickerManager {
     private final static String PLUGIN_CONSTANT = "info.guardianproject.emoji.STICKER_PACK";
 
     private final static String[][] stickerCategories = new String[][]{
+            {
+                    "stickers/emoji",
+                    "Emoji"},
+            {
+                    "stickers/bunny",
+                    "Bunny"}};/*,
             {
                     "stickers/olo and shimi",
                     "Olo & Shimi"},
@@ -67,7 +73,7 @@ public class StickerManager {
             {
                     "stickers/expressions",
                     "Expressions"}
-    };
+    };*/
 
     private StickerManager(Context context) {
         mContext = context;
