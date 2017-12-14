@@ -1,6 +1,9 @@
 package net.wrappy.im.util;
 
 
+import android.content.Context;
+import android.net.Uri;
+
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 
@@ -39,4 +42,8 @@ public final class ConferenceUtils {
     public static boolean isInvisibleMessage(String message) {
         return message.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX) || message.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || message.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX);
 	}
+
+    public static void saveBitmapPreferences(Uri imagePath, String mNickname, Context context) {
+        PreferenceUtils.putString(mNickname, imagePath.toString(), context);
+    }
 }
