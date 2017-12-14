@@ -81,6 +81,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -95,6 +96,8 @@ import net.java.otr4j.session.SessionStatus;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
+import net.wrappy.im.TranslateAPI.InAppTranslation;
+import net.wrappy.im.adapter.RecycleWalletAdapter;
 import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
@@ -132,6 +135,7 @@ import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -141,6 +145,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -239,6 +244,8 @@ public class ConversationView {
     private Date mLastSeen;
 
     private int mViewType;
+
+    private boolean istranslate = false;
 
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
@@ -464,10 +471,17 @@ public class ConversationView {
         } catch (RemoteException e) {
             Log.d(ImApp.LOG_TAG, "error getting remote activity", e);
         }
-
-
     }
 
+    public void sendDeleteChat(String msgId){
+        sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
+    }
+
+    public void sendEditChat(String msgId, String newMsg){
+        StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
+        buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
+        sendMessageAsync(buffer.toString());
+    }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1564,7 +1578,7 @@ public class ConversationView {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            CursorLoader loader = new CursorLoader(mActivity, mUri, null, null, null, Imps.Messages.DEFAULT_SORT_ORDER);
+            CursorLoader loader = new CursorLoader(mActivity, mUri, null, Imps.MessageColumns.STATUS + " = " + Imps.MessageColumns.VISIBLE, null, Imps.Messages.DEFAULT_SORT_ORDER);
 
             return loader;
         }
@@ -1864,7 +1878,6 @@ public class ConversationView {
 
 
     boolean sendMessage(String msg, boolean isResend) {
-
         //don't send empty messages
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1883,6 +1896,16 @@ public class ConversationView {
 
         if (session != null) {
             try {
+                // delete own message
+                if (msg.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
+                    String packet_id = msg.replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
+                    session.deleteMessageInDb(packet_id);
+                } else if (msg.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {// update own message
+                    String[] message_edit = ConferenceUtils.getEditedMessage(msg);
+                    session.updateMessageInDb(message_edit[0], message_edit[1]);
+//                    session.deleteMessageInDb(message_edit[0]);
+                }
+
                 session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();
@@ -2531,9 +2554,38 @@ public class ConversationView {
         private int mMimeTypeColumn;
         private int mIdColumn;
 
+        class BodyTranslate
+        {
+            public  boolean mIstranslate;
+            public String mTexttranslate;
+
+        }
+
+
+        private List<BodyTranslate> bodytranslate = new ArrayList<>();
+        private InAppTranslation iapptranslater;
+        private String targetlanguage = "ja";
+       // private String bodytranalate = "";
+
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
+
+        public  void setTargetLanguage(String target)
+        {
+            switch (target) {
+                case "English":
+                    targetlanguage = "en";
+                    break;
+                case "Japanese":
+                    targetlanguage = "ja";
+                    break;
+                case "Vietnamese":
+                    targetlanguage = "vi";
+                    break;
+            }
+            bodytranslate.clear();
+        }
 
         public ConversationRecyclerViewAdapter(Activity context, Cursor c) {
             super(context, c);
@@ -2566,6 +2618,7 @@ public class ConversationView {
 
         @Override
         public long getItemId(int position) {
+
             Cursor c = getCursor();
             c.moveToPosition(position);
             long chatId = c.getLong(mIdColumn);
@@ -2613,6 +2666,7 @@ public class ConversationView {
         @Override
         public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             MessageListItem view = null;
+            MessageViewHolder mvh = null;
 
             if (viewType == 0)
                 view = (MessageListItem) LayoutInflater.from(parent.getContext())
@@ -2620,6 +2674,29 @@ public class ConversationView {
             else
                 view = (MessageListItem) LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.message_view_right, parent, false);
+
+            iapptranslater = new InAppTranslation(mActivity, new InAppTranslation.CompleteTransaction() {
+                @Override
+                public void onTaskTranslateComplete(String result,int position) {
+                    BodyTranslate data = new BodyTranslate();
+                    data.mIstranslate = true;
+                    data.mTexttranslate = result;
+                    bodytranslate.set(position, data);
+                    notifyItemChanged(position);
+                }
+
+                @Override
+                public void onTaskDetectComplete(String result,String src,int position) {
+                    if(!result.equals("")) {
+                        iapptranslater.translate(src, result, targetlanguage, position);
+                    }
+                }
+
+                @Override
+                public void onTaskLListTranslateComplete(List<String> result) {
+
+                }
+            });
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 // Called when the user long-clicks on someView
@@ -2637,13 +2714,46 @@ public class ConversationView {
                 }
             });
 
-            MessageViewHolder mvh = new MessageViewHolder(view);
+            mvh = new MessageViewHolder(view);
             view.applyStyleColors();
             return mvh;
         }
 
+
         @Override
-        public void onBindViewHolder(MessageViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
+            if(bodytranslate.size() < position + 1) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        String Textdata = cursor.getString(mBodyColumn);
+                        BodyTranslate data = new BodyTranslate();
+                        data.mIstranslate = false;
+                        data.mTexttranslate = "";
+                        bodytranslate.add(data);
+                        // do what ever you want here
+                    } while (cursor.moveToNext());
+                }
+            }
+            cursor.moveToPosition(position);
+
+            viewHolder.btntranslate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cursor.moveToPosition(viewHolder.getPos());
+                    if(bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                        bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
+                        iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
+                    }
+                    else
+                    {
+                        bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
+                        notifyItemChanged(viewHolder.getPos());
+                    }
+                }
+            });
+
+
+            viewHolder.setPosition(position);
 
             MessageListItem messageView = (MessageListItem) viewHolder.itemView;
             setLinkifyForMessageView(messageView);
@@ -2659,7 +2769,32 @@ public class ConversationView {
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = cursor.getString(mBodyColumn);
+            String body = cursor.getString(mBodyColumn) ;
+            if(istranslate ==false || cursor.getString(mMimeTypeColumn)!=null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX))
+            {
+                viewHolder.btntranslate.setVisibility(View.GONE);
+                viewHolder.txttranslate.setVisibility(View.GONE);
+               // body =cursor.getString(mBodyColumn);
+            }
+            else
+            {
+                viewHolder.btntranslate.setVisibility(View.VISIBLE);
+                if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                    if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
+                        viewHolder.txttranslate.setVisibility(View.VISIBLE);
+                        viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
+                    }
+                    viewHolder.btntranslate.setText("close translate");
+                }
+                else
+                {
+                    viewHolder.txttranslate.setVisibility(View.GONE);
+                    viewHolder.btntranslate.setText("see translate");
+                }
+
+            }
+
             long delta = cursor.getLong(mDeltaColumn);
             boolean showTimeStamp = true;//(delta > SHOW_TIME_STAMP_INTERVAL);
             long timestamp = cursor.getLong(mDateColumn);
@@ -3077,11 +3212,15 @@ public class ConversationView {
      *
      * @return
      */
-    public PopupWindow popupDisplay() {
-        PopupWindow popupWindow = new PopupWindow(mActivity);
+    public FrameLayout popupDisplay(ConversationDetailActivity activity) {
+        FrameLayout popupWindow = new FrameLayout(activity);
+
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        popupWindow.setLayoutParams(layoutParams);
 
         // inflate menu item layout
-        LayoutInflater inflater = (LayoutInflater) mActivity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.menu_popup_translate, null);
 
@@ -3090,9 +3229,27 @@ public class ConversationView {
                 "English", "Japanese", "Vietnamese"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
                 R.layout.spinner_language_item, arraySpinner);
         spinner.setAdapter(adapter);
+
+        spinner.setSelection(1);
+        mMessageAdapter.setTargetLanguage( spinner.getSelectedItem().toString());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                mMessageAdapter.setTargetLanguage(arraySpinner[position]);
+                mMessageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         final TextView textTurnOnOff = (TextView) view.findViewById(R.id.text_turn_on_off_translate);
 
@@ -3103,17 +3260,21 @@ public class ConversationView {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     textTurnOnOff.setText("On");
+                    istranslate = true;
+                    mMessageAdapter.notifyDataSetChanged();
                 } else {
                     textTurnOnOff.setText("Off");
+                    istranslate = false;
+                    mMessageAdapter.notifyDataSetChanged();
                 }
             }
         });
 
         popupWindow.setFocusable(true);
-        popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        popupWindow.setContentView(view);
+       // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+       // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+     //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        popupWindow.addView(view);
 
         return popupWindow;
     }

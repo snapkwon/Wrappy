@@ -55,11 +55,9 @@ import net.wrappy.im.model.GroupMemberListener;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImEntity;
 import net.wrappy.im.model.ImErrorInfo;
-import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Message;
 import net.wrappy.im.model.MessageListener;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -68,6 +66,8 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IDataListener;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
+import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -391,6 +391,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         Message msg = new Message(text);
         msg.setID(nextID());
 
+        Debug.d("message Id " + msg.getID());
         msg.setFrom(mConnection.getLoginUser().getAddress());
         msg.setType(Imps.MessageType.QUEUED);
 
@@ -406,9 +407,12 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         if (msg.getDateTime() != null)
             sendTime = msg.getDateTime().getTime();
 
-        updateMessageInDb(msg.getID(), newType, sendTime, null);
-
-
+        // clear deleted message
+        if ((msg.getBody().startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)
+                || msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) && newType != Imps.MessageType.QUEUED) {
+            deleteMessageInDb(msg.getID());
+        } else
+            updateMessageInDb(msg.getID(), newType, sendTime, null);
     }
 
     private Message storeMediaMessage(String localUrl, String mimeType) {
@@ -887,7 +891,8 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
                 try {
-                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                    }.getType());
                     Imps.GroupMembers.updateNicknameFromGroupUri(mContentResolver, uri, wpKMemberDtos.getIdentifier());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1039,18 +1044,32 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         return Imps.updateMessageInDb(mContentResolver, id, type, time, mContactId);
     }
 
-    int deleteMessageInDb(String id) {
+    public int updateMessageInDb(String id, String msg) {
+        return Imps.updateMessageBodyInDbByPacketId(mContentResolver, id, msg);
+    }
 
+    public int deleteMessageInDb(String id) {
         return mContentResolver.delete(mMessageURI, Imps.Messages.PACKET_ID + "=?",
                 new String[]{id});
-
     }
 
 
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
         public synchronized boolean onIncomingMessage(ChatSession ses, final Message msg) {
+            Debug.d("message Id " + msg.getID());
             String body = msg.getBody();
+            if (msg.getBody().startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
+                String packet_id = msg.getBody().replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
+                deleteMessageInDb(packet_id);
+                deleteMessageInDb(msg.getID());
+                return false;
+            }else if (msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {
+                String[] message_edit = ConferenceUtils.getEditedMessage(msg.getBody());
+                updateMessageInDb(message_edit[0], message_edit[1]);
+                deleteMessageInDb(msg.getID());
+                return false;
+            }
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);

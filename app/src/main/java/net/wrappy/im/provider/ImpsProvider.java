@@ -861,6 +861,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             }
             buf.append(",is_delivered INTEGER");
             buf.append(",mime_type TEXT");
+            buf.append(",status INTEGER NOT NULL DEFAULT 0");
 
             buf.append(");");
 
@@ -920,7 +921,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                     + "err_code INTEGER NOT NULL DEFAULT 0," + "err_msg TEXT,"
                     + "is_muc INTEGER," + "show_ts INTEGER," +
                     "is_delivered INTEGER," +
-                    "mime_type TEXT" +
+                    "mime_type TEXT," +
+                    "status INTEGER NOT NULL DEFAULT 0" +
                     ");");
 
         }
