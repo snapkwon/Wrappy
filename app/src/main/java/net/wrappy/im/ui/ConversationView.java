@@ -1587,7 +1587,7 @@ public class ConversationView {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
 
             if (newCursor != null) {
-                Log.i("Cursor", android.database.DatabaseUtils.dumpCursorToString(newCursor));
+                //Log.i("Cursor", android.database.DatabaseUtils.dumpCursorToString(newCursor));
                 newCursor.setNotificationUri(mActivity.getApplicationContext().getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
