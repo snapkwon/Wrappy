@@ -79,6 +79,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
@@ -798,9 +799,9 @@ public class ConversationDetailActivity extends BaseActivity {
                 Bundle extras = resultIntent.getExtras();
                 Uri uri = extras.getParcelable("imageUri");
 
-                ConferenceUtils.saveBitmapPreferences(uri, mNickname, this);
+                ConferenceUtils.saveBitmapPreferences(uri, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
 
-                loadBitmapPreferences(uri.getPath());
+                loadBitmapPreferences();
 
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1));
 
@@ -808,20 +809,14 @@ public class ConversationDetailActivity extends BaseActivity {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
             }
-
-
         }
     }
 
     /**
      * loading bitmap to set background this screen
      */
-    public void loadBitmapPreferences() {
-        String imagePath = PreferenceUtils.getString(mNickname, "", getApplicationContext());
-        loadBitmapPreferences(imagePath);
-    }
-
-    private void loadBitmapPreferences(String imagePath) {
+    private void loadBitmapPreferences() {
+        String imagePath = PreferenceUtils.getString(new XmppAddress(mConvoView.mRemoteAddress).getUser(), "", getApplicationContext());
         if (!TextUtils.isEmpty(imagePath)) {
             Glide.with(this)
                     .load(Uri.parse("file:///android_asset/" + imagePath))
