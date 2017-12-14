@@ -18,22 +18,6 @@
 package net.wrappy.im.ui;
 
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import net.wrappy.im.model.ImErrorInfo;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IContactListManager;
-import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
-
-import net.wrappy.im.model.Contact;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.model.Presence;
-
-import net.wrappy.im.ui.widgets.LetterAvatar;
-import net.wrappy.im.util.LogCleaner;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,6 +27,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -52,19 +37,34 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.enums.EnumPresenceStatus;
+import net.wrappy.im.model.Contact;
+import net.wrappy.im.model.ImErrorInfo;
+import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IContactListManager;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.LogCleaner;
+
 public class ContactListItem extends FrameLayout {
-    public static final String[] CONTACT_PROJECTION = { Imps.Contacts._ID, Imps.Contacts.PROVIDER,
-                                                Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
-                                                Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_TYPE,
-                                                Imps.Contacts.SUBSCRIPTION_STATUS,
-                                                Imps.Presence.PRESENCE_STATUS,
-                                                Imps.Presence.PRESENCE_CUSTOM_STATUS,
-                                                Imps.Chats.LAST_MESSAGE_DATE,
-                                                Imps.Chats.LAST_UNREAD_MESSAGE,
-                                                Imps.Contacts.AVATAR_HASH,
-                                                Imps.Contacts.AVATAR_DATA,
-                                                Imps.Contacts.CONTACT_EMAIL
+    public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
+            Imps.Contacts.ACCOUNT, Imps.Contacts.USERNAME,
+            Imps.Contacts.NICKNAME, Imps.Contacts.TYPE,
+            Imps.Contacts.SUBSCRIPTION_TYPE,
+            Imps.Contacts.SUBSCRIPTION_STATUS,
+            Imps.Presence.PRESENCE_STATUS,
+            Imps.Presence.PRESENCE_CUSTOM_STATUS,
+            Imps.Chats.LAST_MESSAGE_DATE,
+            Imps.Chats.LAST_UNREAD_MESSAGE,
+            Imps.Contacts.AVATAR_HASH,
+            Imps.Contacts.AVATAR_DATA,
+            Imps.Contacts.CONTACT_EMAIL
 
     };
 
@@ -126,12 +126,9 @@ public class ContactListItem extends FrameLayout {
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
 
-        if (TextUtils.isEmpty(nickname))
-        {
+        if (TextUtils.isEmpty(nickname)) {
             nickname = address.split("@")[0].split("\\.")[0];
-        }
-        else
-        {
+        } else {
             nickname = nickname.split("@")[0].split("\\.")[0];
         }
 
@@ -146,18 +143,15 @@ public class ContactListItem extends FrameLayout {
 
                 holder.mLine1.setText(str);
 
-            }
-            else
+            } else
                 holder.mLine1.setText(nickname);
 
-        }
-        else
+        } else
             holder.mLine1.setText(nickname);
 
         //holder.mStatusIcon.setVisibility(View.GONE);
 
-        if (holder.mAvatar != null)
-        {
+        if (holder.mAvatar != null) {
             if (Imps.Contacts.TYPE_GROUP == type) {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
@@ -167,71 +161,60 @@ public class ContactListItem extends FrameLayout {
                             R.drawable.group_chat));
 
 
-                    holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
+                holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
 
-            }
-            else
-            {
+            } else {
 
                 Drawable avatar = null;
 
-                try
-                {
-                   //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+                try {
+                    //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
                     avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
 
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     //problem decoding avatar
-                    Log.e(ImApp.LOG_TAG,"error decoding avatar",e);
+                    Log.e(ImApp.LOG_TAG, "error decoding avatar", e);
                 }
 
-                try
-                {
-                    if (avatar != null)
-                    {
+                try {
+                    if (avatar != null) {
                         if (avatar instanceof RoundedAvatarDrawable)
-                            setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
+                            setAvatarBorder(presence, (RoundedAvatarDrawable) avatar);
 
                         holder.mAvatar.setImageDrawable(avatar);
-                    }
-                    else
-                    {
+                    } else {
                         //int color = getAvatarBorder(presence);
                         int padding = 24;
                         LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-                        
+
                         holder.mAvatar.setImageDrawable(lavatar);
 
                     }
 
                     holder.mAvatar.setVisibility(View.VISIBLE);
-                }
-                catch (OutOfMemoryError ome)
-                {
+                } catch (OutOfMemoryError ome) {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
 
             }
         }
 
-        statusText = address;
-        statusText = email;//remove address from xmpp
+        EnumPresenceStatus presenceStatus = EnumPresenceStatus.getStatus(presence);
+        statusText = presenceStatus.getStatus();//remove address from xmpp
+        @ColorInt int presentColor = getResources().getColor(presenceStatus.getColor());
 
-        if (type == Imps.Contacts.TYPE_HIDDEN)
-        {
+        if (type == Imps.Contacts.TYPE_HIDDEN) {
             statusText += " | " + getContext().getString(R.string.action_archive);
         }
 
-        if (holder.mLine2 != null)
+        if (holder.mLine2 != null) {
             holder.mLine2.setText(statusText);
+            holder.mLine2.setTextColor(presentColor);
+        }
 
-        if (Imps.Contacts.TYPE_NORMAL == type)
-        {
+        if (Imps.Contacts.TYPE_NORMAL == type) {
 
-            if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS)
-            {
+            if (subType == Imps.ContactsColumns.SUBSCRIPTION_TYPE_INVITATIONS) {
                 holder.mSubBox.setVisibility(View.VISIBLE);
 
                 holder.mButtonSubApprove.setOnClickListener(new OnClickListener() {
@@ -269,50 +252,50 @@ public class ContactListItem extends FrameLayout {
 
     public void setAvatarBorder(int status, RoundedAvatarDrawable avatar) {
         switch (status) {
-        case Presence.AVAILABLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
-            break;
+            case Presence.AVAILABLE:
+                avatar.setBorderColor(getResources().getColor(R.color.holo_green_light));
+                break;
 
-        case Presence.IDLE:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
+            case Presence.IDLE:
+                avatar.setBorderColor(getResources().getColor(R.color.holo_green_dark));
 
-            break;
+                break;
 
-        case Presence.AWAY:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
-            break;
+            case Presence.AWAY:
+                avatar.setBorderColor(getResources().getColor(R.color.holo_orange_light));
+                break;
 
-        case Presence.DO_NOT_DISTURB:
-            avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
+            case Presence.DO_NOT_DISTURB:
+                avatar.setBorderColor(getResources().getColor(R.color.holo_red_dark));
 
-            break;
+                break;
 
-        case Presence.OFFLINE:
-            avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
-            break;
+            case Presence.OFFLINE:
+                avatar.setBorderColor(getResources().getColor(android.R.color.transparent));
+                break;
 
 
-        default:
+            default:
         }
     }
-    
+
     public int getAvatarBorder(int status) {
         switch (status) {
-        case Presence.AVAILABLE:
-            return (getResources().getColor(R.color.holo_green_light));
+            case Presence.AVAILABLE:
+                return (getResources().getColor(R.color.holo_green_light));
 
-        case Presence.IDLE:
-            return (getResources().getColor(R.color.holo_green_dark));
-        case Presence.AWAY:
-            return (getResources().getColor(R.color.holo_orange_light));
+            case Presence.IDLE:
+                return (getResources().getColor(R.color.holo_green_dark));
+            case Presence.AWAY:
+                return (getResources().getColor(R.color.holo_orange_light));
 
-        case Presence.DO_NOT_DISTURB:
-            return(getResources().getColor(R.color.holo_red_dark));
+            case Presence.DO_NOT_DISTURB:
+                return (getResources().getColor(R.color.holo_red_dark));
 
-        case Presence.OFFLINE:
-            return(getResources().getColor(R.color.holo_grey_dark));
+            case Presence.OFFLINE:
+                return (getResources().getColor(R.color.holo_grey_dark));
 
-        default:
+            default:
         }
 
         return Color.TRANSPARENT;
@@ -341,48 +324,45 @@ public class ContactListItem extends FrameLayout {
 
     void approveSubscription() {
 
-        ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+        ImApp app = ((ImApp) ((Activity) getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
 
 
-        if (mConn != null)
-        {
+        if (mConn != null) {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.approveSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
+                manager.approveSubscription(new Contact(new XmppAddress(address), nickname, Imps.Contacts.TYPE_NORMAL));
             } catch (RemoteException e) {
 
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-                LogCleaner.error(ImApp.LOG_TAG, "approve sub error",e);
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
             }
         }
     }
 
     void declineSubscription() {
 
-        ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+        ImApp app = ((ImApp) ((Activity) getContext()).getApplication());
         IImConnection mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
 
-        if (mConn != null)
-        {
+        if (mConn != null) {
             try {
                 IContactListManager manager = mConn.getContactListManager();
-                manager.declineSubscription(new Contact(new XmppAddress(address),nickname, Imps.Contacts.TYPE_NORMAL));
-                app.dismissChatNotification(mHolder.mProviderId,address);
+                manager.declineSubscription(new Contact(new XmppAddress(address), nickname, Imps.Contacts.TYPE_NORMAL));
+                app.dismissChatNotification(mHolder.mProviderId, address);
                 manager.removeContact(address);
             } catch (RemoteException e) {
                 // mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-                LogCleaner.error(ImApp.LOG_TAG, "decline sub error",e);
+                LogCleaner.error(ImApp.LOG_TAG, "decline sub error", e);
             }
         }
     }
 
-    void deleteContact ()
-    {
+    void deleteContact() {
         try {
 
             IImConnection mConn;
-            ImApp app = ((ImApp)((Activity)getContext()).getApplication());
+            ImApp app = ((ImApp) ((Activity) getContext()).getApplication());
             mConn = app.getConnection(mHolder.mProviderId, mHolder.mAccountId);
 
             IContactListManager manager = mConn.getContactListManager();
@@ -393,24 +373,20 @@ public class ContactListItem extends FrameLayout {
                 //      ErrorResUtils.getErrorRes(getResources(), res, address));
             }
 
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
 
         }
     }
 
-    public void applyStyleColors (ContactViewHolder holder)
-    {
+    public void applyStyleColors(ContactViewHolder holder) {
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorText = settings.getInt("themeColorText", -1);
+        int themeColorBg = settings.getInt("themeColorBg", -1);
 
 
-        if (themeColorText != -1)
-        {
+        if (themeColorText != -1) {
             if (holder.mLine1 != null)
                 holder.mLine1.setTextColor(themeColorText);
 
@@ -422,7 +398,6 @@ public class ContactListItem extends FrameLayout {
         }
 
     }
-
 
 
 }

@@ -5,28 +5,50 @@
     android:background="#ee8394"
     android:elevation="1dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/headerbarBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="@dimen/fab_margin"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_arrow_back"/>
+        android:src="@drawable/ic_arrow_left"/>
 
     <net.wrappy.im.helper.layout.AppTextView
         android:id="@+id/headerbarTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Title"
-        android:textSize="17sp"
+        android:text=""
+        android:textSize="16sp"
         app:font_type="bold"
         android:textAllCaps="true"
         android:layout_centerInParent="true"
         android:layout_gravity="center_vertical"
         android:textColor="@android:color/white"/>
+
+    <net.wrappy.im.helper.layout.AppTextView
+        android:id="@+id/headerbarTitleLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="16sp"
+        app:font_type="bold"
+        android:layout_toRightOf="@id/headerbarBack"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/headerbarDone"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_action_done"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:background="@android:color/transparent"/>
 
 
 </RelativeLayout>

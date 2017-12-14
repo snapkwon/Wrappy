@@ -21,10 +21,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.wrappy.im.model.T;
+import net.wrappy.im.util.SecureMediaStore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -170,7 +172,7 @@ public class AppFuncs {
         return base64String;
     }
 
-    public static File ConvertBitmapToFile(Context context, Bitmap bitmap) {
+    public static File convertBitmapToFile(Context context, Bitmap bitmap) {
         File f = null;
         try {
             f = new File(context.getCacheDir(), "file");
@@ -213,6 +215,26 @@ public class AppFuncs {
             ex.printStackTrace();
         }
 
+    }
+
+    public static Bitmap getBitmapFromIntentResult(Context context, Intent data){
+        Bitmap photo = null;
+        try {
+            if (data.getData()!=null) {
+                photo = SecureMediaStore.getThumbnailFile(context, data.getData(), 512);
+            } else {
+                photo = (Bitmap) data.getExtras().get("data");
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return photo;
+    }
+
+    public static JsonElement convertToJson(String s) throws Exception {
+        JsonElement jsonElement = (new JsonParser()).parse(s);
+        return jsonElement;
     }
 
 }

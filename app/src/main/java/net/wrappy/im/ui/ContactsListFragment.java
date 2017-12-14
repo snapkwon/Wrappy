@@ -439,7 +439,7 @@ public class ContactsListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor) {
+        public void onBindViewHolder(final ContactViewHolder viewHolder, Cursor cursor,int position) {
 
             viewHolder.mContactId =  cursor.getInt(ContactListItem.COLUMN_CONTACT_ID);
            viewHolder.mAddress =  cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
