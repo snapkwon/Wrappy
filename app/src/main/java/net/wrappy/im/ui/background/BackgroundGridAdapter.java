@@ -64,6 +64,7 @@ public class BackgroundGridAdapter extends BaseAdapter {
 
             i = new CircleImageView(mContext);
             i.setLayoutParams(new GridView.LayoutParams(256, 256));
+            i.setPadding(5, 50, 5, 10);
             i.setImageBitmap(bmp);
 
         } catch (Exception e) {
