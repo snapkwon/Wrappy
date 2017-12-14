@@ -34,10 +34,8 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -72,7 +70,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -84,7 +81,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -97,7 +93,6 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.TranslateAPI.InAppTranslation;
-import net.wrappy.im.adapter.RecycleWalletAdapter;
 import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
@@ -275,7 +270,7 @@ public class ConversationView {
     private class RequeryCallback implements Runnable {
         public void run() {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("RequeryCallback");
+                Debug.d("RequeryCallback");
             }
             requeryCursor();
 
@@ -534,25 +529,6 @@ public class ConversationView {
         @Override
         public boolean onIncomingMessage(IChatSession ses,
                                          net.wrappy.im.model.Message msg) {
-
-            if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
-
-                try {
-
-                    String imageName = msg.getBody().replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-                    boolean isHaving = ConferenceUtils.listFiles(mActivity,
-                            "backgrounds/page_1", imageName);
-
-                    Log.d("Cuong", "imageName: " + imageName);
-                    Log.d("Cuong", "isHaving: " + isHaving);
-
-                    String imagePath = (isHaving ? "page_1" : "page_2") + "/" + imageName;
-                    mActivity.saveBitmapPreferences(Uri.parse("backgrounds/" + imagePath));
-                    mActivity.loadBitmapPreferences();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
             return mIsSelected;
         }
 
@@ -593,7 +569,7 @@ public class ConversationView {
             message.getData().putString("file", sanitizedPath);
             mHandler.sendMessage(message);
 
-            log("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
+            Debug.d("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
 
         }
 
@@ -609,7 +585,7 @@ public class ConversationView {
 
              mHandler.sendMessage(message);*/
 
-            log("onIncomingFileTransferProgress: " + file + " " + percent + "%");
+            Debug.d("onIncomingFileTransferProgress: " + file + " " + percent + "%");
 
         }
 
@@ -624,7 +600,7 @@ public class ConversationView {
 
             mHandler.sendMessage(message);
 
-            log("onIncomingFileTransferProgress: " + file + " err: " + err);
+            Debug.d("onIncomingFileTransferProgress: " + file + " err: " + err);
 
         }
 
@@ -773,9 +749,7 @@ public class ConversationView {
 
         public void onContactsPresenceUpdate(Contact[] contacts) {
 
-            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("onContactsPresenceUpdate()");
-            }
+                Debug.d("onContactsPresenceUpdate()");
 
             for (Contact c : contacts) {
                 if (c.getAddress().getBareAddress().equals(Address.stripResource(mRemoteAddress))) {
@@ -799,13 +773,7 @@ public class ConversationView {
         }
     };
 
-
     private boolean mIsListening;
-
-    static final void log(String msg) {
-        if (Debug.DEBUG_ENABLED)
-            Log.d(ImApp.LOG_TAG, "<ChatView> " + msg);
-    }
 
     public ConversationView(ConversationDetailActivity activity) {
 
@@ -857,7 +825,6 @@ public class ConversationView {
             }
         });
 
-
         mButtonAttach = (ImageButton) mActivity.findViewById(R.id.btnAttach);
         mViewAttach = mActivity.findViewById(R.id.attachPanel);
 
@@ -865,13 +832,10 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
-
-
                 toggleAttachMenu();
             }
 
         });
-
 
         mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
@@ -919,12 +883,10 @@ public class ConversationView {
             }
         });
 
-
         mMicButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 //this is the tap to change to hold to talk mode
                 if (mMicButton.getVisibility() == View.VISIBLE) {
                     mComposeMessage.setVisibility(View.GONE);
@@ -949,21 +911,16 @@ public class ConversationView {
 
         final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
             public void onLongPress(MotionEvent e) {
-
                 //this is for recording audio directly from one press
                 mActivity.startAudioRecording();
-
             }
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-
-
                 if (mActivity.isAudioRecording()) {
                     boolean send = true;//inViewInBounds(mMicButton, (int) motionEvent.getX(), (int) motionEvent.getY());
                     mActivity.stopAudioRecording(send);
                 }
-
                 return super.onSingleTapUp(e);
             }
         });
@@ -1044,7 +1001,6 @@ public class ConversationView {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 sendTypingStatus(true);
 
                 return false;
@@ -1442,8 +1398,6 @@ public class ConversationView {
     }
 
     public void bindChat(long chatId, String name) {
-        //log("bind " + this + " " + chatId);
-
         mLastChatId = chatId;
 
         setViewType(VIEW_TYPE_CHAT);
@@ -1456,7 +1410,7 @@ public class ConversationView {
 
         if (!c.moveToFirst()) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("Failed to query chat: " + chatId);
+                Debug.d("Failed to query chat: " + chatId);
             }
             mLastChatId = -1;
 
@@ -1644,7 +1598,7 @@ public class ConversationView {
         }
 
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("scheduleRequery");
+            Debug.d("scheduleRequery");
         }
         mHandler.postDelayed(mRequeryCallback, interval);
 
@@ -1655,7 +1609,7 @@ public class ConversationView {
 
         if (mRequeryCallback != null) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("cancelRequery");
+                Debug.d("cancelRequery");
             }
             mHandler.removeCallbacks(mRequeryCallback);
             mRequeryCallback = null;
@@ -1664,7 +1618,7 @@ public class ConversationView {
 
 
     void requeryCursor() {
-
+        Debug.d("requeryCursor");
         mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
         updateWarningView();
 
@@ -1853,10 +1807,7 @@ public class ConversationView {
 
                 }
             }
-
-
         } catch (Exception e) {
-
             //mHandler.showServiceErrorAlert(e.getLocalizedMessage());
             LogCleaner.error(ImApp.LOG_TAG, "error getting chat session", e);
         }
@@ -1984,7 +1935,7 @@ public class ConversationView {
 
     void registerChatListener() {
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("registerChatListener " + mLastChatId);
+            Debug.d("registerChatListener " + mLastChatId);
         }
         try {
 
@@ -2008,7 +1959,7 @@ public class ConversationView {
 
     void unregisterChatListener() {
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("unregisterChatListener " + mLastChatId);
+            Debug.d("unregisterChatListener " + mLastChatId);
         }
         try {
             if (getChatSession() != null) {
@@ -2217,7 +2168,7 @@ public class ConversationView {
             switch (msg.what) {
 
                 case ImApp.EVENT_CONNECTION_DISCONNECTED:
-                    log("Handle event connection disconnected.");
+                    Debug.d("Handle event connection disconnected.");
                     updateWarningView();
                     promptDisconnectedEvent(msg);
                     return;
@@ -2275,9 +2226,6 @@ public class ConversationView {
 
             mDeltaColumn = len;
             mColumnNames[mDeltaColumn] = DELTA_COLUMN_NAME;
-
-            //if (DBG) log("##### DeltaCursor constructor: mDeltaColumn=" +
-            //        mDeltaColumn + ", columnName=" + mColumnNames[mDeltaColumn]);
         }
 
         public int getCount() {
@@ -2484,7 +2432,6 @@ public class ConversationView {
         }
 
         public long getLong(int column) {
-            //if (DBG) log("DeltaCursor.getLong: column=" + column + ", mDeltaColumn=" + mDeltaColumn);
             checkPosition();
 
             if (column == mDeltaColumn) {
@@ -2892,30 +2839,6 @@ public class ConversationView {
             }
 
 
-        }
-
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            int oldState = mScrollState;
-            mScrollState = scrollState;
-
-            if (getChatSession() != null) {
-                try {
-                    getChatSession().markAsRead();
-                } catch (RemoteException e) {
-
-                    mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-                    LogCleaner.error(ImApp.LOG_TAG, "send message error", e);
-                }
-            }
-
-
-            if (oldState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                if (mNeedRequeryCursor) {
-                    requeryCursor();
-                } else {
-                    notifyDataSetChanged();
-                }
-            }
         }
 
         boolean isScrolling() {
@@ -3334,7 +3257,7 @@ public class ConversationView {
             //Skip for expired conference
             boolean expiredCall = ((System.currentTimeMillis() - timestamp) > SHOW_MEDIA_DELIVERY_INTERVAL);
             if (!expiredCall) {
-                log("doConference");
+                Debug.d("doConference");
                 if (conference.isAudio()) {
                     startAudioConference(conference.getRoomId());
                 } else {

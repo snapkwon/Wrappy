@@ -20,6 +20,7 @@ package net.wrappy.im.service.adapters;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteCallbackList;
@@ -249,7 +250,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             }
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -369,8 +369,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         mContentResolver.delete(mChatURI, null, null);
         mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
         mChatSessionManager.closeChatSession(this);
-
-
     }
 
     public void leaveIfInactive() {
@@ -1064,11 +1062,15 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 deleteMessageInDb(packet_id);
                 deleteMessageInDb(msg.getID());
                 return false;
-            }else if (msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {
+            } else if (msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {
                 String[] message_edit = ConferenceUtils.getEditedMessage(msg.getBody());
                 updateMessageInDb(message_edit[0], message_edit[1]);
                 deleteMessageInDb(msg.getID());
                 return false;
+            } else if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+                Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
+                i.putExtra("background", msg.getBody());
+                mConnection.getContext().sendBroadcast(i);
             }
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();

@@ -224,8 +224,8 @@ public class MessageListItem extends FrameLayout {
         } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
             boolean cmdSuccess = false;
 
-            Toast.makeText(getContext(), "lastMessage: " + lastMessage, Toast.LENGTH_SHORT).show();
-            Log.d("Cuong", "lastMessage: " +  lastMessage);
+//            Toast.makeText(getContext(), "lastMessage: " + lastMessage, Toast.LENGTH_SHORT).show();
+//            Log.d("Cuong", "lastMessage: " +  lastMessage);
 
             if (lastMessage.startsWith("/sticker:")) {
                 String[] cmds = lastMessage.split(":");
@@ -256,9 +256,6 @@ public class MessageListItem extends FrameLayout {
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
-                cmdSuccess = true;
-            } else if (lastMessage.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
-                bindBackground(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
@@ -329,8 +326,8 @@ public class MessageListItem extends FrameLayout {
 
     private void bindBackground(String lastMessage) {
         String message = lastMessage.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-        Toast.makeText(getContext(), "message: " + message, Toast.LENGTH_SHORT).show();
-        Log.d("Cuong", "message: " + message);
+//        Toast.makeText(getContext(), "message: " + message, Toast.LENGTH_SHORT).show();
+//        Log.d("Cuong", "message: " + message);
     }
 
     private void bindConference(String lastMessage) {
@@ -681,7 +678,6 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-
     private String formatMessage(String body) {
 
         if (body != null)
@@ -769,9 +765,6 @@ public class MessageListItem extends FrameLayout {
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
-                cmdSuccess = true;
-            } else if (lastMessage.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
-                bindBackground(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
