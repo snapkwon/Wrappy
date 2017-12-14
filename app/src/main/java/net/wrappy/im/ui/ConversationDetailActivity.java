@@ -231,9 +231,6 @@ public class ConversationDetailActivity extends BaseActivity {
                     popupWindow.setVisibility(View.GONE);
                 }
             }
-        // set background for this screen
-        loadBitmapPreferences();
-
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -244,6 +241,9 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
             }
         });
+
+        // set background for this screen
+        loadBitmapPreferences();
     }
 
     public void updateLastSeen(Date lastSeen) {
