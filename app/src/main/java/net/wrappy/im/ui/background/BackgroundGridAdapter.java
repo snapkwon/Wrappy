@@ -8,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 
-import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.CircleImageView;
-import net.wrappy.im.ui.conference.ConferenceConstant;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,20 +21,21 @@ import java.util.ArrayList;
 public class BackgroundGridAdapter extends BaseAdapter {
 
     private Context mContext;
-    private int[] imageId;
+    ArrayList<BackgroundItem> mBackgroundItems;
 
-    public BackgroundGridAdapter(Context mContext) {
+    public BackgroundGridAdapter(Context mContext, ArrayList<BackgroundItem> mBackgroundItems) {
         this.mContext = mContext;
+        this.mBackgroundItems = mBackgroundItems;
     }
 
     @Override
     public int getCount() {
-        return imageId.length;
+        return mBackgroundItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return imageId[position];
+        return mBackgroundItems.get(position);
     }
 
     @Override
@@ -48,30 +46,30 @@ public class BackgroundGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        CircleImageView circleImageView;
+        CircleImageView i;
 
-        if (convertView == null) {
-            circleImageView = new CircleImageView(mContext);
-            circleImageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-            circleImageView.setScaleType(CircleImageView.ScaleType.CENTER_CROP);
-            circleImageView.setPadding(8, 8, 8, 8);
+        if (convertView != null && convertView instanceof CircleImageView) {
+            i = (CircleImageView) convertView;
         } else {
-            circleImageView = (CircleImageView) convertView;
+            i = new CircleImageView(mContext);
         }
 
-        circleImageView.setImageResource(mThumbIds[position]);
+        try {
 
-        return circleImageView;
+            // getting path from asset and converting to bitmap
+            InputStream is = mBackgroundItems.get(position).res.getAssets().open(mBackgroundItems.get(position).assetUri.getPath());
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
+
+            i = new CircleImageView(mContext);
+            i.setLayoutParams(new GridView.LayoutParams(256, 256));
+            i.setImageBitmap(bmp);
+
+        } catch (Exception e) {
+            Log.e("grid", "problem rendering grid", e);
+        }
+
+        return i;
     }
-
-    public Integer[] mThumbIds = {
-            R.drawable.chat_bg_thumb_1,
-            R.drawable.chat_bg_thumb_2,
-            R.drawable.chat_bg_thumb_3,
-            R.drawable.chat_bg_thumb_4,
-            R.drawable.chat_bg_thumb_5,
-            R.drawable.chat_bg_thumb_6,
-            R.drawable.chat_bg_thumb_7,
-            R.drawable.chat_bg_thumb_8
-    };
 }

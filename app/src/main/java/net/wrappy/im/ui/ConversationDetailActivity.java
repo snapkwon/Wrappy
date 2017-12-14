@@ -219,10 +219,6 @@ public class ConversationDetailActivity extends BaseActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
 
-        // set background for this screen
-        loadBitmapPreferences();
-
-
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -807,6 +803,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 loadBitmapPreferences(uri.getPath());
 
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1));
+
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
