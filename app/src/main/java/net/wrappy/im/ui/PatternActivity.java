@@ -329,10 +329,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 getActivity().appFuncs.dismissProgressWaiting();
                 if (account == 200) {
                     Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     getActivity().startActivity(intent);
                     getActivity().finish();
-
                 } else {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
                     alertDialog.setTitle("Warning");

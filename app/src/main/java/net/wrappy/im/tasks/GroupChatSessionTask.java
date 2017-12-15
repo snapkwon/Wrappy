@@ -26,6 +26,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     private IImConnection mLastConnGroup;
     private ArrayList<String> invitees;
     private WpKChatGroupDto group;
+    boolean needToStartChat = true;
 
     public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         super();
@@ -33,6 +34,14 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         mLastConnGroup = conn;
         this.invitees = invitees;
         this.group = group;
+    }
+
+    public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, IImConnection conn) {
+        super();
+        weakReference = new WeakReference<>(activity);
+        mLastConnGroup = conn;
+        this.group = group;
+        needToStartChat = false;
     }
 
     private boolean isStable() {
@@ -59,7 +68,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     protected String doInBackground(String... params) {
 
         String subject = group.getName();
-        String chatRoom = "group" + group.getXmppGroup();
+        String chatRoom = group.getXmppGroup();
         String server = params[0];
 
 
@@ -76,7 +85,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
 
-                if (session != null) {
+                if (session != null && needToStartChat) {
                     mRequestedChatId = session.getId();
                     publishProgress(mRequestedChatId);
 
@@ -87,9 +96,8 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                 mRequestedChatId = session.getId();
                 publishProgress(mRequestedChatId);
             }
-
+//
             if (invitees != null && invitees.size() > 0) {
-
                 //wait a second for the server to sort itself out
                 try {
                     Thread.sleep(100);

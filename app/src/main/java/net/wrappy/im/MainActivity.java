@@ -41,6 +41,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,9 +54,11 @@ import android.widget.TextView;
 import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.google.gson.Gson;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.GethService.Wallet;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -80,6 +83,7 @@ import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.XmppUriHelper;
@@ -95,6 +99,8 @@ import java.util.UUID;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
+import static net.wrappy.im.helper.RestAPI.POST_CREATE_GROUP;
+
 /**
  */
 public class MainActivity extends BaseActivity {
@@ -109,6 +115,8 @@ public class MainActivity extends BaseActivity {
     public final static int REQUEST_ADD_CONTACT = 9999;
     public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT + 1;
     public final static int REQUEST_CHANGE_SETTINGS = REQUEST_CHOOSE_CONTACT + 1;
+
+    public final static String IS_FROM_PATTERN_ACTIVITY = "isFromPatternScreen";
 
     private ConversationListFragment mConversationList;
     private ContactsListFragment mContactList;
@@ -253,6 +261,28 @@ public class MainActivity extends BaseActivity {
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
 
+        checkToLoadDataServer();
+
+    }
+
+    private void checkToLoadDataServer() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false)) {
+            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    Debug.d(s);
+                    try {
+                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                        for (WpKChatGroupDto groupDto : wpKMemberDtos) {
+                            rejoinGroupChat(groupDto);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     private void installRingtones() {
@@ -525,6 +555,21 @@ public class MainActivity extends BaseActivity {
                 }
             } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
                 mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
+    private void rejoinGroupChat(WpKChatGroupDto group) {
+        if (!TextUtils.isEmpty(group.getXmppGroup())) {
+            try {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                if (conn.getState() == ImConnection.LOGGED_IN) {
+                    String nickname = mApp.getDefaultNickname();
+                    Debug.d("Khoa : " + group.getXmppGroup());
+                    new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
