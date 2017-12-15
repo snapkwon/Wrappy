@@ -1067,7 +1067,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 return false;
             } else if (msg.getBody().startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
                 String imageName = msg.getBody().replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-                ConferenceUtils.saveBitmapPreferences(Uri.parse("backgrounds/page_1/" + imageName), msg.getFrom().getUser(), mConnection.getContext());
+                ConferenceUtils.saveBitmapPreferences(imageName, msg.getFrom().getUser(), mConnection.getContext());
                 Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
                 mConnection.getContext().sendBroadcast(i);
             }

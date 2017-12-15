@@ -797,13 +797,13 @@ public class ConversationDetailActivity extends BaseActivity {
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
                 Bundle extras = resultIntent.getExtras();
-                Uri uri = extras.getParcelable("imageUri");
+                String imagePath = extras.getString("imagePath");
 
-                ConferenceUtils.saveBitmapPreferences(uri, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
+                ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
 
                 loadBitmapPreferences();
 
-                mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1));
+                mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + imagePath);
 
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);

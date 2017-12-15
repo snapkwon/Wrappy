@@ -43,7 +43,7 @@ public final class ConferenceUtils {
         return message.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX) || message.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || message.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX);
 	}
 
-    public static void saveBitmapPreferences(Uri imagePath, String mNickname, Context context) {
-        PreferenceUtils.putString(mNickname, imagePath.toString(), context);
+    public static void saveBitmapPreferences(String imagePath, String mNickname, Context context) {
+        PreferenceUtils.putString(mNickname, imagePath, context);
     }
 }
