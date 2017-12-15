@@ -86,9 +86,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
+import net.wrappy.im.GethService.utils.JSONParser;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
@@ -97,12 +102,14 @@ import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatListener;
@@ -136,7 +143,8 @@ import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.IOException;
+import org.json.JSONObject;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1075,8 +1083,24 @@ public class ConversationView {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if (mComposeMessage.getVisibility() == View.VISIBLE)
-                    sendMessage();
+                if (mComposeMessage.getVisibility() == View.VISIBLE) {
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("message", mComposeMessage.getText().toString());
+                    
+                    RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.GET_REPORT_SPAM, new RestAPI.RestAPIListenner() {
+                        @Override
+                        public void OnComplete(int httpCode, String error, String s) {
+                            Debug.e(s);
+                            JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+                            boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                            if (status) {
+
+                            } else {
+                                sendMessage();
+                            }
+                        }
+                    });
+                }
                 else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
