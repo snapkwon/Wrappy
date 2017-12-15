@@ -48,6 +48,8 @@ import android.widget.ListView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -279,12 +281,12 @@ public class ContactsPickerActivity extends BaseActivity {
                 showWaitinDialog();
                 if (bitmap!=null) {
                     File file = AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap);
-                    RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
+                    RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void onCompleted(Exception e, Response<String> result) {
                             String reference = "";
                             try {
-                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                                 reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                                 WpKIcon icon = new WpKIcon();
                                 icon.setReference(reference);

@@ -29,7 +29,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,11 +59,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,7 +90,6 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -118,6 +113,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private long mChatId = -1;
     private String mAddress = null;
     private String mNickname = null;
+    private String mReference = null;
 
     private ConversationView mConvoView = null;
 
@@ -339,6 +335,7 @@ public class ConversationDetailActivity extends BaseActivity {
             mChatId = intent.getLongExtra("id", -1);
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
+        mReference = intent.getStringExtra("reference");
 
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
@@ -377,7 +374,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     private void startChatting() {
-        mConvoView.bindChat(mChatId, mNickname);
+        mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
         applyStyleForToolbar();
     }
