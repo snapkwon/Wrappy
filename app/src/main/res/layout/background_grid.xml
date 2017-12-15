@@ -4,26 +4,22 @@
     android:id="@+id/bottom_sheet_background_selection"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/listBackground"
     app:behavior_hideable="true"
     app:behavior_peekHeight="200dp"
     app:behavior_skipCollapsed="true"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-    android:background="?attr/listBackground">
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <GridView
-
         android:id="@+id/backgroundGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:columnWidth="100dp"
         android:gravity="center"
         android:horizontalSpacing="8dp"
         android:numColumns="4"
         android:padding="3dp"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="8dp">
-
-    </GridView>
+        android:verticalSpacing="8dp" />
 
 </LinearLayout>
