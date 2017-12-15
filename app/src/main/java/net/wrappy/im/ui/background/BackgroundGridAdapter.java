@@ -1,20 +1,13 @@
 package net.wrappy.im.ui.background;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.CircleImageView;
-
-import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * Created by CuongDuong on 12/11/2017.
