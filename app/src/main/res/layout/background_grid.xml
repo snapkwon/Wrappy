@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/backgroundGridView"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_background_selection"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnWidth="100dp"
-    android:numColumns="4"
-    android:verticalSpacing="8dp"
-    android:horizontalSpacing="8dp"
-    android:stretchMode="columnWidth"
-    android:gravity="center"
     android:background="?attr/listBackground"
-    android:layout_margin="5dp"
-    android:padding="3dp">
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="200dp"
+    app:behavior_skipCollapsed="true"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-</GridView>
+    <GridView
+        android:id="@+id/backgroundGridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:horizontalSpacing="8dp"
+        android:numColumns="4"
+        android:padding="3dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="8dp" />
+
+</LinearLayout>
