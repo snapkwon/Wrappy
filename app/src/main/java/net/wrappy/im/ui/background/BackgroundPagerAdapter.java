@@ -12,7 +12,6 @@ import android.widget.GridView;
 import net.wrappy.im.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by CuongDuong on 12/11/2017.
@@ -60,7 +59,7 @@ public class BackgroundPagerAdapter extends PagerAdapter {
             }
         });
 
-        ((ViewPager)collection).addView(imageGrid);
+        ((ViewPager) collection).addView(imageGrid);
 
         return imageGrid;
     }

@@ -236,6 +236,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                                     }
                                 });
                         alertDialog.show();
+                        mPatternView.clearPattern();
                         //AppFuncs.alert(getApplicationContext(),s,true);
 
                         return;

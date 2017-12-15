@@ -29,13 +29,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -54,20 +50,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -81,12 +79,15 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
@@ -94,9 +95,7 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -130,7 +129,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private View mRootLayout;
     private Toolbar mToolbar;
 
-    FrameLayout popupWindow ;
+    FrameLayout popupWindow;
 
     private PrettyTime mPrettyTime;
 
@@ -174,8 +173,9 @@ public class ConversationDetailActivity extends BaseActivity {
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 //here define your method to be executed when screen is going to sleep
                 mConvoView.setSelected(true);
+            } else if (intent.getAction().equals(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+                loadBitmapPreferences();
             }
-
         }
     };
 
@@ -201,8 +201,8 @@ public class ConversationDetailActivity extends BaseActivity {
         popupWindow.setBackgroundColor(0xfff);
 
 
-        FrameLayout main = (FrameLayout)findViewById(R.id.container);
-        main.addView(popupWindow,new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT , LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
+        FrameLayout main = (FrameLayout) findViewById(R.id.container);
+        main.addView(popupWindow, new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
@@ -224,8 +224,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(popupWindow.getVisibility() == View.VISIBLE)
-                {
+                if (popupWindow.getVisibility() == View.VISIBLE) {
                     popupWindow.setVisibility(View.GONE);
                 }
             }
@@ -233,12 +232,14 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(popupWindow.getVisibility() == View.VISIBLE)
-                {
+                if (popupWindow.getVisibility() == View.VISIBLE) {
                     popupWindow.setVisibility(View.GONE);
                 }
             }
         });
+
+        // set background for this screen
+        loadBitmapPreferences();
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -401,6 +402,7 @@ public class ConversationDetailActivity extends BaseActivity {
         IntentFilter regFilter = new IntentFilter();
         regFilter.addAction(Intent.ACTION_SCREEN_OFF);
         regFilter.addAction(Intent.ACTION_SCREEN_ON);
+        regFilter.addAction(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
         registerReceiver(receiver, regFilter);
 
 
@@ -463,21 +465,18 @@ public class ConversationDetailActivity extends BaseActivity {
                 mConvoView.startAudioConference();
                 return true;
             case R.id.menu_settings_language:
-             //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+                //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
                     @Override
                     public void run() {
                         popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                     }
                 });*/
-              if(popupWindow.getVisibility() == View.GONE)
-              {
-                  popupWindow.setVisibility(View.VISIBLE);
-              }
-              else
-              {
-                  popupWindow.setVisibility(View.GONE);
-              }
+                if (popupWindow.getVisibility() == View.GONE) {
+                    popupWindow.setVisibility(View.VISIBLE);
+                } else {
+                    popupWindow.setVisibility(View.GONE);
+                }
 
                 return true;
         }
@@ -797,33 +796,39 @@ public class ConversationDetailActivity extends BaseActivity {
                 }
 
             } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
+                Bundle extras = resultIntent.getExtras();
+                Uri uri = extras.getParcelable("imageUri");
 
-                try {
-                    Bundle extras = resultIntent.getExtras();
-                    Uri uri = extras.getParcelable("imageUri");
+                ConferenceUtils.saveBitmapPreferences(uri, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
 
-                    InputStream inputStream;
-                    inputStream = getApplicationContext().getAssets().open(uri.getPath());
+                loadBitmapPreferences();
 
-                    Bitmap b = BitmapFactory.decodeStream(inputStream);
-                    b.setDensity(Bitmap.DENSITY_NONE);
-                    Drawable d = new BitmapDrawable(b);
+                mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1));
 
-                    mRootLayout.setBackground(d);
-
-                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + uri);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
                 mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
             }
-
-
         }
     }
+
+    /**
+     * loading bitmap to set background this screen
+     */
+    private void loadBitmapPreferences() {
+        String imagePath = PreferenceUtils.getString(new XmppAddress(mConvoView.mRemoteAddress).getUser(), "", getApplicationContext());
+        if (!TextUtils.isEmpty(imagePath)) {
+            Glide.with(this)
+                    .load(Uri.parse("file:///android_asset/" + imagePath))
+                    .into(new SimpleTarget<GlideDrawable>() {
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            mRootLayout.setBackground(resource.getCurrent());
+                        }
+                    });
+        }
+    }
+
 
     public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
         try {
