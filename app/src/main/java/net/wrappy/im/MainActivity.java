@@ -28,6 +28,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -91,6 +93,7 @@ import net.wrappy.im.util.XmppUriHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -125,6 +128,10 @@ public class MainActivity extends BaseActivity {
     private WalletFragment mwalletFragment;
     Adapter adapter;
     FragmentManager fragmentManager;
+
+    //Check to load old data from server
+    Handler mLoadDataHandler = null;
+    LoadDataRunnable runable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,7 +213,6 @@ public class MainActivity extends BaseActivity {
 
                 mViewPager.setCurrentItem(tab.getPosition());
 
-
                 setToolbarTitle(tab.getPosition());
                 applyStyleColors();
             }
@@ -260,29 +266,7 @@ public class MainActivity extends BaseActivity {
 
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
-
         checkToLoadDataServer();
-
-    }
-
-    private void checkToLoadDataServer() {
-        Intent intent = getIntent();
-        if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false)) {
-            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
-                    Debug.d(s);
-                    try {
-                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-                        for (WpKChatGroupDto groupDto : wpKMemberDtos) {
-                            rejoinGroupChat(groupDto);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
     }
 
     private void installRingtones() {
@@ -393,6 +377,8 @@ public class MainActivity extends BaseActivity {
         handleIntent();
 
         checkConnection();
+
+        checkToLoadDataServer();
 
     }
 
@@ -560,17 +546,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void rejoinGroupChat(WpKChatGroupDto group) {
-        if (!TextUtils.isEmpty(group.getXmppGroup())) {
-            try {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                if (conn.getState() == ImConnection.LOGGED_IN) {
-                    String nickname = mApp.getDefaultNickname();
-                    Debug.d("Khoa : " + group.getXmppGroup());
-                    new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        try {
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            if (conn.getState() == ImConnection.LOGGED_IN) {
+                String nickname = mApp.getDefaultNickname();
+                new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -1022,4 +1005,64 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    private void checkToLoadDataServer() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false) && checkConnection()) {
+            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    Debug.d(s);
+                    WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                    syncData(wpKMemberDtos);
+                }
+            });
+        }
+    }
+
+    private void syncData(WpKChatGroupDto[] wpKMemberDtos) {
+        IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+        try {
+            if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                for (WpKChatGroupDto groupDto : wpKMemberDtos) {
+                    if (!TextUtils.isEmpty(groupDto.getXmppGroup())) {
+                        rejoinGroupChat(groupDto);
+                    }
+                }
+                if (mLoadDataHandler != null) {
+                    mLoadDataHandler.removeCallbacks(runable);
+                    runable = null;
+                    mLoadDataHandler = null;
+                }
+            } else {
+                if (mLoadDataHandler == null) {
+                    mLoadDataHandler = new Handler();
+                    runable = new LoadDataRunnable(this, wpKMemberDtos);
+                } else {
+                    mLoadDataHandler.removeCallbacks(runable);
+                }
+                mLoadDataHandler.postDelayed(runable, 2000);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static final class LoadDataRunnable implements Runnable {
+        WpKChatGroupDto[] groupDtos;
+        WeakReference<MainActivity> weakReference;
+
+        public LoadDataRunnable(MainActivity activity, WpKChatGroupDto[] groupDtos) {
+            this.groupDtos = groupDtos;
+            this.weakReference = new WeakReference<MainActivity>(activity);
+        }
+
+        @Override
+        public void run() {
+            if (groupDtos != null && weakReference != null && weakReference.get() != null) {
+                weakReference.get().syncData(groupDtos);
+
+            }
+        }
+    }
 }

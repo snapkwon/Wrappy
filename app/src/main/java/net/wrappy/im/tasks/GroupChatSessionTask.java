@@ -55,7 +55,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     @Override
     protected void onPreExecute() {
-        if (isStable()) {
+        if (isStable() && needToStartChat) {
             dialog = new ProgressDialog(getActivity());
 
             dialog.setMessage(getActivity().getString(R.string.connecting_to_group_chat_));
@@ -84,7 +84,6 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             long mRequestedChatId = -1;
             if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
-
                 if (session != null && needToStartChat) {
                     mRequestedChatId = session.getId();
                     publishProgress(mRequestedChatId);
@@ -125,7 +124,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         if (isStable()) {
-            if (dialog.isShowing()) {
+            if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
         }
