@@ -878,7 +878,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mDefaultAccountId = cursorProviders.getLong(1);
             mDefaultUsername = cursorProviders.getString(2);
             mDefaultNickname = cursorProviders.getString(3);
-            mDefaultAccountName = cursorProviders.getString(4);
 
             settings.edit().putLong("defaultAccountId", mDefaultAccountId).commit();
 
@@ -1034,7 +1033,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     private String mDefaultUsername = null;
     private String mDefaultOtrFingerprint = null;
     private String mDefaultNickname = null;
-    private String mDefaultAccountName = null;
 
     public String getDefaultUsername() {
         return mDefaultUsername;
@@ -1054,10 +1052,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public long getDefaultAccountId() {
         return mDefaultAccountId;
-    }
-
-    public String getDefaultAccountName() {
-        return mDefaultAccountName;
     }
 
     @Override
