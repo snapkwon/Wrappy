@@ -83,6 +83,10 @@
 
     </array>
 
+    <color name="bg_menu_tab">#f9f9f9</color>
+    <color name="menu_text_normal">#929292</color>
+    <color name="menu_text_active">#ea657c</color>
+
     <color name="background_gainsboro">#dcdcdc</color>
     
     </resources>

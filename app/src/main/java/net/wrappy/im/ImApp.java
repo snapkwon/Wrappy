@@ -1161,6 +1161,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
             if (mConn != null) {
                 try {
+
                     RestAPI.GetDataWrappy(sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
@@ -1231,6 +1232,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             email = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_NAME, ImApp.sImApp.getDefaultAccountId());
         } else {
             email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
+        }
+        if (email==null) {
+            email = address.split("@")[0];
         }
         return email;
     }

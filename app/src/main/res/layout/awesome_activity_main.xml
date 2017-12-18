@@ -15,50 +15,97 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        android:layout_height="56dp"
+        android:background="@color/zom_primary">
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_height="32dp"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_wrappy"
+            android:adjustViewBounds="true"
+            android:layout_centerInParent="true" />
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
+
+
+        <net.wrappy.im.helper.layout.AppEditTextView
+            android:id="@+id/edSearchConversation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabIndicatorHeight="4dp"
-            app:tabGravity="fill"
-            />
+            android:padding="16dp"
+            android:visibility="gone"
+            android:hint="search"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            style="@style/AppText02"/>
 
-    </android.support.design.widget.AppBarLayout>
+        <ImageButton
+            android:id="@+id/btnHeaderSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_search"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="16dp"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="56dp">
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/fab_margin"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_add_white_24dp" />
+        </RelativeLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add_white_24dp" />
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/bg_menu_tab">
 
-</android.support.design.widget.CoordinatorLayout>
+            <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+            <!--app:layout_scrollFlags="scroll|enterAlways" />-->
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabIndicatorColor="@null"
+                app:tabGravity="fill"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+
+
+
+
+</RelativeLayout>
