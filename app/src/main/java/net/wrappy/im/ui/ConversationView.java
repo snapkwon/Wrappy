@@ -36,7 +36,6 @@ import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -93,7 +92,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
@@ -151,8 +149,8 @@ import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -2576,6 +2574,7 @@ public class ConversationView {
         private View mLastSelectedView;
         private String tempPacketIDSelect = "";
         private String tempNicknameSelect = "";
+        private Bitmap mCaptureBitmap;
 
         public void setTargetLanguage(String target) {
             switch (target) {
@@ -2859,9 +2858,10 @@ public class ConversationView {
                     StringBuffer fileName = new StringBuffer();
                     fileName.append("capture_");
                     fileName.append(i);
+                    fileName.append(".png");
                     i++;
 
-                    captureView(mLastSelectedView, fileName.toString());
+                    mCaptureBitmap = captureView(mLastSelectedView, fileName.toString());
 
                     return true;
                 }
@@ -2962,7 +2962,7 @@ public class ConversationView {
                         ImApp mApp = (ImApp) mActivity.getApplication();
                         long mAccountId = mApp.getDefaultAccountId();
 
-                        mSpamBottomSheet = SpamBottomSheet.getInstace(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
+                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect, mCaptureBitmap);
                         mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
 
                         mode.finish();
@@ -3373,15 +3373,21 @@ public class ConversationView {
         LinearLayout mCancelLayout;
 
         public static String TYPE_SPAM = "SPAM";
-        public static String TYPE_VIOLENCE = "VIOLENCE";
+        public static String TYPE_VIOLENCE = "OBJECTIONABLE";
 
-        public static SpamBottomSheet getInstace(String reporter, String member, String messageId) {
+        public static SpamBottomSheet getInstance(String reporter, String member, String messageId,
+                                                        Bitmap bitmap) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
 
             Bundle args = new Bundle();
             args.putString("reporter", reporter);
             args.putString("member", member);
             args.putString("messageId", messageId);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            args.putByteArray("image", byteArray);
 
             spamBottomSheet.setArguments(args);
 
@@ -3408,21 +3414,27 @@ public class ConversationView {
                 case R.id.layout_message_spam:
                 case R.id.layout_message_violence:
 
-                    File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
-                    RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
-                        @Override
-                        public void onCompleted(Exception e, Response<String> result) {
-                            JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
-                            String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
-                            if (getArguments() != null) {
+                    if (getArguments() != null) {
+
+                        byte[] byteArray = getArguments().getByteArray("image");
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                        File mFileCapture = AppFuncs.convertBitmapToFile(getContext(), bitmap);
+                        RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                            @Override
+                            public void onCompleted(Exception e, Response<String> result) {
+                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                                String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+
                                 String reporter = getArguments().getString("reporter");
                                 String member = getArguments().getString("member");
                                 String messageId = getArguments().getString("messageId");
 
                                 sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
                             }
-                        }
-                    });
+                        });
+
+                    }
                     dismiss();
                     break;
                 case R.id.layout_message_cancel:
