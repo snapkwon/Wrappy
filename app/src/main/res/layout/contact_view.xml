@@ -111,15 +111,12 @@
     </LinearLayout>
 
 
-    <ImageView
+    <net.wrappy.im.helper.layout.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:scaleType="centerCrop" 
             android:layout_margin="3dp"
-            android:layout_gravity="left|top"
             android:src="@drawable/avatar_unknown"
-
             />
 
     <ImageView

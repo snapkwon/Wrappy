@@ -46,6 +46,8 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     AppDelegate appDelegate;
     ArrayList<WpKMemberSecurityQuestionDto> stringQuestions = new ArrayList<>();
 
+    int count = 0;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -139,8 +141,14 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                         appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
                     }
                 } else {
-                    AppFuncs.alert(getActivity(), "Answer wrong! Try with email", true);
-                    appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
+                    if (count == 3) {
+                        AppFuncs.alert(getActivity(), "Answer wrong! Try with email", true);
+                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
+                    } else {
+                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
+                    }
+                    count++;
+
                 }
 
             }

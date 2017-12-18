@@ -28,6 +28,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -52,10 +53,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -175,7 +178,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -190,7 +193,7 @@ public class MessageListItem extends FrameLayout {
             nickname = address;
 
         lastMessage = formatMessage(body);
-        showAvatar(address, nickname, true, presenceStatus);
+        showAvatar(address, nickname, true, presenceStatus, mReference);
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
@@ -820,7 +823,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showAvatar(String address, String nickname, boolean isLeft, int presenceStatus) {
+    private void showAvatar(String address, String nickname, boolean isLeft, int presenceStatus, String reference) {
         if (mHolder.mAvatar == null)
             return;
 
@@ -830,10 +833,7 @@ public class MessageListItem extends FrameLayout {
 
             RoundedAvatarDrawable avatar = null;
 
-            try {
-                avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-            } catch (Exception e) {
-            }
+
 
             if (avatar != null) {
                 mHolder.mAvatar.setVisibility(View.VISIBLE);
@@ -851,6 +851,18 @@ public class MessageListItem extends FrameLayout {
                     mHolder.mAvatar.setVisibility(View.VISIBLE);
                     mHolder.mAvatar.setImageDrawable(lavatar);
                 }
+            }
+            try {
+                RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
+                    @Override
+                    public void onCompleted(Exception e, Bitmap result) {
+                        if (result!=null) {
+                            mHolder.mAvatar.setImageBitmap(result);
+                        }
+                    }
+                });
+                //avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+            } catch (Exception e) {
             }
         }
     }

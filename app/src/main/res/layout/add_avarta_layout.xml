@@ -17,6 +17,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_camera_profile"
+        android:visibility="gone"
         android:background="@null"/>
 
 </RelativeLayout>

@@ -19,6 +19,8 @@ public class ConferenceActivity extends JitsiMeetActivity {
     private static final String VIDEO_MUTED = "startWithVideoMuted";
     private static final String ROOM_ID = "roomId";
 
+    private int numberParticipants = 0;
+
     public static void startVideoCall(Context context, String roomId) {
         startConference(context, roomId, false);
     }
@@ -71,6 +73,21 @@ public class ConferenceActivity extends JitsiMeetActivity {
                 @Override
                 public void onConferenceLeft(Map<String, Object> data) {
                     on("CONFERENCE_LEFT", data);
+                }
+
+                @Override
+                public void onParticipantJoined(Map<String, Object> data) {
+                    on("PARTICIPANT_JOINED", data);
+                    numberParticipants++;
+                }
+
+                @Override
+                public void onParticipantLeft(Map<String, Object> data) {
+                    on("PARTICIPANT_LEFT", data);
+                    numberParticipants--;
+                    if (numberParticipants == 1) {
+                        finish();
+                    }
                 }
 
                 @Override

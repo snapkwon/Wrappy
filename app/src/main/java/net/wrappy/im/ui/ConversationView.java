@@ -137,7 +137,6 @@ import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -228,6 +227,7 @@ public class ConversationView {
     long mLastChatId = -1;
     String mRemoteNickname;
     String mRemoteAddress;
+    String mRemoteReference;
     RoundedAvatarDrawable mRemoteAvatar = null;
     Drawable mRemoteHeader = null;
     int mSubscriptionType;
@@ -1376,7 +1376,9 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId, String name) {
+    public void bindChat(long chatId, String name, String reference) {
+        //log("bind " + this + " " + chatId);
+        this.mRemoteReference = reference;
         mLastChatId = chatId;
 
         setViewType(VIEW_TYPE_CHAT);
@@ -2641,6 +2643,17 @@ public class ConversationView {
 
 
             mvh = new MessageViewHolder(view);
+            if (viewType == 0) {
+                mvh.mAvatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
+                        intent.putExtra("address", mRemoteAddress);
+                        intent.putExtra("nickname", mRemoteNickname);
+                        mContext.startActivity(intent);
+                    }
+                });
+            }
             view.applyStyleColors();
             return mvh;
         }
@@ -2785,7 +2798,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference);
                     if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                         doConference(body, id, timestamp);
                     }
