@@ -3372,6 +3372,9 @@ public class ConversationView {
         @BindView(R.id.layout_message_cancel)
         LinearLayout mCancelLayout;
 
+        public static String TYPE_SPAM = "SPAM";
+        public static String TYPE_VIOLENCE = "VIOLENCE";
+
         public static SpamBottomSheet getInstace(String reporter, String member, String messageId) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
 
@@ -3416,7 +3419,7 @@ public class ConversationView {
                                 String member = getArguments().getString("member");
                                 String messageId = getArguments().getString("messageId");
 
-                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? RestAPI.TYPE_SPAM : RestAPI.TYPE_VIOLENCE);
+                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
                             }
                         }
                     });
