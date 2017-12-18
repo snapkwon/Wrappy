@@ -14,6 +14,7 @@ public class WpKChatGroupDto implements Parcelable {
     String description;
     String reference;
     WpKIcon icon;
+    String xmppGroup;
 
     public WpKChatGroupDto() {}
 
@@ -32,6 +33,7 @@ public class WpKChatGroupDto implements Parcelable {
         description = in.readString();
         reference = in.readString();
         icon = in.readParcelable(WpKIcon.class.getClassLoader());
+        xmppGroup = in.readString();
     }
 
     public static final Creator<WpKChatGroupDto> CREATOR = new Creator<WpKChatGroupDto>() {
@@ -94,6 +96,14 @@ public class WpKChatGroupDto implements Parcelable {
         this.icon = icon;
     }
 
+    public String getXmppGroup() {
+        return xmppGroup;
+    }
+
+    public void setXmppGroup(String xmppGroup) {
+        this.xmppGroup = xmppGroup;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -117,5 +127,6 @@ public class WpKChatGroupDto implements Parcelable {
         parcel.writeString(description);
         parcel.writeString(reference);
         parcel.writeParcelable(icon, i);
+        parcel.writeString(xmppGroup);
     }
 }

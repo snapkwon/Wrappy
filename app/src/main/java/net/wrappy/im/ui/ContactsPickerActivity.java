@@ -46,8 +46,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -279,12 +282,12 @@ public class ContactsPickerActivity extends BaseActivity {
                 showWaitinDialog();
                 if (bitmap!=null) {
                     File file = AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap);
-                    RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
+                    RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void onCompleted(Exception e, Response<String> result) {
                             String reference = "";
                             try {
-                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                                 reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                                 WpKIcon icon = new WpKIcon();
                                 icon.setReference(reference);
@@ -346,6 +349,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     ArrayList<String> users = new ArrayList<>();
                     ArrayList<Integer> providers = new ArrayList<>();
                     ArrayList<Integer> accounts = new ArrayList<>();
+                    WpKChatGroupDto chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
 
                     for (int i = 0; i < mSelection.size(); i++) {
                         SelectedContact contact = mSelection.valueAt(i);
@@ -355,7 +359,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                     Store.putStringData(getApplicationContext(),groupName,reference);
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_RESULT_GROUP_NAME, groupName);
+                    data.putExtra(EXTRA_RESULT_GROUP_NAME, chatGroupDto);
                     data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);

@@ -22,6 +22,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -33,13 +35,15 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.enums.EnumPresenceStatus;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
@@ -47,7 +51,6 @@ import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.LogCleaner;
@@ -109,7 +112,7 @@ public class ContactListItem extends FrameLayout {
         bind(holder, cursor, underLineText, true, scrolling);
     }
 
-    public void bind(ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
+    public void bind(final ContactViewHolder holder, Cursor cursor, String underLineText, boolean showChatMsg, boolean scrolling) {
 
         address = cursor.getString(COLUMN_CONTACT_USERNAME);
         nickname = cursor.getString(COLUMN_CONTACT_NICKNAME);
@@ -123,9 +126,10 @@ public class ContactListItem extends FrameLayout {
 
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
+        final String reference = cursor.getString(COLUMN_AVATAR_HASH);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
-
+        String s = DatabaseUtils.dumpCursorToString(cursor);
         if (TextUtils.isEmpty(nickname)) {
             nickname = address.split("@")[0].split("\\.")[0];
         } else {
@@ -167,14 +171,7 @@ public class ContactListItem extends FrameLayout {
 
                 Drawable avatar = null;
 
-                try {
-                    //avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
 
-                } catch (Exception e) {
-                    //problem decoding avatar
-                    Log.e(ImApp.LOG_TAG, "error decoding avatar", e);
-                }
 
                 try {
                     if (avatar != null) {
@@ -195,7 +192,16 @@ public class ContactListItem extends FrameLayout {
                 } catch (OutOfMemoryError ome) {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
-
+                if (!TextUtils.isEmpty(reference)) {
+                    RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
+                        @Override
+                        public void onCompleted(Exception e, Bitmap result) {
+                            if (result!=null) {
+                                holder.mAvatar.setImageBitmap(result);
+                            }
+                        }
+                    });
+                }
             }
         }
 

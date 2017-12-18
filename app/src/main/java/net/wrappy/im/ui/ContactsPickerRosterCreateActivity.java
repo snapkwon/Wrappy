@@ -113,17 +113,19 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
         RestAPI.apiGET(getApplicationContext(),RestAPI.GET_TYPE_ROSTER).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                try {
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        String s = result.getResult();
-                        JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
-                        for (JsonElement element: jsonArray) {
-                            arrType.add(element.getAsString());
+                if (result!=null) {
+                    try {
+                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                            String s = result.getResult();
+                            JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
+                            for (JsonElement element: jsonArray) {
+                                arrType.add(element.getAsString());
+                            }
+                            arrAdapterType.notifyDataSetChanged();
                         }
-                        arrAdapterType.notifyDataSetChanged();
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                }catch (Exception ex) {
-                    ex.printStackTrace();
                 }
             }
         });
@@ -313,12 +315,12 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
             postDataToServer("");
         } else {
             File file = AppFuncs.convertBitmapToFile(getApplicationContext(),photo);
-            RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
+            RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void onCompleted(Exception e, Response<String> result) {
                     String reference = "";
                     try {
-                        JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                        JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                         reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                         postDataToServer(reference);
                     } catch (Exception ex) {
@@ -326,6 +328,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
                     }
                 }
             });
+
         }
     }
 

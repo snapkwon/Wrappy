@@ -117,6 +117,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private long mChatId = -1;
     private String mAddress = null;
     private String mNickname = null;
+    private String mReference = null;
 
     private ConversationView mConvoView = null;
 
@@ -340,6 +341,7 @@ public class ConversationDetailActivity extends BaseActivity {
             mChatId = intent.getLongExtra("id", -1);
         mAddress = intent.getStringExtra("address");
         mNickname = intent.getStringExtra("nickname");
+        mReference = intent.getStringExtra("reference");
 
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
@@ -378,7 +380,7 @@ public class ConversationDetailActivity extends BaseActivity {
     }
 
     private void startChatting() {
-        mConvoView.bindChat(mChatId, mNickname);
+        mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
         applyStyleForToolbar();
     }

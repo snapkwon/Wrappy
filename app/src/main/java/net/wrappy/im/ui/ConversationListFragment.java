@@ -379,7 +379,7 @@ public class ConversationListFragment extends Fragment {
         public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor,int position) {
 
             if (TextUtils.isEmpty(mSearchString)) {
-
+                String s = DatabaseUtils.dumpCursorToString(cursor);
                 final long chatId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
                 final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
                 final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
@@ -393,6 +393,7 @@ public class ConversationListFragment extends Fragment {
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
 
                 final int chatFavorite = cursor.getInt(ConversationListItem.COLUMN_CHAT_FAVORITE);
+                final String reference = cursor.getString(ConversationListItem.COLUMN_AVATAR_HASH);
 
                 String lastMsgType = null;
                 if (!TextUtils.isEmpty(lastMsg)) {
@@ -404,7 +405,7 @@ public class ConversationListFragment extends Fragment {
 
                 ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -414,6 +415,7 @@ public class ConversationListFragment extends Fragment {
                         intent.putExtra("id", chatId);
 //                        intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
+                        intent.putExtra("reference", reference);
                         context.startActivity(intent);
                     }
                 });
@@ -433,11 +435,12 @@ public class ConversationListFragment extends Fragment {
                 final String body = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.BODY));
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
                 final String messageType = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.MIME_TYPE));
+                final String reference = cursor.getString(ConversationListItem.COLUMN_AVATAR_HASH);
 
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -447,6 +450,7 @@ public class ConversationListFragment extends Fragment {
                                 intent.putExtra("id", chatId);
 //                                intent.putExtra("address", nickname);
                                 intent.putExtra("nickname", nickname);
+                                intent.putExtra("reference", reference);
 
                                 context.startActivity(intent);
                             }
@@ -567,8 +571,8 @@ public class ConversationListFragment extends Fragment {
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE,
                 Imps.Chats.CHAT_TYPE,
-                Imps.Chats.CHAT_FAVORITE
-                //          Imps.Contacts.AVATAR_HASH,
+                Imps.Chats.CHAT_FAVORITE,
+                Imps.Contacts.AVATAR_HASH
                 //        Imps.Contacts.AVATAR_DATA
 
         };
