@@ -136,7 +136,6 @@ import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -3241,7 +3240,11 @@ public class ConversationView {
 
     public void startAudioConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.AUDIO);
-        ConferenceActivity.startAudioCall(mContext, roomId);
+        if (isGroupChat()) {
+            ConferenceActivity.startAudioGroupCall(mContext, roomId);
+        } else {
+            ConferenceActivity.startAudioCall(mContext, roomId);
+        }
     }
 
     public void startVideoConference() {
@@ -3251,7 +3254,11 @@ public class ConversationView {
     public void startVideoConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
         Debug.d("room Id " + roomId);
-        ConferenceActivity.startVideoCall(mContext, roomId);
+        if (isGroupChat()) {
+            ConferenceActivity.startVideoGroupCall(mContext, roomId);
+        } else {
+            ConferenceActivity.startVideoCall(mContext, roomId);
+        }
     }
 
     private String getRoomId(String id, ConferenceMessage.ConferenceType type) {
