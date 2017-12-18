@@ -1096,11 +1096,7 @@ public class ConversationView {
 
                 if (mComposeMessage.getVisibility() == View.VISIBLE) {
 
-                    sendMessage();
-
-
-
-                    /*JsonObject jsonObject = new JsonObject();
+                    JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("message", mComposeMessage.getText().toString());
                     
                     RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
@@ -1114,11 +1110,11 @@ public class ConversationView {
                                 if (status) {
 
                                 } else {
-
+                                    sendMessage();
                                 }
                             }
                         }
-                    });*/
+                    });
                 } else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
