@@ -18,31 +18,22 @@ public class ConferenceActivity extends JitsiMeetActivity {
     private static final String AUDIO_MUTED = "startWithAudioMuted";
     private static final String VIDEO_MUTED = "startWithVideoMuted";
     private static final String ROOM_ID = "roomId";
-    private static final String IS_GROUP = "isGroup";
 
-    boolean isGroup = false;
+    private int numberParticipants = 0;
+
     public static void startVideoCall(Context context, String roomId) {
-        startConference(context, roomId, false, false);
+        startConference(context, roomId, false);
     }
 
     public static void startAudioCall(Context context, String roomId) {
-        startConference(context, roomId, true, false);
+        startConference(context, roomId, true);
     }
 
-    public static void startVideoGroupCall(Context context, String roomId) {
-        startConference(context, roomId, false, true);
-    }
-
-    public static void startAudioGroupCall(Context context, String roomId) {
-        startConference(context, roomId, true, true);
-    }
-
-    private static void startConference(Context context, String roomId, boolean isAudioCall, boolean isGroup) {
+    private static void startConference(Context context, String roomId, boolean isAudioCall) {
         Intent intent = new Intent(context, ConferenceActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(VIDEO_MUTED, isAudioCall);
         bundle.putBoolean(AUDIO_MUTED, !isAudioCall);
-        bundle.putBoolean(IS_GROUP, isGroup);
         intent.putExtras(bundle);
         intent.putExtra(ROOM_ID, roomId);
         context.startActivity(intent);
@@ -87,12 +78,14 @@ public class ConferenceActivity extends JitsiMeetActivity {
                 @Override
                 public void onParticipantJoined(Map<String, Object> data) {
                     on("PARTICIPANT_JOINED", data);
+                    numberParticipants++;
                 }
 
                 @Override
                 public void onParticipantLeft(Map<String, Object> data) {
                     on("PARTICIPANT_LEFT", data);
-                    if (!isGroup) {
+                    numberParticipants--;
+                    if (numberParticipants == 1) {
                         finish();
                     }
                 }
@@ -135,7 +128,6 @@ public class ConferenceActivity extends JitsiMeetActivity {
             String roomId = intent.getStringExtra(ROOM_ID);
             urlObject.putString("url", "https://meet.jit.si/" + roomId);
 //            urlObject.putString("url", String.format(ConferenceConstant.CONFERENCE_HOST, roomId));
-            isGroup = intent.getBooleanExtra(IS_GROUP, false);
             if (view != null) {
                 view.loadURLObject(urlObject);
             }

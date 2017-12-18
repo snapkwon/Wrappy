@@ -469,11 +469,11 @@ public class ConversationView {
         }
     }
 
-    public void sendDeleteChat(String msgId){
+    public void sendDeleteChat(String msgId) {
         sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
     }
 
-    public void sendEditChat(String msgId, String newMsg){
+    public void sendEditChat(String msgId, String newMsg) {
         StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
         buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
         sendMessageAsync(buffer.toString());
@@ -749,7 +749,7 @@ public class ConversationView {
 
         public void onContactsPresenceUpdate(Contact[] contacts) {
 
-                Debug.d("onContactsPresenceUpdate()");
+            Debug.d("onContactsPresenceUpdate()");
 
             for (Contact c : contacts) {
                 if (c.getAddress().getBareAddress().equals(Address.stripResource(mRemoteAddress))) {
@@ -2521,9 +2521,8 @@ public class ConversationView {
         private int mMimeTypeColumn;
         private int mIdColumn;
 
-        class BodyTranslate
-        {
-            public  boolean mIstranslate;
+        class BodyTranslate {
+            public boolean mIstranslate;
             public String mTexttranslate;
 
         }
@@ -2532,15 +2531,14 @@ public class ConversationView {
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
-       // private String bodytranalate = "";
+        // private String bodytranalate = "";
 
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
         private String tempPacketIDSelect = "";
 
-        public  void setTargetLanguage(String target)
-        {
+        public void setTargetLanguage(String target) {
             switch (target) {
                 case "English":
                     targetlanguage = "en";
@@ -2645,7 +2643,7 @@ public class ConversationView {
 
             iapptranslater = new InAppTranslation(mActivity, new InAppTranslation.CompleteTransaction() {
                 @Override
-                public void onTaskTranslateComplete(String result,int position) {
+                public void onTaskTranslateComplete(String result, int position) {
                     BodyTranslate data = new BodyTranslate();
                     data.mIstranslate = true;
                     data.mTexttranslate = result;
@@ -2654,8 +2652,8 @@ public class ConversationView {
                 }
 
                 @Override
-                public void onTaskDetectComplete(String result,String src,int position) {
-                    if(!result.equals("")) {
+                public void onTaskDetectComplete(String result, String src, int position) {
+                    if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
                     }
                 }
@@ -2667,13 +2665,12 @@ public class ConversationView {
             });
 
 
-
             mvh = new MessageViewHolder(view);
-            if (viewType==0) {
+            if (viewType == 0) {
                 mvh.mAvatar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(mContext,ProfileActivity.class);
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
                         intent.putExtra("address", mRemoteAddress);
                         intent.putExtra("nickname", mRemoteNickname);
                         mContext.startActivity(intent);
@@ -2686,8 +2683,8 @@ public class ConversationView {
 
 
         @Override
-        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
-            if(bodytranslate.size() < position + 1) {
+        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
+            if (bodytranslate.size() < position + 1) {
                 if (cursor.moveToFirst()) {
                     do {
                         String Textdata = cursor.getString(mBodyColumn);
@@ -2705,12 +2702,10 @@ public class ConversationView {
                 @Override
                 public void onClick(View v) {
                     cursor.moveToPosition(viewHolder.getPos());
-                    if(bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                    if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
                         iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
-                    }
-                    else
-                    {
+                    } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
                         notifyItemChanged(viewHolder.getPos());
                     }
@@ -2750,26 +2745,21 @@ public class ConversationView {
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = cursor.getString(mBodyColumn) ;
-            if(istranslate ==false || cursor.getString(mMimeTypeColumn)!=null
-                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX))
-            {
+            String body = cursor.getString(mBodyColumn);
+            if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 viewHolder.btntranslate.setVisibility(View.GONE);
                 viewHolder.txttranslate.setVisibility(View.GONE);
-               // body =cursor.getString(mBodyColumn);
-            }
-            else
-            {
+                // body =cursor.getString(mBodyColumn);
+            } else {
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
-                if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
                     viewHolder.btntranslate.setText("close translate");
-                }
-                else
-                {
+                } else {
                     viewHolder.txttranslate.setVisibility(View.GONE);
                     viewHolder.btntranslate.setText("see translate");
                 }
@@ -2889,12 +2879,12 @@ public class ConversationView {
 
                 switch (item.getItemId()) {
 
-                     case R.id.menu_message_delete:
-                         if (!tempPacketIDSelect.equalsIgnoreCase("")) {
-                             sendDeleteChat(tempPacketIDSelect);
-                         }
-                         mode.finish(); // Action picked, so close the CAB
-                     return true;
+                    case R.id.menu_message_delete:
+                        if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                            sendDeleteChat(tempPacketIDSelect);
+                        }
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
 //                    case R.id.menu_message_share:
 //                        ((MessageListItem) mLastSelectedView).exportMediaFile();
 //                        mode.finish(); // Action picked, so close the CAB
@@ -2923,7 +2913,7 @@ public class ConversationView {
 
                 if (mLastSelectedView != null)
                     tempPacketIDSelect = "";
-                    mLastSelectedView.setSelected(false);
+                mLastSelectedView.setSelected(false);
 
 
             }
@@ -3193,7 +3183,7 @@ public class ConversationView {
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
-        mMessageAdapter.setTargetLanguage( spinner.getSelectedItem().toString());
+        mMessageAdapter.setTargetLanguage(spinner.getSelectedItem().toString());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -3230,9 +3220,9 @@ public class ConversationView {
         });
 
         popupWindow.setFocusable(true);
-       // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-       // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-     //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         popupWindow.addView(view);
 
         return popupWindow;
@@ -3240,11 +3230,7 @@ public class ConversationView {
 
     public void startAudioConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.AUDIO);
-        if (isGroupChat()) {
-            ConferenceActivity.startAudioGroupCall(mContext, roomId);
-        } else {
-            ConferenceActivity.startAudioCall(mContext, roomId);
-        }
+        ConferenceActivity.startAudioCall(mContext, roomId);
     }
 
     public void startVideoConference() {
@@ -3254,11 +3240,7 @@ public class ConversationView {
     public void startVideoConference(String id) {
         String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
         Debug.d("room Id " + roomId);
-        if (isGroupChat()) {
-            ConferenceActivity.startVideoGroupCall(mContext, roomId);
-        } else {
-            ConferenceActivity.startVideoCall(mContext, roomId);
-        }
+        ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
     private String getRoomId(String id, ConferenceMessage.ConferenceType type) {
