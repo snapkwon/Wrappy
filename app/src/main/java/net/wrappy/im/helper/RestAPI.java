@@ -1,6 +1,8 @@
 package net.wrappy.im.helper;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -51,6 +53,7 @@ public class RestAPI {
     public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     public static String POST_PHOTO = root_url + "kernal/asset/retain/";
+    public static String GET_PHOTO = root_url + "kernal/asset/";
     public static String PHOTO_REFERENCE = "reference";
     public static String PHOTO_AVATAR = "AVATAR";
     public static String PHOTO_BRAND = "BRAND";
@@ -64,6 +67,7 @@ public class RestAPI {
     public static String GET_COUNTRY_CODES = root_url_dev + "master/country";
     public static String GET_TYPE_ROSTER = root_url_dev + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url_dev + "chat/roster/group/add";
+    public static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
 
 
     public static String loginUrl(String user, String pass) {
@@ -83,8 +87,30 @@ public class RestAPI {
         return String.format(POST_REFRESH_TOKEN, refreshToken);
     }
 
+    public static String getMemberByIdUrl(String jid) {
+        return String.format(GET_MEMBER_BY_JID,jid);
+    }
+
+    public static String getPhotoReference(String s) {
+        try {
+            JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+            return jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public static String sendEmailAndUsernameToGetPassUrl(String username, String pass) {
         return String.format(GET_FORGET_PASS_SEND_EMAIL,username,pass);
+    }
+
+    public static void loadImageUrl(Context context, ImageView imageView, String reference) {
+        Ion.with(context).load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/61dcb8b8-e152-11e7-a59a-0050569a8872").withBitmap().intoImageView(imageView);
+    }
+
+    public static Future<Bitmap> getBitmapFromUrl(Context context, String reference) {
+        return Ion.with(context).load(GET_PHOTO+reference).withBitmap().asBitmap();
     }
 
     public interface RestAPIListenner {
@@ -152,7 +178,7 @@ public class RestAPI {
         return header;
     }
 
-    private static Builders.Any.B getIon(Context context, String url, String method) {
+    public static Builders.Any.B getIon(Context context, String url, String method) {
         String header = getHeaderHttps(context,url);
         return Ion.with(context).load(method,url).setTimeout(TIME_OUT).addHeader("Authorization",header);
     }
@@ -206,9 +232,9 @@ public class RestAPI {
         });
     }
 
-    public static void GetDataWrappy(Context context, String url, Class<T> aClass) {
+    public static void GetDataWrappy(Context context, String url) {
         String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).as(TypeToken.get(aClass)).withResponse().setCallback(new FutureCallback<Response<T>>() {
+        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).as(new TypeToken<T>(){}).withResponse().setCallback(new FutureCallback<Response<T>>() {
             @Override
             public void onCompleted(Exception e, Response<T> result) {
 
@@ -216,21 +242,32 @@ public class RestAPI {
         });
     }
 
-    public static void UploadFile(Context context, String url, String type, File file, final RestAPIListenner listenner) {
-        String header = getHeaderHttps(context,url);
-        Ion.with(context)
-                .load(url)
+//    public static void UploadFile(Context context, String url, String type, File file, final RestAPIListenner listenner) {
+//        String header = getHeaderHttps(context,url);
+//        Ion.with(context)
+//                .load(url)
+//                .addHeader("Authorization",header)
+//                .setMultipartParameter("type", type)
+//                .setMultipartFile("file","multipart/form-data",file)
+//                .asString().withResponse()
+//                .setCallback(new FutureCallback<Response<String>>() {
+//                    @Override
+//                    public void onCompleted(Exception e, Response<String> result) {
+//                        listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+//                    }
+//                });
+//    }
+
+    public static Future<Response<String>> uploadFile(Context context,File file, String type) {
+        String header = getHeaderHttps(context,RestAPI.POST_PHOTO);
+        return Ion.with(context)
+                .load(RestAPI.POST_PHOTO)
                 .addHeader("Authorization",header)
                 .setMultipartParameter("type", type)
                 .setMultipartFile("file","multipart/form-data",file)
-                .asString().withResponse()
-                .setCallback(new FutureCallback<Response<String>>() {
-                    @Override
-                    public void onCompleted(Exception e, Response<String> result) {
-                        listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
-                    }
-                });
+                .asString().withResponse();
     }
+
 
     public static void refreshTokenHttps(final Context context) {
         Ion.with(context).load(refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {

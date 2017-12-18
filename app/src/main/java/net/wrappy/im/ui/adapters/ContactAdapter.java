@@ -2,6 +2,7 @@ package net.wrappy.im.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.widgets.LetterAvatar;
@@ -80,8 +82,16 @@ public class ContactAdapter
             line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(wpKMemberDto.getAvatar()))
-                Glide.with(mContext).load(wpKMemberDto.getAvatar()).into(mAvatar);
+            if (!TextUtils.isEmpty(wpKMemberDto.getReference()))
+                RestAPI.getBitmapFromUrl(mContext,wpKMemberDto.getReference()).setCallback(new FutureCallback<Bitmap>() {
+                    @Override
+                    public void onCompleted(Exception e, Bitmap result) {
+                        if (result!=null) {
+                            mAvatar.setImageBitmap(result);
+                        }
+                    }
+                });
+                //RestAPI.loadImageUrl(mContext,mAvatar,wpKMemberDto.getReference());
             else {
                 LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
                 mAvatar.setImageDrawable(lavatar);
@@ -93,7 +103,6 @@ public class ContactAdapter
                         Intent intent = ConversationDetailActivity.getStartIntent(mContext);
                         intent.putExtra("address", wpKMemberDto.getXMPPAuthDto().getAccount());
                         intent.putExtra("nickname", wpKMemberDto.getIdentifier());
-
                         mContext.startActivity(intent);
                     }
                 }

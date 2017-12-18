@@ -1,29 +1,37 @@
 package net.wrappy.im.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
  * Created by ben on 30/11/2017.
  */
 
-public class WpKMemberDto {
+public class WpKMemberDto extends T {
     private Long id;
     private String identifier;
     private String email;
     private String mobile;
-    private String avatar;
+    private String gender;
+    private String reference;
     @SerializedName("wpKAuthList")
     private ArrayList<WpKAuthDto> wpKAuthDtoList;
 
-    public WpKMemberDto(String identifier, String email, String mobile) {
+    public WpKMemberDto(String identifier, String email, String mobile, String gender) {
         this.identifier = identifier;
         this.email = email;
         this.mobile = mobile;
+        this.gender = gender;
     }
 
     public WpKMemberDto() {
+    }
+
+    public static Type getType() {
+        return new TypeToken<WpKMemberDto>(){}.getType();
     }
 
     public Long getId() {
@@ -32,6 +40,14 @@ public class WpKMemberDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getIdentifier() {
@@ -50,12 +66,12 @@ public class WpKMemberDto {
         this.email = email;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getReference() {
+        return reference;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getMobile() {

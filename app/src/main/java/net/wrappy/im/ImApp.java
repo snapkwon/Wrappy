@@ -71,6 +71,7 @@ import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.tasks.MigrateAccountTask;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
@@ -1201,10 +1202,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             // update locally
             String selection = Imps.Contacts.USERNAME + "=?";
             String[] selectionArgs = {address};
-            ContentValues values = new ContentValues(1);
+            ContentValues values = new ContentValues();
             values.put(Imps.Contacts.NICKNAME, name);
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
+            }
+            if (!TextUtils.isEmpty(wpKMemberDto.getReference())) {
+                DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), null, wpKMemberDto.getReference(), address);
+                values.put(Imps.Contacts.AVATAR_DATA, wpKMemberDto.getReference());
             }
             sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
         }
