@@ -33,7 +33,10 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -41,6 +44,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
@@ -92,6 +96,8 @@ import android.widget.Toast;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
@@ -104,6 +110,7 @@ import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
@@ -144,6 +151,9 @@ import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -262,7 +272,6 @@ public class ConversationView {
     private static final long FAST_QUERY_INTERVAL = 200;
 
     public SpamBottomSheet mSpamBottomSheet;
-
 
     private RequeryCallback mRequeryCallback = null;
 
@@ -2850,6 +2859,14 @@ public class ConversationView {
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
 
+                    int i = 0;
+                    StringBuffer fileName = new StringBuffer();
+                    fileName.append("capture_");
+                    fileName.append(i);
+                    i++;
+
+                    captureView(mLastSelectedView, fileName.toString());
+
                     return true;
                 }
             });
@@ -2880,6 +2897,31 @@ public class ConversationView {
             }
 
 
+        }
+
+        /**
+         * Capture message text to report spam
+         *
+         * @param view
+         */
+        public Bitmap captureView(View view, String fileName) {
+            // create a bitmap with the same dimensions
+            Bitmap image = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
+
+            // draw the view inside the Bitmap
+            view.draw(new Canvas(image));
+
+            //Store to sdcard
+            try {
+                String path = Environment.getExternalStorageDirectory().toString();
+                File myFile = new File(path, fileName);
+                FileOutputStream out = new FileOutputStream(myFile);
+
+                image.compress(Bitmap.CompressFormat.PNG, 90, out); //Output
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return image;
         }
 
         boolean isScrolling() {
@@ -2921,8 +2963,12 @@ public class ConversationView {
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     case R.id.menu_report_spam:
-                        mSpamBottomSheet = SpamBottomSheet.getInstace(ImApp.sImApp.getDefaultUsername(), tempNicknameSelect, tempPacketIDSelect, "aaa");
+                        ImApp mApp = (ImApp) mActivity.getApplication();
+                        long mAccountId = mApp.getDefaultAccountId();
+
+                        mSpamBottomSheet = SpamBottomSheet.getInstace(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
                         mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
+
                         mode.finish();
                         return true;
 //                    case R.id.menu_message_share:
@@ -3330,21 +3376,13 @@ public class ConversationView {
         @BindView(R.id.layout_message_cancel)
         LinearLayout mCancelLayout;
 
-        public static final String TYPE_SPAM = "SPAM";
-        public static final String TYPE_VIOLENCE = "VIOLENCE";
-
-        public static SpamBottomSheet getInstace(String reporter, String member, String messageId,
-                                                 String screenShot) {
+        public static SpamBottomSheet getInstace(String reporter, String member, String messageId) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
-
-            Log.d("Cuong", "reporter: " + reporter + ", member: " + member + ", messageId: " + messageId +
-                            ", screenshot: " + screenShot);
 
             Bundle args = new Bundle();
             args.putString("reporter", reporter);
             args.putString("member", member);
             args.putString("messageId", messageId);
-            args.putString("screenshot", screenShot);
 
             spamBottomSheet.setArguments(args);
 
@@ -3366,20 +3404,26 @@ public class ConversationView {
         }
 
         @Override
-        public void onClick(View view) {
+        public void onClick(final View view) {
             switch (view.getId()) {
                 case R.id.layout_message_spam:
-                    if (getArguments() != null) {
-                        String reporter = getArguments().getString("reporter");
-                        String member = getArguments().getString("member");
-                        String messageId = getArguments().getString("messageId");
-                        String screenShot = getArguments().getString("screenshot");
-
-                        //sendReportMessage(reporter, member, messageId, screenShot, TYPE_SPAM);
-                        dismiss();
-                    }
-                    break;
                 case R.id.layout_message_violence:
+
+                    File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
+                    RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                            String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+                            if (getArguments() != null) {
+                                String reporter = getArguments().getString("reporter");
+                                String member = getArguments().getString("member");
+                                String messageId = getArguments().getString("messageId");
+
+                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? RestAPI.TYPE_SPAM : RestAPI.TYPE_VIOLENCE);
+                            }
+                        }
+                    });
                     dismiss();
                     break;
                 case R.id.layout_message_cancel:
@@ -3391,7 +3435,7 @@ public class ConversationView {
         }
 
         public void sendReportMessage(String reporter, String member, String messageId,
-                                      String screenShot, String type) {
+                                      String reference, String type) {
 
             JsonObject reporterObject = new JsonObject();
             reporterObject.addProperty("identifier", reporter);
@@ -3403,16 +3447,13 @@ public class ConversationView {
             jsonObject.add("reporter", reporterObject);
             jsonObject.add("member", memberObject);
             jsonObject.addProperty("messageId", messageId);
-            jsonObject.addProperty("screenShot", screenShot);
-            jsonObject.addProperty("type", type.equals(TYPE_SPAM) ? TYPE_SPAM : TYPE_VIOLENCE);
+            jsonObject.addProperty("screenShot", reference);
+            jsonObject.addProperty("type", type);
 
-            Log.e("Cuong", jsonObject.toString());
-
-            RestAPI.PostDataWrappy(getContext(), jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.e(s);
-
                 }
             });
 

@@ -70,6 +70,8 @@ public class RestAPI {
     public static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
     public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
+    public static String TYPE_SPAM = "SPAM";
+    public static String TYPE_VIOLENCE = "VIOLENCE";
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
