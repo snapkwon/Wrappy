@@ -134,6 +134,7 @@ import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.io.IOException;
@@ -469,11 +470,11 @@ public class ConversationView {
         }
     }
 
-    public void sendDeleteChat(String msgId){
+    public void sendDeleteChat(String msgId) {
         sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
     }
 
-    public void sendEditChat(String msgId, String newMsg){
+    public void sendEditChat(String msgId, String newMsg) {
         StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
         buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
         sendMessageAsync(buffer.toString());
@@ -636,28 +637,9 @@ public class ConversationView {
     };
 
     private void showPromptForData(final String transferFrom, String filePath) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setTitle(mContext.getString(R.string.file_transfer));
-        builder.setMessage(transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
-                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_));
-
-        builder.setNeutralButton(R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-
-                try {
-                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        String message = transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
+                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_);
+        PopupUtils.getDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 try {
@@ -665,33 +647,30 @@ public class ConversationView {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
                 dialog.dismiss();
             }
 
-        });
-
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        }, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-
-                // Do nothing
+                dialog.dismiss();
+            }
+        }, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 dialog.dismiss();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-
     }
 
     private Runnable mUpdateChatCallback = new Runnable() {
@@ -749,7 +728,7 @@ public class ConversationView {
 
         public void onContactsPresenceUpdate(Contact[] contacts) {
 
-                Debug.d("onContactsPresenceUpdate()");
+            Debug.d("onContactsPresenceUpdate()");
 
             for (Contact c : contacts) {
                 if (c.getAddress().getBareAddress().equals(Address.stripResource(mRemoteAddress))) {
@@ -1738,10 +1717,8 @@ public class ConversationView {
 
         // The positive button is deliberately set as no so that
         // the no is the default value
-        new AlertDialog.Builder(mContext).setTitle(R.string.confirm)
-                .setMessage(r.getString(R.string.confirm_block_contact, mRemoteNickname))
-                .setPositiveButton(R.string.yes, confirmListener) // default button
-                .setNegativeButton(R.string.no, null).setCancelable(false).show();
+        PopupUtils.getDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
+                R.string.no, confirmListener, null);
     }
 
     public long getProviderId() {
@@ -2519,9 +2496,8 @@ public class ConversationView {
         private int mMimeTypeColumn;
         private int mIdColumn;
 
-        class BodyTranslate
-        {
-            public  boolean mIstranslate;
+        class BodyTranslate {
+            public boolean mIstranslate;
             public String mTexttranslate;
 
         }
@@ -2530,15 +2506,14 @@ public class ConversationView {
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
-       // private String bodytranalate = "";
+        // private String bodytranalate = "";
 
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
         private String tempPacketIDSelect = "";
 
-        public  void setTargetLanguage(String target)
-        {
+        public void setTargetLanguage(String target) {
             switch (target) {
                 case "English":
                     targetlanguage = "en";
@@ -2643,7 +2618,7 @@ public class ConversationView {
 
             iapptranslater = new InAppTranslation(mActivity, new InAppTranslation.CompleteTransaction() {
                 @Override
-                public void onTaskTranslateComplete(String result,int position) {
+                public void onTaskTranslateComplete(String result, int position) {
                     BodyTranslate data = new BodyTranslate();
                     data.mIstranslate = true;
                     data.mTexttranslate = result;
@@ -2652,8 +2627,8 @@ public class ConversationView {
                 }
 
                 @Override
-                public void onTaskDetectComplete(String result,String src,int position) {
-                    if(!result.equals("")) {
+                public void onTaskDetectComplete(String result, String src, int position) {
+                    if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
                     }
                 }
@@ -2665,7 +2640,6 @@ public class ConversationView {
             });
 
 
-
             mvh = new MessageViewHolder(view);
             view.applyStyleColors();
             return mvh;
@@ -2673,8 +2647,8 @@ public class ConversationView {
 
 
         @Override
-        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
-            if(bodytranslate.size() < position + 1) {
+        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
+            if (bodytranslate.size() < position + 1) {
                 if (cursor.moveToFirst()) {
                     do {
                         String Textdata = cursor.getString(mBodyColumn);
@@ -2692,12 +2666,10 @@ public class ConversationView {
                 @Override
                 public void onClick(View v) {
                     cursor.moveToPosition(viewHolder.getPos());
-                    if(bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                    if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
                         iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
-                    }
-                    else
-                    {
+                    } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
                         notifyItemChanged(viewHolder.getPos());
                     }
@@ -2737,26 +2709,21 @@ public class ConversationView {
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = cursor.getString(mBodyColumn) ;
-            if(istranslate ==false || cursor.getString(mMimeTypeColumn)!=null
-                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX))
-            {
+            String body = cursor.getString(mBodyColumn);
+            if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 viewHolder.btntranslate.setVisibility(View.GONE);
                 viewHolder.txttranslate.setVisibility(View.GONE);
-               // body =cursor.getString(mBodyColumn);
-            }
-            else
-            {
+                // body =cursor.getString(mBodyColumn);
+            } else {
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
-                if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
                     viewHolder.btntranslate.setText("close translate");
-                }
-                else
-                {
+                } else {
                     viewHolder.txttranslate.setVisibility(View.GONE);
                     viewHolder.btntranslate.setText("see translate");
                 }
@@ -2876,12 +2843,12 @@ public class ConversationView {
 
                 switch (item.getItemId()) {
 
-                     case R.id.menu_message_delete:
-                         if (!tempPacketIDSelect.equalsIgnoreCase("")) {
-                             sendDeleteChat(tempPacketIDSelect);
-                         }
-                         mode.finish(); // Action picked, so close the CAB
-                     return true;
+                    case R.id.menu_message_delete:
+                        if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                            sendDeleteChat(tempPacketIDSelect);
+                        }
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
 //                    case R.id.menu_message_share:
 //                        ((MessageListItem) mLastSelectedView).exportMediaFile();
 //                        mode.finish(); // Action picked, so close the CAB
@@ -2910,7 +2877,7 @@ public class ConversationView {
 
                 if (mLastSelectedView != null)
                     tempPacketIDSelect = "";
-                    mLastSelectedView.setSelected(false);
+                mLastSelectedView.setSelected(false);
 
 
             }
@@ -3180,7 +3147,7 @@ public class ConversationView {
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
-        mMessageAdapter.setTargetLanguage( spinner.getSelectedItem().toString());
+        mMessageAdapter.setTargetLanguage(spinner.getSelectedItem().toString());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -3217,9 +3184,9 @@ public class ConversationView {
         });
 
         popupWindow.setFocusable(true);
-       // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-       // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-     //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         popupWindow.addView(view);
 
         return popupWindow;

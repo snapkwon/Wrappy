@@ -1,7 +1,5 @@
 package net.wrappy.im.ui;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -14,11 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -426,35 +422,5 @@ public class ContactDisplayActivity extends BaseActivity {
 
             }
         }.execute();
-
-
-
     }
-
-    private void initSmpUI() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewSmp = inflater.inflate(R.layout.smp_question_dialog, null, false);
-
-        if (viewSmp != null)
-        {
-            new AlertDialog.Builder(this).setTitle(this.getString(R.string.otr_qa_title)).setView(viewSmp)
-                    .setPositiveButton(this.getString(R.string.otr_qa_send), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            EditText eiQuestion = (EditText) viewSmp.findViewById(R.id.editSmpQuestion);
-                            EditText eiAnswer = (EditText) viewSmp.findViewById(R.id.editSmpAnswer);
-                            String question = eiQuestion.getText().toString();
-                            String answer = eiAnswer.getText().toString();
-                            initSmp(question, answer);
-                        }
-                    }).setNegativeButton(this.getString(R.string.otr_qa_cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Do nothing.
-                }
-            }).show();
-        }
-    }
-
-
-
 }
