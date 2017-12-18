@@ -1,19 +1,13 @@
 package net.wrappy.im.ui.background;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 
+import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.CircleImageView;
-
-import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * Created by CuongDuong on 12/11/2017.
@@ -22,21 +16,21 @@ import java.util.ArrayList;
 public class BackgroundGridAdapter extends BaseAdapter {
 
     private Context mContext;
-    ArrayList<BackgroundItem> mBackgroundItems;
+    private final int[] imageId;
 
-    public BackgroundGridAdapter(Context mContext, ArrayList<BackgroundItem> mBackgroundItems) {
+    public BackgroundGridAdapter(Context mContext, int[] imageId) {
         this.mContext = mContext;
-        this.mBackgroundItems = mBackgroundItems;
+        this.imageId = imageId;
     }
 
     @Override
     public int getCount() {
-        return mBackgroundItems.size();
+        return imageId.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return mBackgroundItems.get(position);
+        return imageId[position];
     }
 
     @Override
@@ -47,31 +41,21 @@ public class BackgroundGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        CircleImageView i;
+        View grid;
+        LayoutInflater inflater = (LayoutInflater)
+                        mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (convertView != null && convertView instanceof CircleImageView) {
-            i = (CircleImageView) convertView;
+        if (convertView == null) {
+
+            grid = new View(mContext);
+            grid = inflater.inflate(R.layout.chat_background_grid_item, null);
+            CircleImageView circleImageView = (CircleImageView)
+                            grid.findViewById(R.id.image_thumb_background);
+            circleImageView.setImageResource(imageId[position]);
         } else {
-            i = new CircleImageView(mContext);
+            grid = convertView;
         }
 
-        try {
-
-            // getting path from asset and converting to bitmap
-            InputStream is = mBackgroundItems.get(position).res.getAssets().open(mBackgroundItems.get(position).assetUri.getPath());
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
-            Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
-
-            // set bitmap for image view
-            i = new CircleImageView(mContext);
-            i.setLayoutParams(new GridView.LayoutParams(256, 256));
-            i.setImageBitmap(bmp);
-
-        } catch (Exception e) {
-            Log.e("grid", "problem rendering grid", e);
-        }
-
-        return i;
+        return grid;
     }
 }
