@@ -2,6 +2,7 @@ package net.wrappy.im.model;
 /*
 * Created by Khoa.Nguyen
 * */
+
 import net.wrappy.im.ui.conference.ConferenceConstant;
 
 /**
@@ -88,6 +89,8 @@ public class ConferenceMessage {
     public enum ConferenceState {
         REQUEST("REQUEST"),
         CALLED("CALLED"),
+        ACCEPTED("ACCEPTED"),
+        DECLINED("DECLINED"),
         END("END");
         private String state;
 
@@ -147,6 +150,14 @@ public class ConferenceMessage {
 
     public void endCall() {
         mState = ConferenceState.END;
+    }
+
+    public void accept() {
+        mState = ConferenceState.ACCEPTED;
+    }
+
+    public void decline() {
+        mState = ConferenceState.DECLINED;
     }
 
     public String generateRoomId() {
