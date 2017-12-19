@@ -2859,14 +2859,7 @@ public class ConversationView {
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
 
-                    int i = 0;
-                    StringBuffer fileName = new StringBuffer();
-                    fileName.append("capture_");
-                    fileName.append(i);
-                    fileName.append(".png");
-                    i++;
-
-                    mCaptureBitmap = captureView(mLastSelectedView, fileName.toString());
+                    mCaptureBitmap = captureView(mLastSelectedView);
                     AppFuncs.convertBitmapToFile(mActivity, mCaptureBitmap);
 
                     return true;
@@ -2903,26 +2896,13 @@ public class ConversationView {
 
         /**
          * Capture message text to report spam
-         *
          * @param view
          */
-        public Bitmap captureView(View view, String fileName) {
+        public Bitmap captureView(View view) {
             // create a bitmap with the same dimensions
             Bitmap image = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
-
             // draw the view inside the Bitmap
             view.draw(new Canvas(image));
-
-            //Store to sdcard
-            try {
-                String path = Environment.getExternalStorageDirectory().toString();
-                File myFile = new File(path, fileName);
-                FileOutputStream out = new FileOutputStream(myFile);
-
-                image.compress(Bitmap.CompressFormat.PNG, 90, out); //Output
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return image;
         }
 
