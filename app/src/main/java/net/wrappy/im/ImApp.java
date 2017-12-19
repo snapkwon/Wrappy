@@ -651,7 +651,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         resolver.delete(builder.build(), null, null);
 
        // clearApplicationData();
-        mApplicationContext.deleteDatabase("impsenc.db");
+        mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
 
 
     }

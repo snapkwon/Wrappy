@@ -98,7 +98,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private static final String TABLE_CSP_DEVICES = "csp_device";
     private static final String TABLE_CSP_TOKENS = "csp_tokens";
 
-    private static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
+    public static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     private static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
     private static final int DATABASE_VERSION = 109;

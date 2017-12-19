@@ -296,6 +296,7 @@ public class RestAPI {
                     String error = (e != null) ? e.getLocalizedMessage() : "";
                     if((checkAuthenticationCode(httpCode)))
                     {
+                        listenner.OnComplete(httpCode,  null, null);
                         return;
                     }
                     if (!RestAPI.checkHttpCode(httpCode)) {
