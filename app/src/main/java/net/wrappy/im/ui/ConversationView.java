@@ -147,6 +147,7 @@ import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
@@ -510,10 +511,7 @@ public class ConversationView {
                 }
                 ArrayAdapter<String> a = new ArrayAdapter<String>(mActivity,
                         android.R.layout.select_dialog_item, linkUrls);
-                AlertDialog.Builder b = new AlertDialog.Builder(mActivity);
-                b.setTitle(R.string.select_link_title);
-                b.setCancelable(true);
-                b.setAdapter(a, new DialogInterface.OnClickListener() {
+                PopupUtils.getSelectionDialog(mActivity, mActivity.getString(R.string.select_link_title), a, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Uri uri = Uri.parse(linkUrls.get(which));
@@ -524,13 +522,6 @@ public class ConversationView {
                         mActivity.startActivity(intent);
                     }
                 });
-                b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                b.show();
             }
         }
     };
@@ -652,62 +643,28 @@ public class ConversationView {
     };
 
     private void showPromptForData(final String transferFrom, String filePath) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setTitle(mContext.getString(R.string.file_transfer));
-        builder.setMessage(transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
-                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_));
-
-        builder.setNeutralButton(R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-
-                try {
-                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
+        String message = transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
+                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_);
+        PopupUtils.showCustomDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
-                dialog.dismiss();
             }
 
-        });
-
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        }, new View.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-
-                // Do nothing
-                dialog.dismiss();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-
     }
 
     private Runnable mUpdateChatCallback = new Runnable() {
@@ -1757,8 +1714,8 @@ public class ConversationView {
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     checkConnection();
                     mConn = mApp.getConnection(mProviderId, mAccountId);
@@ -1777,10 +1734,8 @@ public class ConversationView {
 
         // The positive button is deliberately set as no so that
         // the no is the default value
-        new AlertDialog.Builder(mContext).setTitle(R.string.confirm)
-                .setMessage(r.getString(R.string.confirm_block_contact, mRemoteNickname))
-                .setPositiveButton(R.string.yes, confirmListener) // default button
-                .setNegativeButton(R.string.no, null).setCancelable(false).show();
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
+                R.string.no, confirmListener, null, false);
     }
 
     public long getProviderId() {

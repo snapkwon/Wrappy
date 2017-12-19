@@ -34,25 +34,4 @@ public class DummyActivity extends Activity {
         ((ImApp)getApplication()).maybeInit(this);
         finish();
     }
-
-    // Unused for now
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.im_label)
-                .setMessage(R.string.swipe_alert)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        if (Build.VERSION.SDK_INT >= 17)
-            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    finish();
-                }
-            });
-        builder.show();
-    }
 }
