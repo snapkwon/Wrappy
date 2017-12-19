@@ -68,6 +68,7 @@ import net.wrappy.im.service.IDataListener;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.ui.conference.ConferencePopupActivity;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
@@ -1141,6 +1142,8 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     }
                 } catch (Exception e) {
                 }
+                //Check conference trigger
+                checkTriggerConference(messageUri, bareAddress, nickname, body);
 
                 // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
@@ -1247,6 +1250,18 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                     }
                 }
             });
+        }
+
+        private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, String body) {
+            if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                Intent intent;
+                if (isGroupChatSession()) {
+                    intent = ConferencePopupActivity.newIntentGroup(nickname, body, uri);
+                } else {
+                    intent = ConferencePopupActivity.newIntentP2P(nickname, body, uri);
+                }
+                mConnection.getContext().startActivity(intent);
+            }
         }
 
         public void onSendMessageError(ChatSession ses, final Message msg, final ImErrorInfo error) {

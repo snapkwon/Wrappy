@@ -520,9 +520,17 @@
             android:name=".ui.IntroActivity"
             android:label="@string/title_activity_launcher"
             android:theme="@style/NoActionBar"></activity>
-        <activity android:name=".ui.ProfileActivity" android:theme="@style/NoActionBar" />
-        <activity android:name=".ui.ContactsPickerRosterActivity" android:theme="@style/NoActionBar" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.ContactsPickerRosterCreateActivity" android:theme="@style/NoActionBar" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".ui.ContactsPickerRosterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".ui.ContactsPickerRosterCreateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
         <activity
             android:name="net.wrappy.im.ui.PatternActivity"
             android:launchMode="singleTop"
@@ -569,6 +577,9 @@
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
         <activity android:name=".ui.SettingConversationActivity"></activity>
+        <activity
+            android:name=".ui.conference.ConferencePopupActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>
