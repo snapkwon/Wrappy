@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -31,6 +31,7 @@ import net.wrappy.im.GethService.contracts.PRDToken;
 import net.wrappy.im.GethService.db.Balance;
 import net.wrappy.im.GethService.db.BalanceRepo;
 import net.wrappy.im.R;
+import net.wrappy.im.util.PopupUtils;
 
 import org.ethereum.geth.BigInt;
 
@@ -73,7 +74,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
     private ImageButton send_action_back;
     private TextView send_action_header;
     String nameCoin;
-    String  hexAddress ;
+    String hexAddress;
 
 
     final Handler myHandler = new Handler();
@@ -87,25 +88,14 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
 
     private LocalBroadcastManager mLocalBroadcastManager;
 
-    private final BroadcastReceiver mBroadcastReceiver  = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SEND_STATUS)) {
                 String status = intent.getExtras().getString(STATUS);
-                if(!isFinishing()) {
+                if (!isFinishing()) {
                     if (!status.isEmpty()) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                        LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                        final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                        dialogBuilder.setView(dialogView);
-
-                        final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                        tvTitle.setText(status);
-
-                        dialogBuilder.setNegativeButton("Cancel", null);
-                        AlertDialog b = dialogBuilder.create();
-                        b.show();
-
+                        PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", status, R.string.cancel, null);
                     }
                 }
 
@@ -113,7 +103,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         }
     };
 
-    public Double convertPROToUSD(Double pro){
+    public Double convertPROToUSD(Double pro) {
         try {
             // String ethRate = coinInfo.getString("price_usd");
             return pro * wallet.getPRORate();
@@ -124,7 +114,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
 
     }
 
-    public Double convertUSDToETH(Double usd){
+    public Double convertUSDToETH(Double usd) {
         try {
             String ethRate = wallet.coinInfo.getString("price_usd");
             return usd / Double.parseDouble(ethRate);
@@ -135,7 +125,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
 
     }
 
-    public Double convertETHToUSD(Double eth){
+    public Double convertETHToUSD(Double eth) {
         try {
             String ethRate = wallet.coinInfo.getString("price_usd");
             return eth * Double.parseDouble(ethRate);
@@ -150,11 +140,10 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         return str.substring(0, str.length() - 1);
     }
 
-    public BigInt convertEtherToWei(float eth){
+    public BigInt convertEtherToWei(float eth) {
         String t = "1000000000000000000";
-        while(eth < 1)
-        {
-            eth = eth *10;
+        while (eth < 1) {
+            eth = eth * 10;
             t = removeLastChar(t);
         }
 
@@ -164,7 +153,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
 
     private static final DecimalFormat decimalFormatter = new DecimalFormat("0.00##", new DecimalFormatSymbols(Locale.US));
 
-    public Double getETHBalance(Double eth){
+    public Double getETHBalance(Double eth) {
         try {
             BigDecimal balanceForAccount = new BigDecimal(eth);
             balanceForAccount = balanceForAccount.divide(new BigDecimal("1000000000000000000"));
@@ -180,7 +169,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        password  ="";
+        password = "";
         valueBalance = 0.0;
 
         setContentView(R.layout.activity_send__ethereum);
@@ -199,16 +188,13 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
 
 
-
         nameCoin = getIntent().getStringExtra("nameCoin");
 
-        if(nameCoin.equals("Ethereum")) {
+        if (nameCoin.equals("Ethereum")) {
             if (actionbar != null) {
                 actionbar.setTitle(getResources().getString(R.string.ETH));
             }
-        }
-        else if(nameCoin.equals("Proteusion"))
-        {
+        } else if (nameCoin.equals("Proteusion")) {
             if (actionbar != null) {
                 actionbar.setTitle(getResources().getString(R.string.PRO));
             }
@@ -217,7 +203,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         try {
             KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
             hexAddress = keyManager.getAccounts().get(0).getAddress().getHex();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -231,31 +217,29 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         balance.setTokenAddress(PRDToken.contractAddress);
         balance = balanceRepo.getWalletInfo(balance);
 
-        txtAvalaibleBalance = (TextView)this.findViewById(net.wrappy.im.R.id.textbalance);
+        txtAvalaibleBalance = (TextView) this.findViewById(net.wrappy.im.R.id.textbalance);
         edtAddressETH = (EditText) this.findViewById(net.wrappy.im.R.id.editETHadress);
         btWalletAddress = (ImageButton) this.findViewById(net.wrappy.im.R.id.buttonWalletAddress);
-        edtETHAmount = (EditText)this.findViewById(net.wrappy.im.R.id.editETHamount);
-        edtUSDAmount = (EditText)this.findViewById(net.wrappy.im.R.id.editUSDamount);
+        edtETHAmount = (EditText) this.findViewById(net.wrappy.im.R.id.editETHamount);
+        edtUSDAmount = (EditText) this.findViewById(net.wrappy.im.R.id.editUSDamount);
         btETH = (Button) this.findViewById(net.wrappy.im.R.id.buttonETH);
         btUSD = (Button) this.findViewById(net.wrappy.im.R.id.buttonUSD);
-        edtDescription = (EditText)this.findViewById(net.wrappy.im.R.id.editdescription) ;
-        btSend = (Button)this.findViewById(net.wrappy.im.R.id.buttonSend);
-        txtBalance = (TextView)this.findViewById(net.wrappy.im.R.id.textbalancesendethereum);
+        edtDescription = (EditText) this.findViewById(net.wrappy.im.R.id.editdescription);
+        btSend = (Button) this.findViewById(net.wrappy.im.R.id.buttonSend);
+        txtBalance = (TextView) this.findViewById(net.wrappy.im.R.id.textbalancesendethereum);
 
         edtAddressETH.setFocusableInTouchMode(true);
         edtAddressETH.setFocusable(true);
 
-        if(nameCoin.equals("Ethereum")) {
+        if (nameCoin.equals("Ethereum")) {
             valueBalance = Double.parseDouble(balance.getBalance());
-            txtAvalaibleBalance.setText( String.format( "%.4f", getETHBalance(valueBalance)) + " ETH");
+            txtAvalaibleBalance.setText(String.format("%.4f", getETHBalance(valueBalance)) + " ETH");
             btETH.setText("ETH");
             edtETHAmount.setInputType(InputType.TYPE_CLASS_NUMBER |
                     InputType.TYPE_NUMBER_FLAG_DECIMAL |
                     InputType.TYPE_NUMBER_FLAG_SIGNED);
 
-        }
-        else if(nameCoin.equals("Proteusion"))
-        {
+        } else if (nameCoin.equals("Proteusion")) {
             valueBalance = Double.parseDouble(balance.getTokenBalance());
             txtAvalaibleBalance.setText(String.valueOf(valueBalance) + " PRO");
             btETH.setText("PRO");
@@ -289,16 +273,13 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 try {
                     if (edtETHAmount.hasFocus()) {
-                        if(nameCoin.equals("Ethereum")) {
+                        if (nameCoin.equals("Ethereum")) {
                             edtUSDAmount.setText(String.valueOf(convertETHToUSD(Double.valueOf(edtETHAmount.getText().toString()))));
-                        }
-                        else if(nameCoin.equals("Proteusion"))
-                        {
+                        } else if (nameCoin.equals("Proteusion")) {
                             edtUSDAmount.setText(String.valueOf(convertPROToUSD(Double.valueOf(edtETHAmount.getText().toString()))));
                         }
                     }
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
 
                 }
             }
@@ -356,103 +337,42 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
                         waiting.show();
                         String status = "";
                         try {
-                            if(!amount.isEmpty()) {
-                                if(Double.parseDouble(amount)>=0) {
-                                    if(nameCoin.equals("Ethereum")) {
+                            if (!amount.isEmpty()) {
+                                if (Double.parseDouble(amount) >= 0) {
+                                    if (nameCoin.equals("Ethereum")) {
                                         //status = wallet.sendETH(wallet.convertEtherToWei(Float.parseFloat(amount)), password, nonce, address,des);
                                         Intent i = new Intent(SEND_ACTION);
-                                        i.putExtra(TYPE_COIN,nameCoin);
-                                        i.putExtra(AMOUNT ,Long.valueOf(convertEtherToWei(Float.parseFloat(amount)).toString()));
-                                        i.putExtra(PASSWORD,password);
-                                        i.putExtra(ADDRESS ,address);
-                                        i.putExtra(COMMENT ,des);
+                                        i.putExtra(TYPE_COIN, nameCoin);
+                                        i.putExtra(AMOUNT, Long.valueOf(convertEtherToWei(Float.parseFloat(amount)).toString()));
+                                        i.putExtra(PASSWORD, password);
+                                        i.putExtra(ADDRESS, address);
+                                        i.putExtra(COMMENT, des);
                                         mLocalBroadcastManager.sendBroadcast(i);
-
-                                        // String  phone =wallet.getPhoneByAddress(edtAddressETH.getText().toString());
-
-                                        // int userid = MessagesController.getInstance().getUserByPhone(phone).id;
-                                        // String fcmToken = FBDatabaseController.getInstance().getUserTokenFCM(userid);
-
-                                        // String firstNameform = UserConfig.getCurrentUser().first_name!=null?UserConfig.getCurrentUser().first_name:"";
-                                        // String lastNameform = UserConfig.getCurrentUser().first_name!=null?UserConfig.getCurrentUser().last_name:"";
-
-                                        //String firstNameto =  MessagesController.getInstance().getUserByPhone(phone).first_name!=null? MessagesController.getInstance().getUserByPhone(phone).first_name:"";
-                                        // String lastNameto =  MessagesController.getInstance().getUserByPhone(phone).last_name!=null? MessagesController.getInstance().getUserByPhone(phone).last_name:"";
-
-                                        // String bodyPush = lastNameform + " " + firstNameform + " sent to  " + lastNameto + " " + firstNameto  + " " + " " + amount + " ETH";
-
-                                        //  String titlePush = status.replace("Submitted transaction successfully ","");
-                                               /* if(status.equals("Submitted transaction successfully ")) {
-                                                    SendMessagesHelper.getInstance().sendMessage(bodyPush, userid, null, null, null, 1);
-                                                }*/
-
-                                        //  AppFirebaseInstanceIDService.sendNotification(fcmToken,bodyPush,titlePush);
-                                    }
-                                    else if(nameCoin.equals("Proteusion"))
-                                    {
-                                        if(true) {
+                                    } else if (nameCoin.equals("Proteusion")) {
+                                        if (true) {
                                             Intent i = new Intent(SEND_ACTION);
-                                            i.putExtra(TYPE_COIN,nameCoin);
-                                            i.putExtra(AMOUNT ,Long.valueOf(amount));
-                                            i.putExtra(PASSWORD,password);
-                                            i.putExtra(ADDRESS ,address);
+                                            i.putExtra(TYPE_COIN, nameCoin);
+                                            i.putExtra(AMOUNT, Long.valueOf(amount));
+                                            i.putExtra(PASSWORD, password);
+                                            i.putExtra(ADDRESS, address);
                                             mLocalBroadcastManager.sendBroadcast(i);
-                                                    /*status = wallet.sendPRD(address, Long.parseLong(amount), password);
-
-                                                    String  phone =wallet.getPhoneByAddress(edtAddressETH.getText().toString());
-
-                                                    int userid = MessagesController.getInstance().getUserByPhone(phone).id;
-                                                    //String fcmToken = FBDatabaseController.getInstance().getUserTokenFCM(userid);
-
-                                                    String firstNameform = UserConfig.getCurrentUser().first_name!=null?UserConfig.getCurrentUser().first_name:"";
-                                                    String lastNameform = UserConfig.getCurrentUser().first_name!=null?UserConfig.getCurrentUser().last_name:"";
-
-                                                    String firstNameto =  MessagesController.getInstance().getUserByPhone(phone).first_name!=null? MessagesController.getInstance().getUserByPhone(phone).first_name:"";
-                                                    String lastNameto =  MessagesController.getInstance().getUserByPhone(phone).last_name!=null? MessagesController.getInstance().getUserByPhone(phone).last_name:"";
-
-                                                    String bodyPush = lastNameform + " " + firstNameform + " sent to  " + lastNameto + " " + firstNameto  + " " + " " + amount + " PRO";
-                                                    //   String titlePush = status.replace("Submitted transaction successfully ","");
-                                                    if(status.equals("Submitted transaction successfully")) {
-                                                        SendMessagesHelper.getInstance().sendMessage(bodyPush, userid, null, null, null, 1);
-                                                    }*/
-
-
-                                            //    AppFirebaseInstanceIDService.sendNotification(fcmToken,bodyPush,titlePush);
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             status = "Amount to send is low.";
                                         }
                                     }
 
-                                }
-                                else
-                                {
+                                } else {
                                     status = "Amount to send is low.";
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 status = "Amount to send is null";
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
-                        if(!status.isEmpty())
-                        {
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                            LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                            dialogBuilder.setView(dialogView);
-
-                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                            tvTitle.setText(status);
-
-                            dialogBuilder.setNegativeButton("Cancel", null);
-                            AlertDialog b = dialogBuilder.create();
-                            b.show();
-
+                        if (!status.isEmpty()) {
+                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", status, R.string.cancel, null);
                         }
 
                         waiting.cancel();
@@ -481,93 +401,55 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
                 return;
             }
             try {
-                if(nameCoin.equals("Ethereum")) {
-                    if (wallet.getETHBalance()> 0 || valueBalance !=0) {
+                if (nameCoin.equals("Ethereum")) {
+                    if (wallet.getETHBalance() > 0 || valueBalance != 0) {
                         Double range = 0.0;
                         range = valueBalance - wallet.getETHBalance();
                         if (range < 0) {
                             valueBalance = wallet.getETHBalance();
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                            LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                            dialogBuilder.setView(dialogView);
-
-                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                            tvTitle.setText("you received " + String.format("%.4f", Math.abs(range)) + " ETH");
-
-                            dialogBuilder.setNegativeButton("Cancel", null);
-                            AlertDialog b = dialogBuilder.create();
-                            b.show();
+                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", "you received " + String.format("%.4f", Math.abs(range)) + " ETH", R.string.cancel, null);
                             txtAvalaibleBalance.setText(String.valueOf(valueBalance) + " ETH");
                         } else if (range > 0) {
                             valueBalance = wallet.getETHBalance();
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                            LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                            dialogBuilder.setView(dialogView);
-
-                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                            tvTitle.setText("you sent " + String.format("%.4f", Math.abs(range)) + " ETH");
-
-                            dialogBuilder.setNegativeButton("Cancel", null);
-                            AlertDialog b = dialogBuilder.create();
-                            b.show();
+                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", "you sent " + String.format("%.4f", Math.abs(range)) + " ETH", R.string.cancel, null);
                             txtAvalaibleBalance.setText(String.valueOf(valueBalance) + " ETH");
                         }
 
                     }
-                }
-                else if(nameCoin.equals("Proteusion")) {
-                    if (wallet.getPROBalance() > 0 || valueBalance !=0) {
+                } else if (nameCoin.equals("Proteusion")) {
+                    if (wallet.getPROBalance() > 0 || valueBalance != 0) {
                         Double range = 0.0;
                         range = valueBalance - wallet.getPROBalance();
                         if (range < 0) {
                             valueBalance = wallet.getPROBalance();
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                            LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                            dialogBuilder.setView(dialogView);
-
-                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                            tvTitle.setText("you received " + String.format("%.4f", Math.abs(range)) + " PRO");
-
-                            dialogBuilder.setNegativeButton("Cancel", null);
-                            AlertDialog b = dialogBuilder.create();
-                            b.show();
+                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", "you received " + String.format("%.4f", Math.abs(range)) + " PRO", R.string.cancel, null);
                             txtAvalaibleBalance.setText(String.valueOf(valueBalance) + " PRO");
                         } else if (range > 0) {
                             valueBalance = wallet.getPROBalance();
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                            LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                            dialogBuilder.setView(dialogView);
-
-                            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                            tvTitle.setText("you sent " + String.format("%.4f", Math.abs(range)) + " PRO");
-
-                            dialogBuilder.setNegativeButton("Cancel", null);
-                            AlertDialog b = dialogBuilder.create();
-                            b.show();
+                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", "you sent " + String.format("%.4f", Math.abs(range)) + " PRO", R.string.cancel, null);
                             txtAvalaibleBalance.setText(String.valueOf(valueBalance) + " PRO");
                         }
 
                     }
                 }
-            }catch(Exception e) {
+            } catch (Exception e) {
                 //show nothing
                 e.printStackTrace();
             }
         }
     };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == QrScannerActivity.QR_REQUEST_CODE) {
             try {
                 edtAddressETH.setText(data.getExtras().getString(QrScannerActivity.QR_RESULT_STR));
-            }catch (Exception ex){}
+            } catch (Exception ex) {
+            }
         }
     }
+
     // updateUI method related to a Runnable
     private void updateUI() {
         myHandler.post(myRunnable); // relate this to a Runnable
@@ -650,11 +532,11 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(myTimer!=null) {
+        if (myTimer != null) {
             myTimer.cancel();
             myTimer.purge();
         }
-        if(myTask!=null) {
+        if (myTask != null) {
             myTask.cancel();
         }
         //  myHandler.removeCallbacks(myRunnable);
