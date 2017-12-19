@@ -473,4 +473,8 @@
     <string name="ETH">Ethereum</string>
     <string name="PRO">Proteusion</string>
 
+    <string name="menu_spam">Spam</string>
+    <string name="menu_violence">Violence</string>
+    <string name="menu_cancel">Cancel</string>
+
 </resources>

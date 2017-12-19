@@ -43,13 +43,14 @@ public class AppFuncs {
     private static AppFuncs _ins;
 
     public static AppFuncs getInstance() {
-        if (_ins==null) {
+        if (_ins == null) {
             _ins = new AppFuncs();
         }
         return _ins;
     }
 
     ProgressDialog dialog;
+
     public void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
         dialog.setMessage("Waiting...");
@@ -57,32 +58,32 @@ public class AppFuncs {
     }
 
     public void dismissProgressWaiting() {
-        if (dialog!=null && dialog.isShowing()) {
+        if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
     }
 
 
-    public static float convertDpToPixel(float dp, Context context){
+    public static float convertDpToPixel(float dp, Context context) {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return px;
     }
 
-    public static float convertPixelsToDp(float px, Context context){
+    public static float convertPixelsToDp(float px, Context context) {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
 
-    public static void alert(Context context,String s,boolean isLong) {
-        Toast.makeText(context,s,isLong? Toast.LENGTH_LONG: Toast.LENGTH_SHORT).show();
+    public static void alert(Context context, String s, boolean isLong) {
+        Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
     }
 
     public static void log(String string) {
-        Log.i("AppFuncs",string);
+        Log.i("AppFuncs", string);
     }
 
     public static boolean detectSpecialCharacters(String s) {
@@ -96,7 +97,7 @@ public class AppFuncs {
     }
 
     public static void getImageFromDevice(final Activity activity, final int requestCode) {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
 
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.CAMERA)
@@ -122,9 +123,7 @@ public class AppFuncs {
                         activity.startActivityForResult(cameraIntent, requestCode);
 
 
-                    }
-
-                    else if (options[item].equals("Choose from Gallery"))
+                    } else if (options[item].equals("Choose from Gallery"))
 
                     {
 
@@ -134,10 +133,7 @@ public class AppFuncs {
                         activity.startActivityForResult(intent, requestCode);
 
 
-
-                    }
-
-                    else if (options[item].equals("Cancel")) {
+                    } else if (options[item].equals("Cancel")) {
 
                         dialog.dismiss();
 
@@ -156,7 +152,6 @@ public class AppFuncs {
         }
 
 
-
     }
 
     public static String bitmapToBase64String(Bitmap bitmap) {
@@ -164,12 +159,24 @@ public class AppFuncs {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
             base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return base64String;
+    }
+
+    public static File getFileFromBitmap(Context context) {
+        File f;
+        try {
+            f = new File(context.getCacheDir(), "file");
+            if (f.exists())
+                return f;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public static File convertBitmapToFile(Context context, Bitmap bitmap) {
@@ -186,7 +193,7 @@ public class AppFuncs {
             fos.write(bitmapdata);
             fos.flush();
             fos.close();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return f;
@@ -198,7 +205,7 @@ public class AppFuncs {
             String jsonObject = gson.toJson(aClass);
             JsonObject object = (new JsonParser()).parse(jsonObject).getAsJsonObject();
             return object;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             return new JsonObject();
         }
@@ -211,21 +218,21 @@ public class AppFuncs {
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
 
-    public static Bitmap getBitmapFromIntentResult(Context context, Intent data){
+    public static Bitmap getBitmapFromIntentResult(Context context, Intent data) {
         Bitmap photo = null;
         try {
-            if (data.getData()!=null) {
+            if (data.getData() != null) {
                 photo = SecureMediaStore.getThumbnailFile(context, data.getData(), 512);
             } else {
                 photo = (Bitmap) data.getExtras().get("data");
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
