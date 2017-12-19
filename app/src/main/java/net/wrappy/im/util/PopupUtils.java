@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
@@ -102,6 +104,52 @@ public class PopupUtils {
             btnOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (onOkListener != null)
+                        onOkListener.onClick(v);
+                    dialog.dismiss();
+                }
+            });
+        } else btnOk.setVisibility(View.GONE);
+        if (resCancel > 0) {
+            btnCancel.setText(resCancel);
+            btnCancel.setVisibility(View.VISIBLE);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onCancelListener != null)
+                        onCancelListener.onClick(v);
+                    dialog.dismiss();
+                }
+            });
+        } else btnCancel.setVisibility(View.GONE);
+    }
+
+    public static void showCustomEditDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
+        builder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
+        edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+
+        TextView tvMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
+        if (!TextUtils.isEmpty(message)) {
+            tvMessage.setText(message);
+            tvMessage.setVisibility(View.VISIBLE);
+        } else tvMessage.setVisibility(View.GONE);
+
+        Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
+        Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
+
+        final Dialog dialog = builder.show();
+        if (resOK > 0) {
+            btnOk.setText(resOK);
+            btnOk.setVisibility(View.VISIBLE);
+            btnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setTag(edt.getText().toString());
                     if (onOkListener != null)
                         onOkListener.onClick(v);
                     dialog.dismiss();

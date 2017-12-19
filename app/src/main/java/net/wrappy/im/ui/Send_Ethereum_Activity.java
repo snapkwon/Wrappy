@@ -3,20 +3,16 @@ package net.wrappy.im.ui;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -313,81 +309,66 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PopupUtils.showCustomEditDialog(Send_Ethereum_Activity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                password = String.valueOf(v.getTag());
+                                amount = edtETHAmount.getText().toString();
+                                address = edtAddressETH.getText().toString();
+                                des = edtDescription.getText().toString();
+                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                waiting = new ProgressDialog(Send_Ethereum_Activity.this);
+                                waiting.setMessage("Loading");
+                                waiting.setCancelable(true);
+                                waiting.show();
+                                String status = "";
+                                try {
+                                    if (!amount.isEmpty()) {
+                                        if (Double.parseDouble(amount) >= 0) {
+                                            if (nameCoin.equals("Ethereum")) {
+                                                //status = wallet.sendETH(wallet.convertEtherToWei(Float.parseFloat(amount)), password, nonce, address,des);
+                                                Intent i = new Intent(SEND_ACTION);
+                                                i.putExtra(TYPE_COIN, nameCoin);
+                                                i.putExtra(AMOUNT, Long.valueOf(convertEtherToWei(Float.parseFloat(amount)).toString()));
+                                                i.putExtra(PASSWORD, password);
+                                                i.putExtra(ADDRESS, address);
+                                                i.putExtra(COMMENT, des);
+                                                mLocalBroadcastManager.sendBroadcast(i);
+                                            } else if (nameCoin.equals("Proteusion")) {
+                                                if (true) {
+                                                    Intent i = new Intent(SEND_ACTION);
+                                                    i.putExtra(TYPE_COIN, nameCoin);
+                                                    i.putExtra(AMOUNT, Long.valueOf(amount));
+                                                    i.putExtra(PASSWORD, password);
+                                                    i.putExtra(ADDRESS, address);
+                                                    mLocalBroadcastManager.sendBroadcast(i);
+                                                } else {
+                                                    status = "Amount to send is low.";
+                                                }
+                                            }
 
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Send_Ethereum_Activity.this);
-                LayoutInflater inflater = Send_Ethereum_Activity.this.getLayoutInflater();
-                final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
-                dialogBuilder.setView(dialogView);
-
-                final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
-                edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
-
-                dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // if(!edt.getText().toString().isEmpty()) {
-                        password = edt.getText().toString();
-                        amount = edtETHAmount.getText().toString();
-                        address = edtAddressETH.getText().toString();
-                        des = edtDescription.getText().toString();
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(edt.getWindowToken(), 0);
-                        waiting = new ProgressDialog(Send_Ethereum_Activity.this);
-                        waiting.setMessage("Loading");
-                        waiting.setCancelable(true);
-                        waiting.show();
-                        String status = "";
-                        try {
-                            if (!amount.isEmpty()) {
-                                if (Double.parseDouble(amount) >= 0) {
-                                    if (nameCoin.equals("Ethereum")) {
-                                        //status = wallet.sendETH(wallet.convertEtherToWei(Float.parseFloat(amount)), password, nonce, address,des);
-                                        Intent i = new Intent(SEND_ACTION);
-                                        i.putExtra(TYPE_COIN, nameCoin);
-                                        i.putExtra(AMOUNT, Long.valueOf(convertEtherToWei(Float.parseFloat(amount)).toString()));
-                                        i.putExtra(PASSWORD, password);
-                                        i.putExtra(ADDRESS, address);
-                                        i.putExtra(COMMENT, des);
-                                        mLocalBroadcastManager.sendBroadcast(i);
-                                    } else if (nameCoin.equals("Proteusion")) {
-                                        if (true) {
-                                            Intent i = new Intent(SEND_ACTION);
-                                            i.putExtra(TYPE_COIN, nameCoin);
-                                            i.putExtra(AMOUNT, Long.valueOf(amount));
-                                            i.putExtra(PASSWORD, password);
-                                            i.putExtra(ADDRESS, address);
-                                            mLocalBroadcastManager.sendBroadcast(i);
                                         } else {
                                             status = "Amount to send is low.";
                                         }
+                                    } else {
+                                        status = "Amount to send is null";
                                     }
-
-                                } else {
-                                    status = "Amount to send is low.";
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } else {
-                                status = "Amount to send is null";
+
+                                if (!status.isEmpty()) {
+                                    PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", status, R.string.cancel, null);
+                                }
+
+                                waiting.cancel();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        }, null);
 
-                        if (!status.isEmpty()) {
-                            PopupUtils.showCustomDialog(Send_Ethereum_Activity.this, "", status, R.string.cancel, null);
-                        }
-
-                        waiting.cancel();
-
-                    }
-                });
-
-                dialogBuilder.setNegativeButton("Cancel", null);
-                AlertDialog b = dialogBuilder.create();
-                b.show();
-                edt.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-
             }
         });
 

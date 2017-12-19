@@ -2,7 +2,6 @@ package net.wrappy.im.ui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,15 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +41,6 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
     TextView wallet_qr_address_text;
     Button wallet_qr_btn_coppy, wallet_qr_btn_backup;
     String hexAddress;
-    private KeyManager keyManager;
     private final static int PICK_FOLDER_RESULT_CODE = 1000;
 
     @Override
@@ -62,7 +56,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
         wallet_qr_btn_backup.setOnClickListener(this);
 
         try {
-            keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
+            KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
             hexAddress = keyManager.getKeystore().getAccounts().get(0).getAddress().getHex();
 
             wallet_qr_address_text.setText(hexAddress);
@@ -118,40 +112,28 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.removewallet) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(WalletQrCodeDetailActivity.this);
-            LayoutInflater inflater = WalletQrCodeDetailActivity.this.getLayoutInflater();
-            final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
-            dialogBuilder.setView(dialogView);
+            PopupUtils.showCustomEditDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
 
-            final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
-            edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
-
-            dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-
-
-                    KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
-
-                    try {
-                        keyManager.getKeystore().deleteAccount(keyManager.getKeystore().getAccounts().get(0), edt.getText().toString());
-                        //  FileUtil.copyDirectory(sourceLocation,targetLocation);
-                        PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", getString(R.string.delete_success), R.string.yes, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finish();
+                            try {
+                                keyManager.getKeystore().deleteAccount(keyManager.getKeystore().getAccounts().get(0), String.valueOf(v.getTag()));
+                                //  FileUtil.copyDirectory(sourceLocation,targetLocation);
+                                PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", getString(R.string.delete_success), R.string.yes, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        finish();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", e.toString(), R.string.yes, null);
                             }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", e.toString(), R.string.yes, null);
-                    }
 
-                }
-            });
-
-            dialogBuilder.setNegativeButton("Cancel", null);
-            AlertDialog b = dialogBuilder.create();
-            b.show();
+                        }
+                    }, null);
         } else if (id == R.id.changepasswallet) {
             Intent intent = new Intent(this, ChangePasswordAccount.class);
             this.startActivity(intent);
@@ -167,80 +149,60 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
         switch (requestCode) {
             case PICK_FOLDER_RESULT_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(WalletQrCodeDetailActivity.this);
-                    LayoutInflater inflater = WalletQrCodeDetailActivity.this.getLayoutInflater();
-                    final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
-                    dialogBuilder.setView(dialogView);
+                    PopupUtils.showCustomEditDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Uri treeUri = data.getData();
+                                    final String theFolderPath = FileUtil.getFullPathFromTreeUri(treeUri, WalletQrCodeDetailActivity.this);
 
-                    final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
-                    edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+                                    File sourceLocation = new File(Wallet.getKeystorePath(WalletQrCodeDetailActivity.this.getFilesDir()));
+                                    KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
+                                    File targetLocation = new File(theFolderPath);
 
-                    dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
+                                    try {
+                                        String jsondata = new String(keyManager.getKeystore().exportKey(keyManager.getKeystore().getAccounts().get(0), String.valueOf(v.getTag()), String.valueOf(v.getTag())), "UTF-8");
 
-                            Uri treeUri = data.getData();
-                            final String theFolderPath = FileUtil.getFullPathFromTreeUri(treeUri, WalletQrCodeDetailActivity.this);
-
-                            File sourceLocation = new File(Wallet.getKeystorePath(WalletQrCodeDetailActivity.this.getFilesDir()));
-                            KeyManager keyManager = KeyManager.newKeyManager(getApplicationContext().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
-                            File targetLocation = new File(theFolderPath);
-
-                            try {
-                                String jsondata = null;
-
-                                jsondata = new String(keyManager.getKeystore().exportKey(keyManager.getKeystore().getAccounts().get(0), edt.getText().toString(), edt.getText().toString()), "UTF-8");
-
-                                Bitmap qrCode = null;
-                                qrCode = new QrGenerator.Builder()
-                                        .content(jsondata)
-                                        .qrSize(1024)
-                                        .margin(2)
-                                        .color(Color.BLACK)
-                                        .bgColor(Color.WHITE)
-                                        .ecc(ErrorCorrectionLevel.L)
-                                        .overlayAlpha(255)
-                                        .overlayXfermode(PorterDuff.Mode.SRC)
-                                        .encode();
+                                        Bitmap qrCode = new QrGenerator.Builder()
+                                                .content(jsondata)
+                                                .qrSize(1024)
+                                                .margin(2)
+                                                .color(Color.BLACK)
+                                                .bgColor(Color.WHITE)
+                                                .ecc(ErrorCorrectionLevel.L)
+                                                .overlayAlpha(255)
+                                                .overlayXfermode(PorterDuff.Mode.SRC)
+                                                .encode();
 
 
-                                FileOutputStream out = null;
-                                try {
-                                    Calendar cal = Calendar.getInstance();
-                                    String filename = "UTC--" + cal.getTime().toString() + "--" + keyManager.getAccounts().get(0).getAddress().getHex();
-                           /* for (File f : sourceLocation.listFiles()) {
-                                if (f.isFile())
-                                    filename = f.getName();
-                            }*/
+                                        FileOutputStream out;
+                                        try {
+                                            Calendar cal = Calendar.getInstance();
+                                            String filename = "UTC--" + cal.getTime().toString() + "--" + keyManager.getAccounts().get(0).getAddress().getHex();
 
-                                    File dest = new File(targetLocation, filename + ".png");
-                                    out = new FileOutputStream(dest);
-                                    qrCode.compress(Bitmap.CompressFormat.PNG, 90, out);
-                                    out.flush();
-                                    out.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                            File dest = new File(targetLocation, filename + ".png");
+                                            out = new FileOutputStream(dest);
+                                            qrCode.compress(Bitmap.CompressFormat.PNG, 90, out);
+                                            out.flush();
+                                            out.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
 
-                                //  FileUtil.copyDirectory(sourceLocation,targetLocation);
-                                PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", getString(R.string.backup_success), R.string.yes, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        finish();
+                                        //  FileUtil.copyDirectory(sourceLocation,targetLocation);
+                                        PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", getString(R.string.backup_success), R.string.yes, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                finish();
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", e.toString(), R.string.yes, null);
                                     }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                PopupUtils.showCustomDialog(WalletQrCodeDetailActivity.this, "", e.toString(), R.string.yes, null);
-                            }
 
-                        }
-                    });
-
-                    dialogBuilder.setNegativeButton("Cancel", null);
-                    AlertDialog b = dialogBuilder.create();
-                    b.show();
-
-
+                                }
+                            }, null);
                 }
                 break;
             }
@@ -250,14 +212,9 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
     @Override
     public void onClick(View v) {
         if (v.getId() == wallet_qr_btn_coppy.getId()) {
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-                android.text.ClipboardManager clipboard = (android.text.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(hexAddress);
-            } else {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", hexAddress);
-                clipboard.setPrimaryClip(clip);
-            }
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", hexAddress);
+            clipboard.setPrimaryClip(clip);
             Toast.makeText(this, "clip to board", Toast.LENGTH_SHORT).show();
         }
         if (v.getId() == wallet_qr_btn_backup.getId()) {
