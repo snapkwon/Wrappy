@@ -129,7 +129,7 @@ public class PopupUtils {
         View dialogView = getView(context, R.layout.dialog_with_edittext);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
 
-        EditText txtTitle = (EditText) dialogView.findViewById(R.id.txtTitle);
+        TextView txtTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
         if (TextUtils.isEmpty(title)) {
             txtTitle.setVisibility(View.GONE);
         } else {
