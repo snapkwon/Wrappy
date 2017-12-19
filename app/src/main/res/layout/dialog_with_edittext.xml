@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="match_parent"
@@ -12,32 +11,22 @@
         android:layout_marginTop="12dp"
         android:src="@drawable/text_1" />
 
+    <include layout="@layout/custom_alert_dialog_content" />
 
-    <FrameLayout
+    <net.ironrabbit.type.CustomTypefaceEditText
+        android:id="@+id/etinputpass"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:inputType="textPassword"
+        android:textColor="#000"
+        android:textColorHint="#666666" />
 
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/subtext_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sub_title_wallet_dialog"
-            android:layout_gravity="center_horizontal"/>
-
-        <net.ironrabbit.type.CustomTypefaceEditText
-            android:id="@+id/etinputpass"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:inputType="textPassword"
-            android:textColor="#000"
-            android:textColorHint="#666666" />
-    </FrameLayout>
-
+    <include layout="@layout/custom_alert_dialog_button" />
 
 </LinearLayout>

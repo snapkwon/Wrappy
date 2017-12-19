@@ -147,9 +147,9 @@ import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
@@ -511,10 +511,7 @@ public class ConversationView {
                 }
                 ArrayAdapter<String> a = new ArrayAdapter<String>(mActivity,
                         android.R.layout.select_dialog_item, linkUrls);
-                AlertDialog.Builder b = new AlertDialog.Builder(mActivity);
-                b.setTitle(R.string.select_link_title);
-                b.setCancelable(true);
-                b.setAdapter(a, new DialogInterface.OnClickListener() {
+                PopupUtils.getSelectionDialog(mActivity, mActivity.getString(R.string.select_link_title), a, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Uri uri = Uri.parse(linkUrls.get(which));
@@ -525,13 +522,6 @@ public class ConversationView {
                         mActivity.startActivity(intent);
                     }
                 });
-                b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                b.show();
             }
         }
     };
@@ -653,62 +643,28 @@ public class ConversationView {
     };
 
     private void showPromptForData(final String transferFrom, String filePath) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setTitle(mContext.getString(R.string.file_transfer));
-        builder.setMessage(transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
-                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_));
-
-        builder.setNeutralButton(R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-
-                try {
-                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
+        String message = transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
+                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_);
+        PopupUtils.showCustomDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
-                dialog.dismiss();
             }
 
-        });
-
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        }, new View.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-
-                // Do nothing
-                dialog.dismiss();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-
     }
 
     private Runnable mUpdateChatCallback = new Runnable() {
@@ -1093,26 +1049,7 @@ public class ConversationView {
             public void onClick(View v) {
 
                 if (mComposeMessage.getVisibility() == View.VISIBLE) {
-
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("message", mComposeMessage.getText().toString());
-                    
-                    RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
-                        @Override
-                        public void OnComplete(int httpCode, String error, String s) {
-                            Debug.e(s);
-                            JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
-
-                            if (jObject.get("status").toString() != null) {
-                                boolean status = Boolean.parseBoolean(jObject.get("status").toString());
-                                if (status) {
-
-                                } else {
-                                    sendMessage();
-                                }
-                            }
-                        }
-                    });
+                    checkBeforeSubmit();
                 } else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
@@ -1131,7 +1068,28 @@ public class ConversationView {
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
+    }
 
+    private void checkBeforeSubmit() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("message", mComposeMessage.getText().toString());
+
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.e(s);
+                JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+
+                if (jObject.get("status").toString() != null) {
+                    boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                    if (status) {
+
+                    } else {
+                        sendMessage();
+                    }
+                }
+            }
+        });
     }
 
     private boolean mLastIsTyping = false;
@@ -1756,8 +1714,8 @@ public class ConversationView {
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     checkConnection();
                     mConn = mApp.getConnection(mProviderId, mAccountId);
@@ -1776,10 +1734,8 @@ public class ConversationView {
 
         // The positive button is deliberately set as no so that
         // the no is the default value
-        new AlertDialog.Builder(mContext).setTitle(R.string.confirm)
-                .setMessage(r.getString(R.string.confirm_block_contact, mRemoteNickname))
-                .setPositiveButton(R.string.yes, confirmListener) // default button
-                .setNegativeButton(R.string.no, null).setCancelable(false).show();
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
+                R.string.no, confirmListener, null, false);
     }
 
     public long getProviderId() {
@@ -2573,6 +2529,7 @@ public class ConversationView {
         private ActionMode mActionMode;
         private View mLastSelectedView;
         private String tempPacketIDSelect = "";
+        private int tempMessageType = 0;
         private String tempNicknameSelect = "";
         private Bitmap mCaptureBitmap;
 
@@ -2848,20 +2805,17 @@ public class ConversationView {
                         return false;
                     }
 
+                    cursor.moveToPosition(viewHolder.getPos());
+
                     mLastSelectedView = view;
                     tempPacketIDSelect = cursor.getString(cursor.getColumnIndex(Imps.Messages.PACKET_ID));
+                    tempMessageType = cursor.getInt(mTypeColumn);
                     tempNicknameSelect = nickname;
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
 
-                    int i = 0;
-                    StringBuffer fileName = new StringBuffer();
-                    fileName.append("capture_");
-                    fileName.append(i);
-                    fileName.append(".png");
-                    i++;
-
-                    mCaptureBitmap = captureView(mLastSelectedView, fileName.toString());
+                    mCaptureBitmap = captureView(mLastSelectedView);
+                    AppFuncs.convertBitmapToFile(mActivity, mCaptureBitmap);
 
                     return true;
                 }
@@ -2894,26 +2848,13 @@ public class ConversationView {
 
         /**
          * Capture message text to report spam
-         *
          * @param view
          */
-        public Bitmap captureView(View view, String fileName) {
+        public Bitmap captureView(View view) {
             // create a bitmap with the same dimensions
             Bitmap image = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
-
             // draw the view inside the Bitmap
             view.draw(new Canvas(image));
-
-            //Store to sdcard
-            try {
-                String path = Environment.getExternalStorageDirectory().toString();
-                File myFile = new File(path, fileName);
-                FileOutputStream out = new FileOutputStream(myFile);
-
-                image.compress(Bitmap.CompressFormat.PNG, 90, out); //Output
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return image;
         }
 
@@ -2932,7 +2873,16 @@ public class ConversationView {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_each_message, menu);
+
+                boolean isLeft = (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED)
+                                || (tempMessageType == Imps.MessageType.INCOMING)
+                                || (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+
+                if (isLeft) {
+                    inflater.inflate(R.menu.menu_each_spam_message, menu);
+                } else {
+                    inflater.inflate(R.menu.menu_each_delete_message, menu);
+                }
                 return true;
             }
 
@@ -2959,7 +2909,7 @@ public class ConversationView {
                         ImApp mApp = (ImApp) mActivity.getApplication();
                         long mAccountId = mApp.getDefaultAccountId();
 
-                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect, mCaptureBitmap);
+                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
                         mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
 
                         mode.finish();
@@ -3340,19 +3290,13 @@ public class ConversationView {
         public static String TYPE_SPAM = "SPAM";
         public static String TYPE_VIOLENCE = "OBJECTIONABLE";
 
-        public static SpamBottomSheet getInstance(String reporter, String member, String messageId,
-                                                        Bitmap bitmap) {
+        public static SpamBottomSheet getInstance(String reporter, String member, String messageId) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
 
             Bundle args = new Bundle();
             args.putString("reporter", reporter);
             args.putString("member", member);
             args.putString("messageId", messageId);
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            args.putByteArray("image", byteArray);
 
             spamBottomSheet.setArguments(args);
 
@@ -3379,27 +3323,23 @@ public class ConversationView {
                 case R.id.layout_message_spam:
                 case R.id.layout_message_violence:
 
-                    if (getArguments() != null) {
-
-                        byte[] byteArray = getArguments().getByteArray("image");
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-                        File mFileCapture = AppFuncs.convertBitmapToFile(getContext(), bitmap);
+                        File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
                         RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
                             @Override
                             public void onCompleted(Exception e, Response<String> result) {
                                 JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                                 String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
 
-                                String reporter = getArguments().getString("reporter");
-                                String member = getArguments().getString("member");
-                                String messageId = getArguments().getString("messageId");
+                                if (getArguments() != null) {
 
-                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
+                                    String reporter = getArguments().getString("reporter");
+                                    String member = getArguments().getString("member");
+                                    String messageId = getArguments().getString("messageId");
+
+                                    sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
+                                }
                             }
                         });
-
-                    }
                     dismiss();
                     break;
                 case R.id.layout_message_cancel:

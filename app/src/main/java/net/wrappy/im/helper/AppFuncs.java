@@ -2,7 +2,6 @@ package net.wrappy.im.helper;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.wrappy.im.model.T;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.io.ByteArrayOutputStream;
@@ -102,12 +102,7 @@ public class AppFuncs {
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-            builder.setTitle("Add Photo!");
-
-            builder.setItems(options, new DialogInterface.OnClickListener() {
+            PopupUtils.getSelectionDialog(activity, "Add Photo!", options, new DialogInterface.OnClickListener() {
 
                 @Override
 
@@ -142,9 +137,6 @@ public class AppFuncs {
                 }
 
             });
-
-            builder.show();
-
         } else {
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.CAMERA},
