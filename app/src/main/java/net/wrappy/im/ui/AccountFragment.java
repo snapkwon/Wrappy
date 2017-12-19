@@ -38,7 +38,6 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
@@ -46,6 +45,7 @@ import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrDisplayActivity;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.io.ByteArrayOutputStream;
@@ -114,7 +114,7 @@ public class AccountFragment extends Fragment {
         mAccountName = Imps.Account.getAccountName(getContext().getContentResolver(), mAccountId);
         String email = Imps.Account.getString(getContext().getContentResolver(), Imps.Account.ACCOUNT_EMAIL, mAccountId);
 
-       mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
+        mView = inflater.inflate(R.layout.awesome_fragment_account, container, false);
 
         if (!TextUtils.isEmpty(mUserAddress)) {
 
@@ -187,14 +187,14 @@ public class AccountFragment extends Fragment {
 
                 if (remoteOmemoFingerprints != null && remoteOmemoFingerprints.size() > 0) {
 
-                    ImageView btnQrDisplay = (ImageView)mView.findViewById(R.id.omemoqrcode);
+                    ImageView btnQrDisplay = (ImageView) mView.findViewById(R.id.omemoqrcode);
                     btnQrDisplay.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             try {
                                 String xmppLink = OnboardingManager.generateXmppLink(mUserAddress, remoteOmemoFingerprints.get(0));
-                                Intent intent = new Intent(getActivity(),QrDisplayActivity.class);
-                                intent.putExtra(Intent.EXTRA_TEXT,xmppLink);
+                                Intent intent = new Intent(getActivity(), QrDisplayActivity.class);
+                                intent.putExtra(Intent.EXTRA_TEXT, xmppLink);
                                 getActivity().startActivity(intent);
                             } catch (IOException ioe) {
                                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
@@ -210,24 +210,19 @@ public class AccountFragment extends Fragment {
                         public void onClick(View v) {
 
                             try {
-                                String inviteLink = OnboardingManager.generateInviteLink(getActivity(),mUserAddress,remoteOmemoFingerprints.get(0),mNickname);
+                                String inviteLink = OnboardingManager.generateInviteLink(getActivity(), mUserAddress, remoteOmemoFingerprints.get(0), mNickname);
                                 new QrShareAsyncTask(getActivity()).execute(inviteLink, mNickname);
                             } catch (IOException ioe) {
                                 Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
                             }
                         }
                     });
-                }
-                else
-                {
+                } else {
                     mView.findViewById(R.id.omemodisplay).setVisibility(View.GONE);
                 }
-            }
-            catch (RemoteException re)
-            {
+            } catch (RemoteException re) {
 
             }
-
 
 
         }
@@ -235,8 +230,7 @@ public class AccountFragment extends Fragment {
         return mView;
     }
 
-    private void showChangeNickname ()
-    {
+    private void showChangeNickname() {
         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 
         // Set an EditText view to get user input
@@ -265,50 +259,18 @@ public class AccountFragment extends Fragment {
         alert.show();
     }
 
-    private void showChangePassword ()
-    {
-        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-        alert.setTitle(R.string.lock_screen_create_passphrase);
+    private void showChangePassword() {
+        PopupUtils.showCustomEditDialog(getContext(), getContext().getString(R.string.lock_screen_create_passphrase),
+                "", getAccountPassword(mProviderId), R.string.yes, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newPassword = String.valueOf(v.getTag());
 
-        // Set an EditText view to get user input
-        final EditText input = new EditText(getContext());
-        input.setText(getAccountPassword(mProviderId));
-        alert.setView(input);
-
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String newPassword = input.getText().toString();
-
-                if (!TextUtils.isEmpty(newPassword)) {
-                    new ChangePasswordTask().execute(getAccountPassword(mProviderId),newPassword);
-
-
-                    // Do something with value!
-                }
-            }
-        });
-
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
-    }
-
-    private boolean checkConnection() {
-        try {
-            IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
-
-            if (conn.getState() == ImConnection.DISCONNECTED)
-                return false;
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-
+                        if (!TextUtils.isEmpty(newPassword)) {
+                            new ChangePasswordTask().execute(getAccountPassword(mProviderId), newPassword);
+                        }
+                    }
+                }, null, false);
     }
 
     private String getAccountPassword(long providerId) {
@@ -496,8 +458,7 @@ public class AccountFragment extends Fragment {
                 return isCamera ? getCaptureImageOutputUri() : data.getData();
             }
 
-        }
-        else
+        } else
             return getCaptureImageOutputUri();
     }
 
@@ -530,7 +491,7 @@ public class AccountFragment extends Fragment {
         return spacedFingerprint.toString();
     }
 
-    void signIn () {
+    void signIn() {
         // The toggle is enabled
         SignInHelper helper = new SignInHelper(getActivity(), mHandler, new SignInHelper.SignInListener() {
             @Override
@@ -544,7 +505,7 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        helper.signIn(getAccountPassword(mProviderId), mProviderId, mAccountId,true);
+        helper.signIn(getAccountPassword(mProviderId), mProviderId, mAccountId, true);
 
         //keep signed in please!
         ContentValues values = new ContentValues();
@@ -594,8 +555,7 @@ public class AccountFragment extends Fragment {
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.CAMERA);
 
-        if (permissionCheck ==PackageManager.PERMISSION_DENIED)
-        {
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                     Manifest.permission.CAMERA)) {
@@ -616,8 +576,7 @@ public class AccountFragment extends Fragment {
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-        }
-        else {
+        } else {
 
             startActivityForResult(getPickImageChooserIntent(), 200);
         }
@@ -637,12 +596,9 @@ public class AccountFragment extends Fragment {
                 if (!oldPassword.equals(newPassword)) {
                     boolean result = OnboardingManager.changePassword(getActivity(), mProviderId, mAccountId, oldPassword, newPassword);
                     return result;
-                }
-                else
+                } else
                     return false;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
                 return false;
             }

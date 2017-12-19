@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +21,14 @@ import net.wrappy.im.R;
  */
 
 public class PopupUtils {
+    public static void getSelectionDialog(Context context, String title, ArrayAdapter<String> languagesAdapter, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setIcon(R.drawable.ic_settings_language);
+        builder.setTitle(R.string.KEY_PREF_LANGUAGE_TITLE);
+        builder.setAdapter(languagesAdapter, listener);
+        builder.show();
+    }
+
     public static void getSelectionDialog(Context context, String title, CharSequence[] options, DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -126,23 +135,37 @@ public class PopupUtils {
     }
 
     public static void showCustomInputPasswordDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
-        showCustomEditDialog(context, message, resOK, resCancel, onOkListener, onCancelListener, true, "");
+        showCustomEditDialog(context, message, "", resOK, resCancel, onOkListener, onCancelListener, true);
     }
 
     public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
-        showCustomEditDialog(context, message, resOK, resCancel, onOkListener, onCancelListener, false, data);
+        showCustomEditDialog(context, message, data, resOK, resCancel, onOkListener, onCancelListener, false);
     }
 
-    public static void showCustomEditDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword, String data) {
+    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword) {
+        showCustomEditDialog(context, "", message, data, resOK, resCancel, onOkListener, onCancelListener, isPassword);
+    }
+
+    public static void showCustomEditDialog(Context context, String title, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
         builder.setView(dialogView);
 
+        final EditText txtTitle = (EditText) dialogView.findViewById(R.id.txtTitle);
+        if (TextUtils.isEmpty(title)) {
+            txtTitle.setVisibility(View.GONE);
+        } else {
+            txtTitle.setVisibility(View.VISIBLE);
+            txtTitle.setText(title);
+        }
         final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
         if (isPassword) {
             edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
-        } else edt.setInputType(InputType.TYPE_CLASS_TEXT);
+        } else {
+            edt.setInputType(InputType.TYPE_CLASS_TEXT);
+            edt.setText(data);
+        }
 
         TextView tvMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
         if (!TextUtils.isEmpty(message)) {

@@ -18,7 +18,6 @@
 package net.wrappy.im.ui.legacy;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -33,7 +32,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -41,7 +39,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -278,28 +275,18 @@ public class ContactListFilterView extends LinearLayout {
 
         final String address = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.USERNAME));
         final String nickname = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
-        final View view = LayoutInflater.from(mContext).inflate(R.layout.alert_dialog_contact_nickname, null);
-        ((TextView) view.findViewById(R.id.contact_address_textview)).setText(address);
-        ((EditText) view.findViewById(R.id.contact_nickname_edittext)).setText(nickname);
-
-        new AlertDialog.Builder(mContext)
-                .setTitle(mContext.getString(R.string.menu_contact_nickname))
-                .setView(view)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
+        PopupUtils.showCustomEditDialog(mContext,mContext.getString(R.string.menu_contact_nickname), address, nickname, R.string.yes, R.string.cancel, new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String newNickname = String.valueOf(v.getTag());
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        final String newNickname = ((EditText) view.findViewById(R.id.contact_nickname_edittext)).getText().toString();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                setContactNickname(address, newNickname, conn);
-                            }
-                        }, 500);
+                    public void run() {
+                        setContactNickname(address, newNickname, conn);
                     }
-                })
-                .setNegativeButton(R.string.cancel, null).show();
+                }, 500);
+            }
+        }, null, false);
     }
 
     protected void setContactNickname(String aAddress, String aNickname, IImConnection conn) {

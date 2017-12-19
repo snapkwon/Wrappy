@@ -494,74 +494,8 @@ public class MessageListItem extends FrameLayout {
 
         } else {
             exportMediaFile();
-            /**
-             String body = convertMediaUriToPath(mediaUri);
-
-             if (body == null)
-             body = new File(mediaUri.getPath()).getAbsolutePath();
-
-
-             Intent intent = new Intent(Intent.ACTION_VIEW);
-             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-             if (Build.VERSION.SDK_INT >= 11)
-             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-             //set a general mime type not specific
-             intent.setDataAndType(Uri.parse(body), mimeType);
-
-
-             Context context = getContext().getApplicationContext();
-
-             if (isIntentAvailable(context, intent))
-             {
-             context.startActivity(intent);
-             }
-             else
-             {
-
-             intent = new Intent(Intent.ACTION_SEND);
-             intent.setDataAndType(Uri.parse(body), mimeType);
-
-             if (isIntentAvailable(context, intent))
-             {
-             context.startActivity(intent);
-             }
-             else {
-             Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
-             }
-             }**/
         }
     }
-
-
-    /**
-     * protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
-     * <p>
-     * final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-     * <p>
-     * new AlertDialog.Builder(context)
-     * .setTitle(context.getString(R.string.export_media))
-     * .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
-     * .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
-     *
-     * @Override public void onClick(DialogInterface dialogInterface, int i) {
-     * reshareMediaFile(mimeType, mediaUri);
-     * }
-     * })
-     * .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
-     * @Override public void onClick(DialogInterface dialog, int whichButton) {
-     * exportMediaFile(mimeType, mediaUri, exportPath);
-     * return;
-     * }
-     * })
-     * .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-     * @Override public void onClick(DialogInterface dialog, int whichButton) {
-     * return;
-     * }
-     * })
-     * .create().show();
-     * }
-     */
 
     private void forwardMediaFile(String mimeType, Uri mediaUri) {
 

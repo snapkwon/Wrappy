@@ -18,6 +18,12 @@
         android:layout_height="match_parent">
 
         <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sub_title_wallet_dialog"
+            android:layout_gravity="center_horizontal"/>
+        <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/txtMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

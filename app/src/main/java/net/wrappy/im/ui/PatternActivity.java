@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -43,6 +44,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PatternLockUtils;
+import net.wrappy.im.util.PopupUtils;
 
 import java.lang.ref.WeakReference;
 import java.security.KeyPair;
@@ -226,16 +228,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 try {
                     if (!RestAPI.checkHttpCode(httpCode)) {
                         appFuncs.dismissProgressWaiting();
-                        AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("The username or password is incorrect");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
+                        PopupUtils.getDialog(PatternActivity.this, "Error", "The username or password is incorrect", R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
                         mPatternView.clearPattern();
                         //AppFuncs.alert(getApplicationContext(),s,true);
 
@@ -335,16 +333,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     getActivity().startActivity(intent);
                     getActivity().finish();
                 } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Warning");
-                    alertDialog.setMessage("The user name or password is incorrect");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
+                    PopupUtils.getDialog(PatternActivity.this, "Warning", "The username or password is incorrect", R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
                 }
             }
         }
