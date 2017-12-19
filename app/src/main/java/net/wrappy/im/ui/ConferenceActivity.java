@@ -80,14 +80,16 @@ public class ConferenceActivity extends JitsiMeetActivity {
                 @Override
                 public void onParticipantJoined(Map<String, Object> data) {
                     on("PARTICIPANT_JOINED", data);
-                    numberParticipants++;
+                    if (data.containsKey("url")) {
+                        numberParticipants++;
+                    }
                 }
 
                 @Override
                 public void onParticipantLeft(Map<String, Object> data) {
                     on("PARTICIPANT_LEFT", data);
                     numberParticipants--;
-                    if (numberParticipants == 1) {
+                    if (numberParticipants == 0) {
                         finish();
                     }
                 }
