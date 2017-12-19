@@ -2,12 +2,9 @@ package net.wrappy.im.util;
 
 
 import android.content.Context;
-import android.net.Uri;
 
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-
-import java.io.IOException;
 
 public final class ConferenceUtils {
 
