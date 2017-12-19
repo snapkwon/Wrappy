@@ -64,6 +64,10 @@ public class PopupUtils {
 
         Dialog dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
+        handleTexts(dialogView, title, message);
+    }
+
+    private static void handleTexts(View dialogView, String title, String message) {
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
         if (!TextUtils.isEmpty(title)) {
             tvTitle.setText(title);
@@ -129,13 +133,7 @@ public class PopupUtils {
         View dialogView = getView(context, R.layout.dialog_with_edittext);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
 
-        TextView txtTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
-        if (TextUtils.isEmpty(title)) {
-            txtTitle.setVisibility(View.GONE);
-        } else {
-            txtTitle.setVisibility(View.VISIBLE);
-            txtTitle.setText(title);
-        }
+        handleTexts(dialogView, title, message);
         EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
         if (isPassword) {
             edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
@@ -143,12 +141,6 @@ public class PopupUtils {
             edt.setInputType(InputType.TYPE_CLASS_TEXT);
             edt.setText(data);
         }
-
-        TextView tvMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
-        if (!TextUtils.isEmpty(message)) {
-            tvMessage.setText(message);
-            tvMessage.setVisibility(View.VISIBLE);
-        } else tvMessage.setVisibility(View.GONE);
 
         Dialog dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener, edt);
@@ -180,7 +172,6 @@ public class PopupUtils {
         if (!TextUtils.isEmpty(message)) {
             tvMessage.setText(message);
         } else group.removeView(tvMessage);
-
     }
 
     private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView) {
