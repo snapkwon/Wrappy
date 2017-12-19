@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <net.wrappy.im.helper.layout.AppTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose your secret question"
+                android:gravity="center_horizontal"
+                android:textColor="#464546"
+                android:textSize="16sp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"/>
+            <LinearLayout
+                android:id="@+id/securityQuestionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="10dp"/>
+            </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp">
+
+                <net.wrappy.im.helper.layout.AppButton
+                    android:id="@+id/btnQuestionComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NEXT"
+                    style="@style/AppButton01"
+                    android:enabled="true"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

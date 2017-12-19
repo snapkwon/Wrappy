@@ -24,10 +24,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/zom_primary">
+        android:background="@color/menu_text_active">
         <ImageView
             android:id="@+id/imgLogo"
-            android:layout_height="32dp"
+            android:layout_height="24dp"
             android:layout_width="match_parent"
             android:scaleType="fitCenter"
             android:src="@drawable/logo_wrappy"

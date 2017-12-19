@@ -79,8 +79,10 @@ public class ProfileFragment extends Fragment {
         jid = getArguments().getString("jid");
         if (jid.isEmpty()) {
             isSelf = true;
-            jid = mApp.getDefaultUsername().split("@")[0];
-            linearForContact.setVisibility(View.GONE);
+            if (mApp.getDefaultUsername().contains("@")) {
+                jid = mApp.getDefaultUsername().split("@")[0];
+                linearForContact.setVisibility(View.GONE);
+            }
         } else {
             linearForSeft.setVisibility(View.GONE);
         }
@@ -132,12 +134,13 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @OnClick({R.id.btnProfileSendMessage,R.id.btnChangeSecuQuestion})
+    @OnClick({R.id.txtProfileSendMessage,R.id.txtProfileChangeQuestion})
     public void onClick(View view) {
-        if (view.getId()==R.id.btnProfileSendMessage) {
+        if (view.getId()==R.id.txtProfileSendMessage) {
             startChat();
-        } else if (view.getId()==R.id.btnChangeSecuQuestion) {
-
+        } else if (view.getId()==R.id.txtProfileChangeQuestion) {
+            Intent intent = new Intent(getActivity(),SecurityQuestionActivity.class);
+            startActivity(intent);
         }
     }
 

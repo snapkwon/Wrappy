@@ -87,6 +87,7 @@ import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
+import net.wrappy.im.ui.MainMenuFragment;
 import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.WalletFragment;
 import net.wrappy.im.ui.Welcome_Wallet_Fragment;
@@ -218,6 +219,7 @@ public class MainActivity extends BaseActivity {
         adapter = new Adapter(fragmentManager);
         mViewPager.setAdapter(adapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mViewPager.setCurrentItem(1);
     }
 
     private void initTabLayout() {
@@ -299,9 +301,9 @@ public class MainActivity extends BaseActivity {
         appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
         appTextView.setText(title);
         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, isResIcon, 0, 0);
-        if (index==0) {
+        if (index==1) {
             appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
-            appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_active, 0, 0);
+            appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
         }
         mTabLayout.getTabAt(index).setCustomView(appTextView);
     }
@@ -625,53 +627,53 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
+//
+//        if (mSearchView != null) {
+//            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//            mSearchView.setIconifiedByDefault(false);
+//
+//            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+//                public boolean onQueryTextChange(String query) {
+//                    if (mTabLayout.getSelectedTabPosition() == 0)
+//                        mConversationList.doSearch(query);
+//                    else if (mTabLayout.getSelectedTabPosition() == 1)
+//                        mContactList.doSearch(query);
+//
+//                    return true;
+//                }
+//
+//                public boolean onQueryTextSubmit(String query) {
+//                    if (mTabLayout.getSelectedTabPosition() == 0)
+//                        mConversationList.doSearch(query);
+//                    else if (mTabLayout.getSelectedTabPosition() == 1)
+//                        mContactList.doSearch(query);
+//
+//                    return true;
+//                }
+//            };
+//
+//            mSearchView.setOnQueryTextListener(queryTextListener);
+//
+//            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//                    mConversationList.doSearch(null);
+//                    return false;
+//                }
+//            });
+//        }
+//
+//        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
+//
+//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+//            mItem.setVisible(true);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
-
-        if (mSearchView != null) {
-            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            mSearchView.setIconifiedByDefault(false);
-
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-                public boolean onQueryTextChange(String query) {
-                    if (mTabLayout.getSelectedTabPosition() == 0)
-                        mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 1)
-                        mContactList.doSearch(query);
-
-                    return true;
-                }
-
-                public boolean onQueryTextSubmit(String query) {
-                    if (mTabLayout.getSelectedTabPosition() == 0)
-                        mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 1)
-                        mContactList.doSearch(query);
-
-                    return true;
-                }
-            };
-
-            mSearchView.setOnQueryTextListener(queryTextListener);
-
-            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-                @Override
-                public boolean onClose() {
-                    mConversationList.doSearch(null);
-                    return false;
-                }
-            });
-        }
-
-        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-            mItem.setVisible(true);
-
-        return true;
+        return false;
     }
 
     @Override
@@ -784,7 +786,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             if (position==0) {
-                return new ContactsListFragment();
+                return new MainMenuFragment();
             } else if (position==1) {
                 return new ConversationListFragment();
             } else if (position==2) {

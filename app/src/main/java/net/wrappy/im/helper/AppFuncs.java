@@ -237,4 +237,9 @@ public class AppFuncs {
         return jsonElement;
     }
 
+    public static JsonElement convertToJson(Object ob) throws Exception {
+        Gson gson = new Gson();
+        return gson.toJsonTree(ob);
+    }
+
 }

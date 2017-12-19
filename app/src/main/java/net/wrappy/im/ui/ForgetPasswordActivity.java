@@ -4,25 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
+import android.view.MenuItem;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
-import net.wrappy.im.helper.layout.AppTextView;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by ben on 07/12/2017.
  */
 
-public class ForgetPasswordActivity extends Activity implements AppDelegate {
+public class ForgetPasswordActivity extends BaseActivity implements AppDelegate {
 
-    public static final int ACTION_FROM_QUESTION = 1;
-    public static final int ACTION_FROM_RESET_EMAIL = 2;
-    public static final int ACTION_FROM_CHECK_EMAIL = 3;
+
     public static final String FORGET_PASSWORD = "forgetpassword";
 
 
@@ -33,27 +28,29 @@ public class ForgetPasswordActivity extends Activity implements AppDelegate {
     }
 
 
-    @BindView(R.id.headerbarTitle) AppTextView headerbarTitle;
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forget_password_question_activity);
         ButterKnife.bind(this);
-        headerbarTitle.setText("FORGET PASSWORD");
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
+        getSupportActionBar().setTitle("Forget Password");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         goToQuestionFragment();
 
     }
 
-    @OnClick(R.id.headerbarBack)
-    public void headerBack(View v) {
-        LauncherActivity.start(ForgetPasswordActivity.this);
-        finish();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home) {
+            LauncherActivity.start(ForgetPasswordActivity.this);
+            finish();
+        }
+        return true;
     }
 
     private void goToQuestionFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordQuestionFragment.newInstance()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordQuestionFragment.newInstance(0)).commit();
     }
 
     private void goToResetEmailFragment() {

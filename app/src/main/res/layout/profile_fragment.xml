@@ -190,6 +190,7 @@
                             android:src="@drawable/ic_setting_chat"/>
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtProfileSendMessage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/AppText02"
@@ -270,18 +271,13 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:enabled="false"
-                            android:clickable="false"
                             android:src="@drawable/ic_setting_chat"/>
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtProfileChangeQuestion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/AppText02"
-                            android:focusable="false"
-                            android:enabled="false"
-                            android:clickable="false"
                             android:layout_marginLeft="16dp"
                             android:text="Change Security Question"/>
 

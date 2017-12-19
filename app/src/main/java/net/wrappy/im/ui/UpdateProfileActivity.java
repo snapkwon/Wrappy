@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -26,7 +27,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
@@ -37,6 +37,7 @@ import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkCountry;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -71,7 +72,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     AppFuncs appFuncs;
 
     @BindView(R.id.spnProfileCountryCodes) AppCompatSpinner spnProfileCountryCodes;
-    @BindView(R.id.headerbarTitle) AppTextView headerbarTitle;
     @BindView(R.id.imgPhotoAvatar) CircleImageView imgAvatar;
     @BindView(R.id.imgProfileHeader) ImageView imgHeader;
     @BindView(R.id.edProfileUsername) EditText edUsername;
@@ -89,6 +89,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.update_profile_activity);
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
+        getSupportActionBar().setTitle("Update Profile");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         appFuncs = AppFuncs.getInstance();
         btnCameraAvatar.setVisibility(View.VISIBLE);
         btnCameraHeader.setVisibility(View.VISIBLE);
@@ -107,7 +110,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     }
 
     private void preferenceView() {
-        headerbarTitle.setText("Update Profile");
         adapterGender = ArrayAdapter.createFromResource(this,
                 R.array.profile_gender, R.layout.update_profile_textview);
         spinnerProfileGender.setAdapter(adapterGender);
@@ -135,17 +137,13 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
 
     @Optional
-    @OnClick({R.id.headerbarBack, R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
     @Override
     public void onClick(View view) {
         if (isFlag) {
             return;
         } isFlag = true;
         try {
-            if (view.getId() == R.id.headerbarBack) {
-                LauncherActivity.start(UpdateProfileActivity.this);
-                finish();
-            }
             if (view.getId() == R.id.btnProfileComplete) {
                 String error = validateData();
                 if (!error.isEmpty()) {
@@ -232,6 +230,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     appFuncs.dismissProgressWaiting();
                     return;
                 }
+                Store.putStringData(getApplicationContext(),Store.USERNAME,user);
                 String url = RestAPI.loginUrl(user,password);
                 RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
@@ -391,4 +390,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home) {
+            LauncherActivity.start(UpdateProfileActivity.this);
+            finish();
+        }
+        return true;
+    }
 }

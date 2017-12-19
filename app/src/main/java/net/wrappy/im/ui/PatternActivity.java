@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -202,15 +204,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.GetDataWrappy(getApplicationContext(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.apiPOST(getApplicationContext(),url,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    login(pass);
-                } else {
-                    Log.i(TAG,WpErrors.getErrorMessage(s));
-                    AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
-                    finish();
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        login(pass);
+                    } else {
+                        Log.i(TAG,WpErrors.getErrorMessage(result.getResult()));
+                        AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
+                        finish();
+                    }
                 }
             }
         });

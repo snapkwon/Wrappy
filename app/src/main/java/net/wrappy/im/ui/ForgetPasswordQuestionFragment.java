@@ -13,6 +13,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
@@ -37,6 +39,8 @@ import static net.wrappy.im.ui.ForgetPasswordActivity.ACTION_FROM_QUESTION;
 
 public class ForgetPasswordQuestionFragment extends Fragment {
 
+    private static String TYPE = "typeofsecu";
+
     View mainView;
     @BindView(R.id.txtSecurityForgetQuestion01) AppTextView txtSecurityForgetQuestion01;
     @BindView(R.id.txtSecurityForgetQuestion02) AppTextView txtSecurityForgetQuestion02;
@@ -47,6 +51,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     ArrayList<WpKMemberSecurityQuestionDto> stringQuestions = new ArrayList<>();
 
     int count = 0;
+    int type = 0;
 
     @Override
     public void onAttach(Activity activity) {
@@ -56,8 +61,12 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
     AppFuncs appFuncs;
 
-    public static ForgetPasswordQuestionFragment newInstance() {
-        return new ForgetPasswordQuestionFragment();
+    public static ForgetPasswordQuestionFragment newInstance(int type) {
+        ForgetPasswordQuestionFragment fragment = new ForgetPasswordQuestionFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(TYPE,type);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Nullable
@@ -66,6 +75,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         mainView = inflater.inflate(R.layout.forget_password_question_fragment,null);
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
+        type = getArguments().getInt(TYPE,0);
         getListQuestion();
         return mainView;
     }
@@ -124,33 +134,63 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         } else if (answer02.isEmpty()) {
             error = "Answer of question 02 is empty";
         } else {
-            postResultToServer(answer01,answer02);
+            if (stringQuestions!=null && stringQuestions.size() > 1) {
+                stringQuestions.get(0).setAnswer(answer01);
+                stringQuestions.get(1).setAnswer(answer02);
+                postResultToServer();
+            }
         }
         if (!error.isEmpty()) {
             AppFuncs.alert(getActivity(),error,true);
         }
     }
 
-    private void postResultToServer(String an1,String an2) {
-        String url = RestAPI.getHashStringResetPassUrl(Store.getStringData(getActivity(),Store.USERNAME),an1,an2,"ada");
-        RestAPI.GetDataWrappy(getActivity(), url, new RestAPI.RestAPIListenner() {
+    private void postResultToServer() {
+        JsonObject jsonObject = new JsonObject();
+        try {
+            jsonObject.add("kMemberSecurityQuestionDtoList",AppFuncs.convertToJson(stringQuestions).getAsJsonArray());
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        if (type==0) {
+            postDataForForgetPassword(jsonObject);
+        } else {
+            postDataForChangeSecurityQuestions(jsonObject);
+        }
+
+
+    }
+
+    private void postDataForForgetPassword(JsonObject json) {
+        RestAPI.apiPOST(getActivity(),RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(),Store.USERNAME)),json)
+                .setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    if (!s.isEmpty()) {
-                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
-                    }
-                } else {
-                    if (count == 3) {
-                        AppFuncs.alert(getActivity(), "Answer wrong! Try with email", true);
-                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        if (!result.getResult().isEmpty())
+                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
                     } else {
                         AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
                     }
-                    count++;
-
                 }
+            }
+        });
+    }
 
+    private void postDataForChangeSecurityQuestions(JsonObject json) {
+        RestAPI.apiPOST(getActivity(),RestAPI.POST_CHANGE_QUESTION_CHECK,json).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        if (!result.getResult().isEmpty())
+                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
+                    } else {
+                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
+                    }
+                }
             }
         });
     }
