@@ -4,12 +4,6 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/menu_report_spam"
-        android:icon="@drawable/ic_alert"
-        android:title="@string/setting_report_spam"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/menu_message_delete"
         android:icon="@drawable/ic_chat_menu_delete"
         android:title="@string/delete"
