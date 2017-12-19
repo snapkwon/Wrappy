@@ -159,6 +159,18 @@ public class AppFuncs {
         return base64String;
     }
 
+    public static File getFileFromBitmap(Context context) {
+        File f;
+        try {
+            f = new File(context.getCacheDir(), "file");
+            if (f.exists())
+                return f;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static File convertBitmapToFile(Context context, Bitmap bitmap) {
         File f = null;
         try {
