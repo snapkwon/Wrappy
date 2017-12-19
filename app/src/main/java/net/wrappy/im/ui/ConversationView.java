@@ -2822,9 +2822,6 @@ public class ConversationView {
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
                     messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference);
-                    if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                        doConference(body, id, timestamp);
-                    }
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -3152,10 +3149,6 @@ public class ConversationView {
         }
     }
 
-    public void startAudioConference() {
-        startAudioConference(null);
-    }
-
     /**
      * Showing popup menu item translate
      *
@@ -3228,51 +3221,23 @@ public class ConversationView {
         return popupWindow;
     }
 
-    public void startAudioConference(String id) {
-        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.AUDIO);
+    public void startAudioConference() {
+        String roomId = getRoomId(ConferenceMessage.ConferenceType.AUDIO);
         ConferenceActivity.startAudioCall(mContext, roomId);
     }
 
     public void startVideoConference() {
-        startVideoConference(null);
-    }
-
-    public void startVideoConference(String id) {
-        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        String roomId = getRoomId(ConferenceMessage.ConferenceType.VIDEO);
         Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
-    private String getRoomId(String id, ConferenceMessage.ConferenceType type) {
+    private String getRoomId(ConferenceMessage.ConferenceType type) {
         String roomId;
-        if (!TextUtils.isEmpty(id)) {
-            roomId = id;
-        } else {
-            ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
-            sendMessageAsync(message.toString());
-            roomId = message.getRoomId();
-        }
+        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
+        sendMessageAsync(message.toString());
+        roomId = message.getRoomId();
         return roomId;
-    }
-
-    private void doConference(String body, long id, long timestamp) {
-        ConferenceMessage conference = new ConferenceMessage(body);
-        if (!conference.isEnded()) {
-            conference.endCall();
-            body = conference.toString();
-            Imps.updateMessageBodyInDb(mActivity.getContentResolver(), mLastChatId, String.valueOf(id), body);
-            mMessageAdapter.setNeedRequeryCursor(true);
-            //Skip for expired conference
-            boolean expiredCall = ((System.currentTimeMillis() - timestamp) > SHOW_MEDIA_DELIVERY_INTERVAL);
-            if (!expiredCall) {
-                Debug.d("doConference");
-                if (conference.isAudio()) {
-                    startAudioConference(conference.getRoomId());
-                } else {
-                    startVideoConference(conference.getRoomId());
-                }
-            }
-        }
     }
 
     public void startSettingScreen() {

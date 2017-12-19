@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import net.wrappy.im.BuildConfig;
 
@@ -118,6 +120,9 @@ public class ConferenceActivity extends JitsiMeetActivity {
         // about what we want anyway.
         setWelcomePageEnabled(false);
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         if (intent != null) {
             Bundle config = new Bundle();
