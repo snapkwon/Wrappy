@@ -1092,26 +1092,7 @@ public class ConversationView {
             public void onClick(View v) {
 
                 if (mComposeMessage.getVisibility() == View.VISIBLE) {
-
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("message", mComposeMessage.getText().toString());
-                    
-                    RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
-                        @Override
-                        public void OnComplete(int httpCode, String error, String s) {
-                            Debug.e(s);
-                            JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
-
-                            if (jObject.get("status").toString() != null) {
-                                boolean status = Boolean.parseBoolean(jObject.get("status").toString());
-                                if (status) {
-
-                                } else {
-                                    sendMessage();
-                                }
-                            }
-                        }
-                    });
+                    checkBeforeSubmit();
                 } else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
@@ -1130,7 +1111,28 @@ public class ConversationView {
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
+    }
 
+    private void checkBeforeSubmit() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("message", mComposeMessage.getText().toString());
+
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.e(s);
+                JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+
+                if (jObject.get("status").toString() != null) {
+                    boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                    if (status) {
+
+                    } else {
+                        sendMessage();
+                    }
+                }
+            }
+        });
     }
 
     private boolean mLastIsTyping = false;
