@@ -345,6 +345,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                             });
                     alertDialog.show();
                 }
+                mExistingAccountTask =null;
             }
         }
     }

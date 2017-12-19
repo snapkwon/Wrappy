@@ -20,7 +20,7 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
         if (getProps("google_translate_apikey") == null) {
-            buildConfigField "String", "GoogleTranslateApiKey", "google_translate_apikey"
+            buildConfigField "String", "GoogleTranslateApiKey", "\"google_translate_apikey\""
         } else {
 
         buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
@@ -100,10 +100,12 @@ def getProps(String propName) {
     if (propsFile.exists()) {
         def props = new Properties()
         props.load(new FileInputStream(propsFile))
-        return props[propName]
-    } else {
-        return "inapptranslation.google_translate_apikey";
+        if (props.getProperty("google_translate_apikey")) {
+              return props[propName]
+        }
     }
+    return null;
+
 }
 
 repositories {

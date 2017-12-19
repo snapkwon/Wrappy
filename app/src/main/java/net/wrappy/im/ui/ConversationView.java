@@ -138,6 +138,8 @@ import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
+import net.wrappy.im.util.PreferenceContract;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.net.URLEncoder;
@@ -148,6 +150,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.tornado.android.patternlock.PatternUtils;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -244,7 +247,7 @@ public class ConversationView {
 
     private int mViewType;
 
-    private boolean istranslate = false;
+    private boolean istranslate;
 
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
@@ -784,6 +787,8 @@ public class ConversationView {
 
         mActivity = activity;
         mContext = activity;
+        istranslate =      PreferenceUtils.getBoolean("istranslate",
+                istranslate, mActivity);
         ButterKnife.bind(this, mActivity);
 
         mApp = (ImApp) mActivity.getApplication();
@@ -2567,7 +2572,16 @@ public class ConversationView {
                     targetlanguage = "vi";
                     break;
             }
-            bodytranslate.clear();
+            resetTranslate();
+           // bodytranslate.clear();
+        }
+
+        public void resetTranslate()
+        {
+            for(int i =0 ; i < bodytranslate.size() ; i++)
+            {
+                bodytranslate.get(i).mIstranslate = false;
+            }
         }
 
         public ConversationRecyclerViewAdapter(Activity context, Cursor c) {
@@ -2595,7 +2609,18 @@ public class ConversationView {
         public Cursor swapCursor(Cursor newCursor) {
             if (newCursor != null) {
                 resolveColumnIndex(newCursor);
+                if (newCursor.moveToFirst()) {
+                    do {
+                        if(bodytranslate.size() < newCursor.getPosition() +1) {
+                            BodyTranslate data = new BodyTranslate();
+                            data.mIstranslate = false;
+                            data.mTexttranslate = "";
+                            bodytranslate.add(data);
+                        }
+                    } while (newCursor.moveToNext());
+                }
             }
+
             return super.swapCursor(newCursor);
         }
 
@@ -2705,18 +2730,7 @@ public class ConversationView {
 
         @Override
         public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
-            if(bodytranslate.size() < position + 1) {
-                if (cursor.moveToFirst()) {
-                    do {
-                        String Textdata = cursor.getString(mBodyColumn);
-                        BodyTranslate data = new BodyTranslate();
-                        data.mIstranslate = false;
-                        data.mTexttranslate = "";
-                        bodytranslate.add(data);
-                        // do what ever you want here
-                    } while (cursor.moveToNext());
-                }
-            }
+
             cursor.moveToPosition(position);
 
             viewHolder.btntranslate.setOnClickListener(new View.OnClickListener() {
@@ -2725,6 +2739,8 @@ public class ConversationView {
                     cursor.moveToPosition(viewHolder.getPos());
                     if(bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
+                        viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.waiting_dialog));
+                        viewHolder.btntranslate.setEnabled(false);
                         iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
                     }
                     else
@@ -2762,18 +2778,19 @@ public class ConversationView {
             }
             else
             {
+                viewHolder.btntranslate.setEnabled(true);
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
                 if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
-                    viewHolder.btntranslate.setText("close translate");
+                    viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.closetranslate));
                 }
                 else
                 {
                     viewHolder.txttranslate.setVisibility(View.GONE);
-                    viewHolder.btntranslate.setText("see translate");
+                    viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.seetranslate));
                 }
 
             }
@@ -3195,7 +3212,7 @@ public class ConversationView {
      *
      * @return
      */
-    public FrameLayout popupDisplay(ConversationDetailActivity activity) {
+    public FrameLayout popupDisplay(final ConversationDetailActivity activity) {
         FrameLayout popupWindow = new FrameLayout(activity);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -3244,10 +3261,14 @@ public class ConversationView {
                 if (isChecked) {
                     textTurnOnOff.setText("On");
                     istranslate = true;
+                    PreferenceUtils.putBoolean("istranslate",
+                            istranslate, mActivity);
                     mMessageAdapter.notifyDataSetChanged();
                 } else {
                     textTurnOnOff.setText("Off");
                     istranslate = false;
+                    PreferenceUtils.putBoolean("istranslate",
+                            istranslate, mActivity);
                     mMessageAdapter.notifyDataSetChanged();
                 }
             }

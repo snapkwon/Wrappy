@@ -195,7 +195,19 @@ public class AccountSettingsActivity extends PreferenceActivity implements
         //need to delete
         ((ImApp)getApplication()).deleteAccount(getContentResolver(),mAccountId, mProviderId);
 
-        finish();
+        ((ImApp)getApplication()).resetDB();
+
+        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+
+
+
+        // Intent intent = new Intent(AccountSettingsActivity.this, IntroActivity.class);
+       // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //startActivity(intent);
+
+      //  finish();
     }
 
     /* save the preferences in Imps so they are accessible everywhere */

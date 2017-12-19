@@ -472,5 +472,7 @@
     <string name="title_wallet">Wallet</string>
     <string name="ETH">Ethereum</string>
     <string name="PRO">Proteusion</string>
+    <string name="seetranslate">See translate</string>
+    <string name="closetranslate">Close translate</string>
 
 </resources>

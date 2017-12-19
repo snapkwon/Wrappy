@@ -78,6 +78,7 @@ import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Languages;
 import net.wrappy.im.util.LogCleaner;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -156,7 +157,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
      * A flag indicates that we have called tomServiceStarted start the service.
      */
 //    private boolean mServiceStarted;
-    private Context mApplicationContext;
+    private static Context mApplicationContext;
 
     private CacheWordHandler mCacheWord;
 
@@ -267,6 +268,20 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
 
         RestAPI.initIon(getApplicationContext());
+
+    }
+
+    public  void resetDB()
+    {
+        if(mCacheWord !=null)
+        {
+
+            ImpsProvider.resetDB();
+            mCacheWord.deinitialize();
+            mCacheWord.connectToService();
+              //  initDBHelper(mCacheWord.getEncryptionKey(), false);
+
+        }
 
     }
 
@@ -635,8 +650,39 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ContentUris.appendId(builder, accountId);
         resolver.delete(builder.build(), null, null);
 
+       // clearApplicationData();
+        mApplicationContext.deleteDatabase("impsenc.db");
+
 
     }
+
+    public static void clearApplicationData() {
+        File cache = mApplicationContext.getCacheDir();
+        File appDir = new File(cache.getParent());
+        if(appDir.exists()){
+            String[] children = appDir.list();
+            for(String s : children){
+                if(!s.equals("lib")){
+                    deleteDir(new File(appDir, s));
+                }
+            }
+        }
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        return dir.delete();
+    }
+
 
     public void registerForBroadcastEvent(int what, Handler target) {
         mBroadcaster.request(what, target, what);

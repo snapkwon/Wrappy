@@ -286,7 +286,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordUninitialized() {
-
+            int i =0;
     }
 
     @Override
@@ -1357,6 +1357,11 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private DatabaseHelper getDBHelper() {
 
         return mDbHelper;
+    }
+
+    public  static void resetDB()
+    {
+        mDbHelper=null;
     }
 
     @Override
