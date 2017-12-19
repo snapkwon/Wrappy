@@ -38,12 +38,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.koushikdutta.async.future.FutureCallback;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.enums.EnumPresenceStatus;
-import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
@@ -54,6 +56,8 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.LogCleaner;
+
+import static net.wrappy.im.helper.RestAPI.GET_PHOTO;
 
 public class ContactListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -168,40 +172,18 @@ public class ContactListItem extends FrameLayout {
                 holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
 
             } else {
-
-                Drawable avatar = null;
-
-
-
-                try {
-                    if (avatar != null) {
-                        if (avatar instanceof RoundedAvatarDrawable)
-                            setAvatarBorder(presence, (RoundedAvatarDrawable) avatar);
-
-                        holder.mAvatar.setImageDrawable(avatar);
-                    } else {
-                        //int color = getAvatarBorder(presence);
-                        int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-                        holder.mAvatar.setImageDrawable(lavatar);
-
-                    }
-
-                    holder.mAvatar.setVisibility(View.VISIBLE);
-                } catch (OutOfMemoryError ome) {
-                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
-                }
+                generateLetterAvatar(holder, nickname);
                 if (!TextUtils.isEmpty(reference)) {
-                    RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
+                    String imgUrl = GET_PHOTO + reference;
+                    Glide.with(getContext())
+                            .load(imgUrl).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onCompleted(Exception e, Bitmap result) {
-                            if (result!=null) {
-                                holder.mAvatar.setImageBitmap(result);
-                            }
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            holder.mAvatar.setImageBitmap(resource);
                         }
                     });
                 }
+
             }
         }
 
@@ -253,6 +235,19 @@ public class ContactListItem extends FrameLayout {
         }
 
         holder.mLine1.setVisibility(View.VISIBLE);
+    }
+
+    private void generateLetterAvatar(ContactViewHolder holder, String nickname) {
+        try {
+            //int color = getAvatarBorder(presence);
+            int padding = 24;
+            LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
+
+            holder.mAvatar.setImageDrawable(lavatar);
+            holder.mAvatar.setVisibility(View.VISIBLE);
+        } catch (OutOfMemoryError ome) {
+            //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
+        }
     }
 
 

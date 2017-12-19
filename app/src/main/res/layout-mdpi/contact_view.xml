@@ -18,13 +18,11 @@
  */
 -->
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp"	
-     >
+    android:padding="3dp">
      
 			
     <LinearLayout
@@ -96,15 +94,20 @@
             android:layout_alignParentEnd="true" />
     </LinearLayout>
 
-    <net.wrappy.im.helper.layout.CircleImageView
-        android:id="@+id/avatar"
+    <net.wrappy.im.helper.layout.CircleLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:scaleType="centerCrop"
-        android:layout_margin="3dp"
-        android:visibility="gone"
-        android:layout_gravity="left|top"
-        />
+        android:background="@drawable/rounded_shape_white"
+        android:clipChildren="true">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_gravity="left|top" />
+    </net.wrappy.im.helper.layout.CircleLayout>
 
     <ImageView
         android:id="@+id/avatarCheck"

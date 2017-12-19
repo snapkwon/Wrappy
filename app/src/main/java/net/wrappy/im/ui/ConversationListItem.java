@@ -40,6 +40,8 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
@@ -62,6 +64,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Date;
 import java.util.Locale;
+
+import static net.wrappy.im.helper.RestAPI.GET_PHOTO;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -182,48 +186,18 @@ public class ConversationListItem extends FrameLayout {
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
                 }
             }
-            //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
             else {
-//                holder.mAvatar.setVisibility(View.GONE);
-
-                Drawable avatar = null;
-                try {
-                    if (avatar != null) {
-                        //if (avatar instanceof RoundedAvatarDrawable)
-                        //  setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
-
-                        holder.mAvatar.setImageDrawable(avatar);
-                    } else {
-                        // int color = getAvatarBorder(presence);
-                        int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-                        holder.mAvatar.setImageDrawable(lavatar);
-
-                    }
-
-                    holder.mAvatar.setVisibility(View.VISIBLE);
-                } catch (OutOfMemoryError ome) {
-                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
-                }
-                try {
-                    RestAPI.getBitmapFromUrl(getContext(),referenceAvatar).setCallback(new FutureCallback<Bitmap>() {
+                generateLetterAvatar(holder, nickname);
+                if (!TextUtils.isEmpty(referenceAvatar)) {
+                    String imgUrl = GET_PHOTO + referenceAvatar;
+                    Glide.with(getContext())
+                            .load(imgUrl).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onCompleted(Exception e, Bitmap result) {
-                            if (result!=null) {
-                                holder.mAvatar.setImageBitmap(result);
-                            }
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            holder.mAvatar.setImageBitmap(resource);
                         }
                     });
-                    //avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                    // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                } catch (Exception e) {
-                    //problem decoding avatar
-                    Log.e(ImApp.LOG_TAG, "error decoding avatar", e);
                 }
-
-
-
             }
         }
 
@@ -338,6 +312,19 @@ public class ConversationListItem extends FrameLayout {
             holder.mPinIcon.setVisibility(VISIBLE);
         } else {
             holder.mPinIcon.setVisibility(GONE);
+        }
+    }
+
+    private void generateLetterAvatar(ConversationViewHolder holder, String nickname) {
+        try {
+            //int color = getAvatarBorder(presence);
+            int padding = 24;
+            LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
+
+            holder.mAvatar.setImageDrawable(lavatar);
+            holder.mAvatar.setVisibility(View.VISIBLE);
+        } catch (OutOfMemoryError ome) {
+            //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
         }
     }
 
