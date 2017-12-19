@@ -149,7 +149,6 @@ import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
@@ -2573,6 +2572,7 @@ public class ConversationView {
         private ActionMode mActionMode;
         private View mLastSelectedView;
         private String tempPacketIDSelect = "";
+        private int tempMessageType = 0;
         private String tempNicknameSelect = "";
         private Bitmap mCaptureBitmap;
 
@@ -2848,8 +2848,11 @@ public class ConversationView {
                         return false;
                     }
 
+                    cursor.moveToPosition(viewHolder.getPos());
+
                     mLastSelectedView = view;
                     tempPacketIDSelect = cursor.getString(cursor.getColumnIndex(Imps.Messages.PACKET_ID));
+                    tempMessageType = cursor.getInt(mTypeColumn);
                     tempNicknameSelect = nickname;
                     // Start the CAB using the ActionMode.Callback defined above
                     mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
@@ -2862,6 +2865,7 @@ public class ConversationView {
                     i++;
 
                     mCaptureBitmap = captureView(mLastSelectedView, fileName.toString());
+                    AppFuncs.convertBitmapToFile(mActivity, mCaptureBitmap);
 
                     return true;
                 }
@@ -2935,7 +2939,16 @@ public class ConversationView {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_each_message, menu);
+
+                boolean isLeft = (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED)
+                                || (tempMessageType == Imps.MessageType.INCOMING)
+                                || (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+
+                if (isLeft) {
+                    inflater.inflate(R.menu.menu_each_spam_message, menu);
+                } else {
+                    inflater.inflate(R.menu.menu_each_delete_message, menu);
+                }
                 return true;
             }
 
@@ -2962,7 +2975,7 @@ public class ConversationView {
                         ImApp mApp = (ImApp) mActivity.getApplication();
                         long mAccountId = mApp.getDefaultAccountId();
 
-                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect, mCaptureBitmap);
+                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
                         mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
 
                         mode.finish();
@@ -3375,19 +3388,13 @@ public class ConversationView {
         public static String TYPE_SPAM = "SPAM";
         public static String TYPE_VIOLENCE = "OBJECTIONABLE";
 
-        public static SpamBottomSheet getInstance(String reporter, String member, String messageId,
-                                                        Bitmap bitmap) {
+        public static SpamBottomSheet getInstance(String reporter, String member, String messageId) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
 
             Bundle args = new Bundle();
             args.putString("reporter", reporter);
             args.putString("member", member);
             args.putString("messageId", messageId);
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            args.putByteArray("image", byteArray);
 
             spamBottomSheet.setArguments(args);
 
@@ -3414,27 +3421,23 @@ public class ConversationView {
                 case R.id.layout_message_spam:
                 case R.id.layout_message_violence:
 
-                    if (getArguments() != null) {
-
-                        byte[] byteArray = getArguments().getByteArray("image");
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-                        File mFileCapture = AppFuncs.convertBitmapToFile(getContext(), bitmap);
+                        File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
                         RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
                             @Override
                             public void onCompleted(Exception e, Response<String> result) {
                                 JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                                 String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
 
-                                String reporter = getArguments().getString("reporter");
-                                String member = getArguments().getString("member");
-                                String messageId = getArguments().getString("messageId");
+                                if (getArguments() != null) {
 
-                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
+                                    String reporter = getArguments().getString("reporter");
+                                    String member = getArguments().getString("member");
+                                    String messageId = getArguments().getString("messageId");
+
+                                    sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
+                                }
                             }
                         });
-
-                    }
                     dismiss();
                     break;
                 case R.id.layout_message_cancel:
