@@ -23,9 +23,14 @@ import net.wrappy.im.R;
 
 public class PopupUtils {
     public static void getSelectionDialog(Context context, String title, ArrayAdapter<String> languagesAdapter, DialogInterface.OnClickListener listener) {
+        getSelectionDialog(context, title, -1, languagesAdapter, listener);
+    }
+
+    public static void getSelectionDialog(Context context, String title, int resIcon, ArrayAdapter<String> languagesAdapter, DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setIcon(R.drawable.ic_settings_language);
-        builder.setTitle(R.string.KEY_PREF_LANGUAGE_TITLE);
+        if (resIcon > 0)
+            builder.setIcon(resIcon);
+        builder.setTitle(title);
         builder.setAdapter(languagesAdapter, listener);
         builder.show();
     }
@@ -41,56 +46,23 @@ public class PopupUtils {
         builder.show();
     }
 
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, View.OnClickListener positiveListener,
-                                 View.OnClickListener negativeListener) {
-        getDialog(context, title, message, positiveButton, negativeButton, positiveListener, negativeListener, false);
-    }
-
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, View.OnClickListener positiveListener,
-                                 View.OnClickListener negativeListener, boolean isCancelable) {
-        showCustomDialog(context, title, message, positiveButton, negativeButton, positiveListener, negativeListener, isCancelable);
-    }
-
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, int neutralButton, DialogInterface.OnClickListener positiveListener,
-                                 DialogInterface.OnClickListener negativeListener, DialogInterface.OnClickListener neutralListener) {
-        getDialog(context, title, message, positiveButton, negativeButton, neutralButton, positiveListener,
-                negativeListener, neutralListener, false);
-    }
-
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, int neutralButton, DialogInterface.OnClickListener positiveListener,
-                                 DialogInterface.OnClickListener negativeListener, DialogInterface.OnClickListener neutralListener, boolean isCancelable) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(isCancelable);
-        builder.setTitle(title);
-        builder.setMessage(message);
-
-        if (neutralButton > 0)
-            builder.setNeutralButton(neutralButton, neutralListener);
-        if (positiveButton > 0)
-            builder.setPositiveButton(positiveButton, positiveListener);
-        if (negativeButton > 0)
-            builder.setNegativeButton(negativeButton, negativeListener);
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    public static void showCustomDialog(Context context, String title, String message, int resOK, final View.OnClickListener onOkListener) {
+    public static void showCustomDialog(Context context, String title, String message, int resOK, View.OnClickListener onOkListener) {
         showCustomDialog(context, title, message, resOK, -1, onOkListener, null, true);
     }
-    public static void showCustomDialog(Context context, String title, String message, int resOK, final View.OnClickListener onOkListener, boolean isCancelable) {
+
+    public static void showCustomDialog(Context context, String title, String message, int resOK, View.OnClickListener onOkListener, boolean isCancelable) {
         showCustomDialog(context, title, message, resOK, -1, onOkListener, null, isCancelable);
     }
 
-    public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
         showCustomDialog(context, title, message, resOK, resCancel, onOkListener, onCancelListener, true);
     }
 
-    public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isCancelable) {
+    public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isCancelable) {
         View dialogView = getView(context, R.layout.custom_alert_dialog);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
 
-        final Dialog dialog = builder.show();
+        Dialog dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
         if (!TextUtils.isEmpty(title)) {
@@ -105,7 +77,11 @@ public class PopupUtils {
         } else tvMessage.setVisibility(View.GONE);
     }
 
-    private static void handleButtons(final Dialog dialog, View dialogView, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    private static void handleButtons(Dialog dialog, View dialogView, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
+        handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener, null);
+    }
+
+    private static void handleButtons(final Dialog dialog, View dialogView, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, final EditText editText) {
         Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
         Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
 
@@ -115,6 +91,8 @@ public class PopupUtils {
             btnOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (editText != null)
+                        v.setTag(editText.getText().toString());
                     if (onOkListener != null)
                         onOkListener.onClick(v);
                     dialog.dismiss();
@@ -135,30 +113,30 @@ public class PopupUtils {
         } else btnCancel.setVisibility(View.GONE);
     }
 
-    public static void showCustomInputPasswordDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomInputPasswordDialog(Context context, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
         showCustomEditDialog(context, message, "", resOK, resCancel, onOkListener, onCancelListener, true);
     }
 
-    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
         showCustomEditDialog(context, message, data, resOK, resCancel, onOkListener, onCancelListener, false);
     }
 
-    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword) {
+    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isPassword) {
         showCustomEditDialog(context, "", message, data, resOK, resCancel, onOkListener, onCancelListener, isPassword);
     }
 
-    public static void showCustomEditDialog(Context context, String title, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword) {
+    public static void showCustomEditDialog(Context context, String title, String message, String data, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isPassword) {
         View dialogView = getView(context, R.layout.dialog_with_edittext);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
 
-        final EditText txtTitle = (EditText) dialogView.findViewById(R.id.txtTitle);
+        EditText txtTitle = (EditText) dialogView.findViewById(R.id.txtTitle);
         if (TextUtils.isEmpty(title)) {
             txtTitle.setVisibility(View.GONE);
         } else {
             txtTitle.setVisibility(View.VISIBLE);
             txtTitle.setText(title);
         }
-        final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
+        EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
         if (isPassword) {
             edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
         } else {
@@ -172,50 +150,23 @@ public class PopupUtils {
             tvMessage.setVisibility(View.VISIBLE);
         } else tvMessage.setVisibility(View.GONE);
 
-        Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
-        Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
-
-        final Dialog dialog = builder.show();
-        if (resOK > 0) {
-            btnOk.setText(resOK);
-            btnOk.setVisibility(View.VISIBLE);
-            btnOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setTag(edt.getText().toString());
-                    if (onOkListener != null)
-                        onOkListener.onClick(v);
-                    dialog.dismiss();
-                }
-            });
-        } else btnOk.setVisibility(View.GONE);
-        if (resCancel > 0) {
-            btnCancel.setText(resCancel);
-            btnCancel.setVisibility(View.VISIBLE);
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onCancelListener != null)
-                        onCancelListener.onClick(v);
-                    dialog.dismiss();
-                }
-            });
-        } else btnCancel.setVisibility(View.GONE);
+        Dialog dialog = builder.show();
+        handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener, edt);
     }
 
 //    public static void showCustomViewDialog(Context context, View view, int resOK, View.OnClickListener onOkListener) {
 //        showCustomViewDialog(context, view, resOK, -1, onOkListener, null);
 //    }
 
-    public static void showCustomViewDialog(Context context, View view, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomViewDialog(Context context, View view, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
         showCustomViewDialog(context, view, "", "", resOK, resCancel, onOkListener, onCancelListener);
     }
 
-    public static void showCustomViewDialog(Context context, View view, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomViewDialog(Context context, View view, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
         View dialogView = getView(context, R.layout.custom_alert_dialog);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
 
-        final Dialog dialog = builder.show();
+        Dialog dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
         ViewGroup group = (ViewGroup) dialogView.findViewById(R.id.lnContent);
         group.addView(view);
@@ -237,7 +188,7 @@ public class PopupUtils {
     }
 
     private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView, boolean isCancelable) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(dialogView);
         builder.setCancelable(isCancelable);
         return builder;

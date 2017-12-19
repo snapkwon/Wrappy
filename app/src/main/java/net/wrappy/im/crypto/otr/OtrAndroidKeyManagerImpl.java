@@ -940,7 +940,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
             return;
         }
 
-        PopupUtils.getDialog(activity, activity.getString(R.string.confirm), activity.getString(R.string.detected_Otr_keystore_import),
+        PopupUtils.showCustomDialog(activity, activity.getString(R.string.confirm), activity.getString(R.string.detected_Otr_keystore_import),
                 R.string.yes, R.string.no, null, null, true);
     }
 

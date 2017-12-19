@@ -244,7 +244,7 @@ public class OnboardingActivity extends BaseActivity {
                 final ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(activity,
                         android.R.layout.simple_list_item_single_choice, languages.getAllNames());
 
-                PopupUtils.getSelectionDialog(activity, getString(R.string.KEY_PREF_LANGUAGE_TITLE), languagesAdapter, new DialogInterface.OnClickListener() {
+                PopupUtils.getSelectionDialog(activity, getString(R.string.KEY_PREF_LANGUAGE_TITLE), R.drawable.ic_settings_language, languagesAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         String[] languageCodes = languages.getSupportedLocales();

@@ -147,21 +147,21 @@ public class AccountSettingsActivity extends PreferenceActivity implements
     }
 
     private void migrateAccount() {
-        PopupUtils.getDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new View.OnClickListener() {
+        PopupUtils.showCustomDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 migrateAccountConfirmed();
             }
-        }, null);
+        }, null, false);
     }
 
     private void deleteAccount() {
-        PopupUtils.getDialog(this, getString(R.string.delete_account), getString(R.string.confirm), R.string.yes, R.string.cancel, new View.OnClickListener() {
+        PopupUtils.showCustomDialog(this, getString(R.string.delete_account), getString(R.string.confirm), R.string.yes, R.string.cancel, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 confirmDeleteAccount();
             }
-        }, null);
+        }, null, false);
     }
 
     private void confirmDeleteAccount() {

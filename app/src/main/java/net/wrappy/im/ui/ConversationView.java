@@ -512,10 +512,7 @@ public class ConversationView {
                 }
                 ArrayAdapter<String> a = new ArrayAdapter<String>(mActivity,
                         android.R.layout.select_dialog_item, linkUrls);
-                AlertDialog.Builder b = new AlertDialog.Builder(mActivity);
-                b.setTitle(R.string.select_link_title);
-                b.setCancelable(true);
-                b.setAdapter(a, new DialogInterface.OnClickListener() {
+                PopupUtils.getSelectionDialog(mActivity, mActivity.getString(R.string.select_link_title), a, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Uri uri = Uri.parse(linkUrls.get(which));
@@ -526,13 +523,6 @@ public class ConversationView {
                         mActivity.startActivity(intent);
                     }
                 });
-                b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                b.show();
             }
         }
     };
@@ -656,36 +646,24 @@ public class ConversationView {
     private void showPromptForData(final String transferFrom, String filePath) {
         String message = transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
                 + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_);
-        PopupUtils.getDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
+        PopupUtils.showCustomDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                dialog.dismiss();
             }
 
-        }, new DialogInterface.OnClickListener() {
+        }, new View.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                dialog.dismiss();
-            }
-        }, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                dialog.dismiss();
             }
         });
     }
@@ -1075,7 +1053,7 @@ public class ConversationView {
 
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("message", mComposeMessage.getText().toString());
-                    
+
                     RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
@@ -1755,8 +1733,8 @@ public class ConversationView {
 
         // The positive button is deliberately set as no so that
         // the no is the default value
-        PopupUtils.getDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
-                R.string.no, confirmListener, null);
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
+                R.string.no, confirmListener, null, false);
     }
 
     public long getProviderId() {
@@ -3353,7 +3331,7 @@ public class ConversationView {
         public static String TYPE_VIOLENCE = "OBJECTIONABLE";
 
         public static SpamBottomSheet getInstance(String reporter, String member, String messageId,
-                                                        Bitmap bitmap) {
+                                                  Bitmap bitmap) {
             SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
 
             Bundle args = new Bundle();

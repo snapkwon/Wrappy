@@ -582,12 +582,12 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     private void confirmLeaveGroup() {
-        PopupUtils.getDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 leaveGroup();
             }
-        }, null);
+        }, null, false);
     }
 
     private void leaveGroup() {

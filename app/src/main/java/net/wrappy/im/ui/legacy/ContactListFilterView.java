@@ -275,7 +275,7 @@ public class ContactListFilterView extends LinearLayout {
 
         final String address = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.USERNAME));
         final String nickname = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
-        PopupUtils.showCustomEditDialog(mContext,mContext.getString(R.string.menu_contact_nickname), address, nickname, R.string.yes, R.string.cancel, new OnClickListener() {
+        PopupUtils.showCustomEditDialog(mContext, mContext.getString(R.string.menu_contact_nickname), address, nickname, R.string.yes, R.string.cancel, new OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String newNickname = String.valueOf(v.getTag());
@@ -333,7 +333,7 @@ public class ContactListFilterView extends LinearLayout {
         };
 
         Resources r = getResources();
-        PopupUtils.getDialog(mContext, r.getString(R.string.confirm), r.getString(R.string.confirm_delete_contact, nickname), R.string.yes, R.string.no, confirmListener, null);
+        PopupUtils.showCustomDialog(mContext, r.getString(R.string.confirm), r.getString(R.string.confirm_delete_contact, nickname), R.string.yes, R.string.no, confirmListener, null, false);
     }
 
     private IImConnection getConnection(Cursor c) {
@@ -375,7 +375,7 @@ public class ContactListFilterView extends LinearLayout {
         };
 
         Resources r = getResources();
-        PopupUtils.getDialog(mContext, r.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, nickname), R.string.yes, R.string.no, confirmListener, null);
+        PopupUtils.showCustomDialog(mContext, r.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, nickname), R.string.yes, R.string.no, confirmListener, null, false);
     }
 
 

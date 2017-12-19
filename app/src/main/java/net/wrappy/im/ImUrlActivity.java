@@ -529,7 +529,7 @@ public class ImUrlActivity extends Activity {
     void createNewAccount() {
         String username = getIntent().getData().getUserInfo();
         String appCreateAcct = String.format(getString(R.string.allow_s_to_create_a_new_chat_account_for_s_), username);
-        PopupUtils.getDialog(this, getString(R.string.prompt_create_new_account_), appCreateAcct, R.string.yes, R.string.no, new View.OnClickListener() {
+        PopupUtils.showCustomDialog(this, getString(R.string.prompt_create_new_account_), appCreateAcct, R.string.yes, R.string.no, new View.OnClickListener() {
             public void onClick(View view) {
                 mHandlerRouter.sendEmptyMessage(1);
             }
@@ -537,7 +537,7 @@ public class ImUrlActivity extends Activity {
             public void onClick(View view) {
                 finish();
             }
-        });
+        }, false);
     }
 
     Handler mHandlerRouter = new Handler() {
