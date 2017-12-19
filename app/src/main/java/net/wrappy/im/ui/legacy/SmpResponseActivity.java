@@ -1,19 +1,19 @@
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.crypto.IOtrChatSession;
-import net.wrappy.im.crypto.otr.OtrDebugLogger;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import net.wrappy.im.model.Address;
-import net.wrappy.im.service.ImServiceConstants;
-import net.wrappy.im.ui.BaseActivity;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.view.View;
 import android.widget.EditText;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.crypto.IOtrChatSession;
+import net.wrappy.im.crypto.otr.OtrDebugLogger;
+import net.wrappy.im.model.Address;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.ImServiceConstants;
+import net.wrappy.im.ui.BaseActivity;
+import net.wrappy.im.util.PopupUtils;
 
 public class SmpResponseActivity extends BaseActivity {
 
@@ -35,32 +35,23 @@ public class SmpResponseActivity extends BaseActivity {
     }
 
     private void showQuestionDialog() {
-
         String title = getString(R.string.smp_question_title);
         String strQuestion = mSessionId + ": " + mQuestion;
 
-        new AlertDialog.Builder(this).setTitle(title).setMessage(strQuestion)
-                .setView(mInputSMP)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+        PopupUtils.showCustomViewDialog(this, mInputSMP, title, strQuestion, R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String secret = mInputSMP.getText().toString();
+                respondSmp(mSessionId, secret);
 
-                        String secret = mInputSMP.getText().toString();
-                        respondSmp(mSessionId, secret);
-
-                        SmpResponseActivity.this.finish();
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing.
-                    }
-                }).show();
-
+                SmpResponseActivity.this.finish();
+            }
+        }, null);
     }
 
     private void respondSmp(String sid, String answer) {
 
-        ImApp app = (ImApp)getApplication();
-
+        ImApp app = (ImApp) getApplication();
 
 
         IOtrChatSession iOtrSession;

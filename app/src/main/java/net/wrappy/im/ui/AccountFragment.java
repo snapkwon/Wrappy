@@ -30,7 +30,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -231,32 +230,17 @@ public class AccountFragment extends Fragment {
     }
 
     private void showChangeNickname() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-
-        // Set an EditText view to get user input
-        final EditText input = new EditText(getContext());
-        input.setText(mAccountName);
-        alert.setView(input);
-
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String newNickname = input.getText().toString();
+        PopupUtils.showCustomEditDialog(getContext(), "", mAccountName, R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newNickname = String.valueOf(v.getTag());
 
                 //update just the nickname
                 ImApp.insertOrUpdateAccount(getContext().getContentResolver(), mProviderId, mAccountId, mNickname, "", null, newNickname);
 
                 mTvNickname.setText(newNickname);
-                // Do something with value!
             }
-        });
-
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
+        }, null);
     }
 
     private void showChangePassword() {
@@ -311,24 +295,12 @@ public class AccountFragment extends Fragment {
             try {
                 Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), imageUri, 512);
                 mCropImageView.setImageBitmap(bmpThumbnail);
-
-                // Use the Builder class for convenient dialog construction
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setView(mCropImageView)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                setAvatar(mCropImageView.getCroppedImage());
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                ;
+                PopupUtils.showCustomViewDialog(getActivity(), mCropImageView, R.string.yes, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setAvatar(mCropImageView.getCroppedImage());
+                    }
+                }, null);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
             }

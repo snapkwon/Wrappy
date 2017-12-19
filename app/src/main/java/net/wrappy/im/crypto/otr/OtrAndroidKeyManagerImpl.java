@@ -1,9 +1,7 @@
 package net.wrappy.im.crypto.otr;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -942,18 +940,8 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
             return;
         }
 
-        Dialog.OnClickListener ocl = new Dialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //launch QR code intent
-                //   new IntentIntegrator(activity).initiateScan();
-
-            }
-        };
         PopupUtils.getDialog(activity, activity.getString(R.string.confirm), activity.getString(R.string.detected_Otr_keystore_import),
-                R.string.yes, R.string.no, ocl, null, true);
+                R.string.yes, R.string.no, null, null, true);
     }
 
     public boolean importOtrKeyStoreWithPassword(String fileOtrKeyStore, String importPassword) {

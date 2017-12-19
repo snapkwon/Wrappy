@@ -798,30 +798,20 @@ public class OnboardingActivity extends BaseActivity {
                     mCropImageView.setImageBitmap(bmpThumbnail);
 
                     // Use the Builder class for convenient dialog construction
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(OnboardingActivity.this);
-                    builder.setView(mCropImageView)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
-                                    showInviteScreen();
+                    PopupUtils.showCustomViewDialog(OnboardingActivity.this, mCropImageView, R.string.yes, R.string.cancel, new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
+                            showInviteScreen();
 
-                                    delete(mOutputFileUri);
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // User cancelled the dialog
-
-                                    delete(mOutputFileUri);
-
-                                }
-                            });
-                    // Create the AlertDialog object and return it
-                    android.support.v7.app.AlertDialog dialog = builder.create();
-                    dialog.show();
-
-
-                    ;
+                            delete(mOutputFileUri);
+                        }
+                    }, new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            delete(mOutputFileUri);
+                        }
+                    });
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
                 }

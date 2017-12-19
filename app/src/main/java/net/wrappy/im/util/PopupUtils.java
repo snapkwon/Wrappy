@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,22 +41,14 @@ public class PopupUtils {
         builder.show();
     }
 
-    public static void getDialog(Context context, String title, String message, int positiveButton, DialogInterface.OnClickListener positiveListener) {
-        getDialog(context, title, message, positiveButton, positiveListener, false);
-    }
-
-    public static void getDialog(Context context, String title, String message, int positiveButton, DialogInterface.OnClickListener positiveListener, boolean isCancelable) {
-        getDialog(context, title, message, positiveButton, -1, -1, positiveListener, null, null, isCancelable);
-    }
-
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, DialogInterface.OnClickListener positiveListener,
-                                 DialogInterface.OnClickListener negativeListener) {
+    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, View.OnClickListener positiveListener,
+                                 View.OnClickListener negativeListener) {
         getDialog(context, title, message, positiveButton, negativeButton, positiveListener, negativeListener, false);
     }
 
-    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, DialogInterface.OnClickListener positiveListener,
-                                 DialogInterface.OnClickListener negativeListener, boolean isCancelable) {
-        getDialog(context, title, message, positiveButton, negativeButton, -1, positiveListener, negativeListener, null, isCancelable);
+    public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, View.OnClickListener positiveListener,
+                                 View.OnClickListener negativeListener, boolean isCancelable) {
+        showCustomDialog(context, title, message, positiveButton, negativeButton, positiveListener, negativeListener, isCancelable);
     }
 
     public static void getDialog(Context context, String title, String message, int positiveButton, int negativeButton, int neutralButton, DialogInterface.OnClickListener positiveListener,
@@ -83,15 +76,22 @@ public class PopupUtils {
     }
 
     public static void showCustomDialog(Context context, String title, String message, int resOK, final View.OnClickListener onOkListener) {
-        showCustomDialog(context, title, message, resOK, -1, onOkListener, null);
+        showCustomDialog(context, title, message, resOK, -1, onOkListener, null, true);
+    }
+    public static void showCustomDialog(Context context, String title, String message, int resOK, final View.OnClickListener onOkListener, boolean isCancelable) {
+        showCustomDialog(context, title, message, resOK, -1, onOkListener, null, isCancelable);
     }
 
     public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View dialogView = inflater.inflate(R.layout.custom_alert_dialog, null);
-        builder.setView(dialogView);
+        showCustomDialog(context, title, message, resOK, resCancel, onOkListener, onCancelListener, true);
+    }
 
+    public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isCancelable) {
+        View dialogView = getView(context, R.layout.custom_alert_dialog);
+        AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
+
+        final Dialog dialog = builder.show();
+        handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
         if (!TextUtils.isEmpty(title)) {
             tvTitle.setText(title);
@@ -103,11 +103,12 @@ public class PopupUtils {
             tvMessage.setText(message);
             tvMessage.setVisibility(View.VISIBLE);
         } else tvMessage.setVisibility(View.GONE);
+    }
 
+    private static void handleButtons(final Dialog dialog, View dialogView, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
         Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
         Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
 
-        final Dialog dialog = builder.show();
         if (resOK > 0) {
             btnOk.setText(resOK);
             btnOk.setVisibility(View.VISIBLE);
@@ -147,10 +148,8 @@ public class PopupUtils {
     }
 
     public static void showCustomEditDialog(Context context, String title, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
-        builder.setView(dialogView);
+        View dialogView = getView(context, R.layout.dialog_with_edittext);
+        AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
 
         final EditText txtTitle = (EditText) dialogView.findViewById(R.id.txtTitle);
         if (TextUtils.isEmpty(title)) {
@@ -202,5 +201,50 @@ public class PopupUtils {
                 }
             });
         } else btnCancel.setVisibility(View.GONE);
+    }
+
+//    public static void showCustomViewDialog(Context context, View view, int resOK, View.OnClickListener onOkListener) {
+//        showCustomViewDialog(context, view, resOK, -1, onOkListener, null);
+//    }
+
+    public static void showCustomViewDialog(Context context, View view, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+        showCustomViewDialog(context, view, "", "", resOK, resCancel, onOkListener, onCancelListener);
+    }
+
+    public static void showCustomViewDialog(Context context, View view, String title, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+        View dialogView = getView(context, R.layout.custom_alert_dialog);
+        AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
+
+        final Dialog dialog = builder.show();
+        handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
+        ViewGroup group = (ViewGroup) dialogView.findViewById(R.id.lnContent);
+        group.addView(view);
+
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.txtTitle);
+        if (!TextUtils.isEmpty(title)) {
+            tvTitle.setText(title);
+        } else group.removeView(tvTitle);
+
+        TextView tvMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
+        if (!TextUtils.isEmpty(message)) {
+            tvMessage.setText(message);
+        } else group.removeView(tvMessage);
+
+    }
+
+    private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView) {
+        return getBuilderDialog(context, dialogView, true);
+    }
+
+    private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView, boolean isCancelable) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(dialogView);
+        builder.setCancelable(isCancelable);
+        return builder;
+    }
+
+    private static View getView(Context context, int resId) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return inflater.inflate(resId, null);
     }
 }

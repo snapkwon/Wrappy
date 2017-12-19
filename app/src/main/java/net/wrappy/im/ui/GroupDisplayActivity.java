@@ -2,7 +2,6 @@ package net.wrappy.im.ui;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -583,9 +582,9 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     private void confirmLeaveGroup() {
-        PopupUtils.getDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new DialogInterface.OnClickListener() {
+        PopupUtils.getDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
                 leaveGroup();
             }
         }, null);

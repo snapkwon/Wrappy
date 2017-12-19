@@ -19,7 +19,6 @@ package net.wrappy.im.ui;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -148,18 +147,18 @@ public class AccountSettingsActivity extends PreferenceActivity implements
     }
 
     private void migrateAccount() {
-        PopupUtils.getDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new DialogInterface.OnClickListener() {
+        PopupUtils.getDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
                 migrateAccountConfirmed();
             }
         }, null);
     }
 
     private void deleteAccount() {
-        PopupUtils.getDialog(this, getString(R.string.delete_account), getString(R.string.confirm), R.string.yes, R.string.cancel, new DialogInterface.OnClickListener() {
+        PopupUtils.getDialog(this, getString(R.string.delete_account), getString(R.string.confirm), R.string.yes, R.string.cancel, new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
                 confirmDeleteAccount();
             }
         }, null);

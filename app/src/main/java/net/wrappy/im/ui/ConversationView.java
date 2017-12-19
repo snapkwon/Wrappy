@@ -1735,8 +1735,8 @@ public class ConversationView {
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     checkConnection();
                     mConn = mApp.getConnection(mProviderId, mAccountId);

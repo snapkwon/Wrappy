@@ -315,8 +315,8 @@ public class ContactListFilterView extends LinearLayout {
 
         String nickname = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
         final String address = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.USERNAME));
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     IContactListManager manager = conn.getContactListManager();
                     int res = manager.removeContact(address);
@@ -351,16 +351,14 @@ public class ContactListFilterView extends LinearLayout {
 
         String nickname = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.NICKNAME));
         final String address = c.getString(c.getColumnIndexOrThrow(Imps.Contacts.USERNAME));
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     IContactListManager manager = conn.getContactListManager();
 
                     int res = -1;
 
-                    if (manager.isBlocked(address))
-                        res = manager.unBlockContact(address);
-                    else {
+                    if (!manager.isBlocked(address)) {
                         res = manager.blockContact(address);
 
                         if (res != ImErrorInfo.NO_ERROR) {

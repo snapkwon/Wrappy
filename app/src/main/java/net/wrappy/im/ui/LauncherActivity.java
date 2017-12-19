@@ -1,10 +1,8 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,6 +13,7 @@ import android.widget.ViewFlipper;
 
 import net.wrappy.im.R;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,28 +61,18 @@ public class LauncherActivity extends BaseActivity {
 
         mViewFlipper.setDisplayedChild(0);
 
-        mEditUsername = (EditText)viewSplash.findViewById(R.id.edtUserMame);
-        mBtnLogin = (Button)viewSplash.findViewById(R.id.btnShowLogin);
-        mBtnregister = (Button)viewSplash.findViewById(R.id.btnShowRegister);
+        mEditUsername = (EditText) viewSplash.findViewById(R.id.edtUserMame);
+        mBtnLogin = (Button) viewSplash.findViewById(R.id.btnShowLogin);
+        mBtnregister = (Button) viewSplash.findViewById(R.id.btnShowRegister);
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mEditUsername.getText().toString().isEmpty())
-                {
-                    AlertDialog alertDialog = new AlertDialog.Builder(LauncherActivity.this).create();
-                    alertDialog.setTitle("Warning");
-                    alertDialog.setMessage("username cannot be empty");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                }
-                else {
-                    Store.putStringData(getApplicationContext(),Store.USERNAME,mEditUsername.getText().toString().trim());
+                if (mEditUsername.getText().toString().isEmpty()) {
+                    PopupUtils.showCustomDialog(LauncherActivity.this, "Warning", "username cannot be empty"
+                            , R.string.yes, null, false);
+                } else {
+                    Store.putStringData(getApplicationContext(), Store.USERNAME, mEditUsername.getText().toString().trim());
                     showLogin();
                 }
             }
@@ -112,48 +101,41 @@ public class LauncherActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showPrevious()
-    {
+    private void showPrevious() {
         setAnimRight();
         getSupportActionBar().setTitle("");
 
-        if (mViewFlipper.getCurrentView().getId()==R.id.flipViewMain)
-        {
+        if (mViewFlipper.getCurrentView().getId() == R.id.flipViewMain) {
             finish();
-        }
-        else if (mViewFlipper.getCurrentView().getId()==R.id.flipViewLogin
-                ||mViewFlipper.getCurrentView().getId()==R.id.flipViewRegister )
-        {
+        } else if (mViewFlipper.getCurrentView().getId() == R.id.flipViewLogin
+                || mViewFlipper.getCurrentView().getId() == R.id.flipViewRegister) {
             showSplash();
         }
 
     }
 
-    private void showSplash ()
-    {
+    private void showSplash() {
         getSupportActionBar().hide();
         mViewFlipper.setDisplayedChild(0);
 
     }
 
-    private void showLogin()
-    {
+    private void showLogin() {
 
         Intent intent = PatternActivity.getStartIntent(LauncherActivity.this);
         Bundle arg = new Bundle();
-        arg.putInt("type",REQUEST_CODE_LOGIN);
-        arg.putString("username" , mEditUsername.getText().toString().trim());
+        arg.putInt("type", REQUEST_CODE_LOGIN);
+        arg.putString("username", mEditUsername.getText().toString().trim());
         intent.putExtras(arg);
         this.startActivity(intent);
 
     }
 
-    private void showRegister()
-    {
-        Intent intent= PatternActivity.getStartIntent(this);
+    private void showRegister() {
+        Intent intent = PatternActivity.getStartIntent(this);
         Bundle arg = new Bundle();
-        arg.putInt("type",REQUEST_CODE_REGISTER);
-        arg.putString("username" , "");
+        arg.putInt("type", REQUEST_CODE_REGISTER);
+        arg.putString("username", "");
         intent.putExtras(arg);
         startActivity(intent);
     }
@@ -181,16 +163,14 @@ public class LauncherActivity extends BaseActivity {
     }*/
 
 
-    private void setAnimLeft ()
-    {
+    private void setAnimLeft() {
         Animation animIn = AnimationUtils.loadAnimation(this, R.anim.push_left_in);
         Animation animOut = AnimationUtils.loadAnimation(this, R.anim.push_left_out);
         mViewFlipper.setInAnimation(animIn);
         mViewFlipper.setOutAnimation(animOut);
     }
 
-    private void setAnimRight ()
-    {
+    private void setAnimRight() {
         Animation animIn = AnimationUtils.loadAnimation(LauncherActivity.this, R.anim.push_right_in);
         Animation animOut = AnimationUtils.loadAnimation(LauncherActivity.this, R.anim.push_right_out);
         mViewFlipper.setInAnimation(animIn);

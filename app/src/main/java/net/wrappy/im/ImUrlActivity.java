@@ -19,7 +19,6 @@ package net.wrappy.im;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -29,6 +28,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import net.wrappy.im.model.ImConnection;
@@ -529,14 +529,12 @@ public class ImUrlActivity extends Activity {
     void createNewAccount() {
         String username = getIntent().getData().getUserInfo();
         String appCreateAcct = String.format(getString(R.string.allow_s_to_create_a_new_chat_account_for_s_), username);
-        PopupUtils.getDialog(this, getString(R.string.prompt_create_new_account_), appCreateAcct, R.string.yes, R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
+        PopupUtils.getDialog(this, getString(R.string.prompt_create_new_account_), appCreateAcct, R.string.yes, R.string.no, new View.OnClickListener() {
+            public void onClick(View view) {
                 mHandlerRouter.sendEmptyMessage(1);
-                dialog.dismiss();
             }
-        }, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        }, new View.OnClickListener() {
+            public void onClick(View view) {
                 finish();
             }
         });
