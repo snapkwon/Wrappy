@@ -59,11 +59,8 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.ConferenceMessage;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
@@ -334,8 +331,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     private void bindConference(String lastMessage) {
-        ConferenceMessage message = new ConferenceMessage(lastMessage);
-        String callDes = message.getType().getType() + " chat end.";
+        String callDes = ConferenceUtils.convertConferenceMessage(lastMessage);
         if (mHolder != null) {
             mHolder.mTextViewForMessages.setText(callDes);
         }
