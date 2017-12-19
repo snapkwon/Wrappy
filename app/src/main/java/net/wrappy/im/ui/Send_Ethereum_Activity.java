@@ -309,7 +309,7 @@ public class Send_Ethereum_Activity extends AppCompatActivity {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupUtils.showCustomEditDialog(Send_Ethereum_Activity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                PopupUtils.showCustomInputPasswordDialog(Send_Ethereum_Activity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

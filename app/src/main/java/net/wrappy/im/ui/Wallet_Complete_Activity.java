@@ -98,7 +98,7 @@ public class Wallet_Complete_Activity extends BaseActivity {
         switch (requestCode) {
             case PICK_FOLDER_RESULT_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    PopupUtils.showCustomEditDialog(Wallet_Complete_Activity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                    PopupUtils.showCustomInputPasswordDialog(Wallet_Complete_Activity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -44,7 +45,7 @@ public class PackupWalletAccount extends AppCompatActivity {
         qrimage = (ImageView) this.findViewById(R.id.imageQRcode);
         saveQR = (Button) this.findViewById(R.id.btnsaveQRwallet);
 
-        PopupUtils.showCustomEditDialog(PackupWalletAccount.this, getString(R.string.sub_title_wallet_dialog), R.string.backup, R.string.cancel,
+        PopupUtils.showCustomInputPasswordDialog(PackupWalletAccount.this, getString(R.string.sub_title_wallet_dialog), R.string.backup, R.string.cancel,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -81,7 +82,7 @@ public class PackupWalletAccount extends AppCompatActivity {
         saveQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!jsondata.isEmpty()) {
+                if (!TextUtils.isEmpty(jsondata)) {
                     pickFolder();
                 }
             }
@@ -121,7 +122,7 @@ public class PackupWalletAccount extends AppCompatActivity {
         switch (requestCode) {
             case PICK_FOLDER_RESULT_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    PopupUtils.showCustomEditDialog(PackupWalletAccount.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                    PopupUtils.showCustomInputPasswordDialog(PackupWalletAccount.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

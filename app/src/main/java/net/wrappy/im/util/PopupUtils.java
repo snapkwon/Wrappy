@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,14 +125,24 @@ public class PopupUtils {
         } else btnCancel.setVisibility(View.GONE);
     }
 
-    public static void showCustomEditDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+    public static void showCustomInputPasswordDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+        showCustomEditDialog(context, message, resOK, resCancel, onOkListener, onCancelListener, true, "");
+    }
+
+    public static void showCustomEditDialog(Context context, String message, String data, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener) {
+        showCustomEditDialog(context, message, resOK, resCancel, onOkListener, onCancelListener, false, data);
+    }
+
+    public static void showCustomEditDialog(Context context, String message, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, boolean isPassword, String data) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View dialogView = inflater.inflate(R.layout.dialog_with_edittext, null);
         builder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
-        edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+        if (isPassword) {
+            edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+        } else edt.setInputType(InputType.TYPE_CLASS_TEXT);
 
         TextView tvMessage = (TextView) dialogView.findViewById(R.id.txtMessage);
         if (!TextUtils.isEmpty(message)) {

@@ -112,7 +112,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.removewallet) {
-            PopupUtils.showCustomEditDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+            PopupUtils.showCustomInputPasswordDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -149,7 +149,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
         switch (requestCode) {
             case PICK_FOLDER_RESULT_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    PopupUtils.showCustomEditDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
+                    PopupUtils.showCustomInputPasswordDialog(WalletQrCodeDetailActivity.this, getString(R.string.sub_title_wallet_dialog), R.string.action_done, R.string.cancel,
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

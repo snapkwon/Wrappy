@@ -13,7 +13,6 @@ import android.os.RemoteException;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.TextViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,6 +48,7 @@ import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PopupUtils;
 
 import org.apache.commons.codec.DecoderException;
 
@@ -413,7 +412,8 @@ public class GroupDisplayActivity extends BaseActivity {
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
                 try {
-                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {}.getType());
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                    }.getType());
                     Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.username, wpKMemberDtos.getIdentifier());
                     updateMembers();
                 } catch (Exception e) {
@@ -541,29 +541,17 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     private void editGroupSubject() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        // Set an EditText view to get user input
-        final EditText input = new EditText(this);
-        input.setText(mName);
-        alert.setView(input);
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String newSubject = input.getText().toString();
+        PopupUtils.showCustomEditDialog(GroupDisplayActivity.this, "", mName, R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newSubject = String.valueOf(v.getTag());
                 changeGroupSubject(newSubject);
 
                 // Update the UI
                 mName = newSubject;
                 mRecyclerView.getAdapter().notifyItemChanged(0);
             }
-        });
-
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
+        }, null);
     }
 
     private void changeGroupSubject(String subject) {
@@ -587,29 +575,20 @@ public class GroupDisplayActivity extends BaseActivity {
 
     public void setMuted(boolean muted) {
         try {
-             if (mSession != null)
+            if (mSession != null)
                 mSession.setMuted(muted);
         } catch (RemoteException re) {
-            
+
         }
     }
 
     private void confirmLeaveGroup() {
-        new android.support.v7.app.AlertDialog.Builder(this)
-                .setTitle(getString(R.string.action_leave))
-                .setMessage(getString(R.string.confirm_leave_group))
-                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        leaveGroup();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        PopupUtils.getDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                leaveGroup();
+            }
+        }, null);
     }
 
     private void leaveGroup() {
