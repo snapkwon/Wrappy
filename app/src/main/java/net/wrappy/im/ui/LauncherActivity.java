@@ -15,32 +15,21 @@ import net.wrappy.im.R;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.util.PopupUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import me.tornado.android.patternlock.PatternView;
-
 
 public class LauncherActivity extends BaseActivity {
 
     private ViewFlipper mViewFlipper;
     private EditText mEditUsername;
-    private Button mBtnForgetPass;
     private Button mBtnLogin;
     private Button mBtnregister;
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
-
-    int type_request;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, LauncherActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
-
-    private static final List<PatternView.Cell> LOGO_PATTERN = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

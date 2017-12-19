@@ -48,6 +48,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/id_or_username"
         android:padding="5dp"
+        android:drawablePadding="5dp"
         android:layout_margin="20dp"
         android:layout_gravity="bottom"
         android:textColor="@android:color/black"
