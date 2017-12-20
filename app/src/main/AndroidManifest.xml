@@ -74,6 +74,9 @@
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup,android:label">
+        <meta-data
+            android:name="net.wrappy.im.helper.UnsafeOkHttpGlideModule"
+            android:value="GlideModule" />
         <activity
             android:name=".RouterActivity"
             android:theme="@style/InviteDialog">
@@ -215,17 +218,15 @@
         </activity>
         <activity
             android:name=".ui.RegistrationSecurityQuestionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.UpdateProfileActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.ForgetPasswordActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
-
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SecurityQuestionActivity" android:screenOrientation="portrait"/>
         <service
             android:name=".plugin.xmpp.XmppImPlugin"
             android:exported="false">
@@ -519,6 +520,17 @@
         <activity
             android:name=".ui.IntroActivity"
             android:label="@string/title_activity_launcher"
+            android:theme="@style/NoActionBar"></activity>
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".ui.ContactsPickerRosterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".ui.ContactsPickerRosterCreateActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity
             android:name="net.wrappy.im.ui.PatternActivity"
@@ -566,6 +578,9 @@
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
         <activity android:name=".ui.SettingConversationActivity"></activity>
+        <activity
+            android:name=".ui.conference.ConferencePopupActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

@@ -46,13 +46,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
@@ -103,7 +107,7 @@ public class ContactsPickerActivity extends BaseActivity {
     View mLayoutContactSelect;
     View mLayoutGroupSelect;
     ListView mListView = null;
-    private MenuItem mMenuStartGroupChat;
+    private MenuItem mMenuStartGroupChat,mMenuContactsList,mMenuContactsAdd;
     private boolean isClickedMenu;
     ProgressDialog dialog;
 
@@ -113,21 +117,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
-
-    // TODO - Maybe extend the Contact class with provider and account instead?
-    public class SelectedContact {
-        public long id;
-        public String username;
-        public Integer account;
-        public Integer provider;
-
-        SelectedContact(long id, String username, int account, int provider) {
-            this.id = id;
-            this.username = username;
-            this.account = account;
-            this.provider = provider;
-        }
-    }
 
     private LongSparseArray<SelectedContact> mSelection = new LongSparseArray<>();
 
@@ -243,6 +232,12 @@ public class ContactsPickerActivity extends BaseActivity {
         });
 
         doFilterAsync("");
+
+        if (getIntent()!=null) {
+            if (getIntent().getBooleanExtra("isGroup",false)){
+                setGroupMode(true);
+            }
+        }
     }
 
     @Override
@@ -292,13 +287,13 @@ public class ContactsPickerActivity extends BaseActivity {
             if (error.isEmpty()) {
                 showWaitinDialog();
                 if (bitmap!=null) {
-                    File file = AppFuncs.ConvertBitmapToFile(getApplicationContext(),bitmap);
-                    RestAPI.UploadFile(getApplicationContext(), RestAPI.POST_PHOTO, RestAPI.PHOTO_AVATAR, file, new RestAPI.RestAPIListenner() {
+                    File file = AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap);
+                    RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void onCompleted(Exception e, Response<String> result) {
                             String reference = "";
                             try {
-                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                                 reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                                 WpKIcon icon = new WpKIcon();
                                 icon.setReference(reference);
@@ -360,6 +355,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     ArrayList<String> users = new ArrayList<>();
                     ArrayList<Integer> providers = new ArrayList<>();
                     ArrayList<Integer> accounts = new ArrayList<>();
+                    WpKChatGroupDto chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
 
                     for (int i = 0; i < mSelection.size(); i++) {
                         SelectedContact contact = mSelection.valueAt(i);
@@ -369,7 +365,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                     Store.putStringData(getApplicationContext(),groupName,reference);
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_RESULT_GROUP_NAME, groupName);
+                    data.putExtra(EXTRA_RESULT_GROUP_NAME, chatGroupDto);
                     data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
                     data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);
@@ -420,6 +416,9 @@ public class ContactsPickerActivity extends BaseActivity {
         inflater.inflate(R.menu.contact_list_menu, menu);
 
         mMenuStartGroupChat = menu.findItem(R.id.action_start_chat);
+        mMenuContactsList = menu.findItem(R.id.action_contacts_list);
+        mMenuContactsAdd = menu.findItem(R.id.action_contacts_add);
+        mMenuContactsList.setVisible(false);
         updateStartGroupChatMenu();
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -452,8 +451,10 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void updateStartGroupChatMenu() {
-        if (mMenuStartGroupChat != null) {
+        if (mMenuStartGroupChat != null && mMenuContactsList!=null && mMenuContactsAdd!=null) {
             mMenuStartGroupChat.setVisible(isGroupMode());
+            //mMenuContactsList.setVisible(!isGroupMode());
+            mMenuContactsAdd.setVisible(!isGroupMode());
             mMenuStartGroupChat.setEnabled(mSelection.size() > 0);
         }
     }
@@ -470,6 +471,13 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else
                         getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                    return true;
+                case R.id.action_contacts_list:
+                    ContactsPickerRosterActivity.start(this);
+                    return true;
+                case R.id.action_contacts_add:
+                    Intent i = new Intent(ContactsPickerActivity.this, AddContactNewActivity.class);
+                    startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
 

@@ -6,13 +6,11 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +19,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -43,6 +44,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PatternLockUtils;
+import net.wrappy.im.util.PopupUtils;
 
 import java.lang.ref.WeakReference;
 import java.security.KeyPair;
@@ -54,11 +56,11 @@ import me.tornado.android.patternlock.PatternView;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_LOGIN;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
-public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity{
+public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity {
 
     public static final String TAG = "PatternActivity";
 
-    public static Intent getStartIntent(Activity context){
+    public static Intent getStartIntent(Activity context) {
         return new Intent(context, PatternActivity.class);
     }
 
@@ -87,29 +89,26 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         appFuncs = AppFuncs.getInstance();
         mHandler = new SimpleAlertHandler(this);
 
-        Bundle arg= getIntent().getExtras();
-        if (arg!=null) {
+        Bundle arg = getIntent().getExtras();
+        if (arg != null) {
             type_request = arg.getInt("type", 0);
             username = arg.getString("username", "");
-            hashResetPassword = arg.getString(ForgetPasswordActivity.FORGET_PASSWORD,"");
+            hashResetPassword = arg.getString(ForgetPasswordActivity.FORGET_PASSWORD, "");
         }
 
         Intent in = getIntent();
         Uri data = in.getData();
-        if (data!=null) {
+        if (data != null) {
             type_request = REQUEST_CODE_REGISTER;
             hashResetPassword = data.getLastPathSegment();
         }
 
 
-        if(type_request == REQUEST_CODE_LOGIN)
-        {
+        if (type_request == REQUEST_CODE_LOGIN) {
             this.setTypePattern(TYPE_NOCONFIRM);
             actionbar.setTitle("Login");
 
-        }
-        else
-        {
+        } else {
             this.setTypePattern(TYPE_CONFIRM);
 
             if (hashResetPassword.isEmpty()) {
@@ -127,6 +126,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             }
         });
     }
+
     @Override
     protected void onCanceled() {
         finish();
@@ -134,7 +134,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
@@ -144,25 +144,23 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         PatternLockUtils.setPattern(pattern, this);
 
         password = PatternUtils.patternToString(pattern);
-        if(type_request == REQUEST_CODE_REGISTER) {
+        if (type_request == REQUEST_CODE_REGISTER) {
 
             showQuestionScreen(password);
-        }
-
-        else if(type_request == REQUEST_CODE_LOGIN)
-        {
+        } else if (type_request == REQUEST_CODE_LOGIN) {
             login(password);
         }
     }
 
     private void getUserInfo(final long accountId) {
         mExistingAccountTask = null;
-        RestAPI.GetDataWrappy(ImApp.sImApp,RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
                 try {
-                    Registration registration = new Gson().fromJson(s, new TypeToken<Registration>() { }.getType());
+                    Registration registration = new Gson().fromJson(s, new TypeToken<Registration>() {
+                    }.getType());
                     Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -184,12 +182,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         }
     }
 
-    private void showQuestionScreen (String pass)
-    {
+    private void showQuestionScreen(String pass) {
         if (hashResetPassword.isEmpty()) {
             Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
             WpKAuthDto wpKAuthDto = new WpKAuthDto(password);
-            intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
+            intent.putExtra(WpKAuthDto.class.getName(), wpKAuthDto);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -202,15 +199,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.GetDataWrappy(getApplicationContext(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.apiPOST(getApplicationContext(),url,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    login(pass);
-                } else {
-                    Log.i(TAG,WpErrors.getErrorMessage(s));
-                    AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
-                    finish();
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        login(pass);
+                    } else {
+                        Log.i(TAG,WpErrors.getErrorMessage(result.getResult()));
+                        AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
+                        finish();
+                    }
                 }
             }
         });
@@ -218,24 +217,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     private void login(String pass) {
         appFuncs.showProgressWaiting(this);
-        String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME),pass);
-        RestAPI.PostDataWrappy(getApplicationContext(),new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME), pass);
+        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
                     if (!RestAPI.checkHttpCode(httpCode)) {
                         appFuncs.dismissProgressWaiting();
-                        AlertDialog alertDialog = new AlertDialog.Builder(PatternActivity.this).create();
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("The username or password is incorrect");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
+                        PopupUtils.showCustomDialog(PatternActivity.this, "Error", "The username or password is incorrect", R.string.yes, null, false);
+                        mPatternView.clearPattern();
                         //AppFuncs.alert(getApplicationContext(),s,true);
 
                         return;
@@ -244,8 +235,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(getApplicationContext());
-                    doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword(), username);
-                }catch (Exception ex) {
+                    doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
+                } catch (Exception ex) {
                     appFuncs.dismissProgressWaiting();
                     ex.printStackTrace();
                 }
@@ -254,15 +245,13 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         });
     }
 
-    private void doExistingAccountRegister (String username , String password, String accountName)
-    {
+    private void doExistingAccountRegister(String username, String password, String accountName) {
 
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
             mExistingAccountTask.execute(username, password, accountName);
         }
     }
-
 
 
     private final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
@@ -278,8 +267,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
@@ -329,21 +317,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 getActivity().appFuncs.dismissProgressWaiting();
                 if (account == 200) {
                     Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     getActivity().startActivity(intent);
                     getActivity().finish();
-
                 } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Warning");
-                    alertDialog.setMessage("The user name or password is incorrect");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
+                    PopupUtils.showCustomDialog(PatternActivity.this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
                 }
                 mExistingAccountTask =null;
             }

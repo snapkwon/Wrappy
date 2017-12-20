@@ -475,4 +475,16 @@
     <string name="seetranslate">See translate</string>
     <string name="closetranslate">Close translate</string>
 
+    <string name="menu_spam">Spam</string>
+    <string name="menu_violence">Violence</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="error_repeat_password">Repeat Password mismatch</string>
+    <string name="message_enter_password">Enter a password</string>
+    <string name="old_password_mismatch">Old Password mismatch</string>
+    <string name="message_change_password_success">Change Password successful</string>
+    <string name="backup_success">Backup Successfully</string>
+    <string name="delete_success">Delete Successfully</string>
+    <string name="message_fail_import">Failed to import , please try again</string>
+    <string name="backup">BACKUP</string>
+
 </resources>

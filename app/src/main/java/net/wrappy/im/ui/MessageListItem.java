@@ -28,6 +28,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -52,15 +53,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
-import net.wrappy.im.model.ConferenceMessage;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
@@ -175,7 +175,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -190,7 +190,7 @@ public class MessageListItem extends FrameLayout {
             nickname = address;
 
         lastMessage = formatMessage(body);
-        showAvatar(address, nickname, true, presenceStatus);
+        showAvatar(address, nickname, true, presenceStatus, mReference);
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
@@ -223,6 +223,9 @@ public class MessageListItem extends FrameLayout {
 
         } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
             boolean cmdSuccess = false;
+
+//            Toast.makeText(getContext(), "lastMessage: " + lastMessage, Toast.LENGTH_SHORT).show();
+//            Log.d("Cuong", "lastMessage: " +  lastMessage);
 
             if (lastMessage.startsWith("/sticker:")) {
                 String[] cmds = lastMessage.split(":");
@@ -321,9 +324,14 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
+    private void bindBackground(String lastMessage) {
+        String message = lastMessage.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
+//        Toast.makeText(getContext(), "message: " + message, Toast.LENGTH_SHORT).show();
+//        Log.d("Cuong", "message: " + message);
+    }
+
     private void bindConference(String lastMessage) {
-        ConferenceMessage message = new ConferenceMessage(lastMessage);
-        String callDes = message.getType().getType() + " chat end.";
+        String callDes = ConferenceUtils.convertConferenceMessage(lastMessage);
         if (mHolder != null) {
             mHolder.mTextViewForMessages.setText(callDes);
         }
@@ -482,74 +490,8 @@ public class MessageListItem extends FrameLayout {
 
         } else {
             exportMediaFile();
-            /**
-             String body = convertMediaUriToPath(mediaUri);
-
-             if (body == null)
-             body = new File(mediaUri.getPath()).getAbsolutePath();
-
-
-             Intent intent = new Intent(Intent.ACTION_VIEW);
-             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-             if (Build.VERSION.SDK_INT >= 11)
-             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-             //set a general mime type not specific
-             intent.setDataAndType(Uri.parse(body), mimeType);
-
-
-             Context context = getContext().getApplicationContext();
-
-             if (isIntentAvailable(context, intent))
-             {
-             context.startActivity(intent);
-             }
-             else
-             {
-
-             intent = new Intent(Intent.ACTION_SEND);
-             intent.setDataAndType(Uri.parse(body), mimeType);
-
-             if (isIntentAvailable(context, intent))
-             {
-             context.startActivity(intent);
-             }
-             else {
-             Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
-             }
-             }**/
         }
     }
-
-
-    /**
-     * protected void onLongClickMediaIcon(final String mimeType, final Uri mediaUri) {
-     * <p>
-     * final java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
-     * <p>
-     * new AlertDialog.Builder(context)
-     * .setTitle(context.getString(R.string.export_media))
-     * .setMessage(context.getString(R.string.export_media_file_to, exportPath.getAbsolutePath()))
-     * .setNeutralButton("Share on Zom", new DialogInterface.OnClickListener() {
-     *
-     * @Override public void onClick(DialogInterface dialogInterface, int i) {
-     * reshareMediaFile(mimeType, mediaUri);
-     * }
-     * })
-     * .setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
-     * @Override public void onClick(DialogInterface dialog, int whichButton) {
-     * exportMediaFile(mimeType, mediaUri, exportPath);
-     * return;
-     * }
-     * })
-     * .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-     * @Override public void onClick(DialogInterface dialog, int whichButton) {
-     * return;
-     * }
-     * })
-     * .create().show();
-     * }
-     */
 
     private void forwardMediaFile(String mimeType, Uri mediaUri) {
 
@@ -669,7 +611,6 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-
     private String formatMessage(String body) {
 
         if (body != null)
@@ -744,7 +685,7 @@ public class MessageListItem extends FrameLayout {
                     afd.close();
 
                     //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1].toLowerCase());
+                    Uri mediaUri = Uri.parse("asset://localhost/" + cmds[1]);
 
                     //now load the thumbnail
                     cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
@@ -764,7 +705,7 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
@@ -812,7 +753,7 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showAvatar(String address, String nickname, boolean isLeft, int presenceStatus) {
+    private void showAvatar(String address, String nickname, boolean isLeft, int presenceStatus, String reference) {
         if (mHolder.mAvatar == null)
             return;
 
@@ -822,10 +763,7 @@ public class MessageListItem extends FrameLayout {
 
             RoundedAvatarDrawable avatar = null;
 
-            try {
-                avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-            } catch (Exception e) {
-            }
+
 
             if (avatar != null) {
                 mHolder.mAvatar.setVisibility(View.VISIBLE);
@@ -843,6 +781,18 @@ public class MessageListItem extends FrameLayout {
                     mHolder.mAvatar.setVisibility(View.VISIBLE);
                     mHolder.mAvatar.setImageDrawable(lavatar);
                 }
+            }
+            try {
+                RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
+                    @Override
+                    public void onCompleted(Exception e, Bitmap result) {
+                        if (result!=null) {
+                            mHolder.mAvatar.setImageBitmap(result);
+                        }
+                    }
+                });
+                //avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
+            } catch (Exception e) {
             }
         }
     }

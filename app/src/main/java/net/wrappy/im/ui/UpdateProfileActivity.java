@@ -6,16 +6,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -23,7 +27,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
@@ -33,13 +36,17 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkCountry;
 import net.wrappy.im.model.WpkToken;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.SecureMediaStore;
+import net.wrappy.im.util.Debug;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -65,22 +72,29 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     AppFuncs appFuncs;
 
     @BindView(R.id.spnProfileCountryCodes) AppCompatSpinner spnProfileCountryCodes;
-    @BindView(R.id.headerbarTitle) AppTextView headerbarTitle;
-    @BindView(R.id.imgProfileAvatar) CircleImageView imgAvatar;
+    @BindView(R.id.imgPhotoAvatar) CircleImageView imgAvatar;
     @BindView(R.id.imgProfileHeader) ImageView imgHeader;
     @BindView(R.id.edProfileUsername) EditText edUsername;
     @BindView(R.id.edProfileEmail) EditText edEmail;
     @BindView(R.id.edProfilePhone) EditText edPhone;
     @BindView(R.id.spinnerProfileGender) AppCompatSpinner spinnerProfileGender;
+    @BindView(R.id.btnProfileCameraHeader) ImageButton btnCameraHeader;
+    @BindView(R.id.btnPhotoCameraAvatar) ImageButton btnCameraAvatar;
 
     ArrayAdapter<String> countryAdapter;
+    ArrayAdapter<CharSequence> adapterGender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
+        getSupportActionBar().setTitle("Update Profile");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         appFuncs = AppFuncs.getInstance();
+        btnCameraAvatar.setVisibility(View.VISIBLE);
+        btnCameraHeader.setVisibility(View.VISIBLE);
         getSecurityQuestions();
         mHandler = new SimpleAlertHandler(this);
         preferenceView();
@@ -96,10 +110,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     }
 
     private void preferenceView() {
-        headerbarTitle.setText("Update Profile");
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        adapterGender = ArrayAdapter.createFromResource(this,
                 R.array.profile_gender, R.layout.update_profile_textview);
-        spinnerProfileGender.setAdapter(adapter);
+        spinnerProfileGender.setAdapter(adapterGender);
         getCountryCodesFromServer();
     }
 
@@ -124,95 +137,49 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
 
     @Optional
-    @OnClick({R.id.headerbarBack, R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnProfileCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
     @Override
     public void onClick(View view) {
         if (isFlag) {
             return;
         } isFlag = true;
         try {
-            if (view.getId() == R.id.headerbarBack) {
-                LauncherActivity.start(UpdateProfileActivity.this);
-                finish();
-            }
             if (view.getId() == R.id.btnProfileComplete) {
                 String error = validateData();
                 if (!error.isEmpty()) {
                     AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
-                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()) + phone;
                 appFuncs.showProgressWaiting(this);
-                WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone);
+                if (photoAvatar!=null) {
 
-                registrationData.setWpKMemberDto(wpKMemberDto);
-
-                Gson gson = new Gson();
-                JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
-
-
-                RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
-
-                    @Override
-                    public void OnComplete(int httpCode, String error, String s) {
-                        if (error!=null && !error.isEmpty()) {
-                            AppFuncs.alert(getApplicationContext(),error,true);
-                            appFuncs.dismissProgressWaiting();
-                            return;
-                        }
-                        if (!RestAPI.checkHttpCode(httpCode)) {
-                            if (s!=null) {
-                                String er = WpErrors.getErrorMessage(s);
-                                if (!er.isEmpty()) {
-                                    AppFuncs.alert(getApplicationContext(),er,true);
-                                } else {
-                                    AppFuncs.alert(getApplicationContext(),"Registration fail. Try Again!",true);
-                                }
+                    RestAPI.uploadFile(getApplicationContext(),AppFuncs.convertBitmapToFile(getApplicationContext(),photoAvatar),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            if (result==null) {
+                                AppFuncs.alert(getApplicationContext(),"Internet fail",true);
+                                appFuncs.dismissProgressWaiting();
+                                return;
                             }
-                            appFuncs.dismissProgressWaiting();
-                            return;
-                        }
-                        String url = RestAPI.loginUrl(user,password);
-                        RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
-
-                            @Override
-                            public void OnComplete(int httpCode, String error, String s) {
-                                try {
-
-                                    if (error!=null && !error.isEmpty()) {
-                                        AppFuncs.alert(getApplicationContext(),error,true);
-                                        appFuncs.dismissProgressWaiting();
-                                        return;
-                                    }
-                                    if (!RestAPI.checkHttpCode(httpCode)) {
-                                        String er = WpErrors.getErrorMessage(s);
-                                        if (!er.isEmpty()) {
-                                            AppFuncs.alert(getApplicationContext(),er,true);
-                                        }
-                                        appFuncs.dismissProgressWaiting();
-                                        return;
-                                    }
-                                    JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-                                    Gson gson = new Gson();
-                                    WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-                                    wpkToken.saveToken(getApplicationContext());
-                                    doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
-                                }catch (Exception ex) {
-                                    appFuncs.dismissProgressWaiting();
-                                    ex.printStackTrace();
-                                }
+                            if (!RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                AppFuncs.alert(getApplicationContext(),"Upload file fail",true);
+                                appFuncs.dismissProgressWaiting();
+                                return;
                             }
-                        });
-                    }
-                });
-
+                            String reference = RestAPI.getPhotoReference(result.getResult());
+                            postDataToServer(reference);
+                        }
+                    });
+                } else {
+                    postDataToServer(null);
+                }
             }
             if (view.getId() == R.id.btnProfileSkip) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
-            if (view.getId() == R.id.btnProfileCameraAvatar) {
+            if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
@@ -225,12 +192,87 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+
+    private void postDataToServer(String reference){
+        WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone,adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
+        wpKMemberDto.setIdentifier(user);
+        wpKMemberDto.setEmail(email);
+        wpKMemberDto.setMobile(phone);
+        wpKMemberDto.setGender(adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
+
+        if (reference!=null) {
+            wpKMemberDto.setReference(reference);
+        }
+
+        registrationData.setWpKMemberDto(wpKMemberDto);
+
+        Gson gson = new Gson();
+        JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
+        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
+
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                if (error!=null && !error.isEmpty()) {
+                    AppFuncs.alert(getApplicationContext(),error,true);
+                    appFuncs.dismissProgressWaiting();
+                    return;
+                }
+                if (!RestAPI.checkHttpCode(httpCode)) {
+                    if (s!=null) {
+                        String er = WpErrors.getErrorMessage(s);
+                        if (!er.isEmpty()) {
+                            AppFuncs.alert(getApplicationContext(),er,true);
+                        } else {
+                            AppFuncs.alert(getApplicationContext(),"Registration fail. Try Again!",true);
+                        }
+                    }
+                    appFuncs.dismissProgressWaiting();
+                    return;
+                }
+                Store.putStringData(getApplicationContext(),Store.USERNAME,user);
+                String url = RestAPI.loginUrl(user,password);
+                RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+
+                    @Override
+                    public void OnComplete(int httpCode, String error, String s) {
+                        try {
+
+                            if (error!=null && !error.isEmpty()) {
+                                AppFuncs.alert(getApplicationContext(),error,true);
+                                appFuncs.dismissProgressWaiting();
+                                return;
+                            }
+                            if (!RestAPI.checkHttpCode(httpCode)) {
+                                String er = WpErrors.getErrorMessage(s);
+                                if (!er.isEmpty()) {
+                                    AppFuncs.alert(getApplicationContext(),er,true);
+                                }
+                                appFuncs.dismissProgressWaiting();
+                                return;
+                            }
+                            JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                            Gson gson = new Gson();
+                            WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+                            wpkToken.saveToken(getApplicationContext());
+                            doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
+                        }catch (Exception ex) {
+                            appFuncs.dismissProgressWaiting();
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     private String validateData() {
         String error = "";
         try {
             user = edUsername.getText().toString().trim();
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
+
             if (user.isEmpty()) {
                 error = "Username is empty";
             } else if (user.length() < 6) {
@@ -247,6 +289,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (phone.isEmpty()) {
                 phone = null;
+            } else {
+                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()) + phone;
             }
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -309,33 +353,36 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             signInHelper.activateAccount(account.providerId,account.accountId);
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
+            try {
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                photoAvatar.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+
+                byte[] avatarBytesCompressed = stream.toByteArray();
+                String avatarHash = "nohash";
+                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarBytesCompressed, avatarHash, account.username);
+            } catch (Exception e) {
+                Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+            }
+
             mExistingAccountTask = null;
 
             Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
             startActivity(intent);
         }
     }
-
+    Bitmap photoAvatar, photoHeader;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (data!=null) {
-                Bitmap photo;
                 if (requestCode==IMAGE_HEADER) {
-                    if (data.getData()!=null) {
-                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    } else {
-                        photo = (Bitmap) data.getExtras().get("data");
-                    }
-                    imgHeader.setImageBitmap(photo);
+                    photoHeader = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
+                    imgHeader.setImageBitmap(photoHeader);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    if (data.getData()!=null) {
-                        photo = SecureMediaStore.getThumbnailFile(UpdateProfileActivity.this, data.getData(), 512);
-                    } else {
-                        photo = (Bitmap) data.getExtras().get("data");
-                    }
-                    imgAvatar.setImageBitmap(photo);
+                    photoAvatar = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
+                    imgAvatar.setImageBitmap(photoAvatar);
                 }
             }
         }catch (Exception ex) {
@@ -343,4 +390,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home) {
+            LauncherActivity.start(UpdateProfileActivity.this);
+            finish();
+        }
+        return true;
+    }
 }

@@ -447,6 +447,7 @@ public class ContactsListFragment extends Fragment {
 
             String nickname =  cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
             viewHolder.email =  cursor.getString(ContactListItem.COLUMN_CONTACT_EMAIL);
+            final String reference = cursor.getString(ContactListItem.COLUMN_AVATAR_HASH);
 
             if (TextUtils.isEmpty(nickname))
             {
@@ -476,13 +477,13 @@ public class ContactsListFragment extends Fragment {
                         ((MainActivity)mContext).startChat(viewHolder.mProviderId,viewHolder.mAccountId, viewHolder.mAddress);
                         */
 
-                    Intent intent = new Intent(mContext,ContactDisplayActivity.class);
+                    Intent intent = new Intent(mContext,ProfileActivity.class);
                     intent.putExtra("address", viewHolder.mAddress);
                     intent.putExtra("nickname", viewHolder.mNickname);
                     intent.putExtra("provider", viewHolder.mProviderId);
                     intent.putExtra("account", viewHolder.mAccountId);
                     intent.putExtra("contactId", viewHolder.mContactId);
-
+                    intent.putExtra("reference",reference);
                     mContext.startActivity(intent);
 
                 }

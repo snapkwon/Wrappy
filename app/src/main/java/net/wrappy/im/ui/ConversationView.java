@@ -33,19 +33,22 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -72,7 +75,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -84,11 +86,16 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
@@ -97,11 +104,12 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.TranslateAPI.InAppTranslation;
-import net.wrappy.im.adapter.RecycleWalletAdapter;
 import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
@@ -135,13 +143,17 @@ import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.PreferenceContract;
 import net.wrappy.im.util.PreferenceUtils;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -233,6 +245,7 @@ public class ConversationView {
     long mLastChatId = -1;
     String mRemoteNickname;
     String mRemoteAddress;
+    String mRemoteReference;
     RoundedAvatarDrawable mRemoteAvatar = null;
     Drawable mRemoteHeader = null;
     int mSubscriptionType;
@@ -259,6 +272,7 @@ public class ConversationView {
     private static final long DEFAULT_QUERY_INTERVAL = 2000;
     private static final long FAST_QUERY_INTERVAL = 200;
 
+    public SpamBottomSheet mSpamBottomSheet;
 
     private RequeryCallback mRequeryCallback = null;
 
@@ -276,7 +290,7 @@ public class ConversationView {
     private class RequeryCallback implements Runnable {
         public void run() {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("RequeryCallback");
+                Debug.d("RequeryCallback");
             }
             requeryCursor();
 
@@ -473,10 +487,17 @@ public class ConversationView {
         } catch (RemoteException e) {
             Log.d(ImApp.LOG_TAG, "error getting remote activity", e);
         }
-
-
     }
 
+    public void sendDeleteChat(String msgId) {
+        sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
+    }
+
+    public void sendEditChat(String msgId, String newMsg) {
+        StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
+        buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
+        sendMessageAsync(buffer.toString());
+    }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -493,10 +514,7 @@ public class ConversationView {
                 }
                 ArrayAdapter<String> a = new ArrayAdapter<String>(mActivity,
                         android.R.layout.select_dialog_item, linkUrls);
-                AlertDialog.Builder b = new AlertDialog.Builder(mActivity);
-                b.setTitle(R.string.select_link_title);
-                b.setCancelable(true);
-                b.setAdapter(a, new DialogInterface.OnClickListener() {
+                PopupUtils.getSelectionDialog(mActivity, mActivity.getString(R.string.select_link_title), a, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Uri uri = Uri.parse(linkUrls.get(which));
@@ -507,13 +525,6 @@ public class ConversationView {
                         mActivity.startActivity(intent);
                     }
                 });
-                b.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                b.show();
             }
         }
     };
@@ -528,7 +539,6 @@ public class ConversationView {
         @Override
         public boolean onIncomingMessage(IChatSession ses,
                                          net.wrappy.im.model.Message msg) {
-
             return mIsSelected;
         }
 
@@ -569,7 +579,7 @@ public class ConversationView {
             message.getData().putString("file", sanitizedPath);
             mHandler.sendMessage(message);
 
-            log("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
+            Debug.d("onIncomingFileTransfer: " + transferFrom + " @ " + transferUrl);
 
         }
 
@@ -585,7 +595,7 @@ public class ConversationView {
 
              mHandler.sendMessage(message);*/
 
-            log("onIncomingFileTransferProgress: " + file + " " + percent + "%");
+            Debug.d("onIncomingFileTransferProgress: " + file + " " + percent + "%");
 
         }
 
@@ -600,7 +610,7 @@ public class ConversationView {
 
             mHandler.sendMessage(message);
 
-            log("onIncomingFileTransferProgress: " + file + " err: " + err);
+            Debug.d("onIncomingFileTransferProgress: " + file + " err: " + err);
 
         }
 
@@ -636,62 +646,28 @@ public class ConversationView {
     };
 
     private void showPromptForData(final String transferFrom, String filePath) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setTitle(mContext.getString(R.string.file_transfer));
-        builder.setMessage(transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
-                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_));
-
-        builder.setNeutralButton(R.string.button_yes_accept_all, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-
-                try {
-                    mCurrentChatSession.setIncomingFileResponse(transferFrom, true, true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
+        String message = transferFrom + ' ' + mActivity.getString(R.string.wants_to_send_you_the_file)
+                + " '" + filePath + "'. " + mActivity.getString(R.string.accept_transfer_);
+        PopupUtils.showCustomDialog(mActivity, mContext.getString(R.string.file_transfer), message, R.string.yes, R.string.no, new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, true, false);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
-                dialog.dismiss();
             }
 
-        });
-
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        }, new View.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onClick(View view) {
                 try {
                     mCurrentChatSession.setIncomingFileResponse(transferFrom, false, false);
                 } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-
-                // Do nothing
-                dialog.dismiss();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-
     }
 
     private Runnable mUpdateChatCallback = new Runnable() {
@@ -749,9 +725,7 @@ public class ConversationView {
 
         public void onContactsPresenceUpdate(Contact[] contacts) {
 
-            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("onContactsPresenceUpdate()");
-            }
+            Debug.d("onContactsPresenceUpdate()");
 
             for (Contact c : contacts) {
                 if (c.getAddress().getBareAddress().equals(Address.stripResource(mRemoteAddress))) {
@@ -775,13 +749,7 @@ public class ConversationView {
         }
     };
 
-
     private boolean mIsListening;
-
-    static final void log(String msg) {
-        if (Debug.DEBUG_ENABLED)
-            Log.d(ImApp.LOG_TAG, "<ChatView> " + msg);
-    }
 
     public ConversationView(ConversationDetailActivity activity) {
 
@@ -835,7 +803,6 @@ public class ConversationView {
             }
         });
 
-
         mButtonAttach = (ImageButton) mActivity.findViewById(R.id.btnAttach);
         mViewAttach = mActivity.findViewById(R.id.attachPanel);
 
@@ -843,13 +810,10 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
-
-
                 toggleAttachMenu();
             }
 
         });
-
 
         mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
 
@@ -897,12 +861,10 @@ public class ConversationView {
             }
         });
 
-
         mMicButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 //this is the tap to change to hold to talk mode
                 if (mMicButton.getVisibility() == View.VISIBLE) {
                     mComposeMessage.setVisibility(View.GONE);
@@ -927,21 +889,16 @@ public class ConversationView {
 
         final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
             public void onLongPress(MotionEvent e) {
-
                 //this is for recording audio directly from one press
                 mActivity.startAudioRecording();
-
             }
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-
-
                 if (mActivity.isAudioRecording()) {
                     boolean send = true;//inViewInBounds(mMicButton, (int) motionEvent.getX(), (int) motionEvent.getY());
                     mActivity.stopAudioRecording(send);
                 }
-
                 return super.onSingleTapUp(e);
             }
         });
@@ -1022,7 +979,6 @@ public class ConversationView {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 sendTypingStatus(true);
 
                 return false;
@@ -1097,9 +1053,9 @@ public class ConversationView {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if (mComposeMessage.getVisibility() == View.VISIBLE)
-                    sendMessage();
-                else {
+                if (mComposeMessage.getVisibility() == View.VISIBLE) {
+                    checkBeforeSubmit();
+                } else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
                     if (mLastSessionStatus == SessionStatus.ENCRYPTED)
@@ -1117,7 +1073,28 @@ public class ConversationView {
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
         mHistory.setAdapter(mMessageAdapter);
+    }
 
+    private void checkBeforeSubmit() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("message", mComposeMessage.getText().toString());
+
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.e(s);
+                JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+
+                if (jObject.get("status").toString() != null) {
+                    boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                    if (status) {
+
+                    } else {
+                        sendMessage();
+                    }
+                }
+            }
+        });
     }
 
     private boolean mLastIsTyping = false;
@@ -1419,9 +1396,9 @@ public class ConversationView {
 
     }
 
-    public void bindChat(long chatId, String name) {
+    public void bindChat(long chatId, String name, String reference) {
         //log("bind " + this + " " + chatId);
-
+        this.mRemoteReference = reference;
         mLastChatId = chatId;
 
         setViewType(VIEW_TYPE_CHAT);
@@ -1434,7 +1411,7 @@ public class ConversationView {
 
         if (!c.moveToFirst()) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("Failed to query chat: " + chatId);
+                Debug.d("Failed to query chat: " + chatId);
             }
             mLastChatId = -1;
 
@@ -1575,7 +1552,7 @@ public class ConversationView {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            CursorLoader loader = new CursorLoader(mActivity, mUri, null, null, null, Imps.Messages.DEFAULT_SORT_ORDER);
+            CursorLoader loader = new CursorLoader(mActivity, mUri, null, Imps.MessageColumns.STATUS + " = " + Imps.MessageColumns.VISIBLE, null, Imps.Messages.DEFAULT_SORT_ORDER);
 
             return loader;
         }
@@ -1584,7 +1561,7 @@ public class ConversationView {
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
 
             if (newCursor != null) {
-
+                //Log.i("Cursor", android.database.DatabaseUtils.dumpCursorToString(newCursor));
                 newCursor.setNotificationUri(mActivity.getApplicationContext().getContentResolver(), mUri);
                 mMessageAdapter.swapCursor(new DeltaCursor(newCursor));
 
@@ -1622,7 +1599,7 @@ public class ConversationView {
         }
 
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("scheduleRequery");
+            Debug.d("scheduleRequery");
         }
         mHandler.postDelayed(mRequeryCallback, interval);
 
@@ -1633,7 +1610,7 @@ public class ConversationView {
 
         if (mRequeryCallback != null) {
             if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-                log("cancelRequery");
+                Debug.d("cancelRequery");
             }
             mHandler.removeCallbacks(mRequeryCallback);
             mRequeryCallback = null;
@@ -1642,7 +1619,7 @@ public class ConversationView {
 
 
     void requeryCursor() {
-
+        Debug.d("requeryCursor");
         mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
         updateWarningView();
 
@@ -1742,8 +1719,8 @@ public class ConversationView {
 
     public void blockContact() {
         // TODO: unify with codes in ContactListView
-        DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            public void onClick(View view) {
                 try {
                     checkConnection();
                     mConn = mApp.getConnection(mProviderId, mAccountId);
@@ -1762,10 +1739,8 @@ public class ConversationView {
 
         // The positive button is deliberately set as no so that
         // the no is the default value
-        new AlertDialog.Builder(mContext).setTitle(R.string.confirm)
-                .setMessage(r.getString(R.string.confirm_block_contact, mRemoteNickname))
-                .setPositiveButton(R.string.yes, confirmListener) // default button
-                .setNegativeButton(R.string.no, null).setCancelable(false).show();
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.confirm), r.getString(R.string.confirm_block_contact, mRemoteNickname), R.string.yes,
+                R.string.no, confirmListener, null, false);
     }
 
     public long getProviderId() {
@@ -1831,10 +1806,7 @@ public class ConversationView {
 
                 }
             }
-
-
         } catch (Exception e) {
-
             //mHandler.showServiceErrorAlert(e.getLocalizedMessage());
             LogCleaner.error(ImApp.LOG_TAG, "error getting chat session", e);
         }
@@ -1873,9 +1845,7 @@ public class ConversationView {
         mComposeMessage.requestFocus();
     }
 
-
     boolean sendMessage(String msg, boolean isResend) {
-
         //don't send empty messages
         if (TextUtils.isEmpty(msg.trim())) {
             return false;
@@ -1894,6 +1864,16 @@ public class ConversationView {
 
         if (session != null) {
             try {
+                // delete own message
+                if (msg.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
+                    String packet_id = msg.replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
+                    session.deleteMessageInDb(packet_id);
+                } else if (msg.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {// update own message
+                    String[] message_edit = ConferenceUtils.getEditedMessage(msg);
+                    session.updateMessageInDb(message_edit[0], message_edit[1]);
+//                    session.deleteMessageInDb(message_edit[0]);
+                }
+
                 session.sendMessage(msg, isResend);
                 return true;
                 //requeryCursor();
@@ -1954,7 +1934,7 @@ public class ConversationView {
 
     void registerChatListener() {
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("registerChatListener " + mLastChatId);
+            Debug.d("registerChatListener " + mLastChatId);
         }
         try {
 
@@ -1978,7 +1958,7 @@ public class ConversationView {
 
     void unregisterChatListener() {
         if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            log("unregisterChatListener " + mLastChatId);
+            Debug.d("unregisterChatListener " + mLastChatId);
         }
         try {
             if (getChatSession() != null) {
@@ -2187,7 +2167,7 @@ public class ConversationView {
             switch (msg.what) {
 
                 case ImApp.EVENT_CONNECTION_DISCONNECTED:
-                    log("Handle event connection disconnected.");
+                    Debug.d("Handle event connection disconnected.");
                     updateWarningView();
                     promptDisconnectedEvent(msg);
                     return;
@@ -2245,9 +2225,6 @@ public class ConversationView {
 
             mDeltaColumn = len;
             mColumnNames[mDeltaColumn] = DELTA_COLUMN_NAME;
-
-            //if (DBG) log("##### DeltaCursor constructor: mDeltaColumn=" +
-            //        mDeltaColumn + ", columnName=" + mColumnNames[mDeltaColumn]);
         }
 
         public int getCount() {
@@ -2454,7 +2431,6 @@ public class ConversationView {
         }
 
         public long getLong(int column) {
-            //if (DBG) log("DeltaCursor.getLong: column=" + column + ", mDeltaColumn=" + mDeltaColumn);
             checkPosition();
 
             if (column == mDeltaColumn) {
@@ -2542,9 +2518,8 @@ public class ConversationView {
         private int mMimeTypeColumn;
         private int mIdColumn;
 
-        class BodyTranslate
-        {
-            public  boolean mIstranslate;
+        class BodyTranslate {
+            public boolean mIstranslate;
             public String mTexttranslate;
 
         }
@@ -2553,14 +2528,17 @@ public class ConversationView {
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
-       // private String bodytranalate = "";
+        // private String bodytranalate = "";
 
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
+        private String tempPacketIDSelect = "";
+        private int tempMessageType = 0;
+        private String tempNicknameSelect = "";
+        private Bitmap mCaptureBitmap;
 
-        public  void setTargetLanguage(String target)
-        {
+        public void setTargetLanguage(String target) {
             switch (target) {
                 case "English":
                     targetlanguage = "en";
@@ -2685,7 +2663,7 @@ public class ConversationView {
 
             iapptranslater = new InAppTranslation(mActivity, new InAppTranslation.CompleteTransaction() {
                 @Override
-                public void onTaskTranslateComplete(String result,int position) {
+                public void onTaskTranslateComplete(String result, int position) {
                     BodyTranslate data = new BodyTranslate();
                     data.mIstranslate = true;
                     data.mTexttranslate = result;
@@ -2694,8 +2672,8 @@ public class ConversationView {
                 }
 
                 @Override
-                public void onTaskDetectComplete(String result,String src,int position) {
-                    if(!result.equals("")) {
+                public void onTaskDetectComplete(String result, String src, int position) {
+                    if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
                     }
                 }
@@ -2706,23 +2684,19 @@ public class ConversationView {
                 }
             });
 
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                // Called when the user long-clicks on someView
-                public boolean onLongClick(View view) {
-                    if (mActionMode != null) {
-                        return false;
-                    }
-
-                    mLastSelectedView = view;
-
-                    // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
-
-                    return true;
-                }
-            });
 
             mvh = new MessageViewHolder(view);
+            if (viewType == 0) {
+                mvh.mAvatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
+                        intent.putExtra("address", mRemoteAddress);
+                        intent.putExtra("nickname", mRemoteNickname);
+                        mContext.startActivity(intent);
+                    }
+                });
+            }
             view.applyStyleColors();
             return mvh;
         }
@@ -2737,14 +2711,12 @@ public class ConversationView {
                 @Override
                 public void onClick(View v) {
                     cursor.moveToPosition(viewHolder.getPos());
-                    if(bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                    if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
                         viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.waiting_dialog));
                         viewHolder.btntranslate.setEnabled(false);
                         iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
-                    }
-                    else
-                    {
+                    } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
                         notifyItemChanged(viewHolder.getPos());
                     }
@@ -2761,34 +2733,30 @@ public class ConversationView {
             int messageType = cursor.getInt(mTypeColumn);
 
             String address = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteAddress;
-            String nickname = mRemoteNickname;
+            final String nickname;
             if (!TextUtils.isEmpty(address) && isGroupChat()) {
                 nickname = Imps.Contacts.getNicknameFromAddress(mActivity.getContentResolver(), new XmppAddress(address).getBareAddress());
-            }
+            } else nickname = mRemoteNickname;
 
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = cursor.getString(mBodyColumn) ;
-            if(istranslate ==false || cursor.getString(mMimeTypeColumn)!=null
-                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX))
-            {
+            String body = cursor.getString(mBodyColumn);
+            if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+
                 viewHolder.btntranslate.setVisibility(View.GONE);
                 viewHolder.txttranslate.setVisibility(View.GONE);
-               // body =cursor.getString(mBodyColumn);
-            }
-            else
-            {
+                // body =cursor.getString(mBodyColumn);
+            } else {
                 viewHolder.btntranslate.setEnabled(true);
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
-                if(bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
                     viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.closetranslate));
-                }
-                else
-                {
+                } else {
                     viewHolder.txttranslate.setVisibility(View.GONE);
                     viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.seetranslate));
                 }
@@ -2847,13 +2815,32 @@ public class ConversationView {
                 messageType = Imps.MessageType.OUTGOING;
                 encState = EncryptionState.ENCRYPTED_AND_VERIFIED;
             }
+            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mActionMode != null) {
+                        return false;
+                    }
+
+                    cursor.moveToPosition(viewHolder.getPos());
+
+                    mLastSelectedView = view;
+                    tempPacketIDSelect = cursor.getString(cursor.getColumnIndex(Imps.Messages.PACKET_ID));
+                    tempMessageType = cursor.getInt(mTypeColumn);
+                    tempNicknameSelect = nickname;
+                    // Start the CAB using the ActionMode.Callback defined above
+                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
+
+                    mCaptureBitmap = captureView(mLastSelectedView);
+                    AppFuncs.convertBitmapToFile(mActivity, mCaptureBitmap);
+
+                    return true;
+                }
+            });
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus);
-                    if (!mNeedRequeryCursor && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                        doConference(body, id, timestamp);
-                    }
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference);
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -2876,28 +2863,16 @@ public class ConversationView {
 
         }
 
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            int oldState = mScrollState;
-            mScrollState = scrollState;
-
-            if (getChatSession() != null) {
-                try {
-                    getChatSession().markAsRead();
-                } catch (RemoteException e) {
-
-                    mHandler.showServiceErrorAlert(e.getLocalizedMessage());
-                    LogCleaner.error(ImApp.LOG_TAG, "send message error", e);
-                }
-            }
-
-
-            if (oldState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                if (mNeedRequeryCursor) {
-                    requeryCursor();
-                } else {
-                    notifyDataSetChanged();
-                }
-            }
+        /**
+         * Capture message text to report spam
+         * @param view
+         */
+        public Bitmap captureView(View view) {
+            // create a bitmap with the same dimensions
+            Bitmap image = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
+            // draw the view inside the Bitmap
+            view.draw(new Canvas(image));
+            return image;
         }
 
         boolean isScrolling() {
@@ -2915,7 +2890,16 @@ public class ConversationView {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_message_context, menu);
+
+                boolean isLeft = (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED)
+                                || (tempMessageType == Imps.MessageType.INCOMING)
+                                || (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+
+                if (isLeft) {
+                    inflater.inflate(R.menu.menu_each_spam_message, menu);
+                } else {
+                    inflater.inflate(R.menu.menu_each_delete_message, menu);
+                }
                 return true;
             }
 
@@ -2931,24 +2915,34 @@ public class ConversationView {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
                 switch (item.getItemId()) {
-                    /**
-                     case R.id.menu_message_delete:
-                     //shareCurrentItem();
-                     mode.finish(); // Action picked, so close the CAB
-                     return true;
-                     */
-                    case R.id.menu_message_share:
-                        ((MessageListItem) mLastSelectedView).exportMediaFile();
+
+                    case R.id.menu_message_delete:
+                        if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                            sendDeleteChat(tempPacketIDSelect);
+                        }
                         mode.finish(); // Action picked, so close the CAB
                         return true;
-                    case R.id.menu_message_forward:
-                        ((MessageListItem) mLastSelectedView).forwardMediaFile();
-                        mode.finish(); // Action picked, so close the CAB
+                    case R.id.menu_report_spam:
+                        ImApp mApp = (ImApp) mActivity.getApplication();
+                        long mAccountId = mApp.getDefaultAccountId();
+
+                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
+                        mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
+
+                        mode.finish();
                         return true;
-                    case R.id.menu_message_resend:
-                        sendMessageAsync(((MessageListItem) mLastSelectedView).getLastMessage());
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
+//                    case R.id.menu_message_share:
+//                        ((MessageListItem) mLastSelectedView).exportMediaFile();
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
+//                    case R.id.menu_message_forward:
+//                        ((MessageListItem) mLastSelectedView).forwardMediaFile();
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
+//                    case R.id.menu_message_resend:
+//                        sendMessageAsync(((MessageListItem) mLastSelectedView).getLastMessage());
+//                        mode.finish(); // Action picked, so close the CAB
+//                        return true;
 
                     default:
                         return false;
@@ -2964,7 +2958,8 @@ public class ConversationView {
 
 
                 if (mLastSelectedView != null)
-                    mLastSelectedView.setSelected(false);
+                    tempPacketIDSelect = "";
+                mLastSelectedView.setSelected(false);
 
 
             }
@@ -3203,10 +3198,6 @@ public class ConversationView {
         }
     }
 
-    public void startAudioConference() {
-        startAudioConference(null);
-    }
-
     /**
      * Showing popup menu item translate
      *
@@ -3234,7 +3225,7 @@ public class ConversationView {
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
-        mMessageAdapter.setTargetLanguage( spinner.getSelectedItem().toString());
+        mMessageAdapter.setTargetLanguage(spinner.getSelectedItem().toString());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -3275,59 +3266,31 @@ public class ConversationView {
         });
 
         popupWindow.setFocusable(true);
-       // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-       // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-     //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        // popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        // popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        //   popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         popupWindow.addView(view);
 
         return popupWindow;
     }
 
-    public void startAudioConference(String id) {
-        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.AUDIO);
+    public void startAudioConference() {
+        String roomId = getRoomId(ConferenceMessage.ConferenceType.AUDIO);
         ConferenceActivity.startAudioCall(mContext, roomId);
     }
 
     public void startVideoConference() {
-        startVideoConference(null);
-    }
-
-    public void startVideoConference(String id) {
-        String roomId = getRoomId(id, ConferenceMessage.ConferenceType.VIDEO);
+        String roomId = getRoomId(ConferenceMessage.ConferenceType.VIDEO);
         Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
     }
 
-    private String getRoomId(String id, ConferenceMessage.ConferenceType type) {
+    private String getRoomId(ConferenceMessage.ConferenceType type) {
         String roomId;
-        if (!TextUtils.isEmpty(id)) {
-            roomId = id;
-        } else {
-            ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
-            sendMessageAsync(message.toString());
-            roomId = message.getRoomId();
-        }
+        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
+        sendMessageAsync(message.toString());
+        roomId = message.getRoomId();
         return roomId;
-    }
-
-    private void doConference(String body, long id, long timestamp) {
-        ConferenceMessage conference = new ConferenceMessage(body);
-        if (!conference.isEnded()) {
-            conference.endCall();
-            body = conference.toString();
-            Imps.updateMessageBodyInDb(mActivity.getContentResolver(), mLastChatId, String.valueOf(id), body);
-            mMessageAdapter.setNeedRequeryCursor(true);
-            //Skip for expired conference
-            boolean expiredCall = ((System.currentTimeMillis() - timestamp) > SHOW_MEDIA_DELIVERY_INTERVAL);
-            if (!expiredCall) {
-                log("doConference");
-                if (conference.isAudio()) {
-                    startAudioConference(conference.getRoomId());
-                } else {
-                    startVideoConference(conference.getRoomId());
-                }
-            }
-        }
     }
 
     public void startSettingScreen() {
@@ -3335,5 +3298,102 @@ public class ConversationView {
         Intent intent = new Intent(mContext, SettingConversationActivity.class);
         mContext.startActivity(intent);
 
+    }
+
+    public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {
+        @BindView(R.id.layout_message_spam)
+        LinearLayout mSpamLayout;
+        @BindView(R.id.layout_message_violence)
+        LinearLayout mViolenceLayout;
+        @BindView(R.id.layout_message_cancel)
+        LinearLayout mCancelLayout;
+
+        public static String TYPE_SPAM = "SPAM";
+        public static String TYPE_VIOLENCE = "OBJECTIONABLE";
+
+        public static SpamBottomSheet getInstance(String reporter, String member, String messageId) {
+            SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
+
+            Bundle args = new Bundle();
+            args.putString("reporter", reporter);
+            args.putString("member", member);
+            args.putString("messageId", messageId);
+
+            spamBottomSheet.setArguments(args);
+
+            return spamBottomSheet;
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.report_spam_bottom_sheet, container, false);
+
+            ButterKnife.bind(this, view);
+
+            mSpamLayout.setOnClickListener(this);
+            mViolenceLayout.setOnClickListener(this);
+            mCancelLayout.setOnClickListener(this);
+
+            return view;
+        }
+
+        @Override
+        public void onClick(final View view) {
+            switch (view.getId()) {
+                case R.id.layout_message_spam:
+                case R.id.layout_message_violence:
+
+                        File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
+                        RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                            @Override
+                            public void onCompleted(Exception e, Response<String> result) {
+                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                                String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+
+                                if (getArguments() != null) {
+
+                                    String reporter = getArguments().getString("reporter");
+                                    String member = getArguments().getString("member");
+                                    String messageId = getArguments().getString("messageId");
+
+                                    sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
+                                }
+                            }
+                        });
+                    dismiss();
+                    break;
+                case R.id.layout_message_cancel:
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void sendReportMessage(String reporter, String member, String messageId,
+                                      String reference, String type) {
+
+            JsonObject reporterObject = new JsonObject();
+            reporterObject.addProperty("identifier", reporter);
+
+            JsonObject memberObject = new JsonObject();
+            memberObject.addProperty("identifier", member);
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add("reporter", reporterObject);
+            jsonObject.add("member", memberObject);
+            jsonObject.addProperty("messageId", messageId);
+            jsonObject.addProperty("screenShot", reference);
+            jsonObject.addProperty("type", type);
+
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    Debug.e(s);
+                }
+            });
+
+        }
     }
 }

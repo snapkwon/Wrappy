@@ -23,6 +23,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -39,17 +40,19 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
@@ -61,6 +64,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Date;
 import java.util.Locale;
+
+import static net.wrappy.im.helper.RestAPI.GET_PHOTO;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -92,6 +97,7 @@ public class ConversationListItem extends FrameLayout {
     public static final int COLUMN_LAST_MESSAGE = 11;
     public static final int COLUMN_CHAT_TYPE = 12;
     public static final int COLUMN_CHAT_FAVORITE = 13;
+    public static final int COLUMN_AVATAR_HASH = 14;
 
 
     static Drawable AVATAR_DEFAULT_GROUP = null;
@@ -111,7 +117,7 @@ public class ConversationListItem extends FrameLayout {
      * }
      */
 
-    public void bind(ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite) {
+    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar) {
 
         //applyStyleColors(holder);
         if (nickname == null) {
@@ -150,14 +156,22 @@ public class ConversationListItem extends FrameLayout {
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {
 
-                    String reference = Store.getStringData(context, nickname);
+                    final String reference = Store.getStringData(context, nickname);
                     if (!reference.isEmpty()) {
-                        Ion.with(context)
-                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/" + reference)
-                                .withBitmap()
-                                .placeholder(R.drawable.group_chat)
-                                .error(R.drawable.group_chat)
-                                .intoImageView(holder.mAvatar);
+                        RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
+                            @Override
+                            public void onCompleted(Exception e, Bitmap result) {
+                                if (result!=null) {
+                                    holder.mAvatar.setImageBitmap(result);
+                                }
+                            }
+                        });
+//                        Ion.with(context)
+//                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/" + reference)
+//                                .withBitmap()
+//                                .placeholder(R.drawable.group_chat)
+//                                .error(R.drawable.group_chat)
+//                                .intoImageView(holder.mAvatar);
                     } else {
                         String groupId = address.split("@")[0];
                         Drawable avatar = new GroupAvatar(groupId);
@@ -172,40 +186,18 @@ public class ConversationListItem extends FrameLayout {
                     holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
                 }
             }
-            //   else if (cursor.getColumnIndex(Imps.Contacts.AVATAR_DATA)!=-1)
             else {
-//                holder.mAvatar.setVisibility(View.GONE);
-
-                Drawable avatar = null;
-
-                try {
-                    avatar = DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), address, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                    // avatar = DatabaseUtils.getAvatarFromCursor(cursor, COLUMN_AVATAR_DATA, ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-                } catch (Exception e) {
-                    //problem decoding avatar
-                    Log.e(ImApp.LOG_TAG, "error decoding avatar", e);
+                generateLetterAvatar(holder, nickname);
+                if (!TextUtils.isEmpty(referenceAvatar)) {
+                    String imgUrl = GET_PHOTO + referenceAvatar;
+                    Glide.with(getContext())
+                            .load(imgUrl).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            holder.mAvatar.setImageBitmap(resource);
+                        }
+                    });
                 }
-
-                try {
-                    if (avatar != null) {
-                        //if (avatar instanceof RoundedAvatarDrawable)
-                        //  setAvatarBorder(presence,(RoundedAvatarDrawable)avatar);
-
-                        holder.mAvatar.setImageDrawable(avatar);
-                    } else {
-                        // int color = getAvatarBorder(presence);
-                        int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-                        holder.mAvatar.setImageDrawable(lavatar);
-
-                    }
-
-                    holder.mAvatar.setVisibility(View.VISIBLE);
-                } catch (OutOfMemoryError ome) {
-                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
-                }
-
             }
         }
 
@@ -320,6 +312,19 @@ public class ConversationListItem extends FrameLayout {
             holder.mPinIcon.setVisibility(VISIBLE);
         } else {
             holder.mPinIcon.setVisibility(GONE);
+        }
+    }
+
+    private void generateLetterAvatar(ConversationViewHolder holder, String nickname) {
+        try {
+            //int color = getAvatarBorder(presence);
+            int padding = 24;
+            LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
+
+            holder.mAvatar.setImageDrawable(lavatar);
+            holder.mAvatar.setVisibility(View.VISIBLE);
+        } catch (OutOfMemoryError ome) {
+            //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
         }
     }
 

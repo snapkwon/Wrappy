@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -18,28 +17,38 @@
  */
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-     <item
-    android:id="@+id/menu_search"
-    app:actionViewClass="android.support.v7.widget.SearchView"
-    android:icon="@drawable/ic_search_white_24dp"
-    app:showAsAction="always|collapseActionView"
-    android:title="@string/search_by_id"/>
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_chat_menu_search"
+        android:title="@string/search_by_id"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 
-     <item android:id="@+id/action_start_chat"
-         android:title="@string/ok"
-         android:icon="@drawable/ic_check_white_24dp"
-         app:showAsAction="always"
-         />
+    <item
+        android:id="@+id/action_start_chat"
+        android:icon="@drawable/ic_check_white_24dp"
+        android:title="@string/ok"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_contacts_add"
+        android:icon="@drawable/ic_chat_menu_contact"
+        android:title="@string/ok"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_contacts_list"
+        android:icon="@drawable/ic_chat_menu_list"
+        android:title="@string/ok"
+        app:showAsAction="always" />
 
 
-<!--    <item android:id="@+id/menu_new_group_chat"
-        android:title="@string/create_group"
-        android:icon="@drawable/ic_people_white_36dp"
-        app:showAsAction="always"
-        />-->
+    <!--    <item android:id="@+id/menu_new_group_chat"
+            android:title="@string/create_group"
+            android:icon="@drawable/ic_people_white_36dp"
+            app:showAsAction="always"
+            />-->
 
     <!-- 
 
@@ -57,34 +66,34 @@
         
          />
           -->
-<!--  
-    <item android:id="@+id/menu_view_accounts"
-        android:title="@string/menu_view_accounts" />
+    <!--
+        <item android:id="@+id/menu_view_accounts"
+            android:title="@string/menu_view_accounts" />
 
-  
-         
- <item android:id="@+id/menu_view_groups"
-        android:title="@string/menu_view_groups"
-        android:icon="@drawable/ic_tab_contacts_selected"
-        		        android:showAsAction="never"
-        
-         />
-         -->
-         
- 
- <!-- 
-    <item android:id="@+id/menu_quit"
-        android:title="@string/bg_data_prompt_cancel" 
-        android:icon="@drawable/ic_menu_sign_out"
-        		        android:showAsAction="never"
-        
-         /> 
-         
-  <item android:id="@+id/menu_view_accounts"
-        android:title="@string/menu_view_accounts"
-        android:icon="@drawable/ic_menu_settings"
-        		        android:showAsAction="never"
-        
-         />-->
-  
+
+
+     <item android:id="@+id/menu_view_groups"
+            android:title="@string/menu_view_groups"
+            android:icon="@drawable/ic_tab_contacts_selected"
+                            android:showAsAction="never"
+
+             />
+             -->
+
+
+    <!--
+       <item android:id="@+id/menu_quit"
+           android:title="@string/bg_data_prompt_cancel"
+           android:icon="@drawable/ic_menu_sign_out"
+                           android:showAsAction="never"
+
+            />
+
+     <item android:id="@+id/menu_view_accounts"
+           android:title="@string/menu_view_accounts"
+           android:icon="@drawable/ic_menu_settings"
+                           android:showAsAction="never"
+
+            />-->
+
 </menu>

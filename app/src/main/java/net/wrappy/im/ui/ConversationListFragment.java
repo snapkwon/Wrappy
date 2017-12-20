@@ -22,16 +22,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -39,9 +34,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,131 +145,131 @@ public class ConversationListFragment extends Fragment {
 
         // init swipe to dismiss logic
 
-        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
-
-            public static final float ALPHA_FULL = 1.0f;
-
-            @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                // We only want the active item to change
-                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-                    if (viewHolder instanceof ConversationViewHolder) {
-                        // Let the view holder know that this item is being moved or dragged
-                        ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
-                        itemViewHolder.onItemSelected();
-                    }
-                }
-
-                super.onSelectedChanged(viewHolder, actionState);
-            }
-
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-
-
-                    // Get RecyclerView item from the ViewHolder
-                    View itemView = viewHolder.itemView;
-
-                    Paint p = new Paint();
-                    Bitmap icon;
-
-                    if (dX > 0) {
-            /* Note, ApplicationManager is a helper class I created
-               myself to get a context outside an Activity class -
-               feel free to use your own method */
-
-                        icon = BitmapFactory.decodeResource(
-                                getActivity().getResources(), R.drawable.ic_archive_white_24dp);
-
-            /* Set your color for positive displacement */
-                        p.setARGB(255, 150, 150, 150);
-
-
-                        // Draw Rect with varying right side, equal to displacement dX
-                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
-                                (float) itemView.getBottom(), p);
-
-                        // Set the image icon for Right swipe
-                        c.drawBitmap(icon,
-                                (float) itemView.getLeft() + convertDpToPx(16),
-                                (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight()) / 2,
-                                p);
-                    }
-                    // Fade out the view as it is swiped out of the parent's bounds
-                    final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
-                    viewHolder.itemView.setAlpha(alpha);
-                    viewHolder.itemView.setTranslationX(dX);
-                } else {
-                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-                }
-            }
-
-            private int convertDpToPx(int dp) {
-                return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
-            }
-
-            @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-                viewHolder.itemView.setAlpha(ALPHA_FULL);
-
-                if (viewHolder instanceof ConversationViewHolder) {
-                    // Tell the view holder it's time to restore the idle state
-                    ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
-                    itemViewHolder.onItemClear();
-                }
-            }
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // callback for drag-n-drop, false to skip this feature
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                // callback for swipe to dismiss, removing item from data and adapter
-                int position = viewHolder.getAdapterPosition();
-
-                //delete / endchat
-                //items.remove(viewHolder.getAdapterPosition());
-                final long itemId = mAdapter.getItemId(position);
-
-                archiveConversation(itemId);
-
-                Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
-                snack.setAction(R.string.action_undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        unarchiveConversation(itemId);
-                    }
-                });
-                snack.show();
-            }
-
-            @Override
-            public boolean isLongPressDragEnabled() {
-                return true;
-            }
-
-            @Override
-            public boolean isItemViewSwipeEnabled() {
-                return true;
-            }
-        });
-        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
-
-        if (mAdapter.getItemCount() == 0) {
-            mRecView.setVisibility(View.GONE);
-            mEmptyView.setVisibility(View.VISIBLE);
-            mEmptyViewImage.setVisibility(View.VISIBLE);
-        } else if (mRecView.getVisibility() == View.GONE) {
-            mRecView.setVisibility(View.VISIBLE);
-            mEmptyView.setVisibility(View.GONE);
-            mEmptyViewImage.setVisibility(View.GONE);
-        }
+//        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+//                ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) {
+//
+//            public static final float ALPHA_FULL = 1.0f;
+//
+//            @Override
+//            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+//                // We only want the active item to change
+//                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+//                    if (viewHolder instanceof ConversationViewHolder) {
+//                        // Let the view holder know that this item is being moved or dragged
+//                        ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
+//                        itemViewHolder.onItemSelected();
+//                    }
+//                }
+//
+//                super.onSelectedChanged(viewHolder, actionState);
+//            }
+//
+//            @Override
+//            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+//                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+//
+//
+//                    // Get RecyclerView item from the ViewHolder
+//                    View itemView = viewHolder.itemView;
+//
+//                    Paint p = new Paint();
+//                    Bitmap icon;
+//
+//                    if (dX > 0) {
+//            /* Note, ApplicationManager is a helper class I created
+//               myself to get a context outside an Activity class -
+//               feel free to use your own method */
+//
+//                        icon = BitmapFactory.decodeResource(
+//                                getActivity().getResources(), R.drawable.ic_archive_white_24dp);
+//
+//            /* Set your color for positive displacement */
+//                        p.setARGB(255, 150, 150, 150);
+//
+//
+//                        // Draw Rect with varying right side, equal to displacement dX
+//                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+//                                (float) itemView.getBottom(), p);
+//
+//                        // Set the image icon for Right swipe
+//                        c.drawBitmap(icon,
+//                                (float) itemView.getLeft() + convertDpToPx(16),
+//                                (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - icon.getHeight()) / 2,
+//                                p);
+//                    }
+//                    // Fade out the view as it is swiped out of the parent's bounds
+//                    final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+//                    viewHolder.itemView.setAlpha(alpha);
+//                    viewHolder.itemView.setTranslationX(dX);
+//                } else {
+//                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+//                }
+//            }
+//
+//            private int convertDpToPx(int dp) {
+//                return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//            }
+//
+//            @Override
+//            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+//                super.clearView(recyclerView, viewHolder);
+//                viewHolder.itemView.setAlpha(ALPHA_FULL);
+//
+//                if (viewHolder instanceof ConversationViewHolder) {
+//                    // Tell the view holder it's time to restore the idle state
+//                    ConversationViewHolder itemViewHolder = (ConversationViewHolder) viewHolder;
+//                    itemViewHolder.onItemClear();
+//                }
+//            }
+//
+//            @Override
+//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//                // callback for drag-n-drop, false to skip this feature
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//                // callback for swipe to dismiss, removing item from data and adapter
+//                int position = viewHolder.getAdapterPosition();
+//
+//                //delete / endchat
+//                //items.remove(viewHolder.getAdapterPosition());
+//                final long itemId = mAdapter.getItemId(position);
+//
+//                archiveConversation(itemId);
+//
+//                Snackbar snack = Snackbar.make(mRecView, getString(R.string.action_archived), Snackbar.LENGTH_LONG);
+//                snack.setAction(R.string.action_undo, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        unarchiveConversation(itemId);
+//                    }
+//                });
+//                snack.show();
+//            }
+//
+//            @Override
+//            public boolean isLongPressDragEnabled() {
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean isItemViewSwipeEnabled() {
+//                return true;
+//            }
+//        });
+//        swipeToDismissTouchHelper.attachToRecyclerView(recyclerView);
+//
+//        if (mAdapter.getItemCount() == 0) {
+//            mRecView.setVisibility(View.GONE);
+//            mEmptyView.setVisibility(View.VISIBLE);
+//            mEmptyViewImage.setVisibility(View.VISIBLE);
+//        } else if (mRecView.getVisibility() == View.GONE) {
+//            mRecView.setVisibility(View.VISIBLE);
+//            mEmptyView.setVisibility(View.GONE);
+//            mEmptyViewImage.setVisibility(View.GONE);
+//        }
     }
 
     public boolean getArchiveFilter() {
@@ -379,7 +372,7 @@ public class ConversationListFragment extends Fragment {
         public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor,int position) {
 
             if (TextUtils.isEmpty(mSearchString)) {
-
+                String s = DatabaseUtils.dumpCursorToString(cursor);
                 final long chatId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
                 final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
                 final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
@@ -393,6 +386,7 @@ public class ConversationListFragment extends Fragment {
                 final int presence = cursor.getInt(ConversationListItem.COLUMN_CONTACT_PRESENCE_STATUS);
 
                 final int chatFavorite = cursor.getInt(ConversationListItem.COLUMN_CHAT_FAVORITE);
+                final String reference = cursor.getString(ConversationListItem.COLUMN_AVATAR_HASH);
 
                 String lastMsgType = null;
                 if (!TextUtils.isEmpty(lastMsg)) {
@@ -404,7 +398,7 @@ public class ConversationListFragment extends Fragment {
 
                 ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -414,6 +408,7 @@ public class ConversationListFragment extends Fragment {
                         intent.putExtra("id", chatId);
 //                        intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
+                        intent.putExtra("reference", reference);
                         context.startActivity(intent);
                     }
                 });
@@ -433,11 +428,11 @@ public class ConversationListFragment extends Fragment {
                 final String body = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.BODY));
                 final long messageDate = cursor.getLong(cursor.getColumnIndexOrThrow(Imps.Messages.DATE));
                 final String messageType = cursor.getString(cursor.getColumnIndexOrThrow(Imps.Messages.MIME_TYPE));
-
+                final String reference = cursor.getString(ConversationListItem.COLUMN_AVATAR_HASH);
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -447,6 +442,7 @@ public class ConversationListFragment extends Fragment {
                                 intent.putExtra("id", chatId);
 //                                intent.putExtra("address", nickname);
                                 intent.putExtra("nickname", nickname);
+                                intent.putExtra("reference", reference);
 
                                 context.startActivity(intent);
                             }
@@ -454,8 +450,6 @@ public class ConversationListFragment extends Fragment {
                     }
                 }
             }
-
-
         }
 
         private void showBottomSheetDialog(String address, long chatId, int chatFavorite) {
@@ -498,6 +492,11 @@ public class ConversationListFragment extends Fragment {
                 buf.append(Imps.Messages.BODY);
                 buf.append(" LIKE ");
                 DatabaseUtils.appendValueToSql(buf, "%" + mSearchString + "%");
+
+                buf.append(" AND ");
+                buf.append(Imps.MessageColumns.STATUS);
+                buf.append('=');
+                buf.append(Imps.MessageColumns.VISIBLE);
 
                 loader = new CursorLoader(getActivity(), mUri, null,
                         buf == null ? null : buf.toString(), null, Imps.Messages.REVERSE_SORT_ORDER);
@@ -564,8 +563,8 @@ public class ConversationListFragment extends Fragment {
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE,
                 Imps.Chats.CHAT_TYPE,
-                Imps.Chats.CHAT_FAVORITE
-                //          Imps.Contacts.AVATAR_HASH,
+                Imps.Chats.CHAT_FAVORITE,
+                Imps.Contacts.AVATAR_HASH
                 //        Imps.Contacts.AVATAR_DATA
 
         };
