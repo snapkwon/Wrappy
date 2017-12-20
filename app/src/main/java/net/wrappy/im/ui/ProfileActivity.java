@@ -34,8 +34,10 @@ public class ProfileActivity extends FragmentActivity {
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         jid = getIntent().getStringExtra("address");
-        String[] arr = jid.split("@");
-        jid = arr[0];
+        if (jid.contains("@")) {
+            String[] arr = jid.split("@");
+            jid = arr[0];
+        }
         mContactId = getIntent().getLongExtra("contactId", -1);
         mNickname = getIntent().getStringExtra("nickname");
         reference = getIntent().getStringExtra("reference");

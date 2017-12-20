@@ -34,18 +34,18 @@ public class MainMenuFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.main_menu_fragment,null);
-        ButterKnife.bind(this,mainView);
+        mainView = inflater.inflate(R.layout.main_menu_fragment, null);
+        ButterKnife.bind(this, mainView);
         return mainView;
     }
 
 
-    @OnClick({R.id.txtMainMenuNewGroup,R.id.txtMainMenuContact,R.id.txtMainMenuNewList,R.id.txtMainMenuSettings,R.id.txtMainMenuAboutUs,R.id.txtMainMenuFAQ,R.id.txtMainMenuLogout})
+    @OnClick({R.id.txtMainMenuNewGroup, R.id.txtMainMenuContact, R.id.txtMainMenuNewList, R.id.txtMainMenuSettings, R.id.txtMainMenuAboutUs, R.id.txtMainMenuFAQ, R.id.txtMainMenuLogout})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.txtMainMenuNewGroup:
                 Intent intentGroup = new Intent(getActivity(), ContactsPickerActivity.class);
-                intentGroup.putExtra("isGroup",true);
+                intentGroup.putExtra("isGroup", true);
                 getActivity().startActivityForResult(intentGroup, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
             case R.id.txtMainMenuContact:
@@ -53,7 +53,7 @@ public class MainMenuFragment extends Fragment {
                 getActivity().startActivityForResult(intent, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
             case R.id.txtMainMenuNewList:
-                AppFuncs.alert(getActivity(),"Developing",true);
+                AppFuncs.alert(getActivity(), "Developing", true);
                 break;
             case R.id.txtMainMenuSettings:
                 Intent sintent = new Intent(getActivity(), SettingActivity.class);
@@ -69,17 +69,17 @@ public class MainMenuFragment extends Fragment {
                 break;
             case R.id.txtMainMenuLogout:
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_contact, "Contact");
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2, R.drawable.ic_menutab_group, "Group");
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, "Logout all devices");
                 sheetCells.add(sheetCell);
                 BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
-                        if (index==1) {
-                            AppFuncs.alert(getActivity(),"Logout this device",true);
+                        if (index == 1) {
+                            AppFuncs.alert(getActivity(), "Logout this device", true);
                         } else if (index == 2) {
-                            AppFuncs.alert(getActivity(),"Logout all devices",true);
+                            AppFuncs.alert(getActivity(), "Logout all devices", true);
                         }
                     }
                 });
@@ -89,7 +89,6 @@ public class MainMenuFragment extends Fragment {
             default:
         }
     }
-
 
 
 }

@@ -800,6 +800,24 @@ public class Imps {
             return ret;
         }
 
+      public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
+            String ret = null;
+            String selection = NICKNAME + "=?";
+            String[] selectionArgs = {nickname};
+            String[] projection = {USERNAME};
+            Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        ret = cursor.getString(cursor.getColumnIndexOrThrow(USERNAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return ret;
+        }
+
         public static final String getString(ContentResolver cr, String columnName, String address) {
             String selection = USERNAME + "=?";
             String[] selectionArgs = {address};
