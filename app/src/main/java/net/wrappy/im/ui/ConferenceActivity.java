@@ -37,6 +37,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
         bundle.putBoolean(VIDEO_MUTED, isAudioCall);
         bundle.putBoolean(AUDIO_MUTED, !isAudioCall);
         intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(ROOM_ID, roomId);
         context.startActivity(intent);
     }

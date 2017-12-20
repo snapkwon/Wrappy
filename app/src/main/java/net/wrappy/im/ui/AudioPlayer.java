@@ -45,8 +45,7 @@ public class AudioPlayer {
 
     }
 
-    public int getDuration ()
-    {
+    public int getDuration() {
         return mDuration;
     }
 
@@ -66,9 +65,7 @@ public class AudioPlayer {
             }
 
             mediaPlayer.start();
-        }
-        else
-        {
+        } else {
             mPlayOnPrepare = true;
             new AsyncTask<String, Void, Boolean>() {
 
@@ -98,14 +95,14 @@ public class AudioPlayer {
         mediaPlayer.pause();
     }
 
-    public boolean isPlaying () {
+    public boolean isPlaying() {
         if (mediaPlayer != null)
             return mediaPlayer.isPlaying();
         else
             return false;
     }
 
-    public boolean isPaused () {
+    public boolean isPaused() {
         if (mediaPlayer != null)
             return (!mediaPlayer.isPlaying()) && (mediaPlayer.getCurrentPosition() > 0);
         else
@@ -133,8 +130,7 @@ public class AudioPlayer {
 
         info.guardianproject.iocipher.File fileStream = new info.guardianproject.iocipher.File(mFileName);
 
-        if (mediaPlayer != null)
-        {
+        if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying())
                 mediaPlayer.stop();
 
@@ -149,9 +145,7 @@ public class AudioPlayer {
             streamer = new HttpMediaStreamer(fileStream, mMimeType);
             Uri uri = streamer.getUri();
             mediaPlayer.setDataSource(mContext, uri);
-        }
-        else
-        {
+        } else {
             mediaPlayer.setDataSource(mFileName);
         }
 
@@ -171,7 +165,7 @@ public class AudioPlayer {
 
                 mPrepared = true;
                 mDuration = mediaPlayer.getDuration();
-                mInfoView.setText((getDuration()/1000) + "secs");
+                mInfoView.setText(String.valueOf(Math.round(getDuration() * 2 / 2000.0) + "secs"));// round 3/4
 
                 if (mPlayOnPrepare)
                     play();
@@ -185,8 +179,7 @@ public class AudioPlayer {
                 //killPlayer();
 
                 if (mVisualizer != null)
-                 mVisualizer.setEnabled(false);
-
+                    mVisualizer.setEnabled(false);
 
 
             }
@@ -217,13 +210,10 @@ public class AudioPlayer {
                         }
                     }, Visualizer.getMaxCaptureRate() / 2, true, false);
 
-        }
-        catch (RuntimeException re)
-        {
-            Log.w(ImApp.LOG_TAG, "unable to init audio player visualizaer",re);
+        } catch (RuntimeException re) {
+            Log.w(ImApp.LOG_TAG, "unable to init audio player visualizaer", re);
         }
     }
-
 
 
 }
