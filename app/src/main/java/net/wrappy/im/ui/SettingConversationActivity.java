@@ -23,11 +23,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingConversationActivity extends AppCompatActivity implements View.OnClickListener {
+public class SettingConversationActivity extends AppCompatActivity  {
     @BindView(R.id.layout_search_setting)
     LinearLayout mSearchLayout;
-    @BindView(R.id.layout_change_background_setting)
-    LinearLayout mChangeBackgroundLayout;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
@@ -37,8 +35,6 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
         setContentView(R.layout.activity_setting_conversation);
 
         ButterKnife.bind(this);
-
-        mChangeBackgroundLayout.setOnClickListener(this);
 
         // back button at action bar
         ActionBar actionBar = getSupportActionBar();
@@ -59,7 +55,7 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    @OnClick({R.id.layout_change_background_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_change_background_setting:
