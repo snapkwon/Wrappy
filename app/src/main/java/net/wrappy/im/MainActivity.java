@@ -16,7 +16,6 @@
 
 package net.wrappy.im;
 
-import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -37,13 +36,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -202,9 +200,10 @@ public class MainActivity extends BaseActivity {
                 return false;
             }
         });
+        initFloatButton();
         initViewPager();
         initTabLayout();
-        initFloatButton();
+
         //don't wnat this to happen to often
         checkForUpdates();
 
@@ -245,6 +244,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 try {
+                    AppFuncs.dismissKeyboard(MainActivity.this);
                     AppTextView appTextView = (AppTextView) tab.getCustomView();
                     appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
                     edSearchConversation.setText("");
@@ -291,6 +291,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+        mTabLayout.getTabAt(1).select();
     }
 
     private void createTabIcons(int index ,int isResIcon, String title) {
@@ -300,11 +301,8 @@ public class MainActivity extends BaseActivity {
         appTextView.setLayoutParams(layoutParams);
         appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
         appTextView.setText(title);
+        appTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, isResIcon, 0, 0);
-        if (index==1) {
-            appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
-            appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-        }
         mTabLayout.getTabAt(index).setCustomView(appTextView);
     }
 

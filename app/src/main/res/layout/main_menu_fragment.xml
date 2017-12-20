@@ -51,7 +51,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"
@@ -76,7 +76,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"
@@ -101,7 +101,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"
@@ -126,7 +126,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"
@@ -151,7 +151,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"
@@ -176,7 +176,7 @@
 
             </LinearLayout>
             <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
+                android:layout_marginLeft="40dp"
                 android:layout_height="1px"
                 android:background="#565656"
                 android:layout_marginTop="10dp"

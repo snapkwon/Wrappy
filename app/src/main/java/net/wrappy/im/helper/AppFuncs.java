@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
 
 public class AppFuncs {
 
+    public static DisplayMetrics displayMetrics = new DisplayMetrics();
+
     private static AppFuncs _ins;
 
     public static AppFuncs getInstance() {
@@ -240,5 +242,7 @@ public class AppFuncs {
         Gson gson = new Gson();
         return gson.toJsonTree(ob);
     }
-
+    public static float getPixelsInCM(float cm, boolean isX) {
+        return (cm / 2.54f) * (isX ? displayMetrics.xdpi : displayMetrics.ydpi);
+    }
 }
