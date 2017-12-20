@@ -458,7 +458,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;*/
             case R.id.menu_verify_or_view:
             case R.id.menu_group_info:
-                startSettingScreen();
+                mConvoView.startSettingScreen();
                 return true;
             case R.id.menu_video_call:
                 mConvoView.startVideoConference();
@@ -984,12 +984,6 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-    private void startSettingScreen() {
-        Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
-        intent.putExtra("chatId", mChatId);
-        startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
-    }
-
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
     public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
@@ -998,7 +992,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
-    private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
+    public static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
     private static final int REQUEST_PLACE_PICKER = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {

@@ -3267,10 +3267,12 @@ public class ConversationView {
     }
 
     public void startSettingScreen() {
-
-        Intent intent = new Intent(mContext, SettingConversationActivity.class);
-        mContext.startActivity(intent);
-
+        Intent intent = new Intent(mActivity, SettingConversationActivity.class);
+        intent.putExtra("chatId", mLastChatId);
+        intent.putExtra("account", mAccountId);
+        intent.putExtra("address", mRemoteAddress);
+        intent.putExtra("provider", mProviderId);
+        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_CHANGE_BACKGROUND);
     }
 
     public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {
