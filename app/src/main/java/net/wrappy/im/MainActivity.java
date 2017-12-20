@@ -58,6 +58,7 @@ import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.GethService.Wallet;
@@ -67,6 +68,7 @@ import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -92,6 +94,7 @@ import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.XmppUriHelper;
@@ -208,7 +211,19 @@ public class MainActivity extends BaseActivity {
 
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
-        checkToLoadDataServer();
+
+        showPopUpNotice();
+    }
+
+    private void showPopUpNotice() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Gson gson = new Gson();
+                ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>(){}.getType());
+                PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+            }
+        });
     }
 
     private void initViewPager() {
