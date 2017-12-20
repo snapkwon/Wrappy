@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,11 +25,15 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.model.Contact;
+import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +46,8 @@ public class SettingConversationActivity extends AppCompatActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
+    @BindView(R.id.member_group_recycler_view)
+    RecyclerView mGroupRecycleView;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -54,6 +62,9 @@ public class SettingConversationActivity extends AppCompatActivity {
     private boolean mIsOwner = false;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
+
+    private MemberGroupAdapter memberGroupAdapter;
+    private ArrayList<MemberGroupDisplay> memberGroupDisplays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +109,15 @@ public class SettingConversationActivity extends AppCompatActivity {
         } catch (RemoteException e) {
         }
 
+        // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
+
+            memberGroupDisplays = new ArrayList<>();
+
+            mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            memberGroupAdapter = new MemberGroupAdapter(memberGroupDisplays, this);
+            mGroupRecycleView.setAdapter(memberGroupAdapter);
         }
     }
 

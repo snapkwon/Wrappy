@@ -200,7 +200,7 @@
             android:background="@color/background_gainsboro"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/member_group_chat_settings"
+            android:id="@+id/member_group_recycler_view"
             style="@style/match_width">
 
         </android.support.v7.widget.RecyclerView>
