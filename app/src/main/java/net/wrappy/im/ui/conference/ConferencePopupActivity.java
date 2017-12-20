@@ -48,6 +48,7 @@ public class ConferencePopupActivity extends Activity {
 
     private static Intent newIntent(String nickname, String message, Uri uri, boolean isGroupChat) {
         Intent intent = new Intent(ImApp.sImApp, ConferencePopupActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(KEY_NICK_NAME, nickname);
         intent.putExtra(KEY_MESSAGE, message);
         intent.putExtra(KEY_GROUP, isGroupChat);
