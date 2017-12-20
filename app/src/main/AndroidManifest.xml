@@ -218,17 +218,15 @@
         </activity>
         <activity
             android:name=".ui.RegistrationSecurityQuestionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.UpdateProfileActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.ForgetPasswordActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
-
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SecurityQuestionActivity" android:screenOrientation="portrait"/>
         <service
             android:name=".plugin.xmpp.XmppImPlugin"
             android:exported="false">

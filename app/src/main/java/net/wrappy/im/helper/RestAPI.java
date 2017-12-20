@@ -68,9 +68,11 @@ public class RestAPI {
     public static String GET_TYPE_ROSTER = root_url_dev + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url_dev + "chat/roster/group/add";
     public static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
+    public static String POST_CHANGE_QUESTION_CHECK = root_url_dev + "member/security/check";
+    public static String PUT_CHANGE_SECURITY_QUESTION = root_url_dev + "member/security/";
+    public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url_dev + "/member/%s/security/password/reset";
     public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
-
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
@@ -82,6 +84,10 @@ public class RestAPI {
 
     public static String getHashStringResetPassUrl(String username, String answer01, String answer02 , String answer03) {
         return String.format(GET_HASH_RESET_PASS,username,answer01,answer02,answer03);
+    }
+
+    public static String getCheckForgetPasswordSecurityQuestionsUrl(String username) {
+        return String.format(POST_FORGET_PASS_CHECK_QUESTIONS,username);
     }
 
     public static String refreshTokenUrl(Context context) {
@@ -191,6 +197,10 @@ public class RestAPI {
 
     public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
         return getIon(context,url,"POST").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+    }
+
+    public static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
+        return getIon(context,url,"PUT").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
     }
 
     public static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {

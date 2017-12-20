@@ -232,6 +232,12 @@ public class ContactsPickerActivity extends BaseActivity {
         });
 
         doFilterAsync("");
+
+        if (getIntent()!=null) {
+            if (getIntent().getBooleanExtra("isGroup",false)){
+                setGroupMode(true);
+            }
+        }
     }
 
     @Override

@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,17 +39,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.javiersantos.appupdater.AppUpdater;
@@ -60,12 +63,16 @@ import com.google.gson.Gson;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.GethService.Wallet;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
@@ -80,12 +87,13 @@ import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
+import net.wrappy.im.ui.MainMenuFragment;
+import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.WalletFragment;
 import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.XmppUriHelper;
@@ -111,7 +119,6 @@ public class MainActivity extends BaseActivity {
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private FloatingActionButton mFab;
-    private Toolbar mToolbar;
 
     private ImApp mApp;
 
@@ -128,6 +135,9 @@ public class MainActivity extends BaseActivity {
     private WalletFragment mwalletFragment;
     Adapter adapter;
     FragmentManager fragmentManager;
+    ImageButton btnHeaderSearch;
+    AppEditTextView edSearchConversation;
+    ImageView imgLogo;
 
     //Check to load old data from server
     Handler mLoadDataHandler = null;
@@ -148,117 +158,53 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.awesome_activity_main);
 
         mApp = (ImApp) getApplication();
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        setSupportActionBar(mToolbar);
-
-        final ActionBar ab = getSupportActionBar();
-
-        mConversationList = new ConversationListFragment();
-        mContactList = new ContactsListFragment();
-        mAccountFragment = new AccountFragment();
-
-        fragmentManager = getSupportFragmentManager();
-        adapter = new Adapter(fragmentManager);
-        adapter.addFragment(mConversationList, getString(R.string.title_chats), R.drawable.ic_message_white_36dp);
-        adapter.addFragment(mContactList, getString(R.string.contacts), R.drawable.ic_people_white_36dp);
-
-        mAccountFragment = new AccountFragment();
-        //  fragAccount.setArguments();
-
-        adapter.addFragment(mAccountFragment, getString(R.string.title_me), R.drawable.ic_face_white_24dp);
-
-
-        if (!Wallet.isNewWallet(this.getFilesDir())) {
-            mwalletFragment = new WalletFragment();
-            adapter.addFragment(mwalletFragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
-        } else {
-            mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
-            adapter.addFragment(mwelcome_wallet_fragment, getString(R.string.title_wallet), R.drawable.ic_wallet);
-
-        }
-
-
-        mViewPager.setAdapter(adapter);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-
-        TabLayout.Tab tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_discuss);
-        mTabLayout.addTab(tab);
-
-        tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_people_white_36dp);
-        mTabLayout.addTab(tab);
-
-        // remove explore tab
-//        tab = mTabLayout.newTab();
-//        tab.setIcon(R.drawable.ic_explore_white_24dp);
-//        mTabLayout.addTab(tab);
-
-        tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_face_white_24dp);
-        mTabLayout.addTab(tab);
-
-        tab = mTabLayout.newTab();
-        tab.setIcon(R.drawable.ic_wallet);
-        mTabLayout.addTab(tab);
-
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                mViewPager.setCurrentItem(tab.getPosition());
-
-                setToolbarTitle(tab.getPosition());
-                applyStyleColors();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                setToolbarTitle(tab.getPosition());
-                applyStyleColors();
-            }
-        });
-
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        btnHeaderSearch = (ImageButton) findViewById(R.id.btnHeaderSearch);
+        btnHeaderSearch.setVisibility(View.GONE);
+        edSearchConversation = (AppEditTextView) findViewById(R.id.edSearchConversation);
+        imgLogo = (ImageView) findViewById(R.id.imgLogo);
+        btnHeaderSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int tabIdx = mViewPager.getCurrentItem();
-
-                if (tabIdx == 0 || tabIdx == 1) {
-
-//                    if (mContactList.getContactCount() > 0) {
-                    Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
-                    startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
-//                    }
-//                    else
-//                    {
-//                        inviteContact();
-//                    }
-
-//                } else if (tabIdx == 1) {
-//                    inviteContact();
+                edSearchConversation.setText("");
+                if (edSearchConversation.getVisibility()==View.VISIBLE) {
+                    AppFuncs.dismissKeyboard(MainActivity.this);
+                    edSearchConversation.setVisibility(View.GONE);
+                    imgLogo.setVisibility(View.VISIBLE);
+                    try {
+                        AppFuncs.dismissKeyboard(MainActivity.this);
+                        ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                        page.doSearch("");
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    edSearchConversation.setVisibility(View.VISIBLE);
+                    edSearchConversation.setFocusable(true);
+                    edSearchConversation.setFocusableInTouchMode(true);
+                    imgLogo.setVisibility(View.GONE);
                 }
-//                else if (tabIdx == 2) {
-//                    startPhotoTaker();
-//                }
-
-
             }
         });
-
-        setToolbarTitle(0);
-
+        edSearchConversation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i==EditorInfo.IME_ACTION_SEARCH) {
+                    try {
+                        AppFuncs.dismissKeyboard(MainActivity.this);
+                        ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                        page.doSearch(edSearchConversation.getText().toString().trim());
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+        initViewPager();
+        initTabLayout();
+        initFloatButton();
         //don't wnat this to happen to often
         checkForUpdates();
 
@@ -267,6 +213,116 @@ public class MainActivity extends BaseActivity {
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
         checkToLoadDataServer();
+    }
+    private void initViewPager() {
+        fragmentManager = getSupportFragmentManager();
+        adapter = new Adapter(fragmentManager);
+        mViewPager.setAdapter(adapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mViewPager.setCurrentItem(1);
+    }
+
+    private void initTabLayout() {
+
+        //
+        TabLayout.Tab tab = mTabLayout.newTab();
+        mTabLayout.addTab(tab);
+        //
+        tab = mTabLayout.newTab();
+        mTabLayout.addTab(tab);
+        //
+        tab = mTabLayout.newTab();
+        mTabLayout.addTab(tab);
+        //
+        tab = mTabLayout.newTab();
+        mTabLayout.addTab(tab);
+        createTabIcons(0,R.drawable.ic_menu_normal,"Menu");
+        createTabIcons(1,R.drawable.ic_menu_conversation_normal,"Chat");
+        createTabIcons(2,R.drawable.ic_menu_wallet_normal,"Wallet");
+        createTabIcons(3,R.drawable.ic_menu_info_normal,"My page");
+
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                try {
+                    AppTextView appTextView = (AppTextView) tab.getCustomView();
+                    appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
+                    edSearchConversation.setText("");
+                    edSearchConversation.setVisibility(View.GONE);
+                    imgLogo.setVisibility(View.VISIBLE);
+                    if (tab.getPosition()==0) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_active, 0, 0);
+                    } else if (tab.getPosition()==1) {
+                        btnHeaderSearch.setVisibility(View.VISIBLE);
+                        mFab.setVisibility(View.VISIBLE);
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
+                    } else if (tab.getPosition()==2) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
+                    } else if (tab.getPosition()==3) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
+                    }
+                    mViewPager.setCurrentItem(tab.getPosition());
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                try {
+                    AppTextView appTextView = (AppTextView) tab.getCustomView();
+                    appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
+                    if (tab.getPosition()==0) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_normal, 0, 0);
+                    } else if (tab.getPosition()==1) {
+                        btnHeaderSearch.setVisibility(View.GONE);
+                        mFab.setVisibility(View.GONE);
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
+                    } else if (tab.getPosition()==2) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
+                    } else if (tab.getPosition()==3) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    private void createTabIcons(int index ,int isResIcon, String title) {
+
+        AppTextView appTextView = new AppTextView(getApplicationContext());
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        appTextView.setLayoutParams(layoutParams);
+        appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
+        appTextView.setText(title);
+        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, isResIcon, 0, 0);
+        if (index==1) {
+            appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
+            appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
+        }
+        mTabLayout.getTabAt(index).setCustomView(appTextView);
+    }
+
+    private void initFloatButton() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setVisibility(View.GONE);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int tabIdx = mViewPager.getCurrentItem();
+
+                if (tabIdx == 0 || tabIdx == 1) {
+
+                    Intent intent = new Intent(MainActivity.this, ContactsPickerActivity.class);
+                    startActivityForResult(intent, REQUEST_CHOOSE_CONTACT);
+                }
+            }
+        });
     }
 
     private void installRingtones() {
@@ -277,58 +333,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void setToolbarTitle(int tabPosition) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getString(R.string.app_name_zom));
-        sb.append(" | ");
-
-        switch (tabPosition) {
-            case 0:
-
-                if (mConversationList.getArchiveFilter())
-                    sb.append(getString(R.string.action_archive));
-                else
-                    sb.append(getString(R.string.chats));
-
-                break;
-            case 1:
-
-                if (mContactList.getCurrentType() == Imps.Contacts.TYPE_HIDDEN)
-                    sb.append(getString(R.string.action_archive));
-                else
-                    sb.append(getString(R.string.friends));
-
-                break;
-//            case 2:
-//                sb.append(getString(R.string.title_more));
-//                break;
-            case 2:
-                sb.append(getString(R.string.me_title));
-                break;
-            case 3:
-                sb.append(getString(R.string.title_wallet));
-                break;
-        }
-
-        mToolbar.setTitle(sb.toString());
-
-        if (mFab != null) {
-            mFab.setVisibility(View.VISIBLE);
-
-            if (tabPosition == 1) {
-                mFab.setImageResource(R.drawable.ic_person_add_white_36dp);
-            } else if (tabPosition == 2) {
-                //                    mFab.setImageResource(R.drawable.ic_photo_camera_white_36dp);
-                mFab.setVisibility(View.GONE);
-
-            } else if (tabPosition == 3) {
-                mFab.setVisibility(View.GONE);
-            } else {
-                mFab.setImageResource(R.drawable.ic_add_white_24dp);
-            }
-        }
-
-    }
 
     public void inviteContact() {
         Intent i = new Intent(MainActivity.this, AddContactNewActivity.class);
@@ -339,8 +343,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        applyStyleColors();
         if (mViewPager.getCurrentItem() == 3) {
             if (!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
                 adapter.mFragments.remove(mwelcome_wallet_fragment);
@@ -625,53 +627,53 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
+//
+//        if (mSearchView != null) {
+//            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//            mSearchView.setIconifiedByDefault(false);
+//
+//            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+//                public boolean onQueryTextChange(String query) {
+//                    if (mTabLayout.getSelectedTabPosition() == 0)
+//                        mConversationList.doSearch(query);
+//                    else if (mTabLayout.getSelectedTabPosition() == 1)
+//                        mContactList.doSearch(query);
+//
+//                    return true;
+//                }
+//
+//                public boolean onQueryTextSubmit(String query) {
+//                    if (mTabLayout.getSelectedTabPosition() == 0)
+//                        mConversationList.doSearch(query);
+//                    else if (mTabLayout.getSelectedTabPosition() == 1)
+//                        mContactList.doSearch(query);
+//
+//                    return true;
+//                }
+//            };
+//
+//            mSearchView.setOnQueryTextListener(queryTextListener);
+//
+//            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//                    mConversationList.doSearch(null);
+//                    return false;
+//                }
+//            });
+//        }
+//
+//        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
+//
+//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
+//            mItem.setVisible(true);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
-
-        if (mSearchView != null) {
-            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            mSearchView.setIconifiedByDefault(false);
-
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-                public boolean onQueryTextChange(String query) {
-                    if (mTabLayout.getSelectedTabPosition() == 0)
-                        mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 1)
-                        mContactList.doSearch(query);
-
-                    return true;
-                }
-
-                public boolean onQueryTextSubmit(String query) {
-                    if (mTabLayout.getSelectedTabPosition() == 0)
-                        mConversationList.doSearch(query);
-                    else if (mTabLayout.getSelectedTabPosition() == 1)
-                        mContactList.doSearch(query);
-
-                    return true;
-                }
-            };
-
-            mSearchView.setOnQueryTextListener(queryTextListener);
-
-            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-                @Override
-                public boolean onClose() {
-                    mConversationList.doSearch(null);
-                    return false;
-                }
-            });
-        }
-
-        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-            mItem.setVisible(true);
-
-        return true;
+        return false;
     }
 
     @Override
@@ -718,7 +720,6 @@ public class MainActivity extends BaseActivity {
             mContactList.setArchiveFilter(false);
 
 
-        setToolbarTitle(mTabLayout.getSelectedTabPosition());
 
     }
 
@@ -730,7 +731,6 @@ public class MainActivity extends BaseActivity {
             mContactList.setArchiveFilter(true);
 
 
-        setToolbarTitle(mTabLayout.getSelectedTabPosition());
 
     }
 
@@ -764,7 +764,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    static class Adapter extends FragmentPagerAdapter {
+    public class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
         private final List<Integer> mFragmentIcons = new ArrayList<>();
@@ -785,17 +785,29 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return mFragments.get(position);
+            if (position==0) {
+                return new MainMenuFragment();
+            } else if (position==1) {
+                return new ConversationListFragment();
+            } else if (position==2) {
+                if (!Wallet.isNewWallet(getFilesDir())) {
+                    return new WalletFragment();
+                } else {
+                    return new Welcome_Wallet_Fragment();
+                }
+            } else {
+                return ProfileFragment.newInstance(0, Store.getStringData(getApplicationContext(),Store.USERNAME),"","");
+            }
         }
 
         @Override
         public int getCount() {
-            return mFragments.size();
+            return 4;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentTitles.get(position);
+            return "";
         }
 
 
@@ -905,19 +917,7 @@ public class MainActivity extends BaseActivity {
 
         //first set font
         checkCustomFont();
-        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
 
-        if (typeface != null) {
-            for (int i = 0; i < mToolbar.getChildCount(); i++) {
-                View view = mToolbar.getChildAt(i);
-                if (view instanceof TextView) {
-                    TextView tv = (TextView) view;
-
-                    tv.setTypeface(typeface);
-                    break;
-                }
-            }
-        }
 
         applyStyleColors();
     }
@@ -942,8 +942,6 @@ public class MainActivity extends BaseActivity {
                 getWindow().setTitleColor(getContrastColor(themeColorHeader));
             }
 
-            mToolbar.setBackgroundColor(themeColorHeader);
-            mToolbar.setTitleTextColor(getContrastColor(themeColorHeader));
 
             mTabLayout.setBackgroundColor(themeColorHeader);
             mTabLayout.setTabTextColors(themeColorText, themeColorText);
@@ -1011,7 +1009,6 @@ public class MainActivity extends BaseActivity {
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    Debug.d(s);
                     WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
                     syncData(wpKMemberDtos);
                 }

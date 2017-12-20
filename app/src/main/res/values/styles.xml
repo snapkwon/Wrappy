@@ -29,7 +29,29 @@
         <item name="android:windowBackground">@drawable/dialog_im_switch_chats_strip</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-    
+
+    <style name="SupportApp" parent="Theme.AppCompat.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:actionBarStyle">@style/SupportApp.MyActionBar</item>
+        <item name="colorPrimary">@color/zom_primary</item>
+
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">@color/menu_text_active</item>
+        <item name="colorAccent">#FF2b63</item>
+
+    </style>
+    <style name="SupportApp.MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/zom_primary</item>
+        <item name="android:color">@android:color/white</item>
+        <item name="android:logo">@android:color/transparent</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_ab_arrow_back</item>
+        <item name="android:titleTextStyle">@style/SupportApp.MyActionBar.Text</item>
+    </style>
+    <style name="SupportApp.MyActionBar.Text" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="btn_white">
     	<item name="android:gravity">center_vertical|center_horizontal</item>
     	<item name="android:textColor">#fff</item>
@@ -84,7 +106,7 @@
     <item name="colorPrimary">@color/zom_primary</item>
 
     <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">#000</item>
+    <item name="colorPrimaryDark">@color/menu_text_active</item>
 
     <!-- colorAccent is used as the default value for colorControlActivated,
          which is used to tint widgets -->

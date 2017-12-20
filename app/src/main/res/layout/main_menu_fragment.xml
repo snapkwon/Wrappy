@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f2f2">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_ngang"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_group"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuNewGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="New Group"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_contact"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="Contact"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_list"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuNewList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="New List"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_setting"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="Settings"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_aboutus"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuAboutUs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="About us"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_faq"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuFAQ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="FAQ"/>
+
+            </LinearLayout>
+            <View android:layout_width="match_parent"
+                android:layout_marginLeft="48dp"
+                android:layout_height="1px"
+                android:background="#565656"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menutab_logout"/>
+
+                <net.wrappy.im.helper.layout.AppTextView
+                    android:id="@+id/txtMainMenuLogout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AppText02"
+                    android:layout_marginLeft="16dp"
+                    android:text="Logout"/>
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
