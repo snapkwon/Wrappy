@@ -38,12 +38,15 @@ public class SettingConversationActivity extends AppCompatActivity {
     LinearLayout mSearchLayout;
     @BindView(R.id.switch_notification)
     Switch switch_notification;
+    @BindView(R.id.layout_member_groups)
+    LinearLayout mMemberGroupsLayout;
 
     private String mAddress = null;
     private long mProviderId = -1;
     private long mAccountId = -1;
     private long mLastChatId = -1;
     private String mLocalAddress = null;
+    private int mContactType = -1;
 
     private IImConnection mConn;
     private IChatSession mSession;
@@ -73,6 +76,7 @@ public class SettingConversationActivity extends AppCompatActivity {
             mProviderId = getIntent().getLongExtra("provider", -1);
             mAccountId = getIntent().getLongExtra("account", -1);
             mLastChatId = getIntent().getLongExtra("chatId", -1);
+            mContactType = getIntent().getIntExtra("isGroupChat", -1);
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
@@ -92,6 +96,10 @@ public class SettingConversationActivity extends AppCompatActivity {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
             }
         } catch (RemoteException e) {
+        }
+
+        if (mContactType == Imps.Contacts.TYPE_GROUP) {
+            mMemberGroupsLayout.setVisibility(View.VISIBLE);
         }
     }
 

@@ -185,4 +185,26 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_member_groups"
+        style="@style/match_width"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:visibility="gone">
+
+        <net.ironrabbit.type.CustomTypefaceTextView
+            style="@style/match_width"
+            android:text="@string/title_member_group_setting"
+            android:textAllCaps="true"
+            android:paddingLeft="10dp"
+            android:background="@color/background_gainsboro"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/member_group_chat_settings"
+            style="@style/match_width">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
 </LinearLayout>

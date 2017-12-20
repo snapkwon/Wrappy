@@ -3272,6 +3272,7 @@ public class ConversationView {
         intent.putExtra("account", mAccountId);
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
+        intent.putExtra("isGroupChat", mContactType);
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_CHANGE_BACKGROUND);
     }
 
