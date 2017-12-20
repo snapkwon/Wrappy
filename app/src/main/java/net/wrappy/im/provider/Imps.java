@@ -1375,6 +1375,18 @@ public class Imps {
         }
 
         /**
+         * Delete messages of conversation by thread id.
+         *
+         * @param threadId the thread id of the message.
+         * @return the result
+         */
+        public static int deleteOtrMessagesByThreadId(ContentResolver resolver, long threadId) {
+            Uri.Builder builder = OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
+            ContentUris.appendId(builder, threadId);
+            return resolver.delete(builder.build(), null, null);
+        }
+
+        /**
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI = Uri

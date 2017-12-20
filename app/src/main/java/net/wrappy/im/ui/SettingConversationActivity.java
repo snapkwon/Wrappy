@@ -2,11 +2,11 @@ package net.wrappy.im.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +16,12 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import net.wrappy.im.R;
+import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SettingConversationActivity extends AppCompatActivity implements View.OnClickListener {
     @BindView(R.id.layout_search_setting)
@@ -64,6 +66,18 @@ public class SettingConversationActivity extends AppCompatActivity implements Vi
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
+        }
+    }
+
+    @OnClick(R.id.layout_clean_setting)
+    void onCleanChatHistory() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("chatId")) {
+            long chatId = intent.getLongExtra("chatId", -1);
+            int result = Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), chatId);
+            if (result > 0) {
+                finish();
+            }
         }
     }
 

@@ -986,6 +986,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private void startSettingScreen() {
         Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
+        intent.putExtra("chatId", mChatId);
         startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
     }
 
