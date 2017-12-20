@@ -14,7 +14,7 @@ public class PopUpNotice {
     @SerializedName("title")
     private Title title;
     @SerializedName("detail")
-    private Detail detail;
+    private Title detail;
     @SerializedName("purpose")
     private String purpose;
     @SerializedName("status")
@@ -44,11 +44,11 @@ public class PopUpNotice {
         this.title = title;
     }
 
-    public Detail getDetail() {
+    public Title getDetail() {
         return detail;
     }
 
-    public void setDetail(Detail detail) {
+    public void setDetail(Title detail) {
         this.detail = detail;
     }
 
