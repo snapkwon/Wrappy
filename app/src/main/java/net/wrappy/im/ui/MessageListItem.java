@@ -224,9 +224,6 @@ public class MessageListItem extends FrameLayout {
         } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
             boolean cmdSuccess = false;
 
-//            Toast.makeText(getContext(), "lastMessage: " + lastMessage, Toast.LENGTH_SHORT).show();
-//            Log.d("Cuong", "lastMessage: " +  lastMessage);
-
             if (lastMessage.startsWith("/sticker:")) {
                 String[] cmds = lastMessage.split(":");
 
@@ -326,8 +323,6 @@ public class MessageListItem extends FrameLayout {
 
     private void bindBackground(String lastMessage) {
         String message = lastMessage.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-//        Toast.makeText(getContext(), "message: " + message, Toast.LENGTH_SHORT).show();
-//        Log.d("Cuong", "message: " + message);
     }
 
     private void bindConference(String lastMessage) {
