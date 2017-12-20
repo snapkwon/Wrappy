@@ -2661,17 +2661,6 @@ public class ConversationView {
 
 
             mvh = new MessageViewHolder(view);
-            if (viewType == 0) {
-                mvh.mAvatar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(mContext, ProfileActivity.class);
-                        intent.putExtra("address", mRemoteAddress);
-                        intent.putExtra("nickname", mRemoteNickname);
-                        mContext.startActivity(intent);
-                    }
-                });
-            }
             view.applyStyleColors();
             return mvh;
         }
@@ -2715,13 +2704,18 @@ public class ConversationView {
             messageView.applyStyleColors();
 
             int messageType = cursor.getInt(mTypeColumn);
+            final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;;
+            final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
-            String address = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteAddress;
-            final String nickname;
-            if (!TextUtils.isEmpty(address) && isGroupChat()) {
-                nickname = Imps.Contacts.getNicknameFromAddress(mActivity.getContentResolver(), new XmppAddress(address).getBareAddress());
-            } else nickname = mRemoteNickname;
-
+            viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, ProfileActivity.class);
+                    intent.putExtra("address", address);
+                    intent.putExtra("nickname",nickname);
+                    mContext.startActivity(intent);
+                }
+            });
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             String body = cursor.getString(mBodyColumn);
