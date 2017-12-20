@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -18,111 +17,112 @@
  */
 -->
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp"	
-     >
-     
-			
+    android:padding="3dp">
+
+
     <LinearLayout
-        android:id="@+id/message_container" 
+        android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="0dp"         
-        android:layout_marginLeft="62dp"     
-        android:orientation="vertical"
         android:layout_gravity="center_vertical"
-        >
-        
-                <net.ironrabbit.type.CustomTypefaceTextView
-                    android:id="@+id/line1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:layout_gravity="left"
-              		android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceLarge"                    
-                    android:singleLine="true"
-                    android:textColor="?contactTextPrimary"
+        android:layout_marginLeft="62dp"
+        android:orientation="vertical"
+        android:padding="0dp">
 
-                    />
-       
-                  <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/line2"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                      android:textColor="?contactTextSecondary"
-
-                      />
-                  
-
-            
-                   
-        
-          	</LinearLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="0dp"
-        android:orientation="horizontal"
-        android:layout_gravity="right"
-        android:visibility="gone"
-        android:id="@+id/subscriptionBox"
-
-        >
-
-        <net.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnApproveSubscription"
-            android:layout_width="60dp"
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/line1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="✔"
+            android:layout_gravity="left"
+            android:fontFamily="sans-serif-light"
+            android:gravity="left"
+            android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:background="@color/holo_green_dark"
-            android:textColor="@android:color/white"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/btnDeclineSubscription"
-            android:layout_toStartOf="@+id/btnDeclineSubscription" />
+            android:textColor="?contactTextPrimary"
 
-        <net.ironrabbit.type.CustomTypefaceButton android:id="@+id/btnDeclineSubscription"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="✖"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:background="@color/holo_red_dark"
-            android:textColor="@android:color/white"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            />
+
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/line2"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?contactTextSecondary"
+
+            />
+
 
     </LinearLayout>
 
 
-    <net.wrappy.im.helper.layout.CircleImageView
-        android:id="@+id/avatar"
+    <LinearLayout
+        android:id="@+id/subscriptionBox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:orientation="horizontal"
+        android:padding="0dp"
+        android:visibility="gone"
+
+        >
+
+        <net.ironrabbit.type.CustomTypefaceButton
+            android:id="@+id/btnApproveSubscription"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/btnDeclineSubscription"
+            android:layout_toStartOf="@+id/btnDeclineSubscription"
+            android:background="@color/holo_green_dark"
+            android:text="✔"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+        <net.ironrabbit.type.CustomTypefaceButton
+            android:id="@+id/btnDeclineSubscription"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/holo_red_dark"
+            android:text="✖"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <net.wrappy.im.helper.layout.CircleLayout
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_margin="3dp"
-        android:visibility="gone"
-        />
+        android:background="@drawable/rounded_shape_white"
+        android:clipChildren="true">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|top"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+    </net.wrappy.im.helper.layout.CircleLayout>
 
     <ImageView
         android:id="@+id/avatarCheck"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_gravity="left|top"
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="18dp"
-        android:layout_gravity="left|top"
         android:background="@drawable/check_view_background"
+        android:padding="5dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_check_white_24dp"
-        android:padding="5dp"
         android:tint="@android:color/white"
         android:visibility="gone" />
 

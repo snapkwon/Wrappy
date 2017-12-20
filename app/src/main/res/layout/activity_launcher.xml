@@ -3,24 +3,20 @@
     android:id="@+id/llRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center_horizontal"
-
-    >
-
+    android:orientation="vertical">
 
     <ViewFlipper
         android:id="@+id/viewFlipper1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:inAnimation="@anim/push_right_in"
         android:layout_margin="0dp"
-        >
+        android:inAnimation="@anim/push_right_in">
 
-        <include android:id="@+id/flipViewMain" layout="@layout/launcher_main"/>
+        <include
+            android:id="@+id/flipViewMain"
+            layout="@layout/launcher_main" />
 
     </ViewFlipper>
-
-
-
+ss
 </LinearLayout>

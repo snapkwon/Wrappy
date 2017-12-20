@@ -1,9 +1,9 @@
 package net.wrappy.im.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import net.wrappy.im.GethService.KeyManager;
 import net.wrappy.im.GethService.WalletInfo;
 import net.wrappy.im.R;
+import net.wrappy.im.util.PopupUtils;
 
 public class Create_New_Wallet extends BaseActivity {
 
@@ -52,30 +53,12 @@ public class Create_New_Wallet extends BaseActivity {
                     }
                     else
                     {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(Create_New_Wallet.this);
-                        LayoutInflater inflater = Create_New_Wallet.this.getLayoutInflater();
-                        final View dialogView = inflater.inflate(R.layout.custom_alert_dialog, null);
-                        builder.setView(dialogView);
-
-                        final TextView tvTitle = (TextView) dialogView.findViewById(R.id.texttitlealert);
-                        tvTitle.setText("Password mismatch");
-
-                        builder.setPositiveButton("OK", null);
-                        builder.show();
+                        PopupUtils.showCustomDialog(Create_New_Wallet.this, "", getString(R.string.error_repeat_password), R.string.yes, null);
                     }
                 }
                 else
                 {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Create_New_Wallet.this);
-                    LayoutInflater inflater = Create_New_Wallet.this.getLayoutInflater();
-                    final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-                    builder.setView(dialogView);
-
-                    final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-                    tvTitle.setText("Enter a password");
-
-                    builder.setPositiveButton("OK", null);
-                    builder.show();
+                    PopupUtils.showCustomDialog(Create_New_Wallet.this, "", getString(R.string.message_enter_password), R.string.yes, null);
                 }
             }
         });

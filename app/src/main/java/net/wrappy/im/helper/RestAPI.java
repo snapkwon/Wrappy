@@ -71,6 +71,8 @@ public class RestAPI {
     public static String POST_CHANGE_QUESTION_CHECK = root_url_dev + "member/security/check";
     public static String PUT_CHANGE_SECURITY_QUESTION = root_url_dev + "member/security/";
     public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url_dev + "/member/%s/security/password/reset";
+    public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
+    public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);

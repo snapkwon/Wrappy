@@ -860,7 +860,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Imps.Provider._ID,
                 Imps.Provider.ACTIVE_ACCOUNT_ID,
                 Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
-                Imps.Provider.ACTIVE_ACCOUNT_NICKNAME
+                Imps.Provider.ACTIVE_ACCOUNT_NICKNAME,
+                Imps.Provider.ACTIVE_ACCOUNT_USERNAME
 
         };
 

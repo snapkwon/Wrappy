@@ -20,6 +20,7 @@ import android.widget.TextView;
 import net.wrappy.im.GethService.GethLightService;
 import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.R;
+import net.wrappy.im.util.PopupUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -184,52 +185,6 @@ public class Welcome_Wallet_Fragment extends Fragment {
             out.close();
         } catch (IOException e) {
 
-        }
-    }
-
-    private void importFile(Uri fileUri) {
-
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            //Wallet wallet = Wallet.getInstance(getParentActivity().getFilesDir(), getParentActivity().getAssets());
-            ContentResolver content = getActivity().getContentResolver();
-            in = content.openInputStream(fileUri);
-            //in = assetManager.open(filename);
-            File file= new File(fileUri.getPath());
-            File outFile = new File(Wallet.getKeystorePath(getActivity().getFilesDir()), file.getName());
-            outFile.getParentFile().mkdirs();
-            out = new FileOutputStream(outFile);
-            copyFile(in, out);
-        } catch(IOException e) {
-            //Log.e("tag", "Failed to copy asset file: " + filename, e);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            final View dialogView = inflater.inflate(net.wrappy.im.R.layout.custom_alert_dialog, null);
-            builder.setView(dialogView);
-
-            final TextView tvTitle = (TextView) dialogView.findViewById(net.wrappy.im.R.id.texttitlealert);
-            tvTitle.setText("Failed to import , please try again");
-
-            builder.setPositiveButton("OK", null);
-            builder.show();
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-            //presentFragment(new WalletFragment(),true);
         }
     }
 

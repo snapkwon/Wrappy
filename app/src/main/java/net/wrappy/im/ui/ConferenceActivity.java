@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import net.wrappy.im.BuildConfig;
 
@@ -18,6 +20,8 @@ public class ConferenceActivity extends JitsiMeetActivity {
     private static final String AUDIO_MUTED = "startWithAudioMuted";
     private static final String VIDEO_MUTED = "startWithVideoMuted";
     private static final String ROOM_ID = "roomId";
+
+    private int numberParticipants = 0;
 
     public static void startVideoCall(Context context, String roomId) {
         startConference(context, roomId, false);
@@ -74,6 +78,23 @@ public class ConferenceActivity extends JitsiMeetActivity {
                 }
 
                 @Override
+                public void onParticipantJoined(Map<String, Object> data) {
+                    on("PARTICIPANT_JOINED", data);
+                    if (data.containsKey("url")) {
+                        numberParticipants++;
+                    }
+                }
+
+                @Override
+                public void onParticipantLeft(Map<String, Object> data) {
+                    on("PARTICIPANT_LEFT", data);
+                    numberParticipants--;
+                    if (numberParticipants == 0) {
+                        finish();
+                    }
+                }
+
+                @Override
                 public void onConferenceWillJoin(Map<String, Object> data) {
                     on("CONFERENCE_WILL_JOIN", data);
                 }
@@ -101,6 +122,9 @@ public class ConferenceActivity extends JitsiMeetActivity {
         // about what we want anyway.
         setWelcomePageEnabled(false);
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         if (intent != null) {
             Bundle config = new Bundle();
