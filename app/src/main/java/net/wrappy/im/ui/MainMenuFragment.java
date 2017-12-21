@@ -73,34 +73,34 @@ public class MainMenuFragment extends Fragment {
         //  finish();
     }
 
-    @OnClick({R.id.txtMainMenuNewGroup, R.id.txtMainMenuContact, R.id.txtMainMenuNewList, R.id.txtMainMenuSettings, R.id.txtMainMenuAboutUs, R.id.txtMainMenuFAQ, R.id.txtMainMenuLogout})
+    @OnClick({R.id.lnMainMenuNewGroup, R.id.lnMainMenuContact, R.id.lnMainMenuNewList, R.id.lnMainMenuSettings, R.id.lnMainMenuAboutUs, R.id.lnMainMenuFAQ, R.id.lnMainMenuLogout})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.txtMainMenuNewGroup:
+            case R.id.lnMainMenuNewGroup:
                 Intent intentGroup = new Intent(getActivity(), ContactsPickerActivity.class);
                 intentGroup.putExtra("isGroup", true);
                 getActivity().startActivityForResult(intentGroup, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
-            case R.id.txtMainMenuContact:
+            case R.id.lnMainMenuContact:
                 Intent intent = new Intent(getActivity(), ContactsPickerActivity.class);
                 getActivity().startActivityForResult(intent, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
-            case R.id.txtMainMenuNewList:
+            case R.id.lnMainMenuNewList:
                 AppFuncs.alert(getActivity(), "Developing", true);
                 break;
-            case R.id.txtMainMenuSettings:
+            case R.id.lnMainMenuSettings:
                 Intent sintent = new Intent(getActivity(), SettingActivity.class);
                 getActivity().startActivityForResult(sintent, MainActivity.REQUEST_CHANGE_SETTINGS);
                 break;
-            case R.id.txtMainMenuAboutUs:
+            case R.id.lnMainMenuAboutUs:
                 Intent aboutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://proteusion.com/en/about/"));
                 startActivity(aboutIntent);
                 break;
-            case R.id.txtMainMenuFAQ:
+            case R.id.lnMainMenuFAQ:
                 Intent faqIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.zondir.jp/en/wrappy"));
                 startActivity(faqIntent);
                 break;
-            case R.id.txtMainMenuLogout:
+            case R.id.lnMainMenuLogout:
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
                 BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
                 sheetCells.add(sheetCell);

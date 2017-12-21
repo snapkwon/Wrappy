@@ -161,7 +161,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
 
     }
-
+    int time = 0;
     private void postDataForForgetPassword(JsonObject json) {
         RestAPI.apiPOST(getActivity(),RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(),Store.USERNAME)),json)
                 .setCallback(new FutureCallback<Response<String>>() {
@@ -172,6 +172,10 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                         if (!result.getResult().isEmpty())
                             appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
                     } else {
+                        if (time > 2) {
+                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
+                        }
+                        time++;
                         AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
                     }
                 }
