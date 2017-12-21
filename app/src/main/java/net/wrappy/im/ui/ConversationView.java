@@ -394,6 +394,7 @@ public class ConversationView {
     public void updateStatusAddContact() {
         btnAddContact.setVisibility(View.GONE);
         txtInviteStatus.setVisibility(View.VISIBLE);
+        imgStatus.setBackgroundResource(R.drawable.waiting);
     }
 
     private int getOtrPolicy() {
