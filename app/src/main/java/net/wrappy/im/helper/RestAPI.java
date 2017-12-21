@@ -19,6 +19,9 @@ import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.security.KeyManagementException;

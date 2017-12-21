@@ -18,6 +18,7 @@ public class WpKMemberDto extends T {
     private String gender;
     private Avatar avatar;
     private Banner banner;
+    private String reference;
     @SerializedName("wpKAuthList")
     private ArrayList<WpKAuthDto> wpKAuthDtoList;
 
@@ -97,6 +98,14 @@ public class WpKMemberDto extends T {
 
     public void setBanner(Banner banner) {
         this.banner = banner;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public WpKAuthDto getXMPPAuthDto() {
