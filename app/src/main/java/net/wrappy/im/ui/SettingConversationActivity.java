@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -25,6 +24,7 @@ import android.widget.Switch;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class SettingConversationActivity extends AppCompatActivity {
@@ -103,8 +102,8 @@ public class SettingConversationActivity extends AppCompatActivity {
 
         try {
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-            if (getSession() != null) {
-                mGroupOwner = getSession().getGroupChatOwner();
+            if (mSession != null) {
+                mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
             }
@@ -135,12 +134,7 @@ public class SettingConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnCheckedChanged(R.id.switch_notification)
-    public void onCheckChangedNotification(CompoundButton p0, boolean p1) {
-        setMuted(!p1);
-    }
-
-    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
+    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.switch_notification})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_change_background_setting:
@@ -148,20 +142,23 @@ public class SettingConversationActivity extends AppCompatActivity {
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
             case R.id.layout_leave_setting:
-                clearHistory();
-                leaveGroup();
+                if (leaveGroup())
+                    clearHistory();
+                else AppFuncs.alert(this, "Could not leave group", true);
                 break;
             case R.id.layout_clean_setting:
-                int result = clearHistory();
-                if (result > 0) {
-                    finish();
-                }
+                clearHistory();
+                break;
+            case R.id.switch_notification:
+                setMuted(!isMuted());
+                switch_notification.setChecked(!isMuted());
                 break;
         }
     }
 
-    private int clearHistory() {
-        return Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+    private void clearHistory() {
+        Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+        finish();
     }
 
     boolean isMuted() {
@@ -178,8 +175,9 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     public void setMuted(boolean muted) {
         try {
-            if (getSession() != null)
+            if (getSession() != null) {
                 getSession().setMuted(muted);
+            }
         } catch (RemoteException re) {
             re.printStackTrace();
         }
@@ -187,10 +185,16 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     public IChatSession getSession() {
         net.wrappy.im.util.Debug.d("mSession " + mSession);
+        if (mSession == null)
+            try {
+                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         return mSession;
     }
 
-    private void leaveGroup() {
+    private boolean leaveGroup() {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
@@ -205,11 +209,13 @@ public class SettingConversationActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                return true;
             }
 
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error leaving group", e);
         }
+        return false;
     }
 
     /**
