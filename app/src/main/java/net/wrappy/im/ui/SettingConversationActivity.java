@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class SettingConversationActivity extends AppCompatActivity {
@@ -101,13 +103,15 @@ public class SettingConversationActivity extends AppCompatActivity {
 
         try {
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-            if (mSession != null) {
-                mGroupOwner = mSession.getGroupChatOwner();
+            if (getSession() != null) {
+                mGroupOwner = getSession().getGroupChatOwner();
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
             }
         } catch (RemoteException e) {
         }
+
+        switch_notification.setChecked(!isMuted());
 
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
@@ -131,20 +135,59 @@ public class SettingConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting})
+    @OnCheckedChanged(R.id.switch_notification)
+    public void onCheckChangedNotification(CompoundButton p0, boolean p1) {
+        setMuted(!p1);
+    }
+
+    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
+            case R.id.layout_leave_setting:
+                clearHistory();
+                leaveGroup();
+                break;
             case R.id.layout_clean_setting:
-                int result = Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+                int result = clearHistory();
                 if (result > 0) {
                     finish();
                 }
                 break;
         }
+    }
+
+    private int clearHistory() {
+        return Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+    }
+
+    boolean isMuted() {
+        try {
+            if (getSession() != null)
+                return getSession().isMuted();
+            else
+                return false;
+        } catch (RemoteException re) {
+            re.printStackTrace();
+            return false;
+        }
+    }
+
+    public void setMuted(boolean muted) {
+        try {
+            if (getSession() != null)
+                getSession().setMuted(muted);
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+    }
+
+    public IChatSession getSession() {
+        net.wrappy.im.util.Debug.d("mSession " + mSession);
+        return mSession;
     }
 
     private void leaveGroup() {
