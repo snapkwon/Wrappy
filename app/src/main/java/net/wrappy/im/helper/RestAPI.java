@@ -19,6 +19,9 @@ import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.security.KeyManagementException;
@@ -41,15 +44,16 @@ public class RestAPI {
     private static int TIME_OUT = 12000;
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
+   // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
     public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
-    public static String POST_REFRESH_TOKEN = root_url + "/oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
+    public static String POST_REFRESH_TOKEN = root_url + "oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
-    public static String POST_REGISTER_DEV = root_url_dev + "member/registration";
+    public static String POST_REGISTER_DEV = root_url + "member/registration";
     public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     public static String POST_PHOTO = root_url + "kernal/asset/retain/";
@@ -74,6 +78,13 @@ public class RestAPI {
     public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
     public static String GET_POPUP_NOTICE = root_url_dev + "kernal/notice";
+
+    private static int POST_METHOD = 0;
+    private static int DELETE_METHOD = 1;
+    private static int GET_METHOD = 2;
+
+    public static int NUMBER_REQUEST_TOKEN =3;
+
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
@@ -128,12 +139,33 @@ public class RestAPI {
 
     public interface RestAPIListenner {
         public void OnComplete(int httpCode, String error, String s);
+        //public void OnTokenInvalid(String url);
     }
 
 
     public static JsonElement getData(JsonObject jsonObject) {
         return jsonObject.get("data");
     }
+
+    public static boolean checkAuthenticationCode(int code) {
+        return ((code == 401)) ? true : false;
+    }
+
+    public  static boolean checkExpiredtoken(String s)
+    {
+        JSONObject mainObject = null;
+        try {
+            mainObject = new JSONObject(s);
+            String  errorstatus = mainObject.getString("error");
+            if(errorstatus.equals("invalid_token")) {
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public static boolean checkHttpCode(int code) {
         return ((code == 200) || (code == 201)) ? true : false;
@@ -182,6 +214,14 @@ public class RestAPI {
             ex.printStackTrace();
         }
     }
+ /*   private static boolean checkOauth(String url) {
+        String header = Store.getStringData(context, WpkToken.STORE_TOKEN_TYPE) + " " + Store.getStringData(context, WpkToken.STORE_ACCESS_TOKEN);
+        if (url.contains("oauth/token?grant_type=password") || url.startsWith(POST_REGISTER)) {
+            header = "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw";
+        }
+        return header;
+    }
+*/
 
     private static String getHeaderHttps(Context context, String url) {
         String header = Store.getStringData(context, WpkToken.STORE_TOKEN_TYPE) + " " + Store.getStringData(context, WpkToken.STORE_ACCESS_TOKEN);
@@ -212,12 +252,21 @@ public class RestAPI {
         return getIon(context,url,"DELETE").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
     }
 
-    public static void PostDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+    public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
         apiPOST(context,url,jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
-                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                    if((checkAuthenticationCode(result.getHeaders().code())))
+                    {
+                        if(checkExpiredtoken(result.getResult())) {
+                            refreshTokenHttps(context, jsonObject, url, listenner, POST_METHOD);
+                        }
+                        
+                    }
+                    else {
+                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                    }
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -226,12 +275,21 @@ public class RestAPI {
         });
     }
 
-    public static void DeleteDataWrappy(Context context, JsonObject jsonObject, String url, final RestAPIListenner listenner) {
+    public static void DeleteDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
         apiDELETE(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
-                    listenner.OnComplete((result!=null) ? result.getHeaders().code() : 0,(e!=null)? e.getLocalizedMessage() : null,(result!=null) ? result.getResult() : null);
+                    if((checkAuthenticationCode(result.getHeaders().code())))
+                    {
+                        if(checkExpiredtoken(result.getResult())) {
+                            refreshTokenHttps(context, jsonObject, url, listenner, DELETE_METHOD);
+                        }
+
+                    }
+                    else {
+                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                    }
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -240,11 +298,21 @@ public class RestAPI {
         });
     }
 
-    public static void GetDataWrappy(Context context, String url, final RestAPIListenner listenner) {
+    public static void GetDataWrappy(final Context context, final String url, final RestAPIListenner listenner) {
         apiGET(context,url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                if(result!=null && (checkAuthenticationCode(result.getHeaders().code())))
+                {
+                    if(checkExpiredtoken(result.getResult()))
+                    {
+                        refreshTokenHttps(context, null, url, listenner, GET_METHOD);
+                    }
+
+                }
+                else {
+                    listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                }
             }
         });
     }
@@ -285,22 +353,52 @@ public class RestAPI {
                 .asString().withResponse();
     }
 
+    static int numberRefreshToken =0;
 
-    public static void refreshTokenHttps(final Context context) {
-        Ion.with(context).load(refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+    public static void refreshTokenHttps(final Context context, final JsonObject json, final String url, final RestAPIListenner listenner,final int method) {
+        final String header = getHeaderHttps(context,url);
+
+        Ion.with(context).load("POST",refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
                     int httpCode = (result != null) ? result.getHeaders().code() : 0;
                     String error = (e != null) ? e.getLocalizedMessage() : "";
+                    if((checkAuthenticationCode(httpCode)))
+                    {
+                        listenner.OnComplete(httpCode,  null, null);
+                        return;
+                    }
                     if (!RestAPI.checkHttpCode(httpCode)) {
                         AppFuncs.alert(context, error, true);
+                        if(numberRefreshToken >=NUMBER_REQUEST_TOKEN)
+                        {
+                            numberRefreshToken = 0;
+                            listenner.OnComplete(-1, "can not refresh access token : please retry!", null);
+
+                        }
+                        else {
+                            numberRefreshToken++;
+                            refreshTokenHttps(context, json, url, listenner,method);
+                        }
                         return;
                     }
                     JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(context);
+                    if(method == POST_METHOD) {
+                        PostDataWrappy(context, json, url, listenner);
+                    }
+                    else if(method == DELETE_METHOD)
+                    {
+                        DeleteDataWrappy( context, json, url, listenner);
+                    }
+                    else if(method == GET_METHOD)
+                    {
+                        GetDataWrappy(context,url,listenner);
+                    }
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

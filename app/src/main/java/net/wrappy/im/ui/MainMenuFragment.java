@@ -1,15 +1,19 @@
 package net.wrappy.im.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
@@ -30,15 +34,44 @@ import butterknife.OnClick;
 public class MainMenuFragment extends Fragment {
 
     View mainView;
+    MainActivity mainActivity;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.main_menu_fragment, null);
         ButterKnife.bind(this, mainView);
+        mainActivity = (MainActivity)getActivity();
         return mainView;
     }
 
+    private void confirmDeleteAccount(int mAccountId,int mProviderId) {
+
+        //need to delete
+        ((ImApp) getActivity().getApplication()).deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
+
+       // ((ImApp) getActivity().getApplication()).resetDB();
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
+        getActivity().startActivity(mainIntent);
+        System.exit(0);
+
+       /* Intent i =  getActivity().getBaseContext().getPackageManager().getLaunchIntentForPackage(  getActivity().getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);*/
+
+
+
+        // Intent intent = new Intent(AccountSettingsActivity.this, IntroActivity.class);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //startActivity(intent);
+
+        //  finish();
+    }
 
     @OnClick({R.id.txtMainMenuNewGroup, R.id.txtMainMenuContact, R.id.txtMainMenuNewList, R.id.txtMainMenuSettings, R.id.txtMainMenuAboutUs, R.id.txtMainMenuFAQ, R.id.txtMainMenuLogout})
     public void onClick(View v) {
@@ -77,6 +110,7 @@ public class MainMenuFragment extends Fragment {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
+   confirmDeleteAccount(mainActivity.getDefaultAcountid(),mainActivity.getDefaultProviderid());
                             AppFuncs.alert(getActivity(), "Logout this device", true);
                         } else if (index == 2) {
                             AppFuncs.alert(getActivity(), "Logout all devices", true);

@@ -352,6 +352,12 @@ public class MainActivity extends BaseActivity {
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
+    public int getDefaultAcountid() {
+        return (int)mApp.getDefaultAccountId();
+    }
+    public int getDefaultProviderid() {
+        return (int)mApp.getDefaultProviderId();
+    }
 
     @Override
     protected void onResume() {
