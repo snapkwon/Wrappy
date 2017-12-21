@@ -1,5 +1,6 @@
 package net.wrappy.im.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import net.java.otr4j.OtrPolicy;
@@ -12,6 +13,8 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.model.Contact;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Created by n8fr8 on 10/23/15.
  */
@@ -21,17 +24,26 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
     long mProviderId;
     long mAccountId;
     int mContactType;
+    private WeakReference<Activity> weakReference;
 
-    public ChatSessionInitTask (ImApp app, long providerId, long accountId, int contactType)
-    {
-        mApp = app;
+    public ChatSessionInitTask(ImApp imApp, long providerId, long accountId, int contactType) {
+        mApp = imApp;
+        init(providerId, accountId, contactType);
+    }
+
+    public ChatSessionInitTask(Activity activity, long providerId, long accountId, int contactType) {
+        mApp = (ImApp) activity.getApplicationContext();
+        weakReference = new WeakReference<>(activity);
+        init(providerId, accountId, contactType);
+    }
+
+    private void init(long providerId, long accountId, int contactType) {
         mProviderId = providerId;
         mAccountId = accountId;
         mContactType = contactType;
     }
 
-    public Long doInBackground (Contact... contacts)
-    {
+    public Long doInBackground(Contact... contacts) {
         if (mProviderId != -1 && mAccountId != -1 && contacts != null) {
             try {
                 IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
@@ -45,28 +57,18 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
                     //always need to recreate the MUC after login
 ////                   if (mContactType == Imps.Contacts.TYPE_GROUP)
- //                     session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
+                    //                     session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
 
-                    if (session == null)
-                    {
+                    if (session == null) {
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                             session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
                         else {
                             session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), false);
                         }
-
                     }
-                    else if (session.isGroupChatSession())
-                    {
-
-                    }
-
                     if (session != null)
                         return (session.getId());
-
-
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -75,9 +77,8 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
         return -1L;
     }
 
-    protected void onPostExecute(Long chatId) {
-
-
+    public boolean isStable() {
+        return weakReference != null && weakReference.get() != null;
     }
 
     private int getOtrPolicy() {

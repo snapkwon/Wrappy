@@ -272,6 +272,7 @@ public class ConversationView {
 
     // array data of spinner language
     private String[] arraySpinner = null;
+    private ChatSessionInitTask task;
 
     public SimpleAlertHandler getHandler() {
         return mHandler;
@@ -3155,22 +3156,18 @@ public class ConversationView {
     private void startChat(String username) {
 
         if (username != null) {
-
-
-            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
+            task = new ChatSessionInitTask(mActivity, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
-
-                    if (chatId != -1 && true) {
+                    if (task.isStable() && chatId != -1) {
                         Intent intent = ConversationDetailActivity.getStartIntent(mActivity);
                         intent.putExtra("id", chatId);
                         mActivity.startActivity(intent);
                     }
-
-                    super.onPostExecute(chatId);
                 }
 
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
+            };
+            task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
 
             mActivity.finish();
         }
