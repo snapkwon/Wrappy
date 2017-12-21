@@ -75,7 +75,7 @@
           	</LinearLayout>
 
 
-    <ImageView
+    <net.wrappy.im.helper.layout.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
