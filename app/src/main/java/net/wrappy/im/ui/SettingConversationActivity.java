@@ -128,9 +128,9 @@ public class SettingConversationActivity extends AppCompatActivity {
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
-        }
 
-        updateMembers();
+            updateMembers();
+        }
     }
 
     private void updateMembers() {
