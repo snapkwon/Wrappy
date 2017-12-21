@@ -140,9 +140,12 @@ public class SettingConversationActivity extends AppCompatActivity {
         setMuted(!p1);
     }
 
-    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
+    @OnClick({R.id.layout_search_setting,R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.layout_search_setting:
+              searchActive();
+                break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
@@ -188,6 +191,14 @@ public class SettingConversationActivity extends AppCompatActivity {
     public IChatSession getSession() {
         net.wrappy.im.util.Debug.d("mSession " + mSession);
         return mSession;
+    }
+    private void searchActive() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", ConversationDetailActivity.TYPE_SEARCH);
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+        this.setResult(Activity.RESULT_OK, intent);
+        this.finish();
     }
 
     private void leaveGroup() {
@@ -262,6 +273,7 @@ public class SettingConversationActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                     Bundle bundle = new Bundle();
+                    bundle.putInt("type", ConversationDetailActivity.TYPE_REQUEST_CHANGE_BACKGROUND);
                     bundle.putString("imagePath", mImagePath[i]);
 
                     Intent intent = new Intent();
