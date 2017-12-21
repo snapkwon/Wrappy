@@ -50,13 +50,10 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Imps;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.BaseActivity;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.Languages;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -798,20 +795,20 @@ public class OnboardingActivity extends BaseActivity {
                     mCropImageView.setImageBitmap(bmpThumbnail);
 
                     // Use the Builder class for convenient dialog construction
-                    PopupUtils.showCustomViewDialog(OnboardingActivity.this, mCropImageView, R.string.yes, R.string.cancel, new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
-                            showInviteScreen();
-
-                            delete(mOutputFileUri);
-                        }
-                    }, new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            delete(mOutputFileUri);
-                        }
-                    });
+//                    PopupUtils.showCustomViewDialog(OnboardingActivity.this, mCropImageView, R.string.yes, R.string.cancel, new OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            setAvatar(mCropImageView.getCroppedImage(), mNewAccount);
+//                            showInviteScreen();
+//
+//                            delete(mOutputFileUri);
+//                        }
+//                    }, new OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            delete(mOutputFileUri);
+//                        }
+//                    });
                 } catch (IOException ioe) {
                     Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
                 }
@@ -819,28 +816,28 @@ public class OnboardingActivity extends BaseActivity {
 
         }
     }
-
-
-    private void setAvatar(Bitmap bmp, OnboardingAccount account) {
-
-        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
-        mImageAvatar.setImageDrawable(avatar);
-
-        final ImApp app = ((ImApp) getApplication());
-
-        try {
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-
-            byte[] avatarBytesCompressed = stream.toByteArray();
-            String avatarHash = "nohash";
-
-            DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarBytesCompressed, avatarHash, account.username + '@' + account.domain);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
-    }
+//
+//
+//    private void setAvatar(Bitmap bmp, OnboardingAccount account) {
+//
+//        RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
+//        mImageAvatar.setImageDrawable(avatar);
+//
+//        final ImApp app = ((ImApp) getApplication());
+//
+//        try {
+//
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+//
+//            byte[] avatarBytesCompressed = stream.toByteArray();
+//            String avatarHash = "nohash";
+//
+//            DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarBytesCompressed, avatarHash, account.username + '@' + account.domain);
+//        } catch (Exception e) {
+//            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+//        }
+//    }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();

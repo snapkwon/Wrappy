@@ -49,7 +49,7 @@ public class RestAPI {
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
     public static String POST_REFRESH_TOKEN = root_url + "/oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
-    public static String POST_REGISTER_DEV = root_url_dev + "member/registration";
+    public static String POST_REGISTER_DEV = root_url + "member/registration";
     public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     public static String POST_PHOTO = root_url + "kernal/asset/retain/";
@@ -57,23 +57,22 @@ public class RestAPI {
     public static String PHOTO_REFERENCE = "reference";
     public static String PHOTO_AVATAR = "AVATAR";
     public static String PHOTO_BRAND = "BRAND";
-    public static String POST_UPDATE_EMAIL_USERNAME = "http://www.mocky.io/v2/5a0e8572300000de204335a8";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
     public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
     public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
-    public static String GET_FORGET_PASS_SEND_EMAIL = root_url_dev + "member/%s/%s/password/mail";
-    public static String GET_COUNTRY_CODES = root_url_dev + "master/country";
-    public static String GET_TYPE_ROSTER = root_url_dev + "chat/roster/group/type";
-    public static String POST_ROSTER_CREATE = root_url_dev + "chat/roster/group/add";
+    public static String GET_FORGET_PASS_SEND_EMAIL = root_url + "member/%s/%s/password/mail";
+    public static String GET_COUNTRY_CODES = root_url + "master/country";
+    public static String GET_TYPE_ROSTER = root_url + "chat/roster/group/type";
+    public static String POST_ROSTER_CREATE = root_url + "chat/roster/group/add";
     public static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
-    public static String POST_CHANGE_QUESTION_CHECK = root_url_dev + "member/security/check";
-    public static String PUT_CHANGE_SECURITY_QUESTION = root_url_dev + "member/security/";
-    public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url_dev + "/member/%s/security/password/reset";
-    public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
-    public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
-    public static String GET_POPUP_NOTICE = root_url_dev + "kernal/notice";
+    public static String POST_CHANGE_QUESTION_CHECK = root_url + "member/security/check";
+    public static String PUT_CHANGE_SECURITY_QUESTION = root_url + "member/security/";
+    public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
+    public static String POST_CHECK_OBJECTIONABLE = root_url + "chat/check-objectionable";
+    public static String POST_REPORT_MESSAGE = root_url + "chat/report";
+    public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
@@ -184,6 +183,7 @@ public class RestAPI {
         if (url.contains("oauth/token?grant_type=password") || url.startsWith(POST_REGISTER)) {
             header = "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw";
         }
+        AppFuncs.log("Header: " + header);
         return header;
     }
 

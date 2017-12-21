@@ -3,8 +3,6 @@ package net.wrappy.im.tasks;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -14,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -23,18 +22,15 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IContactList;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+
 import org.json.JSONException;
 
-import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 5/1/17.
@@ -181,7 +177,6 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                 mConn.broadcastMigrationIdentity(newJabberId);
             }
 
-            migrateAvatars(username, newJabberId);
             mApp.setDefaultAccount(mNewAccount.providerId, mNewAccount.accountId);
 
             //logout of existing account
@@ -308,52 +303,5 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         ContentValues values = new ContentValues();
         values.put(Imps.Account.KEEP_SIGNED_IN, signin);
         mContext.getContentResolver().update(mAccountUri, values, null, null);
-    }
-
-    private void migrateAvatars (String oldUsername, String newUsername)
-    {
-
-        try {
-
-            //first copy the old avatar over to the new account
-            byte[] oldAvatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(),oldUsername);
-            if (oldAvatar != null)
-            {
-                setAvatar(newUsername, oldAvatar);
-            }
-
-            //now change the older avatar, so the vcard gets reloaded
-            Bitmap bitmap = BitmapFactory.decodeStream(mContext.getAssets().open("stickers/olo and shimi/4greeting.png"));
-            setAvatar(oldUsername, bitmap);
-        }
-        catch (Exception ioe)
-        {
-            ioe.printStackTrace();
-        }
-    }
-
-    private void setAvatar(String address, Bitmap bmp) {
-
-        try {
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-
-            byte[] avatarBytesCompressed = stream.toByteArray();
-            String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
-    }
-
-    private void setAvatar(String address, byte[] avatarBytesCompressed) {
-
-        try {
-            String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
     }
 }

@@ -82,20 +82,26 @@ public class ContactAdapter
             line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(wpKMemberDto.getReference()))
-                RestAPI.getBitmapFromUrl(mContext,wpKMemberDto.getReference()).setCallback(new FutureCallback<Bitmap>() {
-                    @Override
-                    public void onCompleted(Exception e, Bitmap result) {
-                        if (result!=null) {
-                            mAvatar.setImageBitmap(result);
+            if (wpKMemberDto.getAvatar()!=null) {
+                String reference = wpKMemberDto.getAvatar().getReference();
+                if (!TextUtils.isEmpty(reference))
+                    RestAPI.getBitmapFromUrl(mContext,reference).setCallback(new FutureCallback<Bitmap>() {
+                        @Override
+                        public void onCompleted(Exception e, Bitmap result) {
+                            if (result!=null) {
+                                mAvatar.setImageBitmap(result);
+                            }
                         }
-                    }
-                });
-                //RestAPI.loadImageUrl(mContext,mAvatar,wpKMemberDto.getReference());
-            else {
-                LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
-                mAvatar.setImageDrawable(lavatar);
+                    });
+                    //RestAPI.loadImageUrl(mContext,mAvatar,wpKMemberDto.getReference());
+                else {
+                    LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+                    mAvatar.setImageDrawable(lavatar);
+                }
+            } else {
+
             }
+
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

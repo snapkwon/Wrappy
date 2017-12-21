@@ -440,21 +440,21 @@ public class XmppConnection extends ImConnection {
             }
 
             // If VCard is loaded, then save the avatar to the personal folder.
-            String avatarHash = vCard.getAvatarHash();
-
-            if (avatarHash != null) {
-                byte[] avatarBytes = vCard.getAvatar();
-
-                if (avatarBytes != null) {
-
-                    debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
-                    debug(TAG, "start avatar length: " + avatarBytes.length);
-
-                    DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
-
-                    return true;
-                }
-            }
+//            String avatarHash = vCard.getAvatarHash();
+//
+//            if (avatarHash != null) {
+//                byte[] avatarBytes = vCard.getAvatar();
+//
+//                if (avatarBytes != null) {
+//
+//                    debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
+//                    debug(TAG, "start avatar length: " + avatarBytes.length);
+//
+//                    DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
+//
+//                    return true;
+//                }
+//            }
 
 
         } catch (Exception e) {
