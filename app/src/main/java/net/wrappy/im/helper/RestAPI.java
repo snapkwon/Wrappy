@@ -77,6 +77,8 @@ public class RestAPI {
     public static String POST_CHECK_OBJECTIONABLE = root_url + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url + "chat/report";
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
+    public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
+    public static String DELETE_AVATAR = root_url+ "member/avatar";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -262,7 +264,7 @@ public class RestAPI {
                         if(checkExpiredtoken(result.getResult())) {
                             refreshTokenHttps(context, jsonObject, url, listenner, POST_METHOD);
                         }
-                        
+
                     }
                     else {
                         listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);

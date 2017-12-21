@@ -6,13 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
@@ -38,6 +41,7 @@ import butterknife.OnClick;
 
 public class ProfileFragment extends Fragment {
 
+    private final int AVATAR = 321;
     View mainView;
     AppFuncs appFuncs;
     String jid = "";
@@ -50,6 +54,7 @@ public class ProfileFragment extends Fragment {
     private String reference = "";
     private ImApp mApp;
     private boolean isSelf;
+    Bitmap photoAvatar;
 
     @BindView(R.id.imgProfileHeader)
     ImageView imgProfileHeader;
@@ -61,16 +66,14 @@ public class ProfileFragment extends Fragment {
     AppTextView txtPhone;
     @BindView(R.id.txtProfileEmail)
     AppTextView txtEmail;
-    @BindView(R.id.txtProfileName)
-    AppTextView txtProfileName;
-    @BindView(R.id.btnChangeSecuQuestion)
-    LinearLayout btnChangeSecuQuestion;
-    @BindView(R.id.btnLogout)
-    LinearLayout btnLogout;
+    @BindView(R.id.txtProfileGender)
+    AppTextView txtGender;
     @BindView(R.id.linearForSeft)
     LinearLayout linearForSeft;
     @BindView(R.id.linearForContact)
     LinearLayout linearForContact;
+    @BindView(R.id.btnPhotoCameraAvatar)
+    ImageButton btnPhotoCameraAvatar;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -91,7 +94,7 @@ public class ProfileFragment extends Fragment {
         mApp = (ImApp) getActivity().getApplication();
         appFuncs = AppFuncs.getInstance();
         jid = getArguments().getString("jid");
-        if (jid.isEmpty()) {
+        if (TextUtils.isEmpty(jid)) {
             isSelf = true;
             if (mApp.getDefaultUsername().contains("@")) {
                 jid = mApp.getDefaultUsername().split("@")[0];
@@ -109,7 +112,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void preferenceView() {
-        txtProfileName.setText(mNickname);
+        if (isSelf) {
+            btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
+        }
         getDataMember();
     }
 
@@ -125,6 +130,7 @@ public class ProfileFragment extends Fragment {
                             txtUsername.setText(wpKMemberDto.getIdentifier());
                             txtEmail.setText(wpKMemberDto.getEmail());
                             txtPhone.setText(wpKMemberDto.getMobile());
+                            txtGender.setText(wpKMemberDto.getGender());
                             if (wpKMemberDto.getAvatar()!=null) {
                                 RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getAvatar().getReference()).setCallback(new FutureCallback<Bitmap>() {
                                     @Override
@@ -162,11 +168,49 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @OnClick({R.id.btnProfileEditAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnClick({R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
-        if (view.getId()==R.id.btnProfileEditAvatar) {
-
-        } if (view.getId() == R.id.lnProfileSendMessage) {
+        if (view.getId() == R.id.btnPhotoCameraAvatar) {
+            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+            BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+            sheetCells.add(sheetCell);
+            sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+            sheetCells.add(sheetCell);
+            if (wpKMemberDto!=null) if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())){
+                sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                sheetCells.add(sheetCell);
+            }
+            PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+                @Override
+                public void onSelectBottomSheetCell(int index) {
+                    switch (index) {
+                        case 1:
+                            AppFuncs.openCamera(getActivity(), AVATAR);
+                            break;
+                        case 2:
+                            AppFuncs.openGallery(getActivity(), AVATAR);
+                            break;
+                        case 3:
+                            photoAvatar = null;
+                            imgPhotoAvatar.setImageResource(R.drawable.avatar);
+                            if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                                RestAPI.apiDELETE(getActivity(),RestAPI.DELETE_AVATAR,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Response<String> result) {
+                                        if (result!=null) {
+                                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                AppFuncs.alert(getActivity(),"Remove Avatar Success",true);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            break;
+                        default:
+                    }
+                }
+            }).show();
+        }else if (view.getId() == R.id.lnProfileSendMessage) {
             startChat();
         } else if (view.getId() == R.id.lnProfileChangeQuestion) {
             Intent intent = new Intent(getActivity(), SecurityQuestionActivity.class);
@@ -189,6 +233,50 @@ public class ProfileFragment extends Fragment {
             });
             bottomSheetDialog.show();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==AVATAR) {
+            appFuncs.showProgressWaiting(getActivity());
+            photoAvatar = AppFuncs.getBitmapFromIntentResult(getActivity(),data);
+            RestAPI.uploadFile(getActivity(),AppFuncs.convertBitmapToFile(getActivity(),photoAvatar),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    appFuncs.dismissProgressWaiting();
+                    try {
+                        String reference = RestAPI.getPhotoReference(result.getResult());
+                        wpKMemberDto.getAvatar().setReference(reference);
+                        updateData();
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+            getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                imgPhotoAvatar.setImageBitmap(photoAvatar);
+                                            }
+                                        }
+            );
+
+        }
+    }
+
+    private void updateData() {
+        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
+        RestAPI.apiPUT(getActivity(),RestAPI.GET_MEMBER_INFO,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.alert(getActivity(),"Update Success",true);
+                    }
+                }
+            }
+        });
     }
 
     public void startChat() {

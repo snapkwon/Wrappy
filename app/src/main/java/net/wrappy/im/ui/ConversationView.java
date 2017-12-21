@@ -145,9 +145,8 @@ import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
-import net.wrappy.im.util.PreferenceContract;
-import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.PopupUtils;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
@@ -159,7 +158,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.tornado.android.patternlock.PatternUtils;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -2956,8 +2954,6 @@ public class ConversationView {
                 if (mLastSelectedView != null)
                     tempPacketIDSelect = "";
                 mLastSelectedView.setSelected(false);
-
-
             }
         };
     }
