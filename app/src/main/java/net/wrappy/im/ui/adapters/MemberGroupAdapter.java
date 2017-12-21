@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 
@@ -27,9 +28,9 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private ArrayList<MemberGroupDisplay> mMembers;
     private Context mContext;
 
-    public MemberGroupAdapter(ArrayList<MemberGroupDisplay> mMembers, Context mContext) {
-        this.mMembers = mMembers;
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers) {
         this.mContext = mContext;
+        this.mMembers = mMembers;
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -60,21 +61,28 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         @BindView(R.id.line2)
         TextView line2;
         @BindView(R.id.avatar)
-        ImageView avatar;
+        CircleImageView avatar;
+        @BindView(R.id.avatarCrown)
+        ImageView avatarCrown;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(MemberGroupDisplay groupMemberDisplay) {
-            line1.setText(groupMemberDisplay.getNickname());
-            line2.setText("");
+        public void bind(MemberGroupDisplay member) {
+            line1.setText(member.getNickname());
             int padding = 24;
+
             avatar.setVisibility(View.VISIBLE);
-            if (avatar == null && !TextUtils.isEmpty(groupMemberDisplay.getNickname())) {
-                LetterAvatar la = new LetterAvatar(mContext, groupMemberDisplay.getNickname(), padding);
-                avatar.setImageDrawable(la);
+            LetterAvatar la = new LetterAvatar(mContext, member.getNickname(), padding);
+            avatar.setImageDrawable(la);
+
+            if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
+                            member.getAffiliation().contentEquals("admin"))) {
+                avatarCrown.setVisibility(View.VISIBLE);
+            } else {
+                avatarCrown.setVisibility(View.GONE);
             }
         }
     }

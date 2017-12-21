@@ -29,6 +29,7 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -120,9 +121,11 @@ public class SettingConversationActivity extends AppCompatActivity {
             memberGroupDisplays = new ArrayList<>();
 
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(memberGroupDisplays, this);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
         }
+
+        updateMembers();
     }
 
     private void updateMembers() {
@@ -141,10 +144,39 @@ public class SettingConversationActivity extends AppCompatActivity {
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
                 ContentResolver cr = getContentResolver();
                 Cursor c = cr.query(memberUri, projection, null, null, null);
+
                 if (c != null) {
+                    int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
+                    int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
+                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+
+                    while (c.moveToNext()) {
+                        MemberGroupDisplay member = new MemberGroupDisplay();
+                        member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
+                        member.setNickname(c.getString(colNickname));
+                        member.setRole(c.getString(colRole));
+                        member.setEmail(ImApp.getEmail(member.getUsername()));
+                        member.setAffiliation(c.getString(colAffiliation));
+
+                        members.add(member);
+                    }
+                    c.close();
+                }
+                memberGroupDisplays.clear();
+                memberGroupDisplays.addAll(members);
+
+                if (!Thread.currentThread().isInterrupted()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mGroupRecycleView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
                 }
             }
         });
+        mThreadUpdate.start();
     }
 
     @Override
