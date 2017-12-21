@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class SettingConversationActivity extends AppCompatActivity {
@@ -134,7 +136,12 @@ public class SettingConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.switch_notification})
+    @OnCheckedChanged({R.id.switch_notification})
+    public void onCheckChanged(CompoundButton buttonView, boolean isChecked) {
+        setMuted(!isChecked);
+    }
+
+    @OnClick({R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_change_background_setting:
@@ -148,10 +155,6 @@ public class SettingConversationActivity extends AppCompatActivity {
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
-                break;
-            case R.id.switch_notification:
-                setMuted(!isMuted());
-                switch_notification.setChecked(!isMuted());
                 break;
         }
     }
