@@ -1677,7 +1677,7 @@ public class Imps {
         /**
          * The hash of the image data <P>Type: TEXT</P>
          */
-        String HASH = "hash";
+        String BANNER = "banner";
 
         /**
          * raw image data <P>Type: BLOB</P>

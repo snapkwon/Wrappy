@@ -3,8 +3,6 @@ package net.wrappy.im.tasks;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -24,7 +22,6 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IContactList;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
@@ -181,7 +178,6 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                 mConn.broadcastMigrationIdentity(newJabberId);
             }
 
-            migrateAvatars(username, newJabberId);
             mApp.setDefaultAccount(mNewAccount.providerId, mNewAccount.accountId);
 
             //logout of existing account

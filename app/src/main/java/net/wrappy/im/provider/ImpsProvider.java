@@ -415,7 +415,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             db.execSQL("CREATE TABLE " + TABLE_AVATARS + " (" + "_id INTEGER PRIMARY KEY,"
                     + "contact TEXT," + "provider_id INTEGER," + "account_id INTEGER,"
-                    + "hash TEXT," + "data BLOB," + // raw image data
+                    + "banner TEXT," + "data Text," + // raw image data
                     "UNIQUE (account_id, contact)" + ");");
 
             db.execSQL("CREATE TABLE " + TABLE_PROVIDER_SETTINGS + " ("
