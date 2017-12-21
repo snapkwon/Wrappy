@@ -71,7 +71,6 @@ public class ConversationListFragment extends Fragment {
     private View mEmptyView;
     private View mEmptyViewImage;
 
-    private View mUpgradeView;
     private TextView mUpgradeDesc;
     private ImageView mUpgradeImage;
     private Button mUpgradeAction;
@@ -87,7 +86,6 @@ public class ConversationListFragment extends Fragment {
         mRecView = (RecyclerView) view.findViewById(R.id.recyclerview);
         mEmptyView = view.findViewById(R.id.empty_view);
 
-        mUpgradeView = view.findViewById(R.id.upgrade_view);
         mUpgradeImage = (ImageView) view.findViewById(R.id.upgrade_view_image);
         mUpgradeDesc = (TextView) view.findViewById(R.id.upgrade_view_text);
         mUpgradeAction = (Button) view.findViewById(R.id.upgrade_action);
@@ -116,8 +114,6 @@ public class ConversationListFragment extends Fragment {
          int themeColorBg = settings.getInt("themeColorBg",-1);
          view.setBackgroundColor(themeColorBg);
          */
-
-        checkUpgrade();
 
         return view;
     }
@@ -578,13 +574,6 @@ public class ConversationListFragment extends Fragment {
 
     }
 
-    private void checkUpgrade() {
-        if (((ImApp) getActivity().getApplication()).needsAccountUpgrade()) {
-            mUpgradeView.setVisibility(View.VISIBLE);
-        }
-
-    }
-
     private MigrateAccountTask.MigrateAccountListener mMigrateTaskListener;
 
     private synchronized void doUpgrade() {
@@ -601,10 +590,6 @@ public class ConversationListFragment extends Fragment {
                     mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
-
-                            mUpgradeView.setVisibility(View.GONE);
-
                         }
                     });
                 }
@@ -617,9 +602,6 @@ public class ConversationListFragment extends Fragment {
                     mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
-                            mUpgradeView.setVisibility(View.GONE);
-
                         }
                     });
                 }

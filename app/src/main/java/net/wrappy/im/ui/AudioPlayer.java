@@ -17,6 +17,7 @@ import android.widget.TextView;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ui.widgets.VisualizerView;
 import net.wrappy.im.util.HttpMediaStreamer;
+import net.wrappy.im.util.Utils;
 
 public class AudioPlayer {
     private static final String TAG = "AudioPlayer";
@@ -165,7 +166,7 @@ public class AudioPlayer {
 
                 mPrepared = true;
                 mDuration = mediaPlayer.getDuration();
-                mInfoView.setText(String.valueOf(Math.round(getDuration() * 2 / 2000.0) + "secs"));// round 3/4
+                mInfoView.setText(Utils.formatDurationMedia(getDuration()));
 
                 if (mPlayOnPrepare)
                     play();

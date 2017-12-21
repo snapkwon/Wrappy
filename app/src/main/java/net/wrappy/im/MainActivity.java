@@ -98,17 +98,22 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 import net.wrappy.im.util.Utils;
 import net.wrappy.im.util.XmppUriHelper;
+
+import org.ethereum.geth.Hash;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import info.guardianproject.iocipher.VirtualFileSystem;
@@ -230,7 +235,14 @@ public class MainActivity extends BaseActivity {
                     Gson gson = new Gson();
                     ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>() {
                     }.getType());
-                    PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+
+                    Set<String> references = PreferenceUtils.getStringSet("reference", new HashSet<String>(), MainActivity.this);
+
+                    if (!references.contains(popUpNotices.get(0).getReference())) {
+                        references.add(popUpNotices.get(0).getReference());
+                        PreferenceUtils.putStringSet("reference", references, MainActivity.this);
+                        PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -361,10 +373,11 @@ public class MainActivity extends BaseActivity {
     }
 
     public int getDefaultAcountid() {
-        return (int)mApp.getDefaultAccountId();
+        return (int) mApp.getDefaultAccountId();
     }
+
     public int getDefaultProviderid() {
-        return (int)mApp.getDefaultProviderId();
+        return (int) mApp.getDefaultProviderId();
     }
 
     @Override

@@ -394,6 +394,7 @@ public class ConversationView {
     public void updateStatusAddContact() {
         btnAddContact.setVisibility(View.GONE);
         txtInviteStatus.setVisibility(View.VISIBLE);
+        imgStatus.setBackgroundResource(R.drawable.waiting);
     }
 
     private int getOtrPolicy() {
@@ -751,7 +752,7 @@ public class ConversationView {
 
         mActivity = activity;
         mContext = activity;
-        istranslate =      PreferenceUtils.getBoolean("istranslate",
+        istranslate = PreferenceUtils.getBoolean("istranslate",
                 istranslate, mActivity);
         ButterKnife.bind(this, mActivity);
 
@@ -1090,7 +1091,7 @@ public class ConversationView {
                             sendMessage();
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     sendMessage();
                 }
             }
@@ -1297,13 +1298,14 @@ public class ConversationView {
 
                 if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            resendFriendRequest();
-                        }
-                    });
+                    updateStatusAddContact();
+//                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+//                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            resendFriendRequest();
+//                        }
+//                    });
                 } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
                     Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
                     sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
@@ -1313,10 +1315,6 @@ public class ConversationView {
                         }
                     });
                     sb.show();
-                } else
-
-                {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
                 }
             }
         });
@@ -1978,26 +1976,13 @@ public class ConversationView {
     }
 
     void updateWarningView() {
-
-        int visibility = View.GONE;
-        int iconVisibility = View.GONE;
-        boolean isConnected;
-
-
         try {
             checkConnection();
-            isConnected = (mConn == null) ? false : mConn.getState() == ImConnection.LOGGED_IN;
-
         } catch (Exception e) {
-
-            isConnected = false;
         }
 
         if (this.isGroupChat()) {
-
             mComposeMessage.setHint(R.string.this_is_a_group_chat);
-
-
         } else if (mCurrentChatSession != null) {
             IOtrChatSession otrChatSession = null;
 
@@ -2012,8 +1997,6 @@ public class ConversationView {
                         Log.w("Gibber", "Unable to call remote OtrChatSession from ChatView", e);
                     }
                 }
-
-
             } catch (RemoteException e) {
                 LogCleaner.error(ImApp.LOG_TAG, "error getting OTR session in ChatView", e);
             }
@@ -2035,7 +2018,6 @@ public class ConversationView {
                     mSendButton.setImageResource(R.drawable.ic_send_secure);
                 }
 
-
                 if (otrChatSession != null) {
                     try {
                         String rFingerprint = otrChatSession.getRemoteFingerprint();
@@ -2043,10 +2025,6 @@ public class ConversationView {
                     } catch (RemoteException re) {
                     }
                 }
-
-
-                //            mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
-
 
             } else if (mIsStartingOtr) {
 
@@ -2060,13 +2038,8 @@ public class ConversationView {
 
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
                 mComposeMessage.setHint(R.string.compose_hint);
-
-                visibility = View.VISIBLE;
             }
-
         }
-
-
     }
 
     public SessionStatus getOtrSessionStatus() {
@@ -2551,13 +2524,11 @@ public class ConversationView {
                     break;
             }
             resetTranslate();
-           // bodytranslate.clear();
+            // bodytranslate.clear();
         }
 
-        public void resetTranslate()
-        {
-            for(int i =0 ; i < bodytranslate.size() ; i++)
-            {
+        public void resetTranslate() {
+            for (int i = 0; i < bodytranslate.size(); i++) {
                 bodytranslate.get(i).mIstranslate = false;
             }
         }
@@ -2589,7 +2560,7 @@ public class ConversationView {
                 resolveColumnIndex(newCursor);
                 if (newCursor.moveToFirst()) {
                     do {
-                        if(bodytranslate.size() < newCursor.getPosition() +1) {
+                        if (bodytranslate.size() < newCursor.getPosition() + 1) {
                             BodyTranslate data = new BodyTranslate();
                             data.mIstranslate = false;
                             data.mTexttranslate = "";
@@ -2692,7 +2663,7 @@ public class ConversationView {
 
 
         @Override
-        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
+        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
 
             cursor.moveToPosition(position);
 
@@ -2720,7 +2691,8 @@ public class ConversationView {
             messageView.applyStyleColors();
 
             int messageType = cursor.getInt(mTypeColumn);
-            final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;;
+            final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
+            ;
             final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
@@ -2728,7 +2700,7 @@ public class ConversationView {
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, ProfileActivity.class);
                     intent.putExtra("address", address);
-                    intent.putExtra("nickname",nickname);
+                    intent.putExtra("nickname", nickname);
                     mContext.startActivity(intent);
                 }
             });
@@ -2859,6 +2831,7 @@ public class ConversationView {
 
         /**
          * Capture message text to report spam
+         *
          * @param view
          */
         public Bitmap captureView(View view) {
@@ -2886,8 +2859,8 @@ public class ConversationView {
                 MenuInflater inflater = mode.getMenuInflater();
 
                 boolean isLeft = (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED)
-                                || (tempMessageType == Imps.MessageType.INCOMING)
-                                || (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+                        || (tempMessageType == Imps.MessageType.INCOMING)
+                        || (tempMessageType == Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
 
                 if (isLeft) {
                     inflater.inflate(R.menu.menu_each_spam_message, menu);
@@ -3142,7 +3115,6 @@ public class ConversationView {
         ImageView viewImage = (ImageView) mActivity.findViewById(R.id.upgrade_view_image);
         TextView viewDesc = (TextView) mActivity.findViewById(R.id.upgrade_view_text);
         Button buttonAction = (Button) mActivity.findViewById(R.id.upgrade_action);
-        View viewUpgradeClose = mActivity.findViewById(R.id.upgrade_close);
 
         viewNotify.setVisibility(View.VISIBLE);
 
@@ -3154,14 +3126,6 @@ public class ConversationView {
             public void onClick(View view) {
                 viewNotify.setVisibility(View.GONE);
                 startChat(contact.getForwardingAddress());
-            }
-        });
-
-        viewUpgradeClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewNotify.setVisibility(View.GONE);
-                contact.setForwardingAddress(null);
             }
         });
     }
@@ -3335,23 +3299,23 @@ public class ConversationView {
                 case R.id.layout_message_spam:
                 case R.id.layout_message_violence:
 
-                        File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
-                        RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
-                            @Override
-                            public void onCompleted(Exception e, Response<String> result) {
-                                JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
-                                String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+                    File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
+                    RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                            String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
 
-                                if (getArguments() != null) {
+                            if (getArguments() != null) {
 
-                                    String reporter = getArguments().getString("reporter");
-                                    String member = getArguments().getString("member");
-                                    String messageId = getArguments().getString("messageId");
+                                String reporter = getArguments().getString("reporter");
+                                String member = getArguments().getString("member");
+                                String messageId = getArguments().getString("messageId");
 
-                                    sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
-                                }
+                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
                             }
-                        });
+                        }
+                    });
                     dismiss();
                     break;
                 case R.id.layout_message_cancel:

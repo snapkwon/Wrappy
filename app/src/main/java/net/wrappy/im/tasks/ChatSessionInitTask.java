@@ -3,15 +3,12 @@ package net.wrappy.im.tasks;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import net.java.otr4j.OtrPolicy;
 import net.wrappy.im.ImApp;
+import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
-
-import net.wrappy.im.Preferences;
-import net.wrappy.im.model.Contact;
 
 import java.lang.ref.WeakReference;
 
@@ -20,19 +17,16 @@ import java.lang.ref.WeakReference;
  */
 public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
-    ImApp mApp;
-    long mProviderId;
-    long mAccountId;
-    int mContactType;
+    private long mProviderId;
+    private long mAccountId;
+    private int mContactType;
     private WeakReference<Activity> weakReference;
 
-    public ChatSessionInitTask(ImApp imApp, long providerId, long accountId, int contactType) {
-        mApp = imApp;
+    public ChatSessionInitTask(long providerId, long accountId, int contactType) {
         init(providerId, accountId, contactType);
     }
 
     public ChatSessionInitTask(Activity activity, long providerId, long accountId, int contactType) {
-        mApp = (ImApp) activity.getApplicationContext();
         weakReference = new WeakReference<>(activity);
         init(providerId, accountId, contactType);
     }
@@ -46,7 +40,7 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
     public Long doInBackground(Contact... contacts) {
         if (mProviderId != -1 && mAccountId != -1 && contacts != null) {
             try {
-                IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+                IImConnection conn = ImApp.getConnection(mProviderId, mAccountId);
 
                 if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
                     return -1L;
@@ -80,26 +74,4 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
     public boolean isStable() {
         return weakReference != null && weakReference.get() != null;
     }
-
-    private int getOtrPolicy() {
-
-        int otrPolicy = OtrPolicy.OPPORTUNISTIC;
-
-        String otrModeSelect = Preferences.getOtrMode();
-
-        if (otrModeSelect.equals("auto")) {
-            otrPolicy = OtrPolicy.OPPORTUNISTIC;
-        } else if (otrModeSelect.equals("disabled")) {
-            otrPolicy = OtrPolicy.NEVER;
-
-        } else if (otrModeSelect.equals("force")) {
-            otrPolicy = OtrPolicy.OTRL_POLICY_ALWAYS;
-
-        } else if (otrModeSelect.equals("requested")) {
-            otrPolicy = OtrPolicy.OTRL_POLICY_MANUAL;
-        }
-
-        return otrPolicy;
-    }
-
 }
