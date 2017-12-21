@@ -92,8 +92,7 @@
                 style="@style/divider"
                 android:layout_alignLeft="@id/text_delete_setting"
                 android:layout_below="@id/text_delete_setting"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_marginTop="15dp" />
 
         </RelativeLayout>
 

@@ -53,6 +53,8 @@ public class SettingConversationActivity extends AppCompatActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
+    @BindView(R.id.layout_leave_setting)
+    LinearLayout layout_leave_setting;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
 
@@ -122,6 +124,7 @@ public class SettingConversationActivity extends AppCompatActivity {
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
+            layout_leave_setting.setVisibility(View.GONE);
 
             memberGroupDisplays = new ArrayList<>();
 
