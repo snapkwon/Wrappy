@@ -7,15 +7,13 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.model.ImErrorInfo;
+import net.wrappy.im.service.IContactList;
+import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 
 import java.util.List;
-
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
-import net.wrappy.im.service.IContactList;
-import net.wrappy.im.service.IContactListManager;
-
-import net.wrappy.im.model.ImErrorInfo;
 
 /**
  * Created by n8fr8 on 6/9/15.

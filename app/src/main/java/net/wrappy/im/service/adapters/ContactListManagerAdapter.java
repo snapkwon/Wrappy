@@ -743,8 +743,6 @@ public class ContactListManagerAdapter extends
     }
 
     final class SubscriptionRequestListenerAdapter extends ISubscriptionListener.Stub {
-
-
         public void onSubScriptionChanged (final Contact from, long providerId, long accountId, final int subType, final int subStatus)
         {
             //Avoid crash when null adapter
@@ -771,8 +769,6 @@ public class ContactListManagerAdapter extends
             {
                 @Override
                 protected Boolean doInBackground(String... strings) {
-
-
                     try {
                         if (mConn != null) {
                             IContactListManager listManager = mConn.getContactListManager();
@@ -799,17 +795,8 @@ public class ContactListManagerAdapter extends
 
                     } catch (RemoteException e) {
                         Log.e(ImApp.LOG_TAG, "error init otr", e);
-
                     }
-
                     return true;
-                }
-
-                @Override
-                protected void onPostExecute(Boolean success) {
-                    super.onPostExecute(success);
-
-
                 }
             }.execute();
 //            if (!isSubscribed(username)) {

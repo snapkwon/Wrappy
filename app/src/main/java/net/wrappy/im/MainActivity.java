@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,11 +77,9 @@ import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
-import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
-import net.wrappy.im.ui.ContactsListFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
@@ -97,6 +94,7 @@ import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+import net.wrappy.im.util.Utils;
 import net.wrappy.im.util.XmppUriHelper;
 
 import java.io.File;
@@ -219,9 +217,14 @@ public class MainActivity extends BaseActivity {
         RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                Gson gson = new Gson();
-                ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>(){}.getType());
-                PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+                try {
+                    Gson gson = new Gson();
+                    ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>() {
+                    }.getType());
+                    PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -314,7 +317,7 @@ public class MainActivity extends BaseActivity {
         appTextView.setLayoutParams(layoutParams);
         appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
         appTextView.setText(title);
-        appTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+        appTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, isResIcon, 0, 0);
         mTabLayout.getTabAt(index).setCustomView(appTextView);
     }
@@ -934,12 +937,12 @@ public class MainActivity extends BaseActivity {
         if (themeColorHeader != -1) {
 
             if (themeColorText == -1)
-                themeColorText = getContrastColor(themeColorHeader);
+                themeColorText = Utils.getContrastColor(themeColorHeader);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setNavigationBarColor(themeColorHeader);
                 getWindow().setStatusBarColor(themeColorHeader);
-                getWindow().setTitleColor(getContrastColor(themeColorHeader));
+                getWindow().setTitleColor(Utils.getContrastColor(themeColorHeader));
             }
 
 
@@ -966,11 +969,6 @@ public class MainActivity extends BaseActivity {
 //
 //        }
 
-    }
-
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     private void checkCustomFont() {

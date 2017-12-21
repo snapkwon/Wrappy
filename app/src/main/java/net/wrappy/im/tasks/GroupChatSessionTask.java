@@ -132,11 +132,6 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                 dialog.dismiss();
             }
         }
-
-        if (result != null) {
-            //   mHandler.showServiceErrorAlert(result);
-
-        }
     }
 
     private void showChat(long chatId) {

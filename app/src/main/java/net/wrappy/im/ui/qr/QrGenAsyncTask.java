@@ -12,18 +12,20 @@ import com.google.zxing.WriterException;
 import com.google.zxing.encode.Contents;
 import com.google.zxing.encode.QRCodeEncoder;
 
+import java.lang.ref.WeakReference;
+
 public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
     private static final String TAG = "QrGenAsyncTask";
 
-    private final Activity activity;
     private ImageView view;
     private Bitmap qrBitmap;
     private int qrCodeDimension;
+    private WeakReference<Activity> weakReference;
 
     public QrGenAsyncTask(Activity activity, ImageView view, int qrCodeDimension) {
-        this.activity = activity;
         this.view = view;
         this.qrCodeDimension = qrCodeDimension;
+        weakReference = new WeakReference<>(activity);
     }
 
     /*
@@ -54,7 +56,7 @@ public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
             qrCodeDimension = y;
         **/
 
-  //      Log.i(TAG, "generating QRCode Bitmap of " + qrCodeDimension + "x" + qrCodeDimension);
+        //      Log.i(TAG, "generating QRCode Bitmap of " + qrCodeDimension + "x" + qrCodeDimension);
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(qrData, null,
                 Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), qrCodeDimension);
 
@@ -71,7 +73,7 @@ public class QrGenAsyncTask extends AsyncTask<String, Void, Void> {
 
         // If the generation takes too long for whatever reason, then this view, and indeed the entire
         // activity may not be around any more.
-        if (view != null) {
+        if (weakReference.get() != null && view != null) {
             view.setImageBitmap(qrBitmap);
         }
     }
