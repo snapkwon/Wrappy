@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -27,14 +28,14 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.ref.WeakReference;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 5/1/17.
@@ -55,9 +56,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
     Handler mHandler = new Handler();
 
     ArrayList<String> mContacts;
+    private WeakReference<Activity> weakReference;
 
-    public MigrateAccountTask(Activity context, ImApp app, long providerId, long accountId, MigrateAccountListener listener)
-    {
+    public MigrateAccountTask(Activity context, ImApp app, long providerId, long accountId, MigrateAccountListener listener) {
         mContext = context;
         mAccountId = accountId;
         mProviderId = providerId;
@@ -68,6 +69,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         mConn = app.getConnection(providerId, accountId);
 
         mContacts = new ArrayList<>();
+        weakReference = new WeakReference<>(mContext);
     }
 
     @Override
@@ -90,7 +92,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
         if (mNewAccount == null) {
 
-            username = username + '.' + fingerprint.substring(fingerprint.length()-8,fingerprint.length()).toLowerCase();
+            username = username + '.' + fingerprint.substring(fingerprint.length() - 8, fingerprint.length()).toLowerCase();
             mNewAccount = registerNewAccount(nickname, username, password, domain, null);
 
             if (mNewAccount == null)
@@ -98,7 +100,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         }
 
         String newJabberId = mNewAccount.username + '@' + mNewAccount.domain;
-        keyMan.storeKeyPair(newJabberId,keyPair);
+        keyMan.storeKeyPair(newJabberId, keyPair);
 
         //send migration message to existing contacts and/or sessions
         try {
@@ -119,7 +121,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                 }
             }
 
-            String inviteLink = OnboardingManager.generateInviteLink(mContext, newJabberId, fingerprint, nickname,true);
+            String inviteLink = OnboardingManager.generateInviteLink(mContext, newJabberId, fingerprint, nickname, true);
 
             String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + inviteLink;
             IChatSessionManager sessionMgr = mConn.getChatSessionManager();
@@ -157,9 +159,7 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
                     }
 
                 }
-            }
-            else
-            {
+            } else {
                 String[] offlineAddresses = clManager.getOfflineAddresses();
 
                 for (String address : offlineAddresses) {
@@ -192,10 +192,8 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
             return mNewAccount;
 
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error with migration",e);
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error with migration", e);
         }
 
         //failed
@@ -206,36 +204,29 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
     protected void onPostExecute(OnboardingAccount account) {
         super.onPostExecute(account);
 
-
-        if (account == null)
-        {
-            if (mListener != null)
-                mListener.migrateFailed(mProviderId,mAccountId);
+        if (weakReference.get() != null) {
+            if (account == null) {
+                if (mListener != null)
+                    mListener.migrateFailed(mProviderId, mAccountId);
+            } else {
+                if (mListener != null)
+                    mListener.migrateComplete(account);
+            }
         }
-        else
-        {
-            if (mListener != null)
-                mListener.migrateComplete(account);
-        }
-
     }
 
-    private OnboardingAccount registerNewAccount (String nickname, String username, String password, String domain, String server)
-    {
+    private OnboardingAccount registerNewAccount(String nickname, String username, String password, String domain, String server) {
         try {
             OnboardingAccount result = OnboardingManager.registerAccount(mContext, nickname, username, password, domain, server, 5222);
             return result;
-        }
-        catch (JSONException jse)
-        {
+        } catch (JSONException jse) {
 
         }
 
         return null;
     }
 
-    private int addToContactList (IImConnection conn, String address, String otrFingperint, String nickname)
-    {
+    private int addToContactList(IImConnection conn, String address, String otrFingperint, String nickname) {
         int res = -1;
 
         try {
@@ -298,9 +289,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
 
     public interface MigrateAccountListener {
 
-        public void migrateComplete (OnboardingAccount account);
+        public void migrateComplete(OnboardingAccount account);
 
-        public void migrateFailed (long providerId, long accountId);
+        public void migrateFailed(long providerId, long accountId);
     }
 
     private void setKeepSignedIn(final long accountId, boolean signin) {
@@ -310,24 +301,20 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         mContext.getContentResolver().update(mAccountUri, values, null, null);
     }
 
-    private void migrateAvatars (String oldUsername, String newUsername)
-    {
+    private void migrateAvatars(String oldUsername, String newUsername) {
 
         try {
 
             //first copy the old avatar over to the new account
-            byte[] oldAvatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(),oldUsername);
-            if (oldAvatar != null)
-            {
+            byte[] oldAvatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), oldUsername);
+            if (oldAvatar != null) {
                 setAvatar(newUsername, oldAvatar);
             }
 
             //now change the older avatar, so the vcard gets reloaded
             Bitmap bitmap = BitmapFactory.decodeStream(mContext.getAssets().open("stickers/olo and shimi/4greeting.png"));
             setAvatar(oldUsername, bitmap);
-        }
-        catch (Exception ioe)
-        {
+        } catch (Exception ioe) {
             ioe.printStackTrace();
         }
     }

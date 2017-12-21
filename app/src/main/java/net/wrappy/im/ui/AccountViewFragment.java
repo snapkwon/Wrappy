@@ -43,26 +43,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.crypto.IOtrChatSession;
+import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
-import net.wrappy.im.crypto.IOtrChatSession;
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
-import net.wrappy.im.service.IImConnection;
-
-import net.wrappy.im.R;
-import net.wrappy.im.provider.Imps;
-
-import net.wrappy.im.model.ImConnection;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.XmppUriHelper;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -73,15 +71,15 @@ public class AccountViewFragment extends Fragment {
     private long mProviderId = 0;
     private long mAccountId = 0;
     static final int REQUEST_SIGN_IN = 100001;
-    private static final String[] ACCOUNT_PROJECTION = { Imps.Account._ID, Imps.Account.PROVIDER,
-                                                        Imps.Account.USERNAME,
-                                                        Imps.Account.PASSWORD,
-                                                        Imps.Account.KEEP_SIGNED_IN,
-                                                        Imps.Account.LAST_LOGIN_STATE };
+    private static final String[] ACCOUNT_PROJECTION = {Imps.Account._ID, Imps.Account.PROVIDER,
+            Imps.Account.USERNAME,
+            Imps.Account.PASSWORD,
+            Imps.Account.KEEP_SIGNED_IN,
+            Imps.Account.LAST_LOGIN_STATE};
     private static final int ACCOUNT_PROVIDER_COLUMN = 1;
     private static final int ACCOUNT_USERNAME_COLUMN = 2;
     private static final int ACCOUNT_PASSWORD_COLUMN = 3;
-    
+
     private static final String USERNAME_VALIDATOR = "[^a-z0-9\\.\\-_\\+]";
     //    private static final int ACCOUNT_KEEP_SIGNED_IN_COLUMN = 4;
     //    private static final int ACCOUNT_LAST_LOGIN_STATE = 5;
@@ -90,8 +88,8 @@ public class AccountViewFragment extends Fragment {
     EditText mEditUserAccount;
     EditText mEditPass;
     EditText mEditPassConfirm;
-  //  CheckBox mRememberPass;
-   // CheckBox mUseTor;
+    //  CheckBox mRememberPass;
+    // CheckBox mUseTor;
     Button mBtnSignIn;
     Button mBtnQrDisplay;
     AutoCompleteTextView mSpinnerDomains;
@@ -126,12 +124,11 @@ public class AccountViewFragment extends Fragment {
             initFragment();
     }
 
-    private void initFragment()
-    {
+    private void initFragment() {
 
         Intent i = getIntent();
 
-        mApp = (ImApp)getActivity().getApplication();
+        mApp = (ImApp) getActivity().getApplication();
 
         String action = i.getAction();
 
@@ -146,16 +143,14 @@ public class AccountViewFragment extends Fragment {
             @Override
             public void connectedToService() {
             }
+
             @Override
             public void stateChanged(int state, long accountId) {
-                if (state == ImConnection.LOGGED_IN)
-                {
-                  //  mSignInHelper.goToAccount(accountId);
-                   // finish();
+                if (state == ImConnection.LOGGED_IN) {
+                    //  mSignInHelper.goToAccount(accountId);
+                    // finish();
                     isSignedIn = true;
-                }
-                else
-                {
+                } else {
                     isSignedIn = false;
                 }
 
@@ -199,9 +194,9 @@ public class AccountViewFragment extends Fragment {
                 setAccountKeepSignedIn(true);
                 mSignInHelper.activateAccount(mProviderId, accountId);
                 mSignInHelper.signIn(pass, mProviderId, accountId, true);
-              //  setResult(RESULT_OK);
+                //  setResult(RESULT_OK);
                 cursor.close();
-               // finish();
+                // finish();
                 return;
 
             } else {
@@ -215,8 +210,6 @@ public class AccountViewFragment extends Fragment {
             }
 
 
-
-
         } else if (Intent.ACTION_INSERT.equals(action)) {
 
 
@@ -224,7 +217,6 @@ public class AccountViewFragment extends Fragment {
             // TODO once we implement multiple IM protocols
             mProviderId = ContentUris.parseId(uri);
             provider = mApp.getProvider(mProviderId);
-
 
 
         } else if (Intent.ACTION_EDIT.equals(action)) {
@@ -255,14 +247,14 @@ public class AccountViewFragment extends Fragment {
             mProviderId = cursor.getLong(ACCOUNT_PROVIDER_COLUMN);
             provider = mApp.getProvider(mProviderId);
 
-            Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
+            Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
             Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
                     pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
 
             try {
                 mOriginalUserAccount = cursor.getString(ACCOUNT_USERNAME_COLUMN) + "@"
-                                       + settings.getDomain();
+                        + settings.getDomain();
                 mEditUserAccount.setText(mOriginalUserAccount);
                 mEditPass.setText(cursor.getString(ACCOUNT_PASSWORD_COLUMN));
                 //mRememberPass.setChecked(!cursor.isNull(ACCOUNT_PASSWORD_COLUMN));
@@ -279,13 +271,12 @@ public class AccountViewFragment extends Fragment {
             return;
         }
 
-       setupUIPost();
+        setupUIPost();
 
     }
 
-    private Intent getIntent ()
-    {
-      return  getActivity().getIntent();
+    private Intent getIntent() {
+        return getActivity().getIntent();
     }
 
 
@@ -312,8 +303,7 @@ public class AccountViewFragment extends Fragment {
         mEditPassConfirm = (EditText) view.findViewById(R.id.edtPassConfirm);
         mSpinnerDomains = (AutoCompleteTextView) view.findViewById(R.id.spinnerDomains);
 
-        if (mIsNewAccount)
-        {
+        if (mIsNewAccount) {
             mEditPassConfirm.setVisibility(View.VISIBLE);
             mSpinnerDomains.setVisibility(View.VISIBLE);
             mEditUserAccount.setHint(R.string.account_setup_new_username);
@@ -325,7 +315,7 @@ public class AccountViewFragment extends Fragment {
         }
 
 //        mRememberPass = (CheckBox) findViewById(R.id.rememberPassword);
-  //      mUseTor = (CheckBox) findViewById(R.id.useTor);
+        //      mUseTor = (CheckBox) findViewById(R.id.useTor);
 
 
         mBtnSignIn = (Button) view.findViewById(R.id.btnSignIn);
@@ -335,7 +325,7 @@ public class AccountViewFragment extends Fragment {
 
 
         //mBtnAdvanced = (Button) findViewById(R.id.btnAdvanced);
-       // mBtnQrDisplay = (Button) findViewById(R.id.btnQR);
+        // mBtnQrDisplay = (Button) findViewById(R.id.btnQR);
 
         /*
         mRememberPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -349,8 +339,7 @@ public class AccountViewFragment extends Fragment {
 
     }
 
-    private void setupUIPost ()
-    {
+    private void setupUIPost() {
         Intent i = getIntent();
 
         if (isSignedIn) {
@@ -370,13 +359,12 @@ public class AccountViewFragment extends Fragment {
         });
 
 
-        mBtnQrDisplay.setOnClickListener(new OnClickListener()
-        {
+        mBtnQrDisplay.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-               showQR();
+                showQR();
 
             }
 
@@ -390,15 +378,15 @@ public class AccountViewFragment extends Fragment {
                 checkUserChanged();
 
                 /**
-                if (mUseTor.isChecked())
-                {
-                    OrbotHelper oh = new OrbotHelper(AccountActivity.this);
-                    if (!oh.isOrbotRunning())
-                    {
-                        oh.requestOrbotStart(AccountActivity.this);
-                        return;
-                    }
-                }*/
+                 if (mUseTor.isChecked())
+                 {
+                 OrbotHelper oh = new OrbotHelper(AccountActivity.this);
+                 if (!oh.isOrbotRunning())
+                 {
+                 oh.requestOrbotStart(AccountActivity.this);
+                 return;
+                 }
+                 }*/
 
 
                 final String pass = mEditPass.getText().toString();
@@ -407,12 +395,11 @@ public class AccountViewFragment extends Fragment {
                 final boolean isActive = false; // TODO(miron) does this ever need to be true?
                 ContentResolver cr = getActivity().getContentResolver();
 
-                if (mIsNewAccount)
-                {
+                if (mIsNewAccount) {
                     mDomain = mSpinnerDomains.getText().toString();
                     String fullUser = mEditUserAccount.getText().toString();
 
-                    if (fullUser.indexOf("@")==-1)
+                    if (fullUser.indexOf("@") == -1)
                         fullUser += '@' + mDomain;
 
                     if (!parseAccount(fullUser)) {
@@ -424,17 +411,13 @@ public class AccountViewFragment extends Fragment {
                     ImPluginHelper helper = ImPluginHelper.getInstance(getActivity());
                     mProviderId = helper.createAdditionalProvider(helper.getProviderNames().get(0)); //xmpp FIXME
 
-                }
-                else
-                {
+                } else {
                     if (!parseAccount(mEditUserAccount.getText().toString())) {
                         mEditUserAccount.selectAll();
                         mEditUserAccount.requestFocus();
                         return;
-                    }
-                    else
-                    {
-                        settingsForDomain(mDomain,mPort);//apply final settings
+                    } else {
+                        settingsForDomain(mDomain, mPort);//apply final settings
                     }
                 }
 
@@ -445,22 +428,16 @@ public class AccountViewFragment extends Fragment {
                 mAccountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mAccountId);
 
                 //if remember pass is true, set the "keep signed in" property to true
-                if (mIsNewAccount)
-                {
-                    if (pass.equals(passConf))
-                    {
+                if (mIsNewAccount) {
+                    if (pass.equals(passConf)) {
                         setAccountKeepSignedIn(rememberPass);
 
                         createNewAccount(mUserName, pass, mAccountId, false);
 
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.error_account_password_mismatch), Toast.LENGTH_SHORT).show();
                     }
-                    else
-                    {
-                       Toast.makeText(getActivity(), getString(R.string.error_account_password_mismatch), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else
-                {
+                } else {
                     if (isSignedIn) {
                         signOut();
                         isSignedIn = false;
@@ -476,65 +453,54 @@ public class AccountViewFragment extends Fragment {
         });
 
         /**
-        mUseTor.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateUseTor(isChecked);
-            }
+         mUseTor.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        updateUseTor(isChecked);
+        }
         });*/
 
         updateWidgetState();
 
-        if (i.hasExtra("title"))
-        {
+        if (i.hasExtra("title")) {
             String title = i.getExtras().getString("title");
         }
 
-        if (i.hasExtra("newuser"))
-        {
+        if (i.hasExtra("newuser")) {
             String newuser = i.getExtras().getString("newuser");
             mEditUserAccount.setText(newuser);
 
             parseAccount(newuser);
-            settingsForDomain(mDomain,mPort);
+            settingsForDomain(mDomain, mPort);
 
         }
 
-        if (i.hasExtra("newpass"))
-        {
+        if (i.hasExtra("newpass")) {
             mEditPass.setText(i.getExtras().getString("newpass"));
             mEditPass.setVisibility(View.GONE);
             //mRememberPass.setChecked(true);
             //mRememberPass.setVisibility(View.GONE);
         }
 
-        if (i.getBooleanExtra("hideTor", false))
-        {
+        if (i.getBooleanExtra("hideTor", false)) {
             //mUseTor.setVisibility(View.GONE);
         }
 
     }
 
-    private boolean checkForKey (String userid)
-    {
+    private boolean checkForKey(String userid) {
 
-        try
-        {
+        try {
             OtrAndroidKeyManagerImpl otrKeyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
             String fp = otrKeyMan.getLocalFingerprint(userid);
 
-            if (fp == null)
-            {
+            if (fp == null) {
                 otrKeyMan.generateLocalKeyPair(userid);
                 fp = otrKeyMan.getLocalFingerprint(userid);
                 return true;
-            }
-            else
+            } else
                 return true;
-        }
-        catch (Exception e)
-        {
-            Log.e(ImApp.LOG_TAG,"error checking for key",e);
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error checking for key", e);
             return false;
         }
 
@@ -546,7 +512,7 @@ public class AccountViewFragment extends Fragment {
         args[0] = mUserName;
         args[1] = mDomain;
 
-        String[] projection = { Imps.Account._ID };
+        String[] projection = {Imps.Account._ID};
         Cursor cursor = cr.query(Imps.Account.BY_DOMAIN_URI, projection, clauses, args, null);
         return cursor;
     }
@@ -598,8 +564,7 @@ public class AccountViewFragment extends Fragment {
     }*/
 
     private void checkUserChanged() {
-        if (mEditUserAccount != null)
-        {
+        if (mEditUserAccount != null) {
             String username = mEditUserAccount.getText().toString().trim().toLowerCase();
 
             if ((!username.equals(mOriginalUserAccount)) && parseAccount(username)) {
@@ -642,11 +607,11 @@ public class AccountViewFragment extends Fragment {
         //its okay if domain is null;
 
 //        if (mDomain == null) {
-  //          isGood = false;
-            //Toast.makeText(AccountActivity.this,
-            //	R.string.account_wizard_no_domain_warning,
-            //	Toast.LENGTH_LONG).show();
-    //    }
+        //          isGood = false;
+        //Toast.makeText(AccountActivity.this,
+        //	R.string.account_wizard_no_domain_warning,
+        //	Toast.LENGTH_LONG).show();
+        //    }
         /*//removing requirement of a . in the domain
         else if (mDomain.indexOf(".") == -1) {
             isGood = false;
@@ -662,10 +627,10 @@ public class AccountViewFragment extends Fragment {
      * If we know the direct XMPP server for a domain, we should turn off DNS lookup
      * because it is slow, error prone, and a way to leak information from third parties
      */
-    void settingsForDomain(String domain,int port) {
+    void settingsForDomain(String domain, int port) {
 
         ContentResolver cr = getActivity().getContentResolver();
-        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
+        Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
 
         Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
                 pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
@@ -699,7 +664,7 @@ public class AccountViewFragment extends Fragment {
         values.put(Imps.AccountColumns.KEEP_SIGNED_IN, 0);
         getActivity().getContentResolver().update(mAccountUri, values, null, null);
 
-        mApp = (ImApp)getActivity().getApplication();
+        mApp = (ImApp) getActivity().getApplication();
 
         mApp.callWhenServiceConnected(mHandler, new Runnable() {
             @Override
@@ -715,7 +680,7 @@ public class AccountViewFragment extends Fragment {
 
         try {
 
-            IImConnection conn = mApp.getConnection(providerId,accountId);
+            IImConnection conn = mApp.getConnection(providerId, accountId);
             if (conn != null) {
                 conn.logout();
             } else {
@@ -728,15 +693,15 @@ public class AccountViewFragment extends Fragment {
                 values.put(Imps.AccountStatusColumns.CONNECTION_STATUS, Imps.ConnectionStatus.OFFLINE);
                 String where = Imps.AccountStatusColumns.ACCOUNT + "=?";
                 getActivity().getContentResolver().update(Imps.AccountStatus.CONTENT_URI, values, where,
-                        new String[] { Long.toString(accountId) });
+                        new String[]{Long.toString(accountId)});
             }
         } catch (RemoteException ex) {
             Log.e(ImApp.LOG_TAG, "signout: caught ", ex);
         } finally {
 
-        //    Toast.makeText(this,
-        //            getString(R.string.signed_out_prompt, this.mEditUserAccount.getText()),
-        //            Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(this,
+            //            getString(R.string.signed_out_prompt, this.mEditUserAccount.getText()),
+            //            Toast.LENGTH_SHORT).show();
             isSignedIn = false;
 
             mBtnSignIn.setText(getString(R.string.sign_in));
@@ -744,17 +709,15 @@ public class AccountViewFragment extends Fragment {
         }
     }
 
-    void createNewaccount (long accountId)
-    {
+    void createNewaccount(long accountId) {
 
-            ContentValues values = new ContentValues(2);
+        ContentValues values = new ContentValues(2);
 
-            values.put(Imps.AccountStatusColumns.PRESENCE_STATUS, Imps.CommonPresenceColumns.NEW_ACCOUNT);
-            values.put(Imps.AccountStatusColumns.CONNECTION_STATUS, Imps.ConnectionStatus.OFFLINE);
-            String where = Imps.AccountStatusColumns.ACCOUNT + "=?";
+        values.put(Imps.AccountStatusColumns.PRESENCE_STATUS, Imps.CommonPresenceColumns.NEW_ACCOUNT);
+        values.put(Imps.AccountStatusColumns.CONNECTION_STATUS, Imps.ConnectionStatus.OFFLINE);
+        String where = Imps.AccountStatusColumns.ACCOUNT + "=?";
         getActivity().getContentResolver().update(Imps.AccountStatus.CONTENT_URI, values, where,
                 new String[]{Long.toString(accountId)});
-
 
 
     }
@@ -777,9 +740,7 @@ public class AccountViewFragment extends Fragment {
         if (!isSignedIn) {
             mBtnSignIn.setEnabled(hasNameAndPassword);
             mBtnSignIn.setFocusable(hasNameAndPassword);
-        }
-        else
-        {
+        } else {
 
         }
     }
@@ -801,11 +762,10 @@ public class AccountViewFragment extends Fragment {
         }
     };
 
-    private void deleteAccount ()
-    {
+    private void deleteAccount() {
 
         //need to delete
-        ((ImApp)getActivity().getApplication()).deleteAccount(getActivity().getContentResolver(),mAccountId, mProviderId);
+        ((ImApp) getActivity().getApplication()).deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
 
     }
 
@@ -818,99 +778,107 @@ public class AccountViewFragment extends Fragment {
         startActivity(intent);
     }
 
-    public void createNewAccount (final String usernameNew, final String passwordNew, final long newAccountId, final boolean useTor)
-    {
-        if (mCreateAccountTask != null && (!mCreateAccountTask.isCancelled()))
-        {
+    public void createNewAccount(final String usernameNew, final String passwordNew, final long newAccountId, final boolean useTor) {
+        if (mCreateAccountTask != null && (!mCreateAccountTask.isCancelled())) {
             mCreateAccountTask.cancel(true);
         }
-
-        mCreateAccountTask = new AsyncTask<Void, Void, String>() {
-
-            private ProgressDialog dialog;
-
-            @Override
-            protected void onPreExecute() {
-                dialog = new ProgressDialog(getActivity());
-                dialog.setCancelable(true);
-                dialog.setMessage(getString(R.string.registering_new_account_));
-                dialog.show();
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                ContentResolver cr = getActivity().getContentResolver();
-                Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(mProviderId)},null);
-
-                Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
-                       pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
-
-                try {
-                    settingsForDomain(mDomain, mPort, settings);
-
-                    HashMap<String,String> aParams = new HashMap<String,String>();
-
-                    XmppConnection xmppConn = new XmppConnection(getActivity());
-
-                    xmppConn.initUser(mProviderId, newAccountId);
-                    xmppConn.registerAccount(settings, usernameNew, passwordNew, aParams);
-                    // settings closed in registerAccount
-                } catch (Exception e) {
-                    LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
-
-                    return e.getLocalizedMessage();
-                } finally {
-
-                    settings.close();
-                }
-
-                return null;
-              }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-
-                try
-                {
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                        dialog = null;
-                    }
-                }
-                catch ( java.lang.IllegalArgumentException iae)
-                {
-                    //dialog may not be attached to window if Activity was closed
-                }
-
-                if (result != null)
-                {
-                    Toast.makeText(getActivity(), "error creating account: " + result, Toast.LENGTH_LONG).show();
-                    //AccountActivity.this.setResult(Activity.RESULT_CANCELED);
-                    //AccountActivity.this.finish();
-                }
-                else
-                {
-                    mSignInHelper.activateAccount(mProviderId, newAccountId);
-                    mSignInHelper.signIn(passwordNew, mProviderId, newAccountId, true);
-
-//                    AccountViewFragment.this.setResult(Activity.RESULT_OK);
-  //                  AccountViewFragment.this.finish();
-                }
-            }
-        }.execute();
+        mCreateAccountTask = new CreateAccountTask(getActivity(), newAccountId, usernameNew, passwordNew);
+        mCreateAccountTask.execute();
     }
 
-    public void showQR ()
-    {
-           String localFingerprint = OtrAndroidKeyManagerImpl.getInstance(getActivity()).getLocalFingerprint(mOriginalUserAccount);
-           String uri = XmppUriHelper.getUri(mOriginalUserAccount, localFingerprint);
-         //  new IntentIntegrator(this).shareText(uri);
+    public void showQR() {
+        String localFingerprint = OtrAndroidKeyManagerImpl.getInstance(getActivity()).getLocalFingerprint(mOriginalUserAccount);
+        String uri = XmppUriHelper.getUri(mOriginalUserAccount, localFingerprint);
+        //  new IntentIntegrator(this).shareText(uri);
     }
 
     private void setAccountKeepSignedIn(final boolean rememberPass) {
         ContentValues values = new ContentValues();
         values.put(Imps.AccountColumns.KEEP_SIGNED_IN, rememberPass ? 1 : 0);
         getActivity().getContentResolver().update(mAccountUri, values, null, null);
+    }
+
+    public class CreateAccountTask extends AsyncTask<Void, Void, String> {
+
+        private ProgressDialog dialog;
+        private long newAccountId;
+        private String usernameNew;
+        private String passwordNew;
+        private Activity activity;
+        private WeakReference<Activity> weakReference;
+
+        public CreateAccountTask(Activity activity, long newAccountId, String usernameNew, String passwordNew) {
+            this.newAccountId = newAccountId;
+            this.usernameNew = usernameNew;
+            this.passwordNew = passwordNew;
+            this.activity = activity;
+            weakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(activity);
+            dialog.setCancelable(true);
+            dialog.setMessage(getString(R.string.registering_new_account_));
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            ContentResolver cr = getActivity().getContentResolver();
+            Cursor pCursor = cr.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
+
+            Imps.ProviderSettings.QueryMap settings = new Imps.ProviderSettings.QueryMap(
+                    pCursor, cr, mProviderId, false /* don't keep updated */, null /* no handler */);
+
+            try {
+                settingsForDomain(mDomain, mPort, settings);
+
+                HashMap<String, String> aParams = new HashMap<String, String>();
+
+                XmppConnection xmppConn = new XmppConnection(getActivity());
+
+                xmppConn.initUser(mProviderId, newAccountId);
+                xmppConn.registerAccount(settings, usernameNew, passwordNew, aParams);
+                // settings closed in registerAccount
+            } catch (Exception e) {
+                LogCleaner.error(ImApp.LOG_TAG, "error registering new account", e);
+
+                return e.getLocalizedMessage();
+            } finally {
+
+                settings.close();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (weakReference == null || weakReference.get() == null)
+                return;
+
+            try {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                    dialog = null;
+                }
+            } catch (java.lang.IllegalArgumentException iae) {
+                //dialog may not be attached to window if Activity was closed
+            }
+
+            if (result != null) {
+                Toast.makeText(getActivity(), "error creating account: " + result, Toast.LENGTH_LONG).show();
+                //AccountActivity.this.setResult(Activity.RESULT_CANCELED);
+                //AccountActivity.this.finish();
+            } else {
+                mSignInHelper.activateAccount(mProviderId, newAccountId);
+                mSignInHelper.signIn(passwordNew, mProviderId, newAccountId, true);
+
+//                    AccountViewFragment.this.setResult(Activity.RESULT_OK);
+                //                  AccountViewFragment.this.finish();
+            }
+        }
     }
 }
