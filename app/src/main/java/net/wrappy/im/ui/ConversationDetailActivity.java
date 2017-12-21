@@ -353,7 +353,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @OnClick({R.id.btnAddFriend})
     protected void onClickAddFriend(View v) {
-        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mAddress), new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
