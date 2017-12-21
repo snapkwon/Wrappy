@@ -469,7 +469,7 @@ public class MessageListItem extends FrameLayout {
         } else if (mimeType.startsWith("audio")) {
 
             if (mAudioPlayer.getDuration() != -1)
-                mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration() / 1000) + "secs");
+                mHolder.mTextViewForMessages.setText(Utils.formatDurationMedia(mAudioPlayer.getDuration()));
 
             if (mAudioPlayer.isPlaying()) {
                 mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
