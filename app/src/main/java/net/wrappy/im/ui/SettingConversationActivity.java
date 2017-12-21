@@ -188,6 +188,8 @@ public class SettingConversationActivity extends AppCompatActivity {
         if (mSession == null)
             try {
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                if (mSession == null)
+                    mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
