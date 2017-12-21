@@ -122,6 +122,10 @@ public class RestAPI {
         return Ion.with(context).load(GET_PHOTO+reference).withBitmap().asBitmap();
     }
 
+    public static String getAvatarUrl(String reference) {
+        return GET_PHOTO + reference;
+    }
+
     public interface RestAPIListenner {
         public void OnComplete(int httpCode, String error, String s);
     }

@@ -28,7 +28,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -53,20 +52,18 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.SecureMediaStore;
@@ -755,39 +752,9 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAvatar.setVisibility(View.GONE);
 
         if (address != null && isLeft) {
-
-            RoundedAvatarDrawable avatar = null;
-
-
-
-            if (avatar != null) {
-                mHolder.mAvatar.setVisibility(View.VISIBLE);
-                mHolder.mAvatar.setImageDrawable(avatar);
-
-                //setAvatarBorder(presenceStatus, avatar);
-
-            } else {
-                //  int color = getAvatarBorder(presenceStatus);
-                int padding = 24;
-
-                if (nickname.length() > 0) {
-                    LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-                    mHolder.mAvatar.setVisibility(View.VISIBLE);
-                    mHolder.mAvatar.setImageDrawable(lavatar);
-                }
-            }
-            try {
-                RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
-                    @Override
-                    public void onCompleted(Exception e, Bitmap result) {
-                        if (result!=null) {
-                            mHolder.mAvatar.setImageBitmap(result);
-                        }
-                    }
-                });
-                //avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-            } catch (Exception e) {
+            GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
+            if (!TextUtils.isEmpty(reference)) {
+                GlideHelper.loadBitmapToCircleImage(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference));
             }
         }
     }

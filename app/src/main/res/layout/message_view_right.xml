@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -21,124 +20,114 @@
     class="net.wrappy.im.ui.MessageListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-	android:padding="3dp"    
     android:layout_margin="6dp"
-        android:descendantFocusability="blocksDescendants"
-    
-     >
-        
+    android:descendantFocusability="blocksDescendants"
+    android:padding="3dp"
+
+    >
+
     <LinearLayout
-        android:id="@+id/message_container" 
+        android:id="@+id/message_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
-       	android:layout_gravity="right"
-    	android:gravity="right"      
-    	android:orientation="vertical"             
-        >
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/audio_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="0dp"
             android:descendantFocusability="blocksDescendants"
-            android:visibility="gone"
             android:orientation="horizontal"
-            >
+            android:padding="0dp"
+            android:visibility="gone">
+
             <net.wrappy.im.ui.widgets.VisualizerView
                 android:id="@+id/audio_view"
                 android:layout_width="200dp"
-                android:layout_height="60dp"
-                />
-            <ImageView android:src="@drawable/media_audio_play"
+                android:layout_height="60dp" />
+
+            <ImageView
                 android:id="@+id/audio_button"
-                android:layout_height="60dp"
                 android:layout_width="60dp"
-                />
+                android:layout_height="60dp"
+                android:src="@drawable/media_audio_play" />
         </LinearLayout>
 
 
         <net.ironrabbit.type.CustomTypefaceTextView
-                    android:id="@+id/message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:padding="6dp"
-                    android:layout_gravity="top|left"
-                    android:gravity="left"
-                    android:textAlignment="gravity"
-            	   android:color="?messageTextPrimary"
-                     />
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:color="?messageTextPrimary"
+            android:fontFamily="sans-serif-light"
+            android:gravity="left"
+            android:padding="6dp"
+            android:textAlignment="gravity"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
-		<TextView
-			android:id="@+id/txttranslate"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:padding="6dp"
-			android:layout_weight="1"
-			android:gravity="left"
-			android:textColor="@color/grey_hex_7b"
-			android:text="" />
+        <TextView
+            android:id="@+id/txttranslate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:padding="6dp"
+            android:text=""
+            android:textColor="@color/grey_hex_7b" />
 
-		<TextView
-			android:id="@+id/btntranslate"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:textColor="@color/Color_Blue"
-			android:padding="2dp"
-			android:text="TextView" />
+        <TextView
+            android:id="@+id/btntranslate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:text="TextView"
+            android:textColor="@color/Color_Blue" />
 
-		<FrameLayout
+        <FrameLayout
             android:id="@+id/media_thumbnail_container"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
-            android:padding="0dp"
             android:descendantFocusability="blocksDescendants"
-            android:visibility="gone"
-            >
+            android:padding="0dp"
+            android:visibility="gone">
+
             <ImageView
                 android:id="@+id/media_thumbnail"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
-                android:scaleType="centerCrop"
                 android:focusableInTouchMode="true"
-                />
+                android:scaleType="centerCrop" />
 
         </FrameLayout>
 
 
-
-
         <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/messagets"
-                android:layout_width="wrap_content"
-                android:layout_height="22sp"
-            	android:textSize="12sp"
-            	android:gravity="center|right"
-        		android:layout_gravity="right"
-                android:layout_margin="3dp"
-        		    android:textAlignment="gravity"
-                      android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/messagets"
+            android:layout_width="wrap_content"
+            android:layout_height="22sp"
+            android:layout_gravity="right"
+            android:layout_margin="3dp"
             android:color="?messageTextSecondary"
+            android:gravity="center|right"
+            android:textAlignment="gravity"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="12sp"
 
             />
-             
-                  
-        
-                         
-          	</LinearLayout>
-          	 
-   
-		<net.wrappy.im.helper.layout.CircleImageView
-            android:id="@+id/avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="gone"
-            android:layout_marginRight="0dip"
 
-            />
-		
-    
-	    
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
 </view>
