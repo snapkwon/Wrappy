@@ -80,11 +80,13 @@ public class ContactAdapter
             line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
-            LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
-            mAvatar.setImageDrawable(lavatar);
-            if (!TextUtils.isEmpty(wpKMemberDto.getReference())) {
-                GlideHelper.loadBitmapToCircleImage(mContext, mAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getReference()));
+            if (wpKMemberDto.getAvatar()!=null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                    GlideHelper.loadBitmapToCircleImage(mContext, mAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
+            } else {
+                    LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+                    mAvatar.setImageDrawable(lavatar);
             }
+
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

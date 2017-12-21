@@ -145,6 +145,7 @@ public class MainActivity extends BaseActivity {
     Handler mLoadContactHandler = new Handler();
     SyncDataRunnable<WpKChatGroupDto> syncGroupChatRunnable;
     SyncDataRunnable<WpKChatRoster> syncContactRunnable;
+    private ChatSessionInitTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -358,6 +359,12 @@ public class MainActivity extends BaseActivity {
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
+    public int getDefaultAcountid() {
+        return (int)mApp.getDefaultAccountId();
+    }
+    public int getDefaultProviderid() {
+        return (int)mApp.getDefaultProviderId();
+    }
 
     @Override
     protected void onResume() {
@@ -816,21 +823,19 @@ public class MainActivity extends BaseActivity {
 
         //startCrypto is not actually used anymore, as we move to OMEMO
 
-        if (username != null)
-            new ChatSessionInitTask(((ImApp) getApplication()), providerId, accountId, Imps.Contacts.TYPE_NORMAL) {
+        if (username != null) {
+            task = new ChatSessionInitTask(this, providerId, accountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
-
-                    if (chatId != -1 && openChat) {
+                    if (task.isStable() && chatId != -1 && openChat) {
                         Intent intent = ConversationDetailActivity.getStartIntent(MainActivity.this);
                         intent.putExtra("id", chatId);
                         startActivity(intent);
                     }
-
-                    super.onPostExecute(chatId);
                 }
-
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
+            };
+            task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
+        }
     }
 
     @Override

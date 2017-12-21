@@ -222,7 +222,7 @@ public class ContactDisplayActivity extends BaseActivity {
             if (manager != null) {
                 IChatSession session = manager.getChatSession(mUsername);
                 if (session == null) {
-                    new ChatSessionInitTask(((ImApp) getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
+                    new ChatSessionInitTask(this, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
                             .executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(mUsername)));
                     Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
                 }

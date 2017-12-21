@@ -294,6 +294,11 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
+    private void reinitmCacheWord ()
+    {
+        mCacheWord.deinitialize();
+    }
+
     private Notification getForegroundNotification() {
        
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);;
@@ -526,6 +531,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     private void shutdown ()
     {
+
         Debug.recordTrail(this, SERVICE_DESTROY_TRAIL_TAG, new Date());
 
         HeartbeatService.stopBeating(getApplicationContext());
@@ -553,7 +559,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             mCacheWord.lock();
             mCacheWord.disconnectFromService();
         }
-
 
     }
 

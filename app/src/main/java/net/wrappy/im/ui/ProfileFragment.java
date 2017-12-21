@@ -125,15 +125,29 @@ public class ProfileFragment extends Fragment {
                             txtUsername.setText(wpKMemberDto.getIdentifier());
                             txtEmail.setText(wpKMemberDto.getEmail());
                             txtPhone.setText(wpKMemberDto.getMobile());
-                            RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getReference()).setCallback(new FutureCallback<Bitmap>() {
-                                @Override
-                                public void onCompleted(Exception e, Bitmap result) {
-                                    if (result != null) {
-                                        imgPhotoAvatar.setImageBitmap(result);
-                                    }
+                            if (wpKMemberDto.getAvatar()!=null) {
+                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getAvatar().getReference()).setCallback(new FutureCallback<Bitmap>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Bitmap result) {
+                                        if (result != null) {
+                                            imgPhotoAvatar.setImageBitmap(result);
+                                        }
 
-                                }
-                            });
+                                    }
+                                });
+                            }
+                            if (wpKMemberDto.getBanner()!=null) {
+                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getBanner().getReference()).setCallback(new FutureCallback<Bitmap>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Bitmap result) {
+                                        if (result != null) {
+                                            imgProfileHeader.setImageBitmap(result);
+                                        }
+
+                                    }
+                                });
+                            }
+
                             //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
                         } catch (Exception ex) {
                             ex.printStackTrace();

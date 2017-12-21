@@ -66,6 +66,7 @@ import net.wrappy.im.service.IConnectionCreationListener;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.IRemoteImService;
+import net.wrappy.im.service.ImService;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
@@ -79,6 +80,7 @@ import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Languages;
 import net.wrappy.im.util.LogCleaner;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -157,7 +159,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
      * A flag indicates that we have called tomServiceStarted start the service.
      */
 //    private boolean mServiceStarted;
-    private Context mApplicationContext;
+    private static Context mApplicationContext;
 
     private CacheWordHandler mCacheWord;
 
@@ -271,6 +273,31 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
+    public  void resetDB()
+    {
+        if(mCacheWord !=null)
+        {
+
+            ImpsProvider.resetDB();
+            mCacheWord.deinitialize();
+            mCacheWord.connectToService();
+        /*    mDefaultProviderId = -1;
+            mDefaultAccountId = -1;
+            mDefaultUsername = null;
+            mDefaultOtrFingerprint = null;
+            mDefaultNickname = null;*/
+            walletDBHelper = new WalletDBHelper(this.getApplicationContext());
+            WalletDatabaseManager.initializeInstance(walletDBHelper);
+            settings.edit().clear().apply();
+            forceStopImService();
+
+       //     RemoteImService.
+            //  initDBHelper(mCacheWord.getEncryptionKey(), false);
+
+        }
+
+    }
+
     public boolean isThemeDark() {
         return mThemeDark;
     }
@@ -331,7 +358,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         }
     }
-
+    Intent serviceIntent;
     public synchronized void startImServiceIfNeed() {
         startImServiceIfNeed(false);
     }
@@ -342,7 +369,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         if (mImService == null) {
 
-            Intent serviceIntent = new Intent(this, RemoteImService.class);
+            serviceIntent = new Intent(this, RemoteImService.class);
 //        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, isBoot);
 
             mApplicationContext.startService(serviceIntent);
@@ -396,10 +423,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mImService = null;
         }
 
-
-        Intent serviceIntent = new Intent(this, RemoteImService.class);
+       // Intent serviceIntent = new Intent(this, RemoteImService.class);
         serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
         mApplicationContext.stopService(serviceIntent);
+
 
 
     }
@@ -636,8 +663,44 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ContentUris.appendId(builder, accountId);
         resolver.delete(builder.build(), null, null);
 
+        clearApplicationData();
+       // mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
+       // mApplicationContext.deleteDatabase(ImpsProvider.UNENCRYPTED_DATABASE_NAME);
+
+       /* SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mApplicationContext);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear().commit();*/
+
 
     }
+
+    public static void clearApplicationData() {
+        File cache = mApplicationContext.getCacheDir();
+        File appDir = new File(cache.getParent());
+        if(appDir.exists()){
+            String[] children = appDir.list();
+            for(String s : children){
+                if(!s.equals("lib")){
+                    deleteDir(new File(appDir, s));
+                }
+            }
+        }
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        return dir.delete();
+    }
+
 
     public void registerForBroadcastEvent(int what, Handler target) {
         mBroadcaster.request(what, target, what);
@@ -1209,10 +1272,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
-            if (!TextUtils.isEmpty(wpKMemberDto.getReference())) {
-                DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), null, wpKMemberDto.getReference(), address);
-                values.put(Imps.Contacts.AVATAR_DATA, wpKMemberDto.getReference());
+            String avatarReference = "";
+            String bannerReference = "";
+            if (wpKMemberDto.getAvatar()!=null) {
+                avatarReference = wpKMemberDto.getAvatar().getReference();
             }
+            if (wpKMemberDto.getBanner()!=null) {
+                bannerReference = wpKMemberDto.getBanner().getReference();
+            }
+            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
+            values.put(Imps.Contacts.AVATAR_DATA, avatarReference);
+
+
             sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
         }
     }
