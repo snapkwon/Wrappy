@@ -77,6 +77,7 @@ public class RestAPI {
     public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url_dev + "/member/%s/security/password/reset";
     public static String POST_CHECK_OBJECTIONABLE = root_url_dev + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url_dev + "chat/report";
+    public static String GET_POPUP_NOTICE = root_url_dev + "kernal/notice";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -130,6 +131,10 @@ public class RestAPI {
 
     public static Future<Bitmap> getBitmapFromUrl(Context context, String reference) {
         return Ion.with(context).load(GET_PHOTO+reference).withBitmap().asBitmap();
+    }
+
+    public static String getAvatarUrl(String reference) {
+        return GET_PHOTO + reference;
     }
 
     public interface RestAPIListenner {

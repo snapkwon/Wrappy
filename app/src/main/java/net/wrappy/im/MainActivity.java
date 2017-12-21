@@ -16,13 +16,11 @@
 
 package net.wrappy.im;
 
-import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,13 +35,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +57,7 @@ import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.GethService.Wallet;
@@ -69,6 +67,7 @@ import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -78,11 +77,9 @@ import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
-import net.wrappy.im.ui.AccountFragment;
 import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
-import net.wrappy.im.ui.ContactsListFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
@@ -94,8 +91,10 @@ import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+import net.wrappy.im.util.Utils;
 import net.wrappy.im.util.XmppUriHelper;
 
 import java.io.File;
@@ -128,9 +127,6 @@ public class MainActivity extends BaseActivity {
 
     public final static String IS_FROM_PATTERN_ACTIVITY = "isFromPatternScreen";
 
-    private ConversationListFragment mConversationList;
-    private ContactsListFragment mContactList;
-    private AccountFragment mAccountFragment;
     private Welcome_Wallet_Fragment mwelcome_wallet_fragment;
     private WalletFragment mwalletFragment;
     Adapter adapter;
@@ -168,7 +164,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 edSearchConversation.setText("");
-                if (edSearchConversation.getVisibility()==View.VISIBLE) {
+                if (edSearchConversation.getVisibility() == View.VISIBLE) {
                     AppFuncs.dismissKeyboard(MainActivity.this);
                     edSearchConversation.setVisibility(View.GONE);
                     imgLogo.setVisibility(View.VISIBLE);
@@ -176,7 +172,7 @@ public class MainActivity extends BaseActivity {
                         AppFuncs.dismissKeyboard(MainActivity.this);
                         ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
                         page.doSearch("");
-                    }catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 } else {
@@ -190,21 +186,22 @@ public class MainActivity extends BaseActivity {
         edSearchConversation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i==EditorInfo.IME_ACTION_SEARCH) {
+                if (i == EditorInfo.IME_ACTION_SEARCH) {
                     try {
                         AppFuncs.dismissKeyboard(MainActivity.this);
                         ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
                         page.doSearch(edSearchConversation.getText().toString().trim());
-                    }catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
                 return false;
             }
         });
+        initFloatButton();
         initViewPager();
         initTabLayout();
-        initFloatButton();
+
         //don't wnat this to happen to often
         checkForUpdates();
 
@@ -212,8 +209,26 @@ public class MainActivity extends BaseActivity {
 
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
-        checkToLoadDataServer();
+
+        showPopUpNotice();
     }
+
+    private void showPopUpNotice() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    Gson gson = new Gson();
+                    ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>() {
+                    }.getType());
+                    PopupUtils.showCustomDialog(MainActivity.this, popUpNotices.get(0).getTitle().getEnUS(), popUpNotices.get(0).getDetail().getEnUS(), R.string.ok, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void initViewPager() {
         fragmentManager = getSupportFragmentManager();
         adapter = new Adapter(fragmentManager);
@@ -236,33 +251,34 @@ public class MainActivity extends BaseActivity {
         //
         tab = mTabLayout.newTab();
         mTabLayout.addTab(tab);
-        createTabIcons(0,R.drawable.ic_menu_normal,"Menu");
-        createTabIcons(1,R.drawable.ic_menu_conversation_normal,"Chat");
-        createTabIcons(2,R.drawable.ic_menu_wallet_normal,"Wallet");
-        createTabIcons(3,R.drawable.ic_menu_info_normal,"My page");
+        createTabIcons(0, R.drawable.ic_menu_normal, "Menu");
+        createTabIcons(1, R.drawable.ic_menu_conversation_normal, "Chat");
+        createTabIcons(2, R.drawable.ic_menu_wallet_normal, "Wallet");
+        createTabIcons(3, R.drawable.ic_menu_info_normal, "My page");
 
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 try {
+                    AppFuncs.dismissKeyboard(MainActivity.this);
                     AppTextView appTextView = (AppTextView) tab.getCustomView();
                     appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
                     edSearchConversation.setText("");
                     edSearchConversation.setVisibility(View.GONE);
                     imgLogo.setVisibility(View.VISIBLE);
-                    if (tab.getPosition()==0) {
+                    if (tab.getPosition() == 0) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_active, 0, 0);
-                    } else if (tab.getPosition()==1) {
+                    } else if (tab.getPosition() == 1) {
                         btnHeaderSearch.setVisibility(View.VISIBLE);
                         mFab.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-                    } else if (tab.getPosition()==2) {
+                    } else if (tab.getPosition() == 2) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
-                    } else if (tab.getPosition()==3) {
+                    } else if (tab.getPosition() == 3) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -272,39 +288,37 @@ public class MainActivity extends BaseActivity {
                 try {
                     AppTextView appTextView = (AppTextView) tab.getCustomView();
                     appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
-                    if (tab.getPosition()==0) {
+                    if (tab.getPosition() == 0) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_normal, 0, 0);
-                    } else if (tab.getPosition()==1) {
+                    } else if (tab.getPosition() == 1) {
                         btnHeaderSearch.setVisibility(View.GONE);
                         mFab.setVisibility(View.GONE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
-                    } else if (tab.getPosition()==2) {
+                    } else if (tab.getPosition() == 2) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
-                    } else if (tab.getPosition()==3) {
+                    } else if (tab.getPosition() == 3) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
+        mTabLayout.getTabAt(1).select();
     }
 
-    private void createTabIcons(int index ,int isResIcon, String title) {
-
+    private void createTabIcons(int index, int isResIcon, String title) {
         AppTextView appTextView = new AppTextView(getApplicationContext());
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         appTextView.setLayoutParams(layoutParams);
         appTextView.setTextColor(getResources().getColor(R.color.menu_text_normal));
         appTextView.setText(title);
+        appTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, isResIcon, 0, 0);
-        if (index==1) {
-            appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
-            appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-        }
         mTabLayout.getTabAt(index).setCustomView(appTextView);
     }
 
@@ -330,9 +344,7 @@ public class MainActivity extends BaseActivity {
         AssetUtil.installRingtone(getApplicationContext(), R.raw.chant, "Zom Chant");
         AssetUtil.installRingtone(getApplicationContext(), R.raw.yak, "Zom Yak");
         AssetUtil.installRingtone(getApplicationContext(), R.raw.dranyen, "Zom Dranyen");
-
     }
-
 
     public void inviteContact() {
         Intent i = new Intent(MainActivity.this, AddContactNewActivity.class);
@@ -354,18 +366,12 @@ public class MainActivity extends BaseActivity {
                 adapter.mFragments.remove(mwelcome_wallet_fragment);
                 fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
                 mwalletFragment = new WalletFragment();
-                adapter.addFragment(mwalletFragment, "Wallet", R.drawable.ic_wallet);
-                adapter.notifyDataSetChanged();
-                mViewPager.setAdapter(adapter);
-                mViewPager.setCurrentItem(3);
+                addWalletTab(mwalletFragment);
             } else if (Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment)) {
                 adapter.mFragments.remove(mwalletFragment);
                 fragmentManager.beginTransaction().remove(mwalletFragment).commit();
                 mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
-                adapter.addFragment(mwelcome_wallet_fragment, "Wallet", R.drawable.ic_wallet);
-                adapter.notifyDataSetChanged();
-                mViewPager.setAdapter(adapter);
-                mViewPager.setCurrentItem(3);
+                addWalletTab(mwelcome_wallet_fragment);
             }
 
         }
@@ -375,19 +381,20 @@ public class MainActivity extends BaseActivity {
             startActivity(new Intent(this, RouterActivity.class));
 
         } else {
-            ImApp app = (ImApp) getApplication();
-
             mApp.maybeInit(this);
             mApp.initAccountInfo();
-
         }
 
         handleIntent();
-
         checkConnection();
-
         checkToLoadDataServer();
+    }
 
+    private void addWalletTab(Fragment fragment) {
+        adapter.addFragment(fragment, "Wallet", R.drawable.ic_wallet);
+        adapter.notifyDataSetChanged();
+        mViewPager.setAdapter(adapter);
+        mViewPager.setCurrentItem(3);
     }
 
     private boolean checkConnection() {
@@ -695,11 +702,11 @@ public class MainActivity extends BaseActivity {
                 return true;
 
             case R.id.menu_list_normal:
-                clearFilters();
+//                clearFilters();
                 return true;
 
             case R.id.menu_list_archive:
-                enableArchiveFilter();
+//                enableArchiveFilter();
                 return true;
 
             case R.id.menu_lock:
@@ -718,27 +725,27 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void clearFilters() {
+//    private void clearFilters() {
+//
+//        if (mTabLayout.getSelectedTabPosition() == 0)
+//            mConversationList.setArchiveFilter(false);
+//        else
+//            mContactList.setArchiveFilter(false);
+//
+//
+//
+//    }
 
-        if (mTabLayout.getSelectedTabPosition() == 0)
-            mConversationList.setArchiveFilter(false);
-        else
-            mContactList.setArchiveFilter(false);
-
-
-
-    }
-
-    private void enableArchiveFilter() {
-
-        if (mTabLayout.getSelectedTabPosition() == 0)
-            mConversationList.setArchiveFilter(true);
-        else
-            mContactList.setArchiveFilter(true);
-
-
-
-    }
+//    private void enableArchiveFilter() {
+//
+//        if (mTabLayout.getSelectedTabPosition() == 0)
+//            mConversationList.setArchiveFilter(true);
+//        else
+//            mContactList.setArchiveFilter(true);
+//
+//
+//
+//    }
 
     public void resetPassphrase() {
         /**
@@ -779,10 +786,6 @@ public class MainActivity extends BaseActivity {
             super(fm);
         }
 
-        public void replaceFragment(int index, Fragment fragment) {
-            mFragments.set(index, fragment);
-        }
-
         public void addFragment(Fragment fragment, String title, int icon) {
             mFragments.add(fragment);
             mFragmentTitles.add(title);
@@ -791,18 +794,18 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if (position==0) {
+            if (position == 0) {
                 return new MainMenuFragment();
-            } else if (position==1) {
+            } else if (position == 1) {
                 return new ConversationListFragment();
-            } else if (position==2) {
+            } else if (position == 2) {
                 if (!Wallet.isNewWallet(getFilesDir())) {
                     return new WalletFragment();
                 } else {
                     return new Welcome_Wallet_Fragment();
                 }
             } else {
-                return ProfileFragment.newInstance(0, Store.getStringData(getApplicationContext(),Store.USERNAME),"","");
+                return ProfileFragment.newInstance(0, Store.getStringData(getApplicationContext(), Store.USERNAME), "", "");
             }
         }
 
@@ -940,12 +943,12 @@ public class MainActivity extends BaseActivity {
         if (themeColorHeader != -1) {
 
             if (themeColorText == -1)
-                themeColorText = getContrastColor(themeColorHeader);
+                themeColorText = Utils.getContrastColor(themeColorHeader);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setNavigationBarColor(themeColorHeader);
                 getWindow().setStatusBarColor(themeColorHeader);
-                getWindow().setTitleColor(getContrastColor(themeColorHeader));
+                getWindow().setTitleColor(Utils.getContrastColor(themeColorHeader));
             }
 
 
@@ -956,27 +959,22 @@ public class MainActivity extends BaseActivity {
 
         }
 
-        if (themeColorBg != -1) {
-            if (mConversationList != null && mConversationList.getView() != null)
-                mConversationList.getView().setBackgroundColor(themeColorBg);
+//        if (themeColorBg != -1) {
+//            if (mConversationList != null && mConversationList.getView() != null)
+//                mConversationList.getView().setBackgroundColor(themeColorBg);
+//
+//            if (mContactList != null && mContactList.getView() != null)
+//                mContactList.getView().setBackgroundColor(themeColorBg);
+//
+//            if (mAccountFragment != null && mAccountFragment.getView() != null)
+//                mAccountFragment.getView().setBackgroundColor(themeColorBg);
+//
+//            if (mwalletFragment != null && mwalletFragment.getView() != null)
+//                mwalletFragment.getView().setBackgroundColor(themeColorBg);
+//
+//
+//        }
 
-            if (mContactList != null && mContactList.getView() != null)
-                mContactList.getView().setBackgroundColor(themeColorBg);
-
-            if (mAccountFragment != null && mAccountFragment.getView() != null)
-                mAccountFragment.getView().setBackgroundColor(themeColorBg);
-
-            if (mwalletFragment != null && mwalletFragment.getView() != null)
-                mwalletFragment.getView().setBackgroundColor(themeColorBg);
-
-
-        }
-
-    }
-
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     private void checkCustomFont() {

@@ -1,9 +1,11 @@
 package net.wrappy.im.util;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.BottomSheetDialog;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -13,9 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by hp on 12/18/2017.
@@ -188,5 +197,42 @@ public class PopupUtils {
     private static View getView(Context context, int resId) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(resId, null);
+    }
+
+    public static BottomSheetDialog createBottomSheet(Activity activity, ArrayList<BottomSheetCell> sheetCells, final BottomSheetListener sheetListener) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(activity);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_dialog,null);
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.bottomSheetContainer);
+        for (int i=0; i < sheetCells.size(); i++) {
+            final int index = sheetCells.get(i).getIndex();
+            linearLayout.addView(createBottomSheetCell(activity,sheetCells.get(i).getResId(), sheetCells.get(i).getTitle(), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sheetListener.onSelectBottomSheetCell(index);
+                    bottomSheetDialog.cancel();
+                }
+            }));
+        }
+        Button button = (Button) view.findViewById(R.id.bottomSheetCancel);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.cancel();
+            }
+        });
+        bottomSheetDialog.setContentView(view);
+        return bottomSheetDialog;
+    }
+
+    private static View createBottomSheetCell(Activity activity, int resId, String tite, View.OnClickListener listener) {
+        View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_cell,null);
+        if (resId!=0) {
+            ImageView imageView = (ImageView) view.findViewById(R.id.bottomSheetIcon);
+            imageView.setImageResource(resId);
+        }
+        AppTextView appTextView = (AppTextView) view.findViewById(R.id.bottomSheetTitle);
+        appTextView.setText(tite);
+        appTextView.setOnClickListener(listener);
+        return view;
     }
 }

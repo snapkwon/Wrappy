@@ -21,7 +21,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -43,7 +42,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
@@ -153,7 +151,6 @@ import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1083,15 +1080,19 @@ public class ConversationView {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.e(s);
-                JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+                try {
+                    JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
 
-                if (jObject.get("status").toString() != null) {
-                    boolean status = Boolean.parseBoolean(jObject.get("status").toString());
-                    if (status) {
+                    if (jObject.get("status").toString() != null) {
+                        boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                        if (status) {
 
-                    } else {
-                        sendMessage();
+                        } else {
+                            sendMessage();
+                        }
                     }
+                }catch (Exception e){
+                    sendMessage();
                 }
             }
         });
@@ -2686,17 +2687,6 @@ public class ConversationView {
 
 
             mvh = new MessageViewHolder(view);
-            if (viewType == 0) {
-                mvh.mAvatar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(mContext, ProfileActivity.class);
-                        intent.putExtra("address", mRemoteAddress);
-                        intent.putExtra("nickname", mRemoteNickname);
-                        mContext.startActivity(intent);
-                    }
-                });
-            }
             view.applyStyleColors();
             return mvh;
         }
@@ -2731,13 +2721,18 @@ public class ConversationView {
             messageView.applyStyleColors();
 
             int messageType = cursor.getInt(mTypeColumn);
+            final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;;
+            final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
-            String address = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteAddress;
-            final String nickname;
-            if (!TextUtils.isEmpty(address) && isGroupChat()) {
-                nickname = Imps.Contacts.getNicknameFromAddress(mActivity.getContentResolver(), new XmppAddress(address).getBareAddress());
-            } else nickname = mRemoteNickname;
-
+            viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, ProfileActivity.class);
+                    intent.putExtra("address", address);
+                    intent.putExtra("nickname",nickname);
+                    mContext.startActivity(intent);
+                }
+            });
             String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             String body = cursor.getString(mBodyColumn);
@@ -3294,10 +3289,13 @@ public class ConversationView {
     }
 
     public void startSettingScreen() {
-
-        Intent intent = new Intent(mContext, SettingConversationActivity.class);
-        mContext.startActivity(intent);
-
+        Intent intent = new Intent(mActivity, SettingConversationActivity.class);
+        intent.putExtra("chatId", mLastChatId);
+        intent.putExtra("account", mAccountId);
+        intent.putExtra("address", mRemoteAddress);
+        intent.putExtra("provider", mProviderId);
+        intent.putExtra("isGroupChat", mContactType);
+        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_CHANGE_BACKGROUND);
     }
 
     public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {

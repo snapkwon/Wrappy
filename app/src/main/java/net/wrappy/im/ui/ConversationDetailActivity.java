@@ -30,7 +30,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
@@ -90,6 +89,7 @@ import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+import net.wrappy.im.util.Utils;
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -109,6 +109,8 @@ import butterknife.OnClick;
 //import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity {
+
+    private AddContactAsyncTask task;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, ConversationDetailActivity.class);
@@ -296,7 +298,7 @@ public class ConversationDetailActivity extends BaseActivity {
         if (themeColorHeader != -1) {
 
             if (themeColorText == -1)
-                themeColorText = getContrastColor(themeColorHeader);
+                themeColorText = Utils.getContrastColor(themeColorHeader);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setNavigationBarColor(themeColorHeader);
@@ -324,11 +326,6 @@ public class ConversationDetailActivity extends BaseActivity {
             }
         }
 
-    }
-
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     MyLoaderCallbacks loaderCallbacks;
@@ -360,7 +357,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                AddContactAsyncTask task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override
                     public void onFinished(Integer code) {
                         startChat();
@@ -458,7 +455,7 @@ public class ConversationDetailActivity extends BaseActivity {
                 return true;*/
             case R.id.menu_verify_or_view:
             case R.id.menu_group_info:
-                startSettingScreen();
+                mConvoView.startSettingScreen();
                 return true;
             case R.id.menu_video_call:
                 mConvoView.startVideoConference();
@@ -984,11 +981,6 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-    private void startSettingScreen() {
-        Intent intent = new Intent(getApplicationContext(), SettingConversationActivity.class);
-        startActivityForResult(intent, REQUEST_CHANGE_BACKGROUND);
-    }
-
     public static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
     public static final int REQUEST_SEND_IMAGE = REQUEST_PICK_CONTACTS + 1;
     public static final int REQUEST_SEND_FILE = REQUEST_SEND_IMAGE + 1;
@@ -997,7 +989,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
-    private static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
+    public static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
     private static final int REQUEST_PLACE_PICKER = REQUEST_CHANGE_BACKGROUND + 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -1043,5 +1035,12 @@ public class ConversationDetailActivity extends BaseActivity {
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE
         };
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (task != null)
+            task.setCallback(null);
     }
 }

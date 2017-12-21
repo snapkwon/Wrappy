@@ -17,7 +17,6 @@
 
 package net.wrappy.im.ui;
 
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -28,7 +27,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -53,23 +51,22 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.SecureMediaStore;
+import net.wrappy.im.util.Utils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -224,9 +221,6 @@ public class MessageListItem extends FrameLayout {
         } else if ((!TextUtils.isEmpty(lastMessage)) && (lastMessage.charAt(0) == '/' || lastMessage.charAt(0) == ':')) {
             boolean cmdSuccess = false;
 
-//            Toast.makeText(getContext(), "lastMessage: " + lastMessage, Toast.LENGTH_SHORT).show();
-//            Log.d("Cuong", "lastMessage: " +  lastMessage);
-
             if (lastMessage.startsWith("/sticker:")) {
                 String[] cmds = lastMessage.split(":");
 
@@ -326,8 +320,6 @@ public class MessageListItem extends FrameLayout {
 
     private void bindBackground(String lastMessage) {
         String message = lastMessage.replace(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX, "");
-//        Toast.makeText(getContext(), "message: " + message, Toast.LENGTH_SHORT).show();
-//        Log.d("Cuong", "message: " + message);
     }
 
     private void bindConference(String lastMessage) {
@@ -760,39 +752,9 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAvatar.setVisibility(View.GONE);
 
         if (address != null && isLeft) {
-
-            RoundedAvatarDrawable avatar = null;
-
-
-
-            if (avatar != null) {
-                mHolder.mAvatar.setVisibility(View.VISIBLE);
-                mHolder.mAvatar.setImageDrawable(avatar);
-
-                //setAvatarBorder(presenceStatus, avatar);
-
-            } else {
-                //  int color = getAvatarBorder(presenceStatus);
-                int padding = 24;
-
-                if (nickname.length() > 0) {
-                    LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-                    mHolder.mAvatar.setVisibility(View.VISIBLE);
-                    mHolder.mAvatar.setImageDrawable(lavatar);
-                }
-            }
-            try {
-                RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
-                    @Override
-                    public void onCompleted(Exception e, Bitmap result) {
-                        if (result!=null) {
-                            mHolder.mAvatar.setImageBitmap(result);
-                        }
-                    }
-                });
-                //avatar = (RoundedAvatarDrawable) DatabaseUtils.getAvatarFromAddress(this.getContext().getContentResolver(), XmppAddress.stripResource(address), ImApp.SMALL_AVATAR_WIDTH, ImApp.SMALL_AVATAR_HEIGHT);
-            } catch (Exception e) {
+            GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
+            if (!TextUtils.isEmpty(reference)) {
+                GlideHelper.loadBitmapToCircleImage(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference));
             }
         }
     }
@@ -1040,7 +1002,7 @@ public class MessageListItem extends FrameLayout {
 
             if (themeColorBg != -1) {
 
-                int textBubbleBg = getContrastColor(themeColorText);
+                int textBubbleBg = Utils.getContrastColor(themeColorText);
                 if (textBubbleBg == Color.BLACK)
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
                 else
@@ -1056,12 +1018,6 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
-    }
-
-    @TargetApi(Build.VERSION_CODES.N)
     public Locale getCurrentLocale() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
@@ -1070,6 +1026,4 @@ public class MessageListItem extends FrameLayout {
             return getResources().getConfiguration().locale;
         }
     }
-
-
 }

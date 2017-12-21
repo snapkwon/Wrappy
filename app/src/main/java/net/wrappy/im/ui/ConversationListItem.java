@@ -40,13 +40,12 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
@@ -55,7 +54,6 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -64,8 +62,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Date;
 import java.util.Locale;
-
-import static net.wrappy.im.helper.RestAPI.GET_PHOTO;
 
 public class ConversationListItem extends FrameLayout {
     public static final String[] CONTACT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.PROVIDER,
@@ -187,16 +183,9 @@ public class ConversationListItem extends FrameLayout {
                 }
             }
             else {
-                generateLetterAvatar(holder, nickname);
+                GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(referenceAvatar)) {
-                    String imgUrl = GET_PHOTO + referenceAvatar;
-                    Glide.with(getContext())
-                            .load(imgUrl).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            holder.mAvatar.setImageBitmap(resource);
-                        }
-                    });
+                    GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
                 }
             }
         }
@@ -312,19 +301,6 @@ public class ConversationListItem extends FrameLayout {
             holder.mPinIcon.setVisibility(VISIBLE);
         } else {
             holder.mPinIcon.setVisibility(GONE);
-        }
-    }
-
-    private void generateLetterAvatar(ConversationViewHolder holder, String nickname) {
-        try {
-            //int color = getAvatarBorder(presence);
-            int padding = 24;
-            LetterAvatar lavatar = new LetterAvatar(getContext(), nickname, padding);
-
-            holder.mAvatar.setImageDrawable(lavatar);
-            holder.mAvatar.setVisibility(View.VISIBLE);
-        } catch (OutOfMemoryError ome) {
-            //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
         }
     }
 

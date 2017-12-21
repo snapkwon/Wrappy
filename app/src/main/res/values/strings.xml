@@ -486,5 +486,6 @@
     <string name="delete_success">Delete Successfully</string>
     <string name="message_fail_import">Failed to import , please try again</string>
     <string name="backup">BACKUP</string>
+    <string name="title_member_group_setting">Member</string>
 
 </resources>

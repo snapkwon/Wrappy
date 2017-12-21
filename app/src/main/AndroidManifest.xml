@@ -75,7 +75,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup,android:label">
         <meta-data
-            android:name="net.wrappy.im.helper.UnsafeOkHttpGlideModule"
+            android:name="net.wrappy.im.helper.glide.UnsafeOkHttpGlideModule"
             android:value="GlideModule" />
         <activity
             android:name=".RouterActivity"
@@ -560,6 +560,7 @@
         <activity android:name=".ui.qr.QrScanFriendActivity" />
         <activity
             android:name=".ui.ConferenceActivity"
+            android:theme="@style/AppTheme"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.Wallet_Complete_Activity"

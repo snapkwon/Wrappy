@@ -1,208 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/match_parent"
     android:background="#f2f2f2">
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/match_width"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/match_width"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/logo_ngang"/>
+                android:src="@drawable/logo_ngang" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/match_width"
             android:background="#fff"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuNewGroup"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_group"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_group" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuNewGroup"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="New Group"/>
+                    android:text="New Group" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuContact"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_contact"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_contact" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuContact"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="Contact"/>
+                    android:text="Contact" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuNewList"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_list"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_list" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuNewList"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="New List"/>
+                    android:text="New List" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuSettings"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_setting"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_setting" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuSettings"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="Settings"/>
+                    android:text="Settings" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuAboutUs"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_aboutus"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_aboutus" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuAboutUs"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="About us"/>
+                    android:text="About us" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuFAQ"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_faq"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_faq" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuFAQ"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="FAQ"/>
+                    android:text="FAQ" />
 
             </LinearLayout>
-            <View android:layout_width="match_parent"
-                android:layout_marginLeft="48dp"
-                android:layout_height="1px"
-                android:background="#565656"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+
+            <View style="@style/dividerMainMenu" />
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/lnMainMenuLogout"
+                style="@style/match_width"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menutab_logout"/>
+                    style="@style/wrap_content"
+                    android:src="@drawable/ic_menutab_logout" />
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuLogout"
+                    style="@style/AppText02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/AppText02"
                     android:layout_marginLeft="16dp"
-                    android:text="Logout"/>
+                    android:text="Logout" />
 
             </LinearLayout>
-
-
-
 
         </LinearLayout>
 
