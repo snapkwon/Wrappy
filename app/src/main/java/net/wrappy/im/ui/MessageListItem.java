@@ -17,7 +17,6 @@
 
 package net.wrappy.im.ui;
 
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -70,6 +69,7 @@ import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.SecureMediaStore;
+import net.wrappy.im.util.Utils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -1035,7 +1035,7 @@ public class MessageListItem extends FrameLayout {
 
             if (themeColorBg != -1) {
 
-                int textBubbleBg = getContrastColor(themeColorText);
+                int textBubbleBg = Utils.getContrastColor(themeColorText);
                 if (textBubbleBg == Color.BLACK)
                     mHolder.mContainer.setBackgroundResource(R.drawable.message_view_rounded_dark);
                 else
@@ -1051,12 +1051,6 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
-    }
-
-    @TargetApi(Build.VERSION_CODES.N)
     public Locale getCurrentLocale() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
@@ -1065,6 +1059,4 @@ public class MessageListItem extends FrameLayout {
             return getResources().getConfiguration().locale;
         }
     }
-
-
 }

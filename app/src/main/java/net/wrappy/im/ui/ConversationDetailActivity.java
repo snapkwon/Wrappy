@@ -30,7 +30,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
@@ -90,6 +89,7 @@ import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+import net.wrappy.im.util.Utils;
 
 import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -109,6 +109,8 @@ import butterknife.OnClick;
 //import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity {
+
+    private AddContactAsyncTask task;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, ConversationDetailActivity.class);
@@ -296,7 +298,7 @@ public class ConversationDetailActivity extends BaseActivity {
         if (themeColorHeader != -1) {
 
             if (themeColorText == -1)
-                themeColorText = getContrastColor(themeColorHeader);
+                themeColorText = Utils.getContrastColor(themeColorHeader);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setNavigationBarColor(themeColorHeader);
@@ -324,11 +326,6 @@ public class ConversationDetailActivity extends BaseActivity {
             }
         }
 
-    }
-
-    public static int getContrastColor(int colorIn) {
-        double y = (299 * Color.red(colorIn) + 587 * Color.green(colorIn) + 114 * Color.blue(colorIn)) / 1000;
-        return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     MyLoaderCallbacks loaderCallbacks;
@@ -360,7 +357,7 @@ public class ConversationDetailActivity extends BaseActivity {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                AddContactAsyncTask task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override
                     public void onFinished(Integer code) {
                         startChat();
@@ -1038,5 +1035,12 @@ public class ConversationDetailActivity extends BaseActivity {
                 Imps.Chats.LAST_MESSAGE_DATE,
                 Imps.Chats.LAST_UNREAD_MESSAGE
         };
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (task != null)
+            task.setCallback(null);
     }
 }
