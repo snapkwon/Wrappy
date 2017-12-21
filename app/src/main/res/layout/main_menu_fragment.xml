@@ -39,7 +39,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuNewGroup"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -60,7 +60,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuContact"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -81,7 +81,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuNewList"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -102,7 +102,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuSettings"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -123,7 +123,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuAboutUs"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -144,7 +144,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuFAQ"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -165,7 +165,7 @@
 
                 <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtMainMenuLogout"
-                    style="@style/AppText02"
+                    style="@style/AppText02_Menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"

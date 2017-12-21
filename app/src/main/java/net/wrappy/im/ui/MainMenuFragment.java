@@ -48,7 +48,7 @@ public class MainMenuFragment extends Fragment {
     private void confirmDeleteAccount(int mAccountId,int mProviderId) {
 
         //need to delete
-        ((ImApp) getActivity().getApplication()).deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
+        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
 
        // ((ImApp) getActivity().getApplication()).resetDB();
 
