@@ -1,8 +1,11 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -65,6 +68,7 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
+    private Thread mThreadUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,28 @@ public class SettingConversationActivity extends AppCompatActivity {
             memberGroupAdapter = new MemberGroupAdapter(memberGroupDisplays, this);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
         }
+    }
+
+    private void updateMembers() {
+        if (mThreadUpdate != null) {
+            mThreadUpdate.interrupt();
+            mThreadUpdate = null;
+        }
+        mThreadUpdate = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ArrayList<MemberGroupDisplay> members = new ArrayList<>();
+
+                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
+                                Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
+                Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+                ContentResolver cr = getContentResolver();
+                Cursor c = cr.query(memberUri, projection, null, null, null);
+                if (c != null) {
+                }
+            }
+        });
     }
 
     @Override
