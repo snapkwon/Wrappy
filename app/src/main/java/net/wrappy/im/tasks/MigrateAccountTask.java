@@ -28,7 +28,6 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -284,10 +283,9 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
     }
 
     public interface MigrateAccountListener {
+        void migrateComplete(OnboardingAccount account);
 
-        public void migrateComplete(OnboardingAccount account);
-
-        public void migrateFailed(long providerId, long accountId);
+        void migrateFailed(long providerId, long accountId);
     }
 
     private void setKeepSignedIn(final long accountId, boolean signin) {
@@ -295,48 +293,5 @@ public class MigrateAccountTask extends AsyncTask<String, Void, OnboardingAccoun
         ContentValues values = new ContentValues();
         values.put(Imps.Account.KEEP_SIGNED_IN, signin);
         mContext.getContentResolver().update(mAccountUri, values, null, null);
-    }
-
-    private void migrateAvatars(String oldUsername, String newUsername) {
-
-        try {
-
-            //first copy the old avatar over to the new account
-            byte[] oldAvatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), oldUsername);
-            if (oldAvatar != null) {
-                setAvatar(newUsername, oldAvatar);
-            }
-
-            //now change the older avatar, so the vcard gets reloaded
-            Bitmap bitmap = BitmapFactory.decodeStream(mContext.getAssets().open("stickers/olo and shimi/4greeting.png"));
-            setAvatar(oldUsername, bitmap);
-        } catch (Exception ioe) {
-            ioe.printStackTrace();
-        }
-    }
-
-    private void setAvatar(String address, Bitmap bmp) {
-
-        try {
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-
-            byte[] avatarBytesCompressed = stream.toByteArray();
-            String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
-    }
-
-    private void setAvatar(String address, byte[] avatarBytesCompressed) {
-
-        try {
-            String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, address);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
     }
 }
