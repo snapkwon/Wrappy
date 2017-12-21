@@ -1,10 +1,13 @@
 package net.wrappy.im.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +28,14 @@ import butterknife.OnClick;
 public class MainMenuFragment extends Fragment {
 
     View mainView;
-    MainActivity t;
+    MainActivity mainActivity;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.main_menu_fragment,null);
         ButterKnife.bind(this,mainView);
-        t = (MainActivity)getActivity();
+        mainActivity = (MainActivity)getActivity();
         return mainView;
     }
 
@@ -41,12 +44,19 @@ public class MainMenuFragment extends Fragment {
         //need to delete
         ((ImApp) getActivity().getApplication()).deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
 
-        ((ImApp) getActivity().getApplication()).resetDB();
+       // ((ImApp) getActivity().getApplication()).resetDB();
 
-        Intent i =  getActivity().getBaseContext().getPackageManager().getLaunchIntentForPackage(  getActivity().getBaseContext().getPackageName() );
+        PackageManager packageManager = getActivity().getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
+        getActivity().startActivity(mainIntent);
+        System.exit(0);
+
+       /* Intent i =  getActivity().getBaseContext().getPackageManager().getLaunchIntentForPackage(  getActivity().getBaseContext().getPackageName() );
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
+        startActivity(i);*/
 
 
 
@@ -85,7 +95,7 @@ public class MainMenuFragment extends Fragment {
                 startActivity(faqIntent);
                 break;
             case R.id.txtMainMenuLogout:
-                confirmDeleteAccount(t.getData(),t.getData1());
+                confirmDeleteAccount(mainActivity.getDefaultAcountid(),mainActivity.getDefaultProviderid());
                 break;
 
             default:

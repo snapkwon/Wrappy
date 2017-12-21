@@ -358,7 +358,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         }
     }
-
+    Intent serviceIntent;
     public synchronized void startImServiceIfNeed() {
         startImServiceIfNeed(false);
     }
@@ -369,7 +369,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         if (mImService == null) {
 
-            Intent serviceIntent = new Intent(this, RemoteImService.class);
+            serviceIntent = new Intent(this, RemoteImService.class);
 //        serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, isBoot);
 
             mApplicationContext.startService(serviceIntent);
@@ -423,8 +423,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mImService = null;
         }
 
-
-        Intent serviceIntent = new Intent(this, RemoteImService.class);
+       // Intent serviceIntent = new Intent(this, RemoteImService.class);
         serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
         mApplicationContext.stopService(serviceIntent);
 
@@ -664,9 +663,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         ContentUris.appendId(builder, accountId);
         resolver.delete(builder.build(), null, null);
 
-        //clearApplicationData();
-        mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
-        mApplicationContext.deleteDatabase(ImpsProvider.UNENCRYPTED_DATABASE_NAME);
+        clearApplicationData();
+       // mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
+       // mApplicationContext.deleteDatabase(ImpsProvider.UNENCRYPTED_DATABASE_NAME);
 
        /* SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mApplicationContext);
         SharedPreferences.Editor editor = preferences.edit();
@@ -681,7 +680,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         if(appDir.exists()){
             String[] children = appDir.list();
             for(String s : children){
-                if(!s.equals("lib") || !s.equals("media.db")){
+                if(!s.equals("lib")){
                     deleteDir(new File(appDir, s));
                 }
             }

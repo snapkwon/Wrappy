@@ -49,12 +49,6 @@
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-        <EditText
-            android:id="@+id/searchEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
