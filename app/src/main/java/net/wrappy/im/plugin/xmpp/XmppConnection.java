@@ -30,6 +30,7 @@ import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsErrorInfo;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.adapters.ChatSessionAdapter;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Debug;
 
@@ -1649,6 +1650,9 @@ public class XmppConnection extends ImConnection {
 
                             if (session != null)
                                 ((ChatGroup) session.getParticipant()).setName(reason);
+                        }
+                        if (mSessionManager.getAdapter() != null) {
+                            new ChatSessionAdapter(session, mSessionManager.getAdapter().getConnection(), true);
                         }
                     } catch (Exception se) {
                         Log.e(TAG, "error accepting invite", se);

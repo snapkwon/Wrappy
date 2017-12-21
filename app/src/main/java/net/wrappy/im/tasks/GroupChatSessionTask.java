@@ -89,7 +89,11 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                     publishProgress(mRequestedChatId);
 
                 } else {
-                    return getActivity().getString(R.string.unable_to_create_or_join_group_chat);
+                    if (isStable()) {
+                        return getActivity().getString(R.string.unable_to_create_or_join_group_chat);
+                    } else {
+                        return null;
+                    }
                 }
             } else {
                 mRequestedChatId = session.getId();

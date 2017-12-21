@@ -17,9 +17,10 @@
 
 package net.wrappy.im.service.adapters;
 
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IChatSessionListener;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
+import android.util.Log;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
@@ -32,16 +33,14 @@ import net.wrappy.im.model.GroupListener;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionListener;
+import net.wrappy.im.service.IChatSessionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import android.os.RemoteCallbackList;
-import android.os.RemoteException;
-import android.util.Log;
-
-import net.wrappy.im.service.IChatSessionManager;
 
 /** manages the chat sessions for a given protocol */
 public class ChatSessionManagerAdapter extends
@@ -198,6 +197,10 @@ public class ChatSessionManagerAdapter extends
         synchronized (mActiveChatSessionAdapters) {
             return mActiveChatSessionAdapters.size();
         }
+    }
+
+    public ImConnectionAdapter getConnection() {
+        return mConnection;
     }
 
     public void registerChatSessionListener(IChatSessionListener listener) {
