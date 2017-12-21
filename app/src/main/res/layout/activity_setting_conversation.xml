@@ -33,13 +33,10 @@
                 android:text="@string/setting_search"
                 android:textSize="16sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+            <View style="@style/divider"
                 android:layout_alignLeft="@id/text_search_setting"
                 android:layout_below="@id/text_search_setting"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_marginTop="15dp" />
 
         </RelativeLayout>
 
@@ -70,9 +67,7 @@
                 android:text="@string/clean_history"
                 android:textSize="16sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+            <View style="@style/divider"
                 android:layout_alignLeft="@id/text_clean_setting"
                 android:layout_below="@id/text_clean_setting"
                 android:layout_marginTop="15dp"
@@ -107,9 +102,7 @@
                 android:text="@string/setting_delete_and_leave_group"
                 android:textSize="16sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+            <View style="@style/divider"
                 android:layout_alignLeft="@id/text_delete_setting"
                 android:layout_below="@id/text_delete_setting"
                 android:layout_marginTop="15dp"
@@ -145,13 +138,10 @@
                 android:text="@string/setting_report_spam"
                 android:textSize="16sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+            <View style="@style/divider"
                 android:layout_alignLeft="@id/text_report_spam_setting"
                 android:layout_below="@id/text_report_spam_setting"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_marginTop="15dp"/>
 
         </RelativeLayout>
 
@@ -189,13 +179,10 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+            <View style="@style/divider"
                 android:layout_alignLeft="@id/text_notification_setting"
                 android:layout_below="@id/text_notification_setting"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_marginTop="15dp"/>
 
         </RelativeLayout>
 
