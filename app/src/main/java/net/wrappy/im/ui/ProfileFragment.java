@@ -162,14 +162,16 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @OnClick({R.id.txtProfileSendMessage, R.id.txtProfileChangeQuestion, R.id.txtProfileLogout})
+    @OnClick({R.id.btnProfileEditAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
-        if (view.getId() == R.id.txtProfileSendMessage) {
+        if (view.getId()==R.id.btnProfileEditAvatar) {
+
+        } if (view.getId() == R.id.lnProfileSendMessage) {
             startChat();
-        } else if (view.getId() == R.id.txtProfileChangeQuestion) {
+        } else if (view.getId() == R.id.lnProfileChangeQuestion) {
             Intent intent = new Intent(getActivity(), SecurityQuestionActivity.class);
             startActivity(intent);
-        } else if (view.getId() == R.id.txtProfileLogout) {
+        } else if (view.getId() == R.id.lnProfileLogout) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
             sheetCells.add(sheetCell);
