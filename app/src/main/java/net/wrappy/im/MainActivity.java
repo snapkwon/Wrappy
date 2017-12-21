@@ -69,14 +69,18 @@ import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
+import net.wrappy.im.tasks.sync.SyncDataListener;
+import net.wrappy.im.tasks.sync.SyncDataRunnable;
 import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
@@ -91,6 +95,7 @@ import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -100,7 +105,6 @@ import net.wrappy.im.util.XmppUriHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,6 +113,7 @@ import java.util.UUID;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
+import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 import static net.wrappy.im.helper.RestAPI.POST_CREATE_GROUP;
 
 /**
@@ -136,8 +141,10 @@ public class MainActivity extends BaseActivity {
     ImageView imgLogo;
 
     //Check to load old data from server
-    Handler mLoadDataHandler = null;
-    LoadDataRunnable runable;
+    Handler mLoadDataHandler = new Handler();
+    Handler mLoadContactHandler = new Handler();
+    SyncDataRunnable<WpKChatGroupDto> syncGroupChatRunnable;
+    SyncDataRunnable<WpKChatRoster> syncContactRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -381,7 +388,6 @@ public class MainActivity extends BaseActivity {
 
         handleIntent();
         checkConnection();
-        checkToLoadDataServer();
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -458,6 +464,7 @@ public class MainActivity extends BaseActivity {
                 //launch a new chat based on the intent value
                 startChat(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), intent.getStringExtra("username"), true, true);
             }
+            checkToLoadDataServer();
 
             setIntent(null);
         }
@@ -551,18 +558,6 @@ public class MainActivity extends BaseActivity {
             } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
                 mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
             }
-        }
-    }
-
-    private void rejoinGroupChat(WpKChatGroupDto group) {
-        try {
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-            if (conn.getState() == ImConnection.LOGGED_IN) {
-                String nickname = mApp.getDefaultNickname();
-                new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -1001,63 +996,125 @@ public class MainActivity extends BaseActivity {
 
     }
 
+
+    /*Start sync contacts and group chat from server*/
     private void checkToLoadDataServer() {
         Intent intent = getIntent();
-        if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false) && checkConnection()) {
+        if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false)) {
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-                    syncData(wpKMemberDtos);
+//                    syncData(wpKMemberDtos);
+                    syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                }
+            });
+            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                    syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
                 }
             });
         }
     }
 
-    private void syncData(WpKChatGroupDto[] wpKMemberDtos) {
-        IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+    SyncDataListener<WpKChatGroupDto> syncGroupListener = new SyncDataListener<WpKChatGroupDto>() {
+        @Override
+        public void sync(WpKChatGroupDto[] data) {
+            syncData(mLoadDataHandler, data, syncGroupListener, 0);
+        }
+
+        @Override
+        public void processing(WpKChatGroupDto[] data) {
+            for (WpKChatGroupDto groupDto : data) {
+                if (!TextUtils.isEmpty(groupDto.getXmppGroup())) {
+                    rejoinGroupChat(groupDto);
+                }
+            }
+        }
+    };
+
+    SyncDataListener<WpKChatRoster> syncContactsListener = new SyncDataListener<WpKChatRoster>() {
+        @Override
+        public void sync(WpKChatRoster[] data) {
+            syncData(mLoadContactHandler, data, syncContactsListener, 1);
+        }
+
+        @Override
+        public void processing(WpKChatRoster[] data) {
+            for (WpKChatRoster roster : data) {
+                approveSubscription(roster);
+            }
+        }
+    };
+
+    /*
+   * Auto approved contact in list which were loaded from Xmpp server
+   * */
+    public static void approveSubscription(final WpKChatRoster roster) {
         try {
-            if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
-                for (WpKChatGroupDto groupDto : wpKMemberDtos) {
-                    if (!TextUtils.isEmpty(groupDto.getXmppGroup())) {
-                        rejoinGroupChat(groupDto);
+            ImApp mApp = ImApp.sImApp;
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            if (conn.getState() == ImConnection.LOGGED_IN) {
+                String address = roster.getContact().getReference() + Constant.EMAIL_DOMAIN;
+                ImApp.updateContact(address, roster.getContact(), conn);
+                IContactListManager manager = conn.getContactListManager();
+                Contact contact = new Contact(new XmppAddress(address), roster.getContact().getIdentifier(), Imps.Contacts.TYPE_NORMAL);
+                manager.approveSubscription(contact);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    /*
+   * Auto join group chat
+   *
+   */
+    private void rejoinGroupChat(WpKChatGroupDto group) {
+        try {
+            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            if (conn.getState() == ImConnection.LOGGED_IN) {
+                String nickname = mApp.getDefaultNickname();
+                new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private <T> void syncData(Handler handler, T[] data, SyncDataListener<T> syncDataListener, int type) {
+        IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+        SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
+        try {
+            if (handler != null) {
+                handler.removeCallbacks(runable);
+                if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                    if (syncDataListener != null) {
+                        syncDataListener.processing(data);
+
                     }
-                }
-                if (mLoadDataHandler != null) {
-                    mLoadDataHandler.removeCallbacks(runable);
-                    runable = null;
-                    mLoadDataHandler = null;
-                }
-            } else {
-                if (mLoadDataHandler == null) {
-                    mLoadDataHandler = new Handler();
-                    runable = new LoadDataRunnable(this, wpKMemberDtos);
                 } else {
-                    mLoadDataHandler.removeCallbacks(runable);
+                    if (runable == null) {
+                        runable = initRunnable(data, syncDataListener, type);
+                    }
+                    handler.postDelayed(runable, 2000);
                 }
-                mLoadDataHandler.postDelayed(runable, 2000);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
     }
 
-    private static final class LoadDataRunnable implements Runnable {
-        WpKChatGroupDto[] groupDtos;
-        WeakReference<MainActivity> weakReference;
-
-        public LoadDataRunnable(MainActivity activity, WpKChatGroupDto[] groupDtos) {
-            this.groupDtos = groupDtos;
-            this.weakReference = new WeakReference<MainActivity>(activity);
-        }
-
-        @Override
-        public void run() {
-            if (groupDtos != null && weakReference != null && weakReference.get() != null) {
-                weakReference.get().syncData(groupDtos);
-
-            }
+    private <T> SyncDataRunnable initRunnable(T[] data, SyncDataListener<T> syncDataListener, int type) {
+        if (type == 0) {
+            syncGroupChatRunnable = (SyncDataRunnable<WpKChatGroupDto>) new SyncDataRunnable<T>(syncDataListener, data);
+            return syncGroupChatRunnable;
+        } else {
+            syncContactRunnable = (SyncDataRunnable<WpKChatRoster>) new SyncDataRunnable<T>(syncDataListener, data);
+            return syncContactRunnable;
         }
     }
 }
