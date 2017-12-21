@@ -1,4 +1,4 @@
-package net.wrappy.im.helper;
+package net.wrappy.im.helper.glide;
 
 import java.security.cert.CertificateException;
 

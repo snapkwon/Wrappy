@@ -3,9 +3,6 @@
  */
 package net.wrappy.im.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -27,6 +24,10 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.legacy.SignInHelper;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccountAdapter extends CursorAdapter implements AccountListItem.SignInManager {
 
     private LayoutInflater mInflater;
@@ -36,9 +37,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
     private Listener mListener;
     private Activity mActivity;
 
-
-    private static Handler sHandler = new Handler()
-    {
+    private static Handler sHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -50,7 +49,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
     };
 
     public AccountAdapter(Activity context,
-            LayoutInflater.Factory factory, int resId) {
+                          LayoutInflater.Factory factory, int resId) {
         super(context, null, 0);
         mActivity = context;
         mInflater = LayoutInflater.from(context).cloneInContext(context);
@@ -64,23 +63,25 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
 
     @Override
     public Cursor swapCursor(Cursor newCursor) {
-        if(mBindTask != null) {
+        if (mBindTask != null) {
             mBindTask.cancel(false);
-            mBindTask = null ;
+            mBindTask = null;
         }
 
         if (mStashCursor != null && (!mStashCursor.isClosed()))
-                mStashCursor.close();
+            mStashCursor.close();
 
         mStashCursor = newCursor;
 
         if (mStashCursor != null) {
             // Delay swapping in the cursor until we get the extra info
-           // List<AccountInfo> accountInfoList = getAccountInfoList(mStashCursor) ;
-           // runBindTask((Activity)mContext, accountInfoList);
+            // List<AccountInfo> accountInfoList = getAccountInfoList(mStashCursor) ;
+            // runBindTask((Activity)mContext, accountInfoList);
         }
         return super.swapCursor(mStashCursor);
-    };
+    }
+
+    ;
 
     /**
      * @param cursor
@@ -89,8 +90,8 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
     private List<AccountInfo> getAccountInfoList(Cursor cursor) {
         List<AccountInfo> aiList = new ArrayList<AccountInfo>();
         cursor.moveToPosition(-1);
-        while( cursor.moveToNext() ) {
-            aiList.add( getAccountInfo(cursor));
+        while (cursor.moveToNext()) {
+            aiList.add(getAccountInfo(cursor));
         }
         return aiList;
     }
@@ -107,7 +108,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         String mSecondRowText;
         boolean mSwitchOn;
         String activeUserName;
-        int connectionStatus ;
+        int connectionStatus;
 
         String domain;
         String host;
@@ -116,7 +117,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
 
     }
 
-    AccountInfo getAccountInfo( Cursor cursor ) {
+    AccountInfo getAccountInfo(Cursor cursor) {
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.providerId = cursor.getInt(cursor.getColumnIndexOrThrow(Imps.Provider._ID));
         if (!cursor.isNull(cursor.getColumnIndexOrThrow(Imps.Provider.ACTIVE_ACCOUNT_ID))) {
@@ -144,10 +145,10 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
 
     }
 
-    private void runBindTask( final Activity context, final List<AccountInfo> accountInfoList ) {
+    private void runBindTask(final Activity context, final List<AccountInfo> accountInfoList) {
         final Resources resources = context.getResources();
         final ContentResolver resolver = context.getContentResolver();
-        final ImApp mApp = (ImApp)context.getApplication();
+        final ImApp mApp = (ImApp) context.getApplication();
 
         // if called multiple times
         if (mBindTask != null)
@@ -160,8 +161,8 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
             @Override
             protected List<AccountSetting> doInBackground(Void... params) {
                 List<AccountSetting> accountSettingList = new ArrayList<AccountSetting>();
-                for( AccountInfo ai : accountInfoList ) {
-                    accountSettingList.add( getAccountSettings(ai) );
+                for (AccountInfo ai : accountInfoList) {
+                    accountSettingList.add(getAccountSettings(ai));
                 }
                 return accountSettingList;
             }
@@ -170,12 +171,11 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
                 AccountSetting as = new AccountSetting();
 
 
-                Cursor pCursor = resolver.query(Imps.ProviderSettings.CONTENT_URI,new String[] {Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE},Imps.ProviderSettings.PROVIDER + "=?",new String[] { Long.toString(ai.providerId)},null);
+                Cursor pCursor = resolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(ai.providerId)}, null);
 
-                if (pCursor != null)
-                {
+                if (pCursor != null) {
                     Imps.ProviderSettings.QueryMap settings =
-                            new Imps.ProviderSettings.QueryMap(pCursor, resolver, ai.providerId, false , null);
+                            new Imps.ProviderSettings.QueryMap(pCursor, resolver, ai.providerId, false, null);
 
                     as.connectionStatus = ai.dbConnectionStatus;
                     as.activeUserName = ai.activeUserName;
@@ -184,17 +184,17 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
                     as.port = settings.getPort();
 
                     /**
-                    IImConnection conn = mApp.getConnection(ai.providerId,settings.get);
-                    if (conn == null) {
-                        as.connectionStatus = ImConnection.DISCONNECTED;
-                    } else {
-                        try {
-                            as.connectionStatus = conn.getState();
-                        } catch (RemoteException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }*/
+                     IImConnection conn = mApp.getConnection(ai.providerId,settings.get);
+                     if (conn == null) {
+                     as.connectionStatus = ImConnection.DISCONNECTED;
+                     } else {
+                     try {
+                     as.connectionStatus = conn.getState();
+                     } catch (RemoteException e) {
+                     // TODO Auto-generated catch block
+                     e.printStackTrace();
+                     }
+                     }*/
 
                     settings.close();
                 }
@@ -206,9 +206,10 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
                 // store
                 mBindTask = null;
                 // swap
-                AccountAdapter.super.swapCursor(mStashCursor);
-                if (mListener != null)
+                if (mListener != null) {
+                    AccountAdapter.super.swapCursor(mStashCursor);
                     mListener.onPopulate();
+                }
             }
         };
         mBindTask.execute();
@@ -225,8 +226,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         Cursor cursor = getCursor();
 
         cursor.moveToFirst();
-        while (!cursor.isAfterLast())
-        {
+        while (!cursor.isAfterLast()) {
             long cAccountId = cursor.getLong(ACTIVE_ACCOUNT_ID_COLUMN);
 
             if (cAccountId == accountId)
@@ -238,7 +238,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         // Remember that the user signed in.
         setKeepSignedIn(accountId, true);
 
- //       long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
+        //       long providerId = cursor.getLong(PROVIDER_ID_COLUMN);
         String password = cursor.getString(ACTIVE_ACCOUNT_PW_COLUMN);
 
         boolean isActive = true; // TODO(miron)
@@ -255,7 +255,7 @@ public class AccountAdapter extends CursorAdapter implements AccountListItem.Sig
         setKeepSignedIn(accountId, false);
 
         try {
-            IImConnection conn =  ((ImApp)mActivity.getApplication()).getConnection(providerId, accountId);
+            IImConnection conn = ((ImApp) mActivity.getApplication()).getConnection(providerId, accountId);
             if (conn != null) {
                 conn.logout();
             }

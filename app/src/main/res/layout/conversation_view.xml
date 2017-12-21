@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -17,93 +16,85 @@
  * limitations under the License.
  */
 -->
-    <view
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/convoitemview"
     class="net.wrappy.im.ui.ConversationListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp"
-        android:id="@+id/convoitemview"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    android:padding="3dp">
 
 
     <LinearLayout
         android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="0dp"
         android:layout_marginLeft="62dp"
         android:orientation="vertical"
-        >
+        android:padding="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
+
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:singleLine="true"
-                android:textColor="?contactTextSecondary"
-                />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?contactTextSecondary" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:fontFamily="sans-serif-light"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?contactTextSecondary"
-                android:layout_alignParentRight="true"
-                />
+                android:textColor="?contactTextSecondary" />
 
         </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/line2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="28dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?contactTextPrimary"
-            android:maxLines="3"
-            android:ellipsize="end"
-            android:paddingBottom="6dp"
-            />
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="right">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/pinIcon"
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/line2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/pin_pink"
-                android:visibility="gone"/>
+                android:layout_marginRight="28dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:paddingBottom="6dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextPrimary" />
 
-            <ImageView
-                android:id="@+id/statusIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="centerCrop"
-                android:padding="3dp"
-                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/pinIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/pin_pink"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/statusIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="3dp"
+                    android:scaleType="centerCrop" />
+
+            </LinearLayout>
 
 
-    </RelativeLayout>
+        </RelativeLayout>
 
         <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line3"
@@ -111,9 +102,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?contactTextSecondary"
-            android:visibility="gone"
-            />
-
+            android:visibility="gone" />
 
 
     </LinearLayout>
@@ -122,28 +111,17 @@
         android:id="@+id/media_thumbnail"
         android:layout_width="100dp"
         android:layout_height="150dp"
-        android:layout_marginTop="30dp"
-        android:scaleType="centerCrop"
-        android:focusableInTouchMode="false"
         android:layout_gravity="left|bottom"
-        android:visibility="gone"
-        />
+        android:layout_marginTop="30dp"
+        android:focusableInTouchMode="false"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
-    <net.wrappy.im.helper.layout.CircleLayout
+    <ImageView
+        android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="@drawable/rounded_shape_white"
-        android:clipChildren="true">
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            android:layout_gravity="left|top"
-            />
-    </net.wrappy.im.helper.layout.CircleLayout>
-
-
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
 </view>

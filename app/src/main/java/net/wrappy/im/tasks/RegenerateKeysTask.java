@@ -28,8 +28,7 @@ public class RegenerateKeysTask extends AsyncTask<String, Void, String> {
 
     String mUserAddress;
 
-    public RegenerateKeysTask(Activity context, ImApp app, String userAddress, long providerId, long accountId, RegenerateKeysListener listener)
-    {
+    public RegenerateKeysTask(Activity context, ImApp app, String userAddress, long providerId, long accountId, RegenerateKeysListener listener) {
         mContext = context;
         mAccountId = accountId;
         mProviderId = providerId;
@@ -51,10 +50,7 @@ public class RegenerateKeysTask extends AsyncTask<String, Void, String> {
             List<String> fps = mConn.getFingerprints(mUserAddress);
 
 
-
-        }
-        catch (RemoteException re)
-        {
+        } catch (RemoteException re) {
             //fail!
         }
 
@@ -66,16 +62,12 @@ public class RegenerateKeysTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String newFingerprint) {
         super.onPostExecute(newFingerprint);
 
-        if (newFingerprint == null)
-        {
-            if (mListener != null)
-                mListener.regenFailed(mProviderId,mAccountId);
-        }
-        else
-        {
-            if (mListener != null)
+        if (mListener != null)
+            if (newFingerprint == null) {
+                mListener.regenFailed(mProviderId, mAccountId);
+            } else {
                 mListener.regenComplete(newFingerprint);
-        }
+            }
 
     }
 

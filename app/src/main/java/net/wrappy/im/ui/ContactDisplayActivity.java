@@ -33,15 +33,8 @@ import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
-import net.wrappy.im.ui.qr.QrDisplayActivity;
-import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.util.PopupUtils;
 
-import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -52,7 +45,6 @@ public class ContactDisplayActivity extends BaseActivity {
     private String mUsername = null;
     private long mProviderId = -1;
     private long mAccountId = -1;
-    private String email = null;
     private IImConnection mConn;
 
     private String mRemoteOtrFingerprint;
@@ -74,7 +66,7 @@ public class ContactDisplayActivity extends BaseActivity {
         mUsername = getIntent().getStringExtra("address");
         mProviderId = getIntent().getLongExtra("provider", -1);
         mAccountId = getIntent().getLongExtra("account", -1);
-        email = ImApp.getEmail(mUsername);
+        String email = ImApp.getEmail(mUsername);
 
         String remoteFingerprint = getIntent().getStringExtra("fingerprint");
         try {// TungNP: finish activity to avoid crash
@@ -90,12 +82,9 @@ public class ContactDisplayActivity extends BaseActivity {
             if (splitNickname.length > 0)
                 mNickname = splitNickname[0];
         }
-
-
         setTitle("");
 
         TextView tv = (TextView) findViewById(R.id.tvNickname);
-        tv = (TextView) findViewById(R.id.tvNickname);
         tv.setText(mNickname);
         tv = (TextView) findViewById(R.id.tvUsername);
         tv.setText(email);
@@ -117,116 +106,31 @@ public class ContactDisplayActivity extends BaseActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startChat();
-
             }
         });
-
 
         if (mConn != null) {
             new AsyncTask<String, Void, Boolean>() {
                 @Override
                 protected Boolean doInBackground(String... strings) {
-
                     mRemoteOtrFingerprint = strings[0];
 
                     if (mRemoteOtrFingerprint == null) {
                         mRemoteOtrFingerprint = OtrChatManager.getInstance().getRemoteKeyFingerprint(mUsername);
                     }
 
-
                     try {
                         mRemoteOmemoFingerprints = mConn.getFingerprints(mUsername);
-
                     } catch (RemoteException re) {
 
                     }
-
                     return true;
-                }
-
-                @Override
-                protected void onPostExecute(Boolean success) {
-                    super.onPostExecute(success);
-
-                    if (mRemoteOmemoFingerprints == null ||
-                            mRemoteOmemoFingerprints.size() == 0)
-                        displayFingerprint(mRemoteOtrFingerprint);
-                    else
-                        displayFingerprint(mRemoteOmemoFingerprints.get(mRemoteOmemoFingerprints.size() - 1));
                 }
             }.execute(remoteFingerprint);
         }
 
     }
-
-    private void displayFingerprint(final String remoteFingerprint) {
-
-        try {
-
-            ImageView btnQrShare = (ImageView) findViewById(R.id.qrshare);
-            ImageView iv = (ImageView) findViewById(R.id.qrcode);
-            TextView tv = (TextView) findViewById(R.id.tvFingerprint);
-
-            ArrayList<String> fingerprints = OtrChatManager.getInstance().getRemoteKeyFingerprints(mUsername);
-
-            boolean removeFingerprint = true;
-            if (!removeFingerprint && !TextUtils.isEmpty(remoteFingerprint)) {
-
-                findViewById(R.id.listEncryptionKey).setVisibility(View.VISIBLE);
-
-                tv.setText(OmemoKeyUtil.prettyFingerprint(remoteFingerprint));
-
-                iv.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-                        String inviteString;
-                        try {
-                            inviteString = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, remoteFingerprint, mNickname);
-
-                            Intent intent = new Intent(ContactDisplayActivity.this, QrDisplayActivity.class);
-                            intent.putExtra(Intent.EXTRA_TEXT, inviteString);
-                            intent.setType("text/plain");
-                            startActivity(intent);
-
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                });
-
-                btnQrShare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        try {
-                            String inviteLink = OnboardingManager.generateInviteLink(ContactDisplayActivity.this, mUsername, remoteFingerprint, mNickname);
-                            new QrShareAsyncTask(ContactDisplayActivity.this).execute(inviteLink, mNickname);
-                        } catch (IOException ioe) {
-                            Log.e(ImApp.LOG_TAG, "couldn't generate QR code", ioe);
-                        }
-                    }
-                });
-
-
-                //if (!OtrChatManager.getInstance().isRemoteKeyVerified(mUsername, remoteFingerprint))
-                //   btnVerify.setVisibility(View.VISIBLE);
-
-            }
-
-        } catch (Exception e) {
-            Log.e(ImApp.LOG_TAG, "error displaying contact", e);
-        }
-
-
-    }
-
 
     public void verifyClicked(View view) {
         verifyRemoteFingerprint();
@@ -246,9 +150,7 @@ public class ContactDisplayActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_contact_detail, menu);
-
         return true;
     }
 
@@ -296,7 +198,6 @@ public class ContactDisplayActivity extends BaseActivity {
 
     void doDeleteContact() {
         try {
-
             IImConnection mConn;
             mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
 
@@ -307,7 +208,6 @@ public class ContactDisplayActivity extends BaseActivity {
                 //mHandler.showAlert(R.string.error,
                 //      ErrorResUtils.getErrorRes(getResources(), res, address));
             }
-
         } catch (RemoteException re) {
 
         }
@@ -322,12 +222,8 @@ public class ContactDisplayActivity extends BaseActivity {
             if (manager != null) {
                 IChatSession session = manager.getChatSession(mUsername);
                 if (session == null) {
-                    new ChatSessionInitTask(((ImApp) getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
-                        @Override
-                        protected void onPostExecute(Long chatId) {
-                            super.onPostExecute(chatId);
-                        }
-                    }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(mUsername)));
+                    new ChatSessionInitTask(this, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
+                            .executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(mUsername)));
                     Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
                 }
             }
@@ -338,28 +234,21 @@ public class ContactDisplayActivity extends BaseActivity {
         intent.putExtra("id", mContactId);
         startActivity(intent);
         finish();
-
-
     }
 
     private void initSmp(String question, String answer) {
         try {
-
-
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mUsername);
             IOtrChatSession iOtrSession = session.getDefaultOtrChatSession();
             iOtrSession.initSmpVerification(question, answer);
 
-
         } catch (RemoteException e) {
             Log.e(ImApp.LOG_TAG, "error init SMP", e);
-
         }
     }
 
     private void verifyRemoteFingerprint() {
-
         new AsyncTask<String, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(String... strings) {
@@ -387,22 +276,11 @@ public class ContactDisplayActivity extends BaseActivity {
                                 }
                             }
                         }
-
                     }
-
                 } catch (RemoteException e) {
                     Log.e(ImApp.LOG_TAG, "error init otr", e);
-
                 }
-
                 return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-
-
             }
         }.execute();
     }

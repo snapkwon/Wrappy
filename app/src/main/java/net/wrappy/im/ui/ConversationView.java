@@ -21,7 +21,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -43,7 +42,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
@@ -147,11 +145,12 @@ import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
+import net.wrappy.im.util.PreferenceContract;
+import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,6 +159,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.tornado.android.patternlock.PatternUtils;
 
 public class ConversationView {
     // This projection and index are set for the query of active chats
@@ -257,7 +257,7 @@ public class ConversationView {
 
     private int mViewType;
 
-    private boolean istranslate = false;
+    private boolean istranslate;
 
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
@@ -275,6 +275,7 @@ public class ConversationView {
 
     // array data of spinner language
     private String[] arraySpinner = null;
+    private ChatSessionInitTask task;
 
     public SimpleAlertHandler getHandler() {
         return mHandler;
@@ -752,6 +753,8 @@ public class ConversationView {
 
         mActivity = activity;
         mContext = activity;
+        istranslate =      PreferenceUtils.getBoolean("istranslate",
+                istranslate, mActivity);
         ButterKnife.bind(this, mActivity);
 
         mApp = (ImApp) mActivity.getApplication();
@@ -1078,15 +1081,19 @@ public class ConversationView {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.e(s);
-                JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
+                try {
+                    JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
 
-                if (jObject.get("status").toString() != null) {
-                    boolean status = Boolean.parseBoolean(jObject.get("status").toString());
-                    if (status) {
+                    if (jObject.get("status").toString() != null) {
+                        boolean status = Boolean.parseBoolean(jObject.get("status").toString());
+                        if (status) {
 
-                    } else {
-                        sendMessage();
+                        } else {
+                            sendMessage();
+                        }
                     }
+                }catch (Exception e){
+                    sendMessage();
                 }
             }
         });
@@ -2545,7 +2552,16 @@ public class ConversationView {
                     targetlanguage = "vi";
                     break;
             }
-            bodytranslate.clear();
+            resetTranslate();
+           // bodytranslate.clear();
+        }
+
+        public void resetTranslate()
+        {
+            for(int i =0 ; i < bodytranslate.size() ; i++)
+            {
+                bodytranslate.get(i).mIstranslate = false;
+            }
         }
 
         public ConversationRecyclerViewAdapter(Activity context, Cursor c) {
@@ -2573,7 +2589,18 @@ public class ConversationView {
         public Cursor swapCursor(Cursor newCursor) {
             if (newCursor != null) {
                 resolveColumnIndex(newCursor);
+                if (newCursor.moveToFirst()) {
+                    do {
+                        if(bodytranslate.size() < newCursor.getPosition() +1) {
+                            BodyTranslate data = new BodyTranslate();
+                            data.mIstranslate = false;
+                            data.mTexttranslate = "";
+                            bodytranslate.add(data);
+                        }
+                    } while (newCursor.moveToNext());
+                }
             }
+
             return super.swapCursor(newCursor);
         }
 
@@ -2667,19 +2694,8 @@ public class ConversationView {
 
 
         @Override
-        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
-            if (bodytranslate.size() < position + 1) {
-                if (cursor.moveToFirst()) {
-                    do {
-                        String Textdata = cursor.getString(mBodyColumn);
-                        BodyTranslate data = new BodyTranslate();
-                        data.mIstranslate = false;
-                        data.mTexttranslate = "";
-                        bodytranslate.add(data);
-                        // do what ever you want here
-                    } while (cursor.moveToNext());
-                }
-            }
+        public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor , final int position) {
+
             cursor.moveToPosition(position);
 
             viewHolder.btntranslate.setOnClickListener(new View.OnClickListener() {
@@ -2688,6 +2704,8 @@ public class ConversationView {
                     cursor.moveToPosition(viewHolder.getPos());
                     if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
+                        viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.waiting_dialog));
+                        viewHolder.btntranslate.setEnabled(false);
                         iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
                     } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
@@ -2726,16 +2744,17 @@ public class ConversationView {
                 viewHolder.txttranslate.setVisibility(View.GONE);
                 // body =cursor.getString(mBodyColumn);
             } else {
+                viewHolder.btntranslate.setEnabled(true);
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
                 if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
                     }
-                    viewHolder.btntranslate.setText("close translate");
+                    viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.closetranslate));
                 } else {
                     viewHolder.txttranslate.setVisibility(View.GONE);
-                    viewHolder.btntranslate.setText("see translate");
+                    viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.seetranslate));
                 }
 
             }
@@ -3154,22 +3173,18 @@ public class ConversationView {
     private void startChat(String username) {
 
         if (username != null) {
-
-
-            new ChatSessionInitTask(((ImApp) mActivity.getApplication()), mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
+            task = new ChatSessionInitTask(mActivity, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
                 @Override
                 protected void onPostExecute(Long chatId) {
-
-                    if (chatId != -1 && true) {
+                    if (task.isStable() && chatId != -1) {
                         Intent intent = ConversationDetailActivity.getStartIntent(mActivity);
                         intent.putExtra("id", chatId);
                         mActivity.startActivity(intent);
                     }
-
-                    super.onPostExecute(chatId);
                 }
 
-            }.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
+            };
+            task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
 
             mActivity.finish();
         }
@@ -3180,7 +3195,7 @@ public class ConversationView {
      *
      * @return
      */
-    public FrameLayout popupDisplay(ConversationDetailActivity activity) {
+    public FrameLayout popupDisplay(final ConversationDetailActivity activity) {
         FrameLayout popupWindow = new FrameLayout(activity);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -3229,10 +3244,14 @@ public class ConversationView {
                 if (isChecked) {
                     textTurnOnOff.setText("On");
                     istranslate = true;
+                    PreferenceUtils.putBoolean("istranslate",
+                            istranslate, mActivity);
                     mMessageAdapter.notifyDataSetChanged();
                 } else {
                     textTurnOnOff.setText("Off");
                     istranslate = false;
+                    PreferenceUtils.putBoolean("istranslate",
+                            istranslate, mActivity);
                     mMessageAdapter.notifyDataSetChanged();
                 }
             }
@@ -3267,10 +3286,13 @@ public class ConversationView {
     }
 
     public void startSettingScreen() {
-
-        Intent intent = new Intent(mContext, SettingConversationActivity.class);
-        mContext.startActivity(intent);
-
+        Intent intent = new Intent(mActivity, SettingConversationActivity.class);
+        intent.putExtra("chatId", mLastChatId);
+        intent.putExtra("account", mAccountId);
+        intent.putExtra("address", mRemoteAddress);
+        intent.putExtra("provider", mProviderId);
+        intent.putExtra("isGroupChat", mContactType);
+        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_CHANGE_BACKGROUND);
     }
 
     public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {

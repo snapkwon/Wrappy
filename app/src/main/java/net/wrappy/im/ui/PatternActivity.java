@@ -324,6 +324,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 } else {
                     PopupUtils.showCustomDialog(PatternActivity.this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
                 }
+                mExistingAccountTask =null;
             }
         }
     }

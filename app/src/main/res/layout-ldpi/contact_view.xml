@@ -96,20 +96,14 @@
 
     </LinearLayout>
 
-    <net.wrappy.im.helper.layout.CircleLayout
+    <ImageView
+        android:id="@+id/avatar"
         android:layout_width="36dp"
         android:layout_height="36dp"
+        android:layout_gravity="left|top"
         android:background="@drawable/rounded_shape_white"
-        android:clipChildren="true">
-
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="left|top"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
-    </net.wrappy.im.helper.layout.CircleLayout>
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/avatarCheck"
