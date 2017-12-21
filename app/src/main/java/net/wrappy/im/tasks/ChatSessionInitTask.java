@@ -17,19 +17,16 @@ import java.lang.ref.WeakReference;
  */
 public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
-    ImApp mApp;
-    long mProviderId;
-    long mAccountId;
-    int mContactType;
+    private long mProviderId;
+    private long mAccountId;
+    private int mContactType;
     private WeakReference<Activity> weakReference;
 
-    public ChatSessionInitTask(ImApp imApp, long providerId, long accountId, int contactType) {
-        mApp = imApp;
+    public ChatSessionInitTask(long providerId, long accountId, int contactType) {
         init(providerId, accountId, contactType);
     }
 
     public ChatSessionInitTask(Activity activity, long providerId, long accountId, int contactType) {
-        mApp = (ImApp) activity.getApplicationContext();
         weakReference = new WeakReference<>(activity);
         init(providerId, accountId, contactType);
     }
@@ -43,7 +40,7 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
     public Long doInBackground(Contact... contacts) {
         if (mProviderId != -1 && mAccountId != -1 && contacts != null) {
             try {
-                IImConnection conn = mApp.getConnection(mProviderId, mAccountId);
+                IImConnection conn = ImApp.getConnection(mProviderId, mAccountId);
 
                 if (conn == null || conn.getState() != ImConnection.LOGGED_IN)
                     return -1L;
