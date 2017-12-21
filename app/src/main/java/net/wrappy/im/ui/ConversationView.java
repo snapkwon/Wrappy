@@ -1297,13 +1297,14 @@ public class ConversationView {
 
                 if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            resendFriendRequest();
-                        }
-                    });
+                    updateStatusAddContact();
+//                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
+//                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            resendFriendRequest();
+//                        }
+//                    });
                 } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
                     Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
                     sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
@@ -1313,10 +1314,6 @@ public class ConversationView {
                         }
                     });
                     sb.show();
-                } else
-
-                {
-                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.GONE);
                 }
             }
         });
