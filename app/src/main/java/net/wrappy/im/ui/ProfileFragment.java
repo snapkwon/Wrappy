@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +26,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
+import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.BottomSheetCell;
@@ -36,6 +39,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 /**
  * Created by ben on 18/12/2017.
@@ -64,18 +68,20 @@ public class ProfileFragment extends Fragment {
     ImageView imgPhotoAvatar;
     @BindView(R.id.txtProfileUsername)
     AppTextView txtUsername;
-    @BindView(R.id.txtProfilePhone)
-    AppTextView txtPhone;
-    @BindView(R.id.txtProfileEmail)
-    AppTextView txtEmail;
-    @BindView(R.id.txtProfileGender)
-    AppTextView txtGender;
+    @BindView(R.id.edProfilePhone)
+    AppEditTextView edPhone;
+    @BindView(R.id.edProfileEmail)
+    AppEditTextView edEmail;
+    @BindView(R.id.edProfileGender)
+    AppEditTextView edGender;
     @BindView(R.id.linearForSeft)
     LinearLayout linearForSeft;
     @BindView(R.id.linearForContact)
     LinearLayout linearForContact;
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnPhotoCameraAvatar;
+    @BindView(R.id.btnProfileSubmit)
+    Button btnProfileSubmit;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -109,7 +115,6 @@ public class ProfileFragment extends Fragment {
         mNickname = getArguments().getString("nickName");
         reference = getArguments().getString("nickName");
         preferenceView();
-
         return mainView;
     }
 
@@ -130,9 +135,9 @@ public class ProfileFragment extends Fragment {
                         try {
                             wpKMemberDto = gson.fromJson(result.getResult(), WpKMemberDto.getType());
                             txtUsername.setText(wpKMemberDto.getIdentifier());
-                            txtEmail.setText(wpKMemberDto.getEmail());
-                            txtPhone.setText(wpKMemberDto.getMobile());
-                            txtGender.setText(wpKMemberDto.getGender());
+                            edEmail.setText(wpKMemberDto.getEmail());
+                            edPhone.setText(wpKMemberDto.getMobile());
+                            edGender.setText(wpKMemberDto.getGender());
                             if (wpKMemberDto.getAvatar() != null) {
                                 GlideHelper.loadBitmapToCircleImage(getContext(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
                             }
@@ -153,10 +158,36 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-
-    @OnClick({R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnTextChanged({R.id.edProfileEmail, R.id.edProfilePhone, R.id.edProfileGender})
+    protected void handleTextChange(Editable editable) {
+        String email = edEmail.getText().toString().trim();
+        String phone = edPhone.getText().toString().trim();
+        String gender = edGender.getText().toString().trim();
+        if (!email.equalsIgnoreCase(wpKMemberDto.getEmail()) || !phone.equalsIgnoreCase(wpKMemberDto.getMobile()) || !gender.equalsIgnoreCase(wpKMemberDto.getGender())) {
+            btnProfileSubmit.setVisibility(View.VISIBLE);
+        } else {
+            btnProfileSubmit.setVisibility(View.GONE);
+        }
+    }
+    @OnClick({R.id.btnProfileSubmit, R.id.btnPhotoCameraAvatar,R.id.btnProfileChangeEmail,R.id.btnProfileChangePhone,R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
-        if (view.getId() == R.id.btnPhotoCameraAvatar) {
+        if (view.getId() == R.id.btnProfileSubmit) {
+            edEmail.clearFocus();
+            edPhone.clearFocus();
+            edGender.clearFocus();
+            String email = edEmail.getText().toString().trim();
+            String phone = edPhone.getText().toString().trim();
+            String gender = edGender.getText().toString().trim();
+            if (!AppFuncs.isEmailValid(email)) {
+                AppFuncs.alert(getActivity(),"Invalid email format", true);
+                return;
+            }
+            wpKMemberDto.setEmail(email);
+            wpKMemberDto.setMobile(phone);
+            wpKMemberDto.setGender(gender);
+            updateData();
+            btnProfileSubmit.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.btnPhotoCameraAvatar) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
             sheetCells.add(sheetCell);
@@ -186,6 +217,7 @@ public class ProfileFragment extends Fragment {
                                         if (result!=null) {
                                             if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                                                 wpKMemberDto.setAvatar(null);
+                                                imgPhotoAvatar.setImageResource(R.drawable.avatar);
                                                 AppFuncs.alert(getActivity(),"Remove Avatar Success",true);
                                             }
                                         }
@@ -262,7 +294,6 @@ public class ProfileFragment extends Fragment {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.alert(getActivity(),"Update Success",true);
                     } else {
-                        imgPhotoAvatar.setImageResource(R.drawable.avatar);
                         AppFuncs.alert(getActivity(),"Update Fail",true);
                     }
                 }
