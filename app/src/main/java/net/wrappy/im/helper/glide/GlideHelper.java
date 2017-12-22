@@ -2,6 +2,7 @@ package net.wrappy.im.helper.glide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 
 /**
@@ -34,6 +36,12 @@ public class GlideHelper {
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if (imageView != null)
                     imageView.setImageBitmap(resource);
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+                AppFuncs.log(e.getLocalizedMessage());
             }
         });
     }
