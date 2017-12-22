@@ -44,7 +44,7 @@ public class RestAPI {
     private static int TIME_OUT = 12000;
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
-   // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
+    // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
     public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
@@ -78,13 +78,13 @@ public class RestAPI {
     public static String POST_REPORT_MESSAGE = root_url + "chat/report";
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
     public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
-    public static String DELETE_AVATAR = root_url+ "member/avatar";
+    public static String DELETE_AVATAR = root_url + "member/avatar";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
     private static int GET_METHOD = 2;
 
-    public static int NUMBER_REQUEST_TOKEN =3;
+    public static int NUMBER_REQUEST_TOKEN = 3;
 
 
     public static String loginUrl(String user, String pass) {
@@ -92,15 +92,15 @@ public class RestAPI {
     }
 
     public static String resetPasswordUrl(String hash, String newPass) {
-        return String.format(GET_RESET_PASSWORD,hash,newPass);
+        return String.format(GET_RESET_PASSWORD, hash, newPass);
     }
 
-    public static String getHashStringResetPassUrl(String username, String answer01, String answer02 , String answer03) {
-        return String.format(GET_HASH_RESET_PASS,username,answer01,answer02,answer03);
+    public static String getHashStringResetPassUrl(String username, String answer01, String answer02, String answer03) {
+        return String.format(GET_HASH_RESET_PASS, username, answer01, answer02, answer03);
     }
 
     public static String getCheckForgetPasswordSecurityQuestionsUrl(String username) {
-        return String.format(POST_FORGET_PASS_CHECK_QUESTIONS,username);
+        return String.format(POST_FORGET_PASS_CHECK_QUESTIONS, username);
     }
 
     public static String refreshTokenUrl(Context context) {
@@ -109,21 +109,21 @@ public class RestAPI {
     }
 
     public static String getMemberByIdUrl(String jid) {
-        return String.format(GET_MEMBER_BY_JID,jid);
+        return String.format(GET_MEMBER_BY_JID, jid);
     }
 
     public static String getPhotoReference(String s) {
         try {
             JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
             return jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
     }
 
     public static String sendEmailAndUsernameToGetPassUrl(String username, String pass) {
-        return String.format(GET_FORGET_PASS_SEND_EMAIL,username,pass);
+        return String.format(GET_FORGET_PASS_SEND_EMAIL, username, pass);
     }
 
     public static void loadImageUrl(Context context, ImageView imageView, String reference) {
@@ -131,7 +131,7 @@ public class RestAPI {
     }
 
     public static Future<Bitmap> getBitmapFromUrl(Context context, String reference) {
-        return Ion.with(context).load(GET_PHOTO+reference).withBitmap().asBitmap();
+        return Ion.with(context).load(GET_PHOTO + reference).withBitmap().asBitmap();
     }
 
     public static String getAvatarUrl(String reference) {
@@ -152,13 +152,12 @@ public class RestAPI {
         return ((code == 401)) ? true : false;
     }
 
-    public  static boolean checkExpiredtoken(String s)
-    {
+    public static boolean checkExpiredtoken(String s) {
         JSONObject mainObject = null;
         try {
             mainObject = new JSONObject(s);
-            String  errorstatus = mainObject.getString("error");
-            if(errorstatus.equals("invalid_token")) {
+            String errorstatus = mainObject.getString("error");
+            if (errorstatus.equals("invalid_token")) {
                 return true;
             }
         } catch (JSONException e) {
@@ -234,43 +233,42 @@ public class RestAPI {
     }
 
     public static Builders.Any.B getIon(Context context, String url, String method) {
-        String header = getHeaderHttps(context,url);
-        return Ion.with(context).load(method,url).setTimeout(TIME_OUT).addHeader("Authorization",header);
+        String header = getHeaderHttps(context, url);
+        return Ion.with(context).load(method, url).setTimeout(TIME_OUT).addHeader("Authorization", header);
     }
 
     public static Future<Response<String>> apiGET(Context context, String url) {
-        return getIon(context,url,"GET").asString().withResponse();
+        return getIon(context, url, "GET").asString().withResponse();
     }
 
     public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
-        return getIon(context,url,"POST").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+        return getIon(context, url, "POST").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
     public static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
-        return getIon(context,url,"PUT").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+        return getIon(context, url, "PUT").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
     public static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
-        return getIon(context,url,"DELETE").setJsonObjectBody((jsonObject==null)? new JsonObject() : jsonObject).asString().withResponse();
+        return getIon(context, url, "DELETE").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
     public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
-        apiPOST(context,url,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+        apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
-                    if((checkAuthenticationCode(result.getHeaders().code())))
-                    {
-                        if(checkExpiredtoken(result.getResult())) {
+                    if ((checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredtoken(result.getResult())) {
                             refreshTokenHttps(context, jsonObject, url, listenner, POST_METHOD);
                         }
 
-                    }
-                    else {
+                    } else {
                         listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
+                    listenner.OnComplete(0, null, null);
                 }
 
             }
@@ -282,17 +280,15 @@ public class RestAPI {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
-                    if((checkAuthenticationCode(result.getHeaders().code())))
-                    {
-                        if(checkExpiredtoken(result.getResult())) {
+                    if ((checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredtoken(result.getResult())) {
                             refreshTokenHttps(context, jsonObject, url, listenner, DELETE_METHOD);
                         }
 
-                    }
-                    else {
+                    } else {
                         listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
@@ -301,18 +297,15 @@ public class RestAPI {
     }
 
     public static void GetDataWrappy(final Context context, final String url, final RestAPIListenner listenner) {
-        apiGET(context,url).setCallback(new FutureCallback<Response<String>>() {
+        apiGET(context, url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if(result!=null && (checkAuthenticationCode(result.getHeaders().code())))
-                {
-                    if(checkExpiredtoken(result.getResult()))
-                    {
+                if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
+                    if (checkExpiredtoken(result.getResult())) {
                         refreshTokenHttps(context, null, url, listenner, GET_METHOD);
                     }
 
-                }
-                else {
+                } else {
                     listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
                 }
             }
@@ -320,8 +313,9 @@ public class RestAPI {
     }
 
     public static void GetDataWrappy(Context context, String url) {
-        String header = getHeaderHttps(context,url);
-        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization",header).as(new TypeToken<T>(){}).withResponse().setCallback(new FutureCallback<Response<T>>() {
+        String header = getHeaderHttps(context, url);
+        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization", header).as(new TypeToken<T>() {
+        }).withResponse().setCallback(new FutureCallback<Response<T>>() {
             @Override
             public void onCompleted(Exception e, Response<T> result) {
 
@@ -345,43 +339,40 @@ public class RestAPI {
 //                });
 //    }
 
-    public static Future<Response<String>> uploadFile(Context context,File file, String type) {
-        String header = getHeaderHttps(context,RestAPI.POST_PHOTO);
+    public static Future<Response<String>> uploadFile(Context context, File file, String type) {
+        String header = getHeaderHttps(context, RestAPI.POST_PHOTO);
         return Ion.with(context)
                 .load(RestAPI.POST_PHOTO)
-                .addHeader("Authorization",header)
+                .addHeader("Authorization", header)
                 .setMultipartParameter("type", type)
-                .setMultipartFile("file","multipart/form-data",file)
+                .setMultipartFile("file", "multipart/form-data", file)
                 .asString().withResponse();
     }
 
-    static int numberRefreshToken =0;
+    static int numberRefreshToken = 0;
 
-    public static void refreshTokenHttps(final Context context, final JsonObject json, final String url, final RestAPIListenner listenner,final int method) {
-        final String header = getHeaderHttps(context,url);
+    public static void refreshTokenHttps(final Context context, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
+        final String header = getHeaderHttps(context, url);
 
-        Ion.with(context).load("POST",refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+        Ion.with(context).load("POST", refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
                     int httpCode = (result != null) ? result.getHeaders().code() : 0;
                     String error = (e != null) ? e.getLocalizedMessage() : "";
-                    if((checkAuthenticationCode(httpCode)))
-                    {
-                        listenner.OnComplete(httpCode,  null, null);
+                    if ((checkAuthenticationCode(httpCode))) {
+                        listenner.OnComplete(httpCode, null, null);
                         return;
                     }
                     if (!RestAPI.checkHttpCode(httpCode)) {
                         AppFuncs.alert(context, error, true);
-                        if(numberRefreshToken >=NUMBER_REQUEST_TOKEN)
-                        {
+                        if (numberRefreshToken >= NUMBER_REQUEST_TOKEN) {
                             numberRefreshToken = 0;
                             listenner.OnComplete(-1, "can not refresh access token : please retry!", null);
 
-                        }
-                        else {
+                        } else {
                             numberRefreshToken++;
-                            refreshTokenHttps(context, json, url, listenner,method);
+                            refreshTokenHttps(context, json, url, listenner, method);
                         }
                         return;
                     }
@@ -389,16 +380,12 @@ public class RestAPI {
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(context);
-                    if(method == POST_METHOD) {
+                    if (method == POST_METHOD) {
                         PostDataWrappy(context, json, url, listenner);
-                    }
-                    else if(method == DELETE_METHOD)
-                    {
-                        DeleteDataWrappy( context, json, url, listenner);
-                    }
-                    else if(method == GET_METHOD)
-                    {
-                        GetDataWrappy(context,url,listenner);
+                    } else if (method == DELETE_METHOD) {
+                        DeleteDataWrappy(context, json, url, listenner);
+                    } else if (method == GET_METHOD) {
+                        GetDataWrappy(context, url, listenner);
                     }
 
                 } catch (Exception ex) {
@@ -414,7 +401,6 @@ public class RestAPI {
         }.getType();
         return gson.fromJson(object, type);
     }
-
 
 
 }
