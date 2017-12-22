@@ -1266,11 +1266,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (wpKMemberDto.getBanner()!=null) {
                 bannerReference = wpKMemberDto.getBanner().getReference();
             }
+
+            Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
+                    selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                long contactId = cursor.getLong(0);
+                Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
+                sImApp.getContentResolver().update(uri, values, null, null);
+            } else {
+                sImApp.getContentResolver().insert(builder.build(), values);
+            }
+
             DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
-            values.put(Imps.Contacts.AVATAR_DATA, avatarReference);
-
-
-            sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
         }
     }
 

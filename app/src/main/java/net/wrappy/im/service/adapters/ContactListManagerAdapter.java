@@ -995,7 +995,7 @@ public class ContactListManagerAdapter extends
         } else {
             ContentValues values = new ContentValues(6);
             values.put(Imps.Contacts.USERNAME, username);
-            values.put(Imps.Contacts.NICKNAME, nickname);
+//            values.put(Imps.Contacts.NICKNAME, nickname);
             values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_NORMAL);
             values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
             values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
