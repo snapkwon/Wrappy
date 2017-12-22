@@ -1,11 +1,14 @@
 package net.wrappy.im.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -57,6 +61,8 @@ public class ProfileFragment extends Fragment {
     private ImApp mApp;
     private boolean isSelf;
     Bitmap photoAvatar;
+
+    MainActivity mainActivity;
 
     @BindView(R.id.imgProfileHeader)
     ImageView imgProfileHeader;
@@ -110,6 +116,8 @@ public class ProfileFragment extends Fragment {
         reference = getArguments().getString("nickName");
         preferenceView();
 
+        mainActivity = (MainActivity)getActivity();
+
         return mainView;
     }
 
@@ -152,6 +160,19 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void confirmDeleteAccount(int mAccountId,int mProviderId) {
+
+        //need to delete
+        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
+        getActivity().startActivity(mainIntent);
+        System.exit(0);
     }
 
     @OnClick({R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
@@ -212,7 +233,8 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     if (index == 1) {
-                        AppFuncs.alert(getActivity(), "Logout this device", true);
+                        confirmDeleteAccount(mainActivity.getDefaultAcountid(),mainActivity.getDefaultProviderid());
+                        //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
                         AppFuncs.alert(getActivity(), "Logout all devices", true);
                     }
