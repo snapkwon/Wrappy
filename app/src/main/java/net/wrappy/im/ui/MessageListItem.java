@@ -261,7 +261,7 @@ public class MessageListItem extends FrameLayout {
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1].toLowerCase() + ".png";
+                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
 
                     //make sure sticker exists
                     AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
