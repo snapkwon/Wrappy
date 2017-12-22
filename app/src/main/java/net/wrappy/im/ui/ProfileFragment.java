@@ -88,6 +88,9 @@ public class ProfileFragment extends Fragment {
     ImageButton btnPhotoCameraAvatar;
     @BindView(R.id.btnProfileSubmit)
     Button btnProfileSubmit;
+    @BindView(R.id.btnProfileChangeEmail) ImageButton btnProfileChangeEmail;
+    @BindView(R.id.btnProfileChangePhone) ImageButton btnProfileChangePhone;
+    @BindView(R.id.btnProfileChangeGender) ImageButton btnProfileChangeGender;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -121,8 +124,17 @@ public class ProfileFragment extends Fragment {
         mNickname = getArguments().getString("nickName");
         reference = getArguments().getString("nickName");
         preferenceView();
+        if (!isSelf) {
+            edGender.setEnabled(false);
+            edEmail.setEnabled(false);
+            edPhone.setEnabled(false);
+            btnProfileChangeEmail.setVisibility(View.GONE);
+            btnProfileChangePhone.setVisibility(View.GONE);
+            btnProfileChangeGender.setVisibility(View.GONE);
+        } else {
+            mainActivity = (MainActivity)getActivity();
+        }
 
-        mainActivity = (MainActivity)getActivity();
         return mainView;
     }
 
@@ -141,6 +153,7 @@ public class ProfileFragment extends Fragment {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         Gson gson = new Gson();
                         try {
+                            AppFuncs.log("load: " + result.getResult());
                             wpKMemberDto = gson.fromJson(result.getResult(), WpKMemberDto.getType());
                             txtUsername.setText(wpKMemberDto.getIdentifier());
                             edEmail.setText(wpKMemberDto.getEmail());
@@ -310,6 +323,7 @@ public class ProfileFragment extends Fragment {
 
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
+        AppFuncs.log("update: " + jsonObject.toString());
         RestAPI.apiPUT(getActivity(),RestAPI.GET_MEMBER_INFO,jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
