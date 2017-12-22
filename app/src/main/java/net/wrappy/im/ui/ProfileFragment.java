@@ -25,6 +25,7 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.WpKMemberDto;
@@ -157,12 +158,12 @@ public class ProfileFragment extends Fragment {
     public void onClick(View view) {
         if (view.getId() == R.id.btnPhotoCameraAvatar) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+            BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+            sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,"Choose from Gallery");
             sheetCells.add(sheetCell);
             if (wpKMemberDto!=null) if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())){
-                sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,"Delete Photo");
                 sheetCells.add(sheetCell);
             }
             PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
@@ -184,6 +185,7 @@ public class ProfileFragment extends Fragment {
                                     public void onCompleted(Exception e, Response<String> result) {
                                         if (result!=null) {
                                             if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                wpKMemberDto.setAvatar(null);
                                                 AppFuncs.alert(getActivity(),"Remove Avatar Success",true);
                                             }
                                         }
@@ -232,7 +234,8 @@ public class ProfileFragment extends Fragment {
                     appFuncs.dismissProgressWaiting();
                     try {
                         String reference = RestAPI.getPhotoReference(result.getResult());
-                        wpKMemberDto.getAvatar().setReference(reference);
+                        Avatar avatar = new Avatar(reference);
+                        wpKMemberDto.setAvatar(avatar);
                         updateData();
                     }catch (Exception ex) {
                         ex.printStackTrace();
@@ -258,6 +261,9 @@ public class ProfileFragment extends Fragment {
                 if (result!=null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.alert(getActivity(),"Update Success",true);
+                    } else {
+                        imgPhotoAvatar.setImageResource(R.drawable.avatar);
+                        AppFuncs.alert(getActivity(),"Update Fail",true);
                     }
                 }
             }

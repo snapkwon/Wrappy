@@ -207,12 +207,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,getString(R.string.popup_choose_gallery));
                 sheetCells.add(sheetCell);
                 if (photoAvatar!=null) {
-                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
                 PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
@@ -236,12 +236,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,"Choose from Gallery");
                 sheetCells.add(sheetCell);
                 if (photoHeader!=null) {
-                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,"Delete Photo");
                     sheetCells.add(sheetCell);
                 }
                 PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {

@@ -309,7 +309,9 @@
     <string name="presence_idle">Idle</string>
     <string name="presence_offline">Offline</string>
     <string name="presence_invisible">Appear Offline</string>
-
+    <string name="popup_take_photo">Take Photo</string>
+    <string name="popup_choose_gallery">Choose from Gallery</string>
+    <string name="popup_delete_photo">Delete Photo</string>
     <!-- Other: Smileys -->
     <string-array name="default_smiley_names">
         <item>Happy</item>
