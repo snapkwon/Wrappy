@@ -1,11 +1,11 @@
 package net.wrappy.im.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +20,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
@@ -125,27 +126,11 @@ public class ProfileFragment extends Fragment {
                             txtUsername.setText(wpKMemberDto.getIdentifier());
                             txtEmail.setText(wpKMemberDto.getEmail());
                             txtPhone.setText(wpKMemberDto.getMobile());
-                            if (wpKMemberDto.getAvatar()!=null) {
-                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getAvatar().getReference()).setCallback(new FutureCallback<Bitmap>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Bitmap result) {
-                                        if (result != null) {
-                                            imgPhotoAvatar.setImageBitmap(result);
-                                        }
-
-                                    }
-                                });
+                            if (wpKMemberDto.getAvatar() != null) {
+                                GlideHelper.loadBitmapToCircleImage(getContext(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
                             }
-                            if (wpKMemberDto.getBanner()!=null) {
-                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getBanner().getReference()).setCallback(new FutureCallback<Bitmap>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Bitmap result) {
-                                        if (result != null) {
-                                            imgProfileHeader.setImageBitmap(result);
-                                        }
-
-                                    }
-                                });
+                            if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
+                                GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                             }
 
                             //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
