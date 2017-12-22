@@ -45,7 +45,10 @@ public class StickerManager {
                     "Emoji"},
             {
                     "stickers/bunny",
-                    "Bunny"}};/*,
+                    "Bunny"},
+            {
+                    "stickers/sticker",
+                    "sticker"}};/*,
             {
                     "stickers/olo and shimi",
                     "Olo & Shimi"},
