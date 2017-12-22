@@ -145,7 +145,7 @@ public class ConferenceMessage {
     }
 
     public ConferenceState getState() {
-        return mState;
+        return mState != null ? mState : ConferenceState.END;
     }
 
     public void endCall() {
