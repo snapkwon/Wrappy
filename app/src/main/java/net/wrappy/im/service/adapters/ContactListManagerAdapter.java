@@ -1004,7 +1004,11 @@ public class ContactListManagerAdapter extends
                 public void onCompleted(Exception e, Response<String> result) {
                     if (result != null) {
                         if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                            ImApp.updateContact(username, (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+                            try {
+                                ImApp.updateContact(username, (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+                            } catch (Exception ex) {
+                                removeContact(username);
+                            }
                         } else {
                             removeContact(username);
                         }

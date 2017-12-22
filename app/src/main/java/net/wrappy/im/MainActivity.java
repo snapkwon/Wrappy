@@ -1024,16 +1024,24 @@ public class MainActivity extends BaseActivity {
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-//                    syncData(wpKMemberDtos);
-                    syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                    try {
+                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                        syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                    syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                    try {
+                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             });
         }
