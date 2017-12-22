@@ -54,6 +54,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -121,6 +122,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private String mNickname = null;
     private String mReference = null;
 
+    private  Menu menuitem;
     private ConversationView mConvoView = null;
 
     MediaRecorder mMediaRecorder = null;
@@ -404,6 +406,8 @@ public class ConversationDetailActivity extends BaseActivity {
         regFilter.addAction(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
         registerReceiver(receiver, regFilter);
 
+        mConvoView.focusSearchmode();
+
 
         /**
          if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
@@ -447,7 +451,17 @@ public class ConversationDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                if(mConvoView.getSearchMode())
+                {
+                    mConvoView.unActiveSearchmode();
+                    for(int i=0;i<4;i++)
+                    {
+                        menuitem.getItem(i).setVisible(true);
+                    }
+                }
+                else {
+                    finish();
+                }
                 return true;
             /*case R.id.menu_end_conversation:
                 mConvoView.closeChatSession(true);
@@ -485,6 +499,7 @@ public class ConversationDetailActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Add Conference menu item
+        menuitem = menu;
         getMenuInflater().inflate(R.menu.menu_conference, menu);
         if (mConvoView.isGroupChat()) {
             getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
@@ -794,15 +809,25 @@ public class ConversationDetailActivity extends BaseActivity {
                     mLastPhoto = null;
                 }
 
-            } else if (requestCode == REQUEST_CHANGE_BACKGROUND) {
+            } else if (requestCode == REQUEST_FROM_SETTING) {
                 Bundle extras = resultIntent.getExtras();
-                String imagePath = extras.getString("imagePath");
+                int type = extras.getInt("type");
+                if(type == TYPE_SEARCH)
+                {
+                    mConvoView.activeSearchmode();
+                    for(int i =0 ;i <4;i++) {
+                        menuitem.getItem(i).setVisible(false);
+                    }
+                }
+                else if(type == TYPE_REQUEST_CHANGE_BACKGROUND) {
+                    String imagePath = extras.getString("imagePath");
 
-                ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
+                    ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
 
-                loadBitmapPreferences();
+                    loadBitmapPreferences();
 
-                mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + imagePath);
+                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + imagePath);
+                }
 
             } else if (requestCode == REQUEST_PLACE_PICKER) {
                 Place place = PlacePicker.getPlace(resultIntent, this);
@@ -989,8 +1014,12 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_SETTINGS = REQUEST_TAKE_PICTURE + 1;
     public static final int REQUEST_TAKE_PICTURE_SECURE = REQUEST_SETTINGS + 1;
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
-    public static final int REQUEST_CHANGE_BACKGROUND = REQUEST_ADD_CONTACT + 1;
-    private static final int REQUEST_PLACE_PICKER = REQUEST_CHANGE_BACKGROUND + 1;
+    public static final int REQUEST_FROM_SETTING = REQUEST_ADD_CONTACT + 1;
+    private static final int REQUEST_PLACE_PICKER = REQUEST_FROM_SETTING + 1;
+
+
+    public static final int TYPE_SEARCH = 0;
+    public static final int TYPE_REQUEST_CHANGE_BACKGROUND = 1;
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override

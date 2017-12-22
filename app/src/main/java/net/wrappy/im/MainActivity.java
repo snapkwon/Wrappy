@@ -16,6 +16,7 @@
 
 package net.wrappy.im;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -490,12 +491,15 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
             if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));

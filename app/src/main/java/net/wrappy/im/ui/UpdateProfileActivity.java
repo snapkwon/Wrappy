@@ -32,6 +32,8 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
@@ -48,6 +50,7 @@ import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PopupUtils;
 
 import java.lang.reflect.Type;
 import java.security.KeyPair;
@@ -203,10 +206,62 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
-                AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCells.add(sheetCell);
+                if (photoAvatar!=null) {
+                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCells.add(sheetCell);
+                }
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        switch (index) {
+                            case 1:
+                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                break;
+                            case 2:
+                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                break;
+                            case 3:
+                                photoAvatar = null;
+                                imgAvatar.setImageResource(R.drawable.avatar);
+                                break;
+                            default:
+                        }
+                    }
+                }).show();
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
-                AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCells.add(sheetCell);
+                if (photoHeader!=null) {
+                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCells.add(sheetCell);
+                }
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        switch (index) {
+                            case 1:
+                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_HEADER);
+                                break;
+                            case 2:
+                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
+                                break;
+                            case 3:
+                                photoHeader = null;
+                                imgHeader.setImageBitmap(null);
+                                break;
+                            default:
+                        }
+                    }
+                }).show();
             }
         }catch (Exception ex) {
             ex.printStackTrace();

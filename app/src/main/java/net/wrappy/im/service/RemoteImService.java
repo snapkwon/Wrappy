@@ -46,10 +46,10 @@ import net.java.otr4j.OtrEngineListener;
 import net.java.otr4j.OtrKeyManagerListener;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionID;
-
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
+import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrKeyManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
@@ -61,10 +61,10 @@ import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.plugin.ImPluginInfo;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.NetworkConnectivityReceiver.State;
 import net.wrappy.im.service.adapters.ImConnectionAdapter;
 import net.wrappy.im.ui.legacy.DummyActivity;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
-import net.wrappy.im.service.NetworkConnectivityReceiver.State;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.SecureMediaStore;
@@ -78,7 +78,6 @@ import java.util.Map;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import net.wrappy.im.R;
 
 
 public class RemoteImService extends Service implements OtrEngineListener, ImService, ICacheWordSubscriber {
@@ -727,10 +726,10 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
                 if (!isNetworkAvailable()) {
                     message = getString(R.string.error_suspended_connection);
-                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
+                    mNotifyBuilder.setSmallIcon(R.drawable.intro1);
                 } else {
                     message = getString(R.string.app_unlocked);
-                    mNotifyBuilder.setSmallIcon(R.drawable.notify_zom);
+                    mNotifyBuilder.setSmallIcon(R.drawable.intro1);
                 }
 
                 mNotifyBuilder.setContentText(message);

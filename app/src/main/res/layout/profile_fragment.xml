@@ -49,14 +49,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <include layout="@layout/add_avarta_layout"/>
-                        <net.wrappy.im.helper.layout.AppTextView
-                            android:id="@+id/txtProfileName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/AppText02"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="10dp"
-                            android:text=""/>
                     </LinearLayout>
 
 
@@ -150,6 +142,35 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:background="#fff"
+                            android:layout_marginTop="10dp"
+                            android:padding="10dp">
+
+                            <net.wrappy.im.helper.layout.AppTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/AppText03"
+                                android:text="Gender"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="10dp"
+                                android:background="#000"/>
+                            <net.wrappy.im.helper.layout.AppTextView
+                                android:id="@+id/txtProfileGender"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                style="@style/AppText02"
+                                android:text="Email"/>
+
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
@@ -176,7 +197,7 @@
                     >
 
                     <LinearLayout
-                        android:id="@+id/btnProfileSendMessage"
+                        android:id="@+id/lnProfileSendMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -260,7 +281,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/btnChangeSecuQuestion"
+                        android:id="@+id/lnProfileChangeQuestion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -286,8 +307,8 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"/>
                     <LinearLayout
-                        android:id="@+id/btnLogout"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/lnProfileLogout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 

@@ -34,10 +34,13 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -71,6 +74,7 @@ import net.wrappy.im.util.Utils;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.net.URLConnection;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -172,7 +176,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference ,String textsearch) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -286,7 +290,15 @@ public class MessageListItem extends FrameLayout {
             //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
             if (lastMessage.length() > 0) {
-                mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
+                if(textsearch.isEmpty())
+                {
+                    mHolder.mTextViewForMessages.setText(new SpannableString((lastMessage)));
+                }
+                else {
+                    lastMessage = lastMessage.replaceAll(textsearch, "<font color='red'>" + textsearch + "</font>");
+                    mHolder.mTextViewForMessages.setText(new SpannableString(Html.fromHtml(lastMessage)));
+                }
+
             } else {
                 mHolder.mTextViewForMessages.setText(lastMessage);
             }
@@ -469,7 +481,7 @@ public class MessageListItem extends FrameLayout {
         } else if (mimeType.startsWith("audio")) {
 
             if (mAudioPlayer.getDuration() != -1)
-                mHolder.mTextViewForMessages.setText((mAudioPlayer.getDuration() / 1000) + "secs");
+                mHolder.mTextViewForMessages.setText(Utils.formatDurationMedia(mAudioPlayer.getDuration()));
 
             if (mAudioPlayer.isPlaying()) {
                 mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
@@ -615,8 +627,31 @@ public class MessageListItem extends FrameLayout {
             return "";
     }
 
+    private Spannable highlight(int color, Spannable original, String word) {
+        String normalized = Normalizer.normalize(original, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        int start = normalized.indexOf(word);
+        if (start < 0) {
+            return original;
+        } else {
+            Spannable highlighted = new SpannableString(original);
+            while (start >= 0) {
+                int spanStart = Math.min(start, original.length());
+                int spanEnd = Math.min(start+word.length(), original.length());
+
+                highlighted.setSpan(new ForegroundColorSpan(color), spanStart,
+                        spanEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+                start = normalized.indexOf(word, spanEnd);
+            }
+            return highlighted;
+        }
+    }
+
+
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
-                                    DeliveryState delivery, EncryptionState encryption) {
+                                    DeliveryState delivery, EncryptionState encryption , String textsearch ) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -722,7 +757,14 @@ public class MessageListItem extends FrameLayout {
             }
 
         } else {
-            mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
+            if(textsearch.isEmpty())
+            {
+                mHolder.mTextViewForMessages.setText(new SpannableString((lastMessage)));
+            }
+            else {
+                lastMessage = lastMessage.replaceAll(textsearch, "<font color='red'>" + textsearch + "</font>");
+                mHolder.mTextViewForMessages.setText(new SpannableString(Html.fromHtml(lastMessage)));
+            }
         }
 
         //if (isSelected())
