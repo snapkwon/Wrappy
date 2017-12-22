@@ -56,9 +56,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -85,6 +89,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -151,6 +156,7 @@ import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -193,6 +199,9 @@ public class ConversationView {
     @BindView(R.id.btnAddFriend)
     Button btnAddContact;
 
+    SearchView searchView;
+
+    LinearLayout inputlayout;
     //static final int MIME_TYPE_COLUMN = 9;
 
     static final String[] INVITATION_PROJECT = {Imps.Invitation._ID, Imps.Invitation.PROVIDER,
@@ -256,6 +265,7 @@ public class ConversationView {
     private int mViewType;
 
     private boolean istranslate;
+    private boolean isSearchMode;
 
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
@@ -291,6 +301,46 @@ public class ConversationView {
             requeryCursor();
 
         }
+    }
+
+    public  boolean getSearchMode()
+    {
+        return isSearchMode;
+    }
+
+    public void activeSearchmode() {
+        isSearchMode = true;
+        inputlayout.setVisibility(View.GONE);
+        searchView.setVisibility(View.VISIBLE);
+    }
+
+    public  void focusSearchmode()
+    {
+        searchView.setIconifiedByDefault(true);
+        searchView.setFocusable(true);
+        searchView.setIconified(false);
+        searchView.requestFocusFromTouch();
+        searchView.requestFocus();
+        searchView.onActionViewExpanded();
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                searchView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            }
+        });
+    }
+
+    public void unActiveSearchmode() {
+        isSearchMode = false;
+        searchView.setVisibility(View.GONE);
+        mMessageAdapter.searchText("");
+        inputlayout.setVisibility(View.VISIBLE);
     }
 
     public boolean isSelected() {
@@ -754,12 +804,15 @@ public class ConversationView {
         mContext = activity;
         istranslate = PreferenceUtils.getBoolean("istranslate",
                 istranslate, mActivity);
+        isSearchMode = false;
         ButterKnife.bind(this, mActivity);
 
         mApp = (ImApp) mActivity.getApplication();
         mHandler = new ChatViewHandler(mActivity);
 
         initViews();
+
+
     }
 
     void registerForConnEvents() {
@@ -770,6 +823,7 @@ public class ConversationView {
         mApp.unregisterForConnEvents(mHandler);
     }
 
+
     protected void initViews() {
         //  mStatusIcon = (ImageView) mActivity.findViewById(R.id.statusIcon);
         //   mDeliveryIcon = (ImageView) mActivity.findViewById(R.id.deliveryIcon);
@@ -779,6 +833,28 @@ public class ConversationView {
         llm.setStackFromEnd(true);
         mHistory.setLayoutManager(llm);
 
+        searchView = (SearchView) mActivity.findViewById(R.id.searchtext) ;
+        searchView.setVisibility(View.GONE);
+
+        inputlayout = (LinearLayout)mActivity.findViewById(R.id.inputLayout) ;
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mMessageAdapter.searchText(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                return true;
+
+            }
+
+        });
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);
         mMicButton = (ImageButton) mActivity.findViewById(R.id.btnMic);
@@ -1069,6 +1145,13 @@ public class ConversationView {
         });
 
         mMessageAdapter = new ConversationRecyclerViewAdapter(mActivity, null);
+        mMessageAdapter.setCallback(new adapterCallback() {
+            @Override
+            public void search(int position) {
+                mHistory.scrollToPosition(position);
+            }
+        });
+
         mHistory.setAdapter(mMessageAdapter);
     }
 
@@ -2475,8 +2558,14 @@ public class ConversationView {
 
     }
 
+    public interface adapterCallback {
+        public void search(int position);
+    }
+
     public class ConversationRecyclerViewAdapter
             extends CursorRecyclerViewAdapter<MessageViewHolder> {
+
+        adapterCallback mCallback;
 
         private int mScrollState;
         private boolean mNeedRequeryCursor;
@@ -2497,8 +2586,16 @@ public class ConversationView {
 
         }
 
+        public void setCallback(adapterCallback mCallback) {
+            this.mCallback = mCallback;
+        }
+
+
+
 
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
+        private String textsearch ="";
+        private List<Integer> searchCol = new ArrayList<>();
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
         // private String bodytranalate = "";
@@ -2510,6 +2607,30 @@ public class ConversationView {
         private int tempMessageType = 0;
         private String tempNicknameSelect = "";
         private Bitmap mCaptureBitmap;
+
+        void searchText(String text) {
+
+            Cursor c = getCursor();
+            textsearch = text;
+            searchCol.clear();
+
+            if (c.moveToFirst()) {
+                do {
+                    if(c.getString(mBodyColumn).contains(text))
+                    {
+                        searchCol.add(c.getPosition());
+                    }
+                } while (c.moveToNext());
+            }
+
+
+            notifyDataSetChanged();
+
+            if(searchCol.size() > 0)
+                mCallback.search(searchCol.get(0));
+
+        }
+
 
         public void setTargetLanguage(String target) {
             switch (target) {
@@ -2662,6 +2783,7 @@ public class ConversationView {
         }
 
 
+
         @Override
         public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
 
@@ -2806,7 +2928,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference,textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -2817,7 +2939,7 @@ public class ConversationView {
                         messageView.bindErrorMessage(errCode);
                     } else {
                         messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, mMarkup, false,
-                                deliveryState, encState);
+                                deliveryState, encState,textsearch);
                     }
 
                     break;
@@ -3252,7 +3374,7 @@ public class ConversationView {
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
-        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_CHANGE_BACKGROUND);
+        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }
 
     public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {
