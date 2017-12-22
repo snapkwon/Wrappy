@@ -1,21 +1,17 @@
 package net.wrappy.im.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.LayoutInflater;
@@ -30,9 +26,12 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
+import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 
@@ -113,13 +112,25 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        if (ContextCompat.checkSelfPermission(mActivity,
-                Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            AppFuncs.getImageFromDevice(mActivity, IMAGE_AVARTA);
-        } else {
-            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA}, 199);
-        }
+        ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+        BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+        sheetCells.add(sheetCell);
+        sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,getString(R.string.popup_choose_gallery));
+        sheetCells.add(sheetCell);
+        PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+            @Override
+            public void onSelectBottomSheetCell(int index) {
+                switch (index) {
+                    case 1:
+                        AppFuncs.openCamera(getActivity(), IMAGE_AVARTA);
+                        break;
+                    case 2:
+                        AppFuncs.openGallery(getActivity(), IMAGE_AVARTA);
+                        break;
+                    default:
+                }
+            }
+        }).show();
     }
 
     @Override

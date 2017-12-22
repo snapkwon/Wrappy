@@ -41,16 +41,16 @@ public class MainMenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.main_menu_fragment, null);
         ButterKnife.bind(this, mainView);
-        mainActivity = (MainActivity)getActivity();
+        mainActivity = (MainActivity) getActivity();
         return mainView;
     }
 
-    private void confirmDeleteAccount(int mAccountId,int mProviderId) {
+    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
 
         //need to delete
         ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
 
-       // ((ImApp) getActivity().getApplication()).resetDB();
+        // ((ImApp) getActivity().getApplication()).resetDB();
 
         PackageManager packageManager = getActivity().getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
@@ -63,7 +63,6 @@ public class MainMenuFragment extends Fragment {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);*/
-
 
 
         // Intent intent = new Intent(AccountSettingsActivity.this, IntroActivity.class);
@@ -110,7 +109,7 @@ public class MainMenuFragment extends Fragment {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
-   confirmDeleteAccount(mainActivity.getDefaultAcountid(),mainActivity.getDefaultProviderid());
+                            confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
                             AppFuncs.alert(getActivity(), "Logout this device", true);
                         } else if (index == 2) {
                             AppFuncs.alert(getActivity(), "Logout all devices", true);

@@ -23,7 +23,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -40,7 +39,6 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.koushikdutta.async.future.FutureCallback;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -153,21 +151,8 @@ public class ConversationListItem extends FrameLayout {
                 try {
 
                     final String reference = Store.getStringData(context, nickname);
-                    if (!reference.isEmpty()) {
-                        RestAPI.getBitmapFromUrl(getContext(),reference).setCallback(new FutureCallback<Bitmap>() {
-                            @Override
-                            public void onCompleted(Exception e, Bitmap result) {
-                                if (result!=null) {
-                                    holder.mAvatar.setImageBitmap(result);
-                                }
-                            }
-                        });
-//                        Ion.with(context)
-//                                .load("https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/kernal/asset/" + reference)
-//                                .withBitmap()
-//                                .placeholder(R.drawable.group_chat)
-//                                .error(R.drawable.group_chat)
-//                                .intoImageView(holder.mAvatar);
+                    if (!TextUtils.isEmpty(reference)) {
+                        GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
                     } else {
                         String groupId = address.split("@")[0];
                         Drawable avatar = new GroupAvatar(groupId);

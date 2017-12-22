@@ -44,8 +44,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -1227,20 +1225,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
             if (mConn != null) {
                 try {
-
-                    RestAPI.GetDataWrappy(sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
-                        @Override
-                        public void OnComplete(int httpCode, String error, String s) {
-                            Debug.d(s);
-                            try {
-                                WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
-                                }.getType());
-                                updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
                     IContactListManager manager = mConn.getContactListManager();
                     manager.approveSubscription(contact);
                 } catch (RemoteException e) {
@@ -1267,7 +1251,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 e.printStackTrace();
             }
             // update locally
-            String selection = Imps.Contacts.USERNAME + "=?";
+            String selection = Imps.Contacts.USERNAME + "='" + address + "'";
             String[] selectionArgs = {address};
             ContentValues values = new ContentValues();
             values.put(Imps.Contacts.NICKNAME, name);
@@ -1282,11 +1266,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (wpKMemberDto.getBanner()!=null) {
                 bannerReference = wpKMemberDto.getBanner().getReference();
             }
+
+            Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
+                    selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                long contactId = cursor.getLong(0);
+                Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
+                sImApp.getContentResolver().update(uri, values, null, null);
+            } else {
+                sImApp.getContentResolver().insert(builder.build(), values);
+            }
+
             DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
-            values.put(Imps.Contacts.AVATAR_DATA, avatarReference);
-
-
-            sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
         }
     }
 

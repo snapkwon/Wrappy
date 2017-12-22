@@ -173,10 +173,13 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                             appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
                     } else {
                         if (time > 2) {
+                            AppFuncs.alert(getActivity(), "Answer wrong! Try Email", true);
                             appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
+                        } else {
+                            AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
                         }
                         time++;
-                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
+
                     }
                 }
             }

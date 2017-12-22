@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -17,8 +18,18 @@ import net.wrappy.im.ui.widgets.LetterAvatar;
  */
 
 public class GlideHelper {
+    public static void loadBitmapToImageView(Context context, final ImageView imageView, String url) {
+        loadBitmap(context, imageView, url, false);
+    }
+
     public static void loadBitmapToCircleImage(Context context, final ImageView imageView, String url) {
-        Glide.with(context).load(url).asBitmap().transform(new CircleTransform(context)).diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+        loadBitmap(context, imageView, url, true);
+    }
+
+    public static void loadBitmap(Context context, final ImageView imageView, String url, boolean transform) {
+        BitmapTypeRequest<String> request = Glide.with(context).load(url).asBitmap();
+        if (transform) request.transform(new CircleTransform(context));
+        request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if (imageView != null)

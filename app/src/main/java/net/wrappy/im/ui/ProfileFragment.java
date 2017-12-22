@@ -27,7 +27,9 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.WpKMemberDto;
@@ -139,27 +141,11 @@ public class ProfileFragment extends Fragment {
                             txtEmail.setText(wpKMemberDto.getEmail());
                             txtPhone.setText(wpKMemberDto.getMobile());
                             txtGender.setText(wpKMemberDto.getGender());
-                            if (wpKMemberDto.getAvatar()!=null) {
-                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getAvatar().getReference()).setCallback(new FutureCallback<Bitmap>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Bitmap result) {
-                                        if (result != null) {
-                                            imgPhotoAvatar.setImageBitmap(result);
-                                        }
-
-                                    }
-                                });
+                            if (wpKMemberDto.getAvatar() != null) {
+                                GlideHelper.loadBitmapToCircleImage(getContext(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
                             }
-                            if (wpKMemberDto.getBanner()!=null) {
-                                RestAPI.getBitmapFromUrl(getActivity(), wpKMemberDto.getBanner().getReference()).setCallback(new FutureCallback<Bitmap>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Bitmap result) {
-                                        if (result != null) {
-                                            imgProfileHeader.setImageBitmap(result);
-                                        }
-
-                                    }
-                                });
+                            if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
+                                GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                             }
 
                             //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
@@ -193,12 +179,12 @@ public class ProfileFragment extends Fragment {
     public void onClick(View view) {
         if (view.getId() == R.id.btnPhotoCameraAvatar) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+            BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+            sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,"Choose from Gallery");
             sheetCells.add(sheetCell);
             if (wpKMemberDto!=null) if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())){
-                sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,"Delete Photo");
                 sheetCells.add(sheetCell);
             }
             PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
@@ -220,6 +206,7 @@ public class ProfileFragment extends Fragment {
                                     public void onCompleted(Exception e, Response<String> result) {
                                         if (result!=null) {
                                             if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                wpKMemberDto.setAvatar(null);
                                                 AppFuncs.alert(getActivity(),"Remove Avatar Success",true);
                                             }
                                         }
@@ -269,7 +256,8 @@ public class ProfileFragment extends Fragment {
                     appFuncs.dismissProgressWaiting();
                     try {
                         String reference = RestAPI.getPhotoReference(result.getResult());
-                        wpKMemberDto.getAvatar().setReference(reference);
+                        Avatar avatar = new Avatar(reference);
+                        wpKMemberDto.setAvatar(avatar);
                         updateData();
                     }catch (Exception ex) {
                         ex.printStackTrace();
@@ -295,6 +283,9 @@ public class ProfileFragment extends Fragment {
                 if (result!=null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.alert(getActivity(),"Update Success",true);
+                    } else {
+                        imgPhotoAvatar.setImageResource(R.drawable.avatar);
+                        AppFuncs.alert(getActivity(),"Update Fail",true);
                     }
                 }
             }
