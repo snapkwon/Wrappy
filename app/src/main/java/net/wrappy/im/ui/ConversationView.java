@@ -201,6 +201,12 @@ public class ConversationView {
 
     SearchView searchView;
 
+    LinearLayout searchlayout;
+
+    ImageButton btnsearchup;
+
+    ImageButton btnsearchbottom;
+
     LinearLayout inputlayout;
     //static final int MIME_TYPE_COLUMN = 9;
 
@@ -311,6 +317,7 @@ public class ConversationView {
     public void activeSearchmode() {
         isSearchMode = true;
         inputlayout.setVisibility(View.GONE);
+        searchlayout.setVisibility(View.VISIBLE);
         searchView.setVisibility(View.VISIBLE);
     }
 
@@ -341,6 +348,7 @@ public class ConversationView {
         searchView.setVisibility(View.GONE);
         mMessageAdapter.searchText("");
         inputlayout.setVisibility(View.VISIBLE);
+        searchlayout.setVisibility(View.GONE);
     }
 
     public boolean isSelected() {
@@ -837,6 +845,28 @@ public class ConversationView {
         searchView.setVisibility(View.GONE);
 
         inputlayout = (LinearLayout)mActivity.findViewById(R.id.inputLayout) ;
+
+        searchlayout = (LinearLayout)mActivity.findViewById(R.id.searchlayout) ;
+
+        searchlayout.setVisibility(View.VISIBLE);
+
+        btnsearchup = (ImageButton) mActivity.findViewById(R.id.btnArrowup) ;
+
+        btnsearchbottom = (ImageButton)mActivity.findViewById(R.id.btnArrowbottom) ;
+
+        btnsearchup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMessageAdapter.searchUp();
+            }
+        });
+
+        btnsearchbottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMessageAdapter.searchBottom();
+            }
+        });
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -2596,6 +2626,7 @@ public class ConversationView {
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
         private String textsearch ="";
         private List<Integer> searchCol = new ArrayList<>();
+        private int searchpos =0;
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
         // private String bodytranalate = "";
@@ -2627,8 +2658,26 @@ public class ConversationView {
             notifyDataSetChanged();
 
             if(searchCol.size() > 0)
-                mCallback.search(searchCol.get(0));
+                mCallback.search(searchCol.get(searchpos));
 
+        }
+
+        public void searchUp()
+        {
+            if(searchpos > 0)
+            {
+                searchpos--;
+                mCallback.search(searchCol.get(searchpos));
+            }
+        }
+
+        public  void searchBottom()
+        {
+            if(searchpos < searchCol.size()-1)
+            {
+                searchpos++;
+                mCallback.search(searchCol.get(searchpos));
+            }
         }
 
 

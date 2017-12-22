@@ -292,7 +292,34 @@
                 android:text="..."
                 android:textColor="?messageTextPrimary"
                 android:visibility="gone" />
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/searchlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal"
+        >
 
+        <ImageButton
+            android:id="@+id/btnArrowup"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_margin="6dp"
+            android:background="@drawable/ic_arrow_top"
+            android:scaleType="centerInside"
+            android:layout_gravity="center" />
+        <ImageButton
+            android:id="@+id/btnArrowbottom"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_margin="6dp"
+            android:background="@drawable/ic_arrow_bottom"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"/>
+    </LinearLayout>
             <LinearLayout
                 android:id="@+id/inputLayout"
                 android:layout_width="match_parent"
@@ -366,6 +393,7 @@
                     android:visibility="gone" />
 
             </LinearLayout>
+</FrameLayout>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
