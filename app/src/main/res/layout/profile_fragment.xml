@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:focusableInTouchMode="true"
     android:layout_height="match_parent"
     android:background="#f2f2f2">
 
@@ -104,12 +105,28 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:background="#000"/>
-                            <net.wrappy.im.helper.layout.AppTextView
-                                android:id="@+id/txtProfileEmail"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                style="@style/AppText02"
-                                android:text="Email"/>
+                                android:orientation="horizontal">
+                                <net.wrappy.im.helper.layout.AppEditTextView
+                                    android:id="@+id/edProfileEmail"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/AppText02"
+                                    android:text="Email"
+                                    android:inputType="textEmailAddress"
+                                    android:background="@null"/>
+                                <ImageButton
+                                    android:id="@+id/btnProfileChangeEmail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_edit"
+                                    android:background="@android:color/transparent"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"/>
+                            </RelativeLayout>
+
 
                         </LinearLayout>
 
@@ -132,12 +149,27 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:background="#000"/>
-                            <net.wrappy.im.helper.layout.AppTextView
-                                android:id="@+id/txtProfilePhone"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                style="@style/AppText02"
-                                android:text="Email"/>
+                                android:orientation="horizontal">
+                                <net.wrappy.im.helper.layout.AppEditTextView
+                                    android:id="@+id/edProfilePhone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/AppText02"
+                                    android:text="Phone"
+                                    android:inputType="phone"
+                                    android:background="@null"/>
+                                <ImageButton
+                                    android:id="@+id/btnProfileChangePhone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_edit"
+                                    android:background="@android:color/transparent"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"/>
+                            </RelativeLayout>
 
 
                         </LinearLayout>
@@ -161,16 +193,41 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:background="#000"/>
-                            <net.wrappy.im.helper.layout.AppTextView
-                                android:id="@+id/txtProfileGender"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                style="@style/AppText02"
-                                android:text="Email"/>
+                                android:orientation="horizontal">
+                                <net.wrappy.im.helper.layout.AppEditTextView
+                                    android:id="@+id/edProfileGender"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/AppText02"
+                                    android:text="Gender"
+                                    android:inputType="textCapCharacters"
+                                    android:background="@null"/>
+                                <ImageButton
+                                    android:id="@+id/btnProfileChangeGender"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_edit"
+                                    android:background="@android:color/transparent"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"/>
+                            </RelativeLayout>
+
 
 
                         </LinearLayout>
 
+                        <net.wrappy.im.helper.layout.AppButton
+                            android:id="@+id/btnProfileSubmit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Submit"
+                            android:visibility="gone"
+                            android:layout_marginTop="10dp"
+                            android:background="@color/menu_text_active"
+                            android:textColor="@android:color/white"/>
 
                     </LinearLayout>
 

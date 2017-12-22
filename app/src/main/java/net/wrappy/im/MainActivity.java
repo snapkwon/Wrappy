@@ -61,7 +61,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceManager;
-import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppEditTextView;
@@ -150,6 +149,8 @@ public class MainActivity extends BaseActivity {
     SyncDataRunnable<WpKChatGroupDto> syncGroupChatRunnable;
     SyncDataRunnable<WpKChatRoster> syncContactRunnable;
     private ChatSessionInitTask task;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,22 +259,22 @@ public class MainActivity extends BaseActivity {
 
     private void initTabLayout() {
 
-        //
+        // main menu tab
         TabLayout.Tab tab = mTabLayout.newTab();
         mTabLayout.addTab(tab);
-        //
+        // conversation list tab
         tab = mTabLayout.newTab();
         mTabLayout.addTab(tab);
-        //
-        tab = mTabLayout.newTab();
-        mTabLayout.addTab(tab);
-        //
+        //wallet tab
+//        tab = mTabLayout.newTab();
+//        mTabLayout.addTab(tab);
+        //profile tab
         tab = mTabLayout.newTab();
         mTabLayout.addTab(tab);
         createTabIcons(0, R.drawable.ic_menu_normal, "Menu");
         createTabIcons(1, R.drawable.ic_menu_conversation_normal, "Chat");
-        createTabIcons(2, R.drawable.ic_menu_wallet_normal, "Wallet");
-        createTabIcons(3, R.drawable.ic_menu_info_normal, "My page");
+//        createTabIcons(2, R.drawable.ic_menu_wallet_normal, "Wallet");
+        createTabIcons(2, R.drawable.ic_menu_info_normal, "My page");
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -381,20 +382,19 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mViewPager.getCurrentItem() == 3) {
-            if (!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
-                adapter.mFragments.remove(mwelcome_wallet_fragment);
-                fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
-                mwalletFragment = new WalletFragment();
-                addWalletTab(mwalletFragment);
-            } else if (Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment)) {
-                adapter.mFragments.remove(mwalletFragment);
-                fragmentManager.beginTransaction().remove(mwalletFragment).commit();
-                mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
-                addWalletTab(mwelcome_wallet_fragment);
-            }
-
-        }
+//        if (mViewPager.getCurrentItem() == 3) {
+//            if (!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
+//                adapter.mFragments.remove(mwelcome_wallet_fragment);
+//                fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
+//                mwalletFragment = new WalletFragment();
+//                addWalletTab(mwalletFragment);
+//            } else if (Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment)) {
+//                adapter.mFragments.remove(mwalletFragment);
+//                fragmentManager.beginTransaction().remove(mwalletFragment).commit();
+//                mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
+//                addWalletTab(mwelcome_wallet_fragment);
+//            }
+//        }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -809,12 +809,12 @@ public class MainActivity extends BaseActivity {
                 return new MainMenuFragment();
             } else if (position == 1) {
                 return new ConversationListFragment();
-            } else if (position == 2) {
-                if (!Wallet.isNewWallet(getFilesDir())) {
-                    return new WalletFragment();
-                } else {
-                    return new Welcome_Wallet_Fragment();
-                }
+//            } else if (position == 2) {
+//                if (!Wallet.isNewWallet(getFilesDir())) {
+//                    return new WalletFragment();
+//                } else {
+//                    return new Welcome_Wallet_Fragment();
+//                }
             } else {
                 return ProfileFragment.newInstance(0, Store.getStringData(getApplicationContext(), Store.USERNAME), "", "");
             }
@@ -1146,3 +1146,4 @@ public class MainActivity extends BaseActivity {
         }
     }
 }
+
