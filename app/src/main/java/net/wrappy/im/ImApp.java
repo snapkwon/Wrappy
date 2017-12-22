@@ -44,8 +44,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -1227,20 +1225,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
             if (mConn != null) {
                 try {
-
-                    RestAPI.GetDataWrappy(sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
-                        @Override
-                        public void OnComplete(int httpCode, String error, String s) {
-                            Debug.d(s);
-                            try {
-                                WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
-                                }.getType());
-                                updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
                     IContactListManager manager = mConn.getContactListManager();
                     manager.approveSubscription(contact);
                 } catch (RemoteException e) {

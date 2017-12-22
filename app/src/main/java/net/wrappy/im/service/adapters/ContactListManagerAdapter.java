@@ -1335,7 +1335,12 @@ public class ContactListManagerAdapter extends
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() { }.getType());
-                    updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier(), wpKMemberDtos.getEmail());
+                    try {
+                        mAdaptee.setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
+                    } catch (ImException e) {
+                        e.printStackTrace();
+                    }
+                    ImApp.updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
