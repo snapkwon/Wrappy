@@ -1,8 +1,11 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -25,8 +28,10 @@ import android.widget.Switch;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -48,6 +53,8 @@ public class SettingConversationActivity extends AppCompatActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
+    @BindView(R.id.layout_leave_setting)
+    LinearLayout layout_leave_setting;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
 
@@ -67,6 +74,7 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
+    private Thread mThreadUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +111,8 @@ public class SettingConversationActivity extends AppCompatActivity {
 
         try {
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-            if (getSession() != null) {
-                mGroupOwner = getSession().getGroupChatOwner();
+            if (mSession != null) {
+                mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
             }
@@ -116,13 +124,67 @@ public class SettingConversationActivity extends AppCompatActivity {
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
+            layout_leave_setting.setVisibility(View.GONE);
 
             memberGroupDisplays = new ArrayList<>();
 
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(memberGroupDisplays, this);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
+
+            updateMembers();
         }
+    }
+
+    private void updateMembers() {
+        if (mThreadUpdate != null) {
+            mThreadUpdate.interrupt();
+            mThreadUpdate = null;
+        }
+        mThreadUpdate = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ArrayList<MemberGroupDisplay> members = new ArrayList<>();
+
+                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
+                                Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
+                Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+                ContentResolver cr = getContentResolver();
+                Cursor c = cr.query(memberUri, projection, null, null, null);
+
+                if (c != null) {
+                    int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
+                    int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
+                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+
+                    while (c.moveToNext()) {
+                        MemberGroupDisplay member = new MemberGroupDisplay();
+                        member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
+                        member.setNickname(c.getString(colNickname));
+                        member.setRole(c.getString(colRole));
+                        member.setEmail(ImApp.getEmail(member.getUsername()));
+                        member.setAffiliation(c.getString(colAffiliation));
+
+                        members.add(member);
+                    }
+                    c.close();
+                }
+                memberGroupDisplays.clear();
+                memberGroupDisplays.addAll(members);
+
+                if (!Thread.currentThread().isInterrupted()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mGroupRecycleView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+        mThreadUpdate.start();
     }
 
     @Override
@@ -135,9 +197,9 @@ public class SettingConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnCheckedChanged(R.id.switch_notification)
-    public void onCheckChangedNotification(CompoundButton p0, boolean p1) {
-        setMuted(!p1);
+    @OnCheckedChanged({R.id.switch_notification})
+    public void onCheckChanged(CompoundButton buttonView, boolean isChecked) {
+        setMuted(!isChecked);
     }
 
     @OnClick({R.id.layout_search_setting,R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
@@ -151,20 +213,19 @@ public class SettingConversationActivity extends AppCompatActivity {
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
             case R.id.layout_leave_setting:
-                clearHistory();
-                leaveGroup();
+                if (leaveGroup())
+                    clearHistory();
+                else AppFuncs.alert(this, "Could not leave group", true);
                 break;
             case R.id.layout_clean_setting:
-                int result = clearHistory();
-                if (result > 0) {
-                    finish();
-                }
+                clearHistory();
                 break;
         }
     }
 
-    private int clearHistory() {
-        return Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+    private void clearHistory() {
+        Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+        finish();
     }
 
     boolean isMuted() {
@@ -181,8 +242,9 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     public void setMuted(boolean muted) {
         try {
-            if (getSession() != null)
+            if (getSession() != null) {
                 getSession().setMuted(muted);
+            }
         } catch (RemoteException re) {
             re.printStackTrace();
         }
@@ -190,6 +252,14 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     public IChatSession getSession() {
         net.wrappy.im.util.Debug.d("mSession " + mSession);
+        if (mSession == null)
+            try {
+                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                if (mSession == null)
+                    mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         return mSession;
     }
     private void searchActive() {
@@ -201,7 +271,7 @@ public class SettingConversationActivity extends AppCompatActivity {
         this.finish();
     }
 
-    private void leaveGroup() {
+    private boolean leaveGroup() {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
@@ -216,11 +286,13 @@ public class SettingConversationActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                return true;
             }
 
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error leaving group", e);
         }
+        return false;
     }
 
     /**

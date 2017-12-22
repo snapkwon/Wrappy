@@ -43,6 +43,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -66,7 +67,6 @@ import net.wrappy.im.service.IConnectionCreationListener;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.IRemoteImService;
-import net.wrappy.im.service.ImService;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
@@ -96,10 +96,11 @@ import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
+import io.fabric.sdk.android.Fabric;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
-    public static final String LOG_TAG = "Zom";
+    public static final String LOG_TAG = "Wrappy";
 
     public static final String EXTRA_INTENT_SEND_TO_USER = "Send2_U";
     public static final String EXTRA_INTENT_PASSWORD = "password";
@@ -220,6 +221,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         Languages.setLanguage(this, Preferences.getLanguage(), false);
 
         sImApp = this;
+        Fabric.with(this, new Crashlytics());
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -1272,10 +1274,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
-            if (!TextUtils.isEmpty(wpKMemberDto.getReference())) {
-                DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), null, wpKMemberDto.getReference(), address);
-                values.put(Imps.Contacts.AVATAR_DATA, wpKMemberDto.getReference());
+            String avatarReference = "";
+            String bannerReference = "";
+            if (wpKMemberDto.getAvatar()!=null) {
+                avatarReference = wpKMemberDto.getAvatar().getReference();
             }
+            if (wpKMemberDto.getBanner()!=null) {
+                bannerReference = wpKMemberDto.getBanner().getReference();
+            }
+            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
+            values.put(Imps.Contacts.AVATAR_DATA, avatarReference);
+
+
             sImApp.getContentResolver().update(builder.build(), values, selection, selectionArgs);
         }
     }

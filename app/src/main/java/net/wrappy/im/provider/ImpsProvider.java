@@ -415,7 +415,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             db.execSQL("CREATE TABLE " + TABLE_AVATARS + " (" + "_id INTEGER PRIMARY KEY,"
                     + "contact TEXT," + "provider_id INTEGER," + "account_id INTEGER,"
-                    + "hash TEXT," + "data BLOB," + // raw image data
+                    + "banner TEXT," + "data Text," + // raw image data
                     "UNIQUE (account_id, contact)" + ");");
 
             db.execSQL("CREATE TABLE " + TABLE_PROVIDER_SETTINGS + " ("
@@ -1129,7 +1129,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         sContactsProjectionMap.put(Imps.Contacts.SHORTCUT, "chats.SHORTCUT AS shortcut");
 
         // Avatars columns
-        sContactsProjectionMap.put(Imps.Contacts.AVATAR_HASH, "avatars.hash AS avatars_hash");
+        sContactsProjectionMap.put(Imps.Contacts.AVATAR_HASH, "avatars.banner AS avatars_hash");
         sContactsProjectionMap.put(Imps.Contacts.AVATAR_DATA, "quote(avatars.data) AS avatars_data");
 
         sContactsProjectionMap.put(Imps.Contacts.CHAT_TYPE, "chats.chat_type AS chat_type");

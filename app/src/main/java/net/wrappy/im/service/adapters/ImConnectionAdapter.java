@@ -17,11 +17,15 @@
 
 package net.wrappy.im.service.adapters;
 
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.service.IChatSessionManager;
-import net.wrappy.im.service.IConnectionListener;
-import net.wrappy.im.service.IContactListManager;
-import net.wrappy.im.service.IInvitationListener;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
+import android.util.Log;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ConnectionListener;
@@ -32,11 +36,17 @@ import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Invitation;
 import net.wrappy.im.model.InvitationListener;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSessionManager;
+import net.wrappy.im.service.IConnectionListener;
+import net.wrappy.im.service.IContactListManager;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.service.IInvitationListener;
 import net.wrappy.im.service.RemoteImService;
-
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.util.Debug;
+
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 
 import java.io.InputStream;
@@ -45,17 +55,6 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.RemoteCallbackList;
-import android.os.RemoteException;
-import android.util.Log;
-
-import net.wrappy.im.service.IImConnection;
 
 public class ImConnectionAdapter extends IImConnection.Stub {
 
@@ -476,7 +475,7 @@ public class ImConnectionAdapter extends IImConnection.Stub {
                                     String remoteAddress = c.getString(3);
                                     String nickname = c.getString(4);
                                     if (remoteAddress != null)
-                                       new ChatSessionInitTask((ImApp) getContext().getApplication(), mProviderId, mAccountId, chatType)
+                                       new ChatSessionInitTask(mProviderId, mAccountId, chatType)
                                                .executeOnExecutor(ImApp.sThreadPoolExecutor,new Contact(new XmppAddress(remoteAddress),nickname,chatType));
                                 }
                             }

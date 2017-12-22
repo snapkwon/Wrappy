@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,10 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.Avatar;
+import net.wrappy.im.model.Banner;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
@@ -44,9 +50,8 @@ import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PopupUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -83,7 +88,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     ArrayAdapter<String> countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
-
+    String avatarReference, bannerReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -120,21 +125,48 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (s!=null) {
-                    Type listType = new TypeToken<ArrayList<WpkCountry>>(){}.getType();
-                    List<WpkCountry> wpkCountry = new Gson().fromJson(s, listType);
-                    wpkCountry.get(0).getCode();
-                    ArrayList<String> strings = new ArrayList<>();
-                    for (int i=0; i < wpkCountry.size(); i++) {
-                        strings.add(wpkCountry.get(i).getPrefix());
+                try {
+                    if (s!=null) {
+                        Type listType = new TypeToken<ArrayList<WpkCountry>>(){}.getType();
+                        List<WpkCountry> wpkCountry = new Gson().fromJson(s, listType);
+                        wpkCountry.get(0).getCode();
+                        ArrayList<String> strings = new ArrayList<>();
+                        for (int i=0; i < wpkCountry.size(); i++) {
+                            strings.add(wpkCountry.get(i).getPrefix());
+                        }
+                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
+                        spnProfileCountryCodes.setAdapter(countryAdapter);
                     }
-                    countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
-                    spnProfileCountryCodes.setAdapter(countryAdapter);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });
     }
+    Handler handler = new Handler();
+    Runnable runnablePostData = new Runnable() {
+        @Override
+        public void run() {
+            appFuncs.dismissProgressWaiting();
+            boolean isFileFail = false;
 
+             if (photoAvatar!=null && TextUtils.isEmpty(avatarReference)) {
+                 AppFuncs.log("avatar null");
+                 isFileFail = true;
+             }
+             if (photoHeader!=null && TextUtils.isEmpty(bannerReference)) {
+                 AppFuncs.log("banner null");
+                 isFileFail = true;
+             }
+            AppFuncs.log("check");
+             if (!isFileFail) {
+                 postDataToServer();
+             } else {
+                 AppFuncs.log("update success");
+                 AppFuncs.alert(getApplicationContext(),"Upload File Fail", true);
+             }
+        }
+    };
 
     @Optional
     @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
@@ -146,32 +178,26 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         try {
             if (view.getId() == R.id.btnProfileComplete) {
                 String error = validateData();
-                if (!error.isEmpty()) {
+                if (!TextUtils.isEmpty(error)) {
                     AppFuncs.alert(getApplicationContext(),error,true);
                     return;
                 }
                 appFuncs.showProgressWaiting(this);
+                boolean isFileExist = false;
                 if (photoAvatar!=null) {
-
-                    RestAPI.uploadFile(getApplicationContext(),AppFuncs.convertBitmapToFile(getApplicationContext(),photoAvatar),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                        @Override
-                        public void onCompleted(Exception e, Response<String> result) {
-                            if (result==null) {
-                                AppFuncs.alert(getApplicationContext(),"Internet fail",true);
-                                appFuncs.dismissProgressWaiting();
-                                return;
-                            }
-                            if (!RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                AppFuncs.alert(getApplicationContext(),"Upload file fail",true);
-                                appFuncs.dismissProgressWaiting();
-                                return;
-                            }
-                            String reference = RestAPI.getPhotoReference(result.getResult());
-                            postDataToServer(reference);
-                        }
-                    });
+                    isFileExist = true;
+                    AppFuncs.log("Upload Avatar");
+                    uploadFileProfile(photoAvatar, RestAPI.PHOTO_AVATAR);
+                }
+                if (photoHeader!=null) {
+                    isFileExist = true;
+                    AppFuncs.log("Upload Banner");
+                    uploadFileProfile(photoHeader, RestAPI.PHOTO_BRAND);
+                }
+                if (!isFileExist){
+                    postDataToServer();
                 } else {
-                    postDataToServer(null);
+                    handler.postDelayed(runnablePostData,10000);
                 }
             }
             if (view.getId() == R.id.btnProfileSkip) {
@@ -180,10 +206,62 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
-                AppFuncs.getImageFromDevice(this,IMAGE_AVATAR);
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCells.add(sheetCell);
+                if (photoAvatar!=null) {
+                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCells.add(sheetCell);
+                }
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        switch (index) {
+                            case 1:
+                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                break;
+                            case 2:
+                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                break;
+                            case 3:
+                                photoAvatar = null;
+                                imgAvatar.setImageResource(R.drawable.avatar);
+                                break;
+                            default:
+                        }
+                    }
+                }).show();
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
-                AppFuncs.getImageFromDevice(this,IMAGE_HEADER);
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1,0, "Take Photo");
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2,0,"Choose from Gallery");
+                sheetCells.add(sheetCell);
+                if (photoHeader!=null) {
+                    sheetCell = new BottomSheetCell(3,0,"Delete Photo");
+                    sheetCells.add(sheetCell);
+                }
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        switch (index) {
+                            case 1:
+                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_HEADER);
+                                break;
+                            case 2:
+                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
+                                break;
+                            case 3:
+                                photoHeader = null;
+                                imgHeader.setImageBitmap(null);
+                                break;
+                            default:
+                        }
+                    }
+                }).show();
             }
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -192,36 +270,58 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    private void uploadFileProfile(final Bitmap bitmap, final String type) {
+        RestAPI.uploadFile(getApplicationContext(),AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
 
-    private void postDataToServer(String reference){
+                try {
+                    String reference = RestAPI.getPhotoReference(result.getResult());
+                    AppFuncs.log("Upload " + reference);
+                    if (result!=null) {
+                        if (type==RestAPI.PHOTO_AVATAR) {
+                            avatarReference = reference;
+                        } else {
+                            bannerReference = reference;
+                        }
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void postDataToServer(){
+        AppFuncs.log("postDataToServer");
         WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone,adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
         wpKMemberDto.setIdentifier(user);
         wpKMemberDto.setEmail(email);
         wpKMemberDto.setMobile(phone);
         wpKMemberDto.setGender(adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
 
-        if (reference!=null) {
-            wpKMemberDto.setReference(reference);
+        if (!TextUtils.isEmpty(avatarReference)) {
+            Avatar avatar = new Avatar(avatarReference);
+            wpKMemberDto.setAvatar(avatar);
+        }
+        if (!TextUtils.isEmpty(bannerReference)) {
+            Banner banner = new Banner(bannerReference);
+            wpKMemberDto.setBanner(banner);
         }
 
         registrationData.setWpKMemberDto(wpKMemberDto);
 
         Gson gson = new Gson();
         JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
+        AppFuncs.log(dataJson.toString());
         RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                Debug.d(s);
-                if (error!=null && !error.isEmpty()) {
-                    AppFuncs.alert(getApplicationContext(),error,true);
-                    appFuncs.dismissProgressWaiting();
-                    return;
-                }
                 if (!RestAPI.checkHttpCode(httpCode)) {
                     if (s!=null) {
                         String er = WpErrors.getErrorMessage(s);
-                        if (!er.isEmpty()) {
+                        if (!TextUtils.isEmpty(er)) {
                             AppFuncs.alert(getApplicationContext(),er,true);
                         } else {
                             AppFuncs.alert(getApplicationContext(),"Registration fail. Try Again!",true);
@@ -232,25 +332,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 }
                 Store.putStringData(getApplicationContext(),Store.USERNAME,user);
                 String url = RestAPI.loginUrl(user,password);
+                AppFuncs.log(url);
                 RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
                     @Override
                     public void OnComplete(int httpCode, String error, String s) {
                         try {
-
-                            if (error!=null && !error.isEmpty()) {
-                                AppFuncs.alert(getApplicationContext(),error,true);
-                                appFuncs.dismissProgressWaiting();
-                                return;
-                            }
                             if (!RestAPI.checkHttpCode(httpCode)) {
                                 String er = WpErrors.getErrorMessage(s);
-                                if (!er.isEmpty()) {
+                                if (!TextUtils.isEmpty(er)) {
                                     AppFuncs.alert(getApplicationContext(),er,true);
                                 }
                                 appFuncs.dismissProgressWaiting();
                                 return;
                             }
+                            AppFuncs.log("login");
                             JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                             Gson gson = new Gson();
                             WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
@@ -273,21 +369,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
 
-            if (user.isEmpty()) {
+            if (TextUtils.isEmpty(user)) {
                 error = "Username is empty";
             } else if (user.length() < 6) {
                 error = "Length of username must be more than 6 characters";
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = "Username contains special characters";
             }
-            else if (!email.isEmpty() && !AppFuncs.isEmailValid(email)) {
+            else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = "Invalid email format";
             } else {}
 
-            if (email.isEmpty()) {
+            if (TextUtils.isEmpty(email)) {
                 email = null;
             }
-            if (phone.isEmpty()) {
+            if (TextUtils.isEmpty(phone)) {
                 phone = null;
             } else {
                 phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()) + phone;
@@ -354,15 +450,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
             try {
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photoAvatar.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-
-                byte[] avatarBytesCompressed = stream.toByteArray();
-                String avatarHash = "nohash";
-                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarBytesCompressed, avatarHash, account.username);
+                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, account.username);
             } catch (Exception e) {
-                Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
+                e.printStackTrace();
             }
 
             mExistingAccountTask = null;

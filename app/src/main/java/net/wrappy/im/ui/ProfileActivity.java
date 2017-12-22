@@ -54,4 +54,5 @@ public class ProfileActivity extends FragmentActivity {
         super.onBackPressed();
         finish();
     }
+
 }

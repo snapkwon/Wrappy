@@ -31,6 +31,7 @@ import net.wrappy.im.util.SecureMediaStore;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +86,11 @@ public class AppFuncs {
     }
 
     public static void log(String string) {
-        Log.i("AppFuncs", string);
+        try {
+            Log.i("wrappy_log", string);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static boolean detectSpecialCharacters(String s) {
@@ -115,8 +120,6 @@ public class AppFuncs {
                     {
 
                         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        //pic = f;
-
                         activity.startActivityForResult(cameraIntent, requestCode);
 
 
@@ -148,6 +151,25 @@ public class AppFuncs {
 
     }
 
+    public static void openCamera(Activity activity, int requestCode) {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            activity.startActivityForResult(cameraIntent, requestCode);
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA},
+                    199);
+        }
+    }
+
+    public static void openGallery(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, requestCode);
+    }
+
     public static String bitmapToBase64String(Bitmap bitmap) {
         String base64String = "";
         try {
@@ -176,7 +198,8 @@ public class AppFuncs {
     public static File convertBitmapToFile(Context context, Bitmap bitmap) {
         File f = null;
         try {
-            f = new File(context.getCacheDir(), "file");
+            String fileName = UUID.randomUUID().toString();
+            f = new File(context.getCacheDir(), fileName);
             f.createNewFile();
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

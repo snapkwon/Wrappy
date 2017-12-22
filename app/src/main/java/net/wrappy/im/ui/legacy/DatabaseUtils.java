@@ -17,17 +17,6 @@
 
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.plugin.ImConfigNames;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
-
-import java.util.Map;
-
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
-
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -38,6 +27,17 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.plugin.ImConfigNames;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
+
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+
+import java.util.Map;
 
 public class DatabaseUtils {
 
@@ -155,33 +155,35 @@ public class DatabaseUtils {
     public static boolean doesAvatarHashExist(ContentResolver resolver, Uri queryUri,
             String jid, String hash) {
 
-        StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
-        buf.append("=?");
-        buf.append(" AND ");
-        buf.append(Imps.Avatars.HASH);
-        buf.append("=?");
-
-        String[] selectionArgs = new String[] { jid, hash };
-
-        Cursor cursor = resolver.query(queryUri, null, buf.toString(), selectionArgs, null);
-        if (cursor == null)
-            return false;
-        try {
-            return cursor.getCount() > 0;
-        } finally {
-            cursor.close();
-        }
+//        StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
+//        buf.append("=?");
+//        buf.append(" AND ");
+//        buf.append(Imps.Avatars.HASH);
+//        buf.append("=?");
+//
+//        String[] selectionArgs = new String[] { jid, hash };
+//
+//        Cursor cursor = resolver.query(queryUri, null, buf.toString(), selectionArgs, null);
+//        if (cursor == null)
+//            return false;
+//        try {
+//            return cursor.getCount() > 0;
+//        } finally {
+//            cursor.close();
+//        }
+        return false;
     }
 
-    public static void insertAvatarBlob(ContentResolver resolver, Uri updateUri, long providerId, long accountId, byte[] data, String hash,
+    public static void insertAvatarBlob(ContentResolver resolver, Uri updateUri, long providerId, long accountId, String avatarReference, String bannerReference,
             String contact) {
-
+        AppFuncs.log("insertAvatarBlob");
         ContentValues values = new ContentValues(5);
         values.put(Imps.Avatars.CONTACT, contact);
-        values.put(Imps.Avatars.DATA, data);
+        values.put(Imps.Avatars.DATA, avatarReference);
         values.put(Imps.Avatars.PROVIDER, providerId);
         values.put(Imps.Avatars.ACCOUNT, accountId);
-        values.put(Imps.Avatars.HASH, hash);
+        values.put(Imps.Avatars.BANNER, bannerReference);
+        AppFuncs.log(values.toString());
         resolver.insert(updateUri, values);
 
     }

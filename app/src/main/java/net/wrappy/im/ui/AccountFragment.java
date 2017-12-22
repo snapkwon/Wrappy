@@ -5,13 +5,11 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,7 +22,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -295,12 +292,12 @@ public class AccountFragment extends Fragment {
             try {
                 Bitmap bmpThumbnail = SecureMediaStore.getThumbnailFile(getActivity(), imageUri, 512);
                 mCropImageView.setImageBitmap(bmpThumbnail);
-                PopupUtils.showCustomViewDialog(getActivity(), mCropImageView, R.string.yes, R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        setAvatar(mCropImageView.getCroppedImage());
-                    }
-                }, null);
+//                PopupUtils.showCustomViewDialog(getActivity(), mCropImageView, R.string.yes, R.string.cancel, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        setAvatar(mCropImageView.getCroppedImage());
+//                    }
+//                }, null);
             } catch (IOException ioe) {
                 Log.e(ImApp.LOG_TAG, "couldn't load avatar", ioe);
             }
@@ -310,25 +307,6 @@ public class AccountFragment extends Fragment {
 
     }
 
-    private void setAvatar(Bitmap bmp) {
-
-        BitmapDrawable avatar = new BitmapDrawable(bmp);
-        mIvAvatar.setImageDrawable(avatar);
-
-        final ImApp app = ((ImApp) getActivity().getApplication());
-
-        try {
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-
-            byte[] avatarBytesCompressed = stream.toByteArray();
-            String avatarHash = "nohash";
-            DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytesCompressed, avatarHash, mUserAddress);
-        } catch (Exception e) {
-            Log.w(ImApp.LOG_TAG, "error loading image bytes", e);
-        }
-    }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();

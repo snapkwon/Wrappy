@@ -599,9 +599,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
      * }
      **/
 
-    boolean sendingPostponed = false;
+    private boolean sendingPostponed = false;
 
-    void sendPostponedMessages() {
+    public void sendPostponedMessages() {
 
         if (!sendingPostponed) {
             sendingPostponed = true;
@@ -677,7 +677,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    String getNickName(String username) {
+    private String getNickName(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {
 
@@ -704,7 +704,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    void onConvertToGroupChatSuccess(ChatGroup group) {
+    private void onConvertToGroupChatSuccess(ChatGroup group) {
         Contact oldParticipant = (Contact) mChatSession.getParticipant();
         String oldAddress = getAddress();
         //    mChatSession.setParticipant(group);
@@ -738,7 +738,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
      * }
      */
 
-    void insertOrUpdateChat(String message) {
+    private void insertOrUpdateChat(String message) {
         if (!ConferenceUtils.isInvisibleMessage(message)) {
             ContentValues values = new ContentValues(2);
 
@@ -765,7 +765,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
 
-    String checkForLinkedMedia(String jid, String message, boolean allowWebDownloads) {
+    private String checkForLinkedMedia(String jid, String message, boolean allowWebDownloads) {
         Matcher matcher = aesGcmUrlPattern.matcher(message);
 
         //if we match the aesgcm crypto pattern, then it is a match
@@ -826,7 +826,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         return id;
     }
 
-    void insertGroupMemberInDb(Contact member) {
+    private void insertGroupMemberInDb(Contact member) {
         String username = member.getAddress().getAddress();
         String nickname = getContactName(Address.stripResource(username));
         member.setName(nickname);
@@ -834,7 +834,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         insertOrUpdateGroupMemberInDb(username, nickname, member);
     }
 
-    public String getContactName(String address) {
+    private String getContactName(String address) {
         // update locally
         if (address.equals(ImApp.sImApp.getDefaultUsername())) {
             long mAccountId = ImApp.sImApp.getDefaultAccountId();
@@ -846,7 +846,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         return address;
     }
 
-    void insertOrUpdateGroupMemberInDb(String oldUsername, String oldNickname, Contact member) {
+    private void insertOrUpdateGroupMemberInDb(String oldUsername, String oldNickname, Contact member) {
 
         if (mChatURI != null) {
             String username = member.getAddress().getAddress();
@@ -898,7 +898,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         });
     }
 
-    void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {
+    private void updateGroupMemberRoleAndAffiliationInDb(Contact member, String role, String affiliation) {
         if (mChatURI != null) {
             String username = member.getAddress().getAddress();
             String nickname = member.getName();
@@ -918,7 +918,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
 
-    void deleteAllGroupMembers() {
+    private void deleteAllGroupMembers() {
 
         if (mChatURI != null) {
             long groupId = ContentUris.parseId(mChatURI);
@@ -929,7 +929,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         //    Imps.MessageType.PRESENCE_UNAVAILABLE);
     }
 
-    Map.Entry<String, String[]> getGroupMemberWhereClause(String username, String nickname) {
+    private Map.Entry<String, String[]> getGroupMemberWhereClause(String username, String nickname) {
         String whereClause = "";
         ArrayList<String> selection = new ArrayList<>();
         if (!TextUtils.isEmpty(nickname)) {
@@ -953,7 +953,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         return new AbstractMap.SimpleEntry<String, String[]>(whereClause, selection.toArray(new String[0]));
     }
 
-    void deleteGroupMemberInDb(Contact member) {
+    private void deleteGroupMemberInDb(Contact member) {
         if (mChatURI != null) {
             String username = member.getAddress().getAddress();
             String nickname = member.getName();
@@ -1005,12 +1005,12 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    void removeMessageInDb(int type) {
+    private void removeMessageInDb(int type) {
         mContentResolver.delete(mMessageURI, Imps.Messages.TYPE + "=?",
                 new String[]{Integer.toString(type)});
     }
 
-    Uri insertMessageInDb(String contact, String body, long time, int type, String mimeType) {
+    private Uri insertMessageInDb(String contact, String body, long time, int type, String mimeType) {
         return insertMessageInDb(contact, body, time, type, 0/*No error*/, nextID(), mimeType);
     }
 
