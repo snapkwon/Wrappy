@@ -498,7 +498,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="" />
+            android:value="@string/fabric_api_key" />
 
         <meta-data
             android:name="net.wrappy.im.tasks.GlideVFSModule"

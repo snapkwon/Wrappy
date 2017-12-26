@@ -248,6 +248,8 @@ public class ProfileFragment extends Fragment {
                             AppFuncs.openGallery(getActivity(), AVATAR);
                             break;
                         case 3:
+                            photoAvatar = null;
+                            imgPhotoAvatar.setImageResource(R.drawable.avatar);
                             if (wpKMemberDto.getAvatar() != null)
                                 if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                                     RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
@@ -302,7 +304,6 @@ public class ProfileFragment extends Fragment {
                 if (data.getData() != null) {
                     AppFuncs.cropImage(getActivity(), data.getData(), true);
                 }
-
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 final Uri resultUri = UCrop.getOutput(data);
                 appFuncs.showProgressWaiting(getActivity());
