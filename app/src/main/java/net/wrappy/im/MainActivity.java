@@ -59,6 +59,7 @@ import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.helper.AppFuncs;
@@ -491,10 +492,14 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
-            if (requestCode == REQUEST_CHANGE_SETTINGS) {
+            if (requestCode == ProfileFragment.AVATAR || requestCode == UCrop.REQUEST_CROP) {
+                try {
+                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                    profileFragment.onActivityResult(requestCode, resultCode, data);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }else if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
