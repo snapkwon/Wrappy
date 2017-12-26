@@ -292,9 +292,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.VISIBLE);
                         mFab.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-                    } else if (tab.getPosition() == 2) {
-                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
                     } else if (tab.getPosition() == 3) {
+                        //appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
+                    } else if (tab.getPosition() == 2) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
@@ -314,9 +314,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.GONE);
                         mFab.setVisibility(View.GONE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
-                    } else if (tab.getPosition() == 2) {
-                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
                     } else if (tab.getPosition() == 3) {
+                        //appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
+                    } else if (tab.getPosition() == 2) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
                     }
                 } catch (Exception ex) {
@@ -495,10 +495,14 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
-            if (requestCode == REQUEST_CHANGE_SETTINGS) {
+            if (requestCode == ProfileFragment.AVATAR) {
+                try {
+                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                    profileFragment.onActivityResult(requestCode, resultCode, data);
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }else if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
@@ -822,7 +826,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
         @Override

@@ -152,13 +152,13 @@ public class AppFuncs {
     }
 
     public static void openCamera(Activity activity, int requestCode) {
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if ((ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ContextCompat.checkSelfPermission(activity,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             activity.startActivityForResult(cameraIntent, requestCode);
         } else {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.CAMERA},
+                    new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},
                     199);
         }
     }

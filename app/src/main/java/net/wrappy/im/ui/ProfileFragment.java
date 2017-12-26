@@ -3,13 +3,12 @@ package net.wrappy.im.ui;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.support.v4.content.IntentCompat;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +37,7 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.util.PopupUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -51,20 +51,19 @@ import butterknife.OnTextChanged;
 
 public class ProfileFragment extends Fragment {
 
-    private final int AVATAR = 321;
+    public static final int AVATAR = 321;
     View mainView;
     AppFuncs appFuncs;
     String jid = "";
     WpKMemberDto wpKMemberDto;
     private long mContactId = -1;
     private String mNickname = null;
-    private String mUsername = null;
-    private long mProviderId = -1;
-    private long mAccountId = -1;
+    String mUsername = null;
+    long mProviderId = -1;
+    long mAccountId = -1;
     private String reference = "";
     private ImApp mApp;
     private boolean isSelf;
-    Bitmap photoAvatar;
 
     MainActivity mainActivity;
 
@@ -243,8 +242,6 @@ public class ProfileFragment extends Fragment {
                             AppFuncs.openGallery(getActivity(), AVATAR);
                             break;
                         case 3:
-                            photoAvatar = null;
-                            imgPhotoAvatar.setImageResource(R.drawable.avatar);
                             if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                                 RestAPI.apiDELETE(getActivity(),RestAPI.DELETE_AVATAR,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
                                     @Override
@@ -291,33 +288,34 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==AVATAR) {
-            appFuncs.showProgressWaiting(getActivity());
-            photoAvatar = AppFuncs.getBitmapFromIntentResult(getActivity(),data);
-            RestAPI.uploadFile(getActivity(),AppFuncs.convertBitmapToFile(getActivity(),photoAvatar),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    appFuncs.dismissProgressWaiting();
-                    try {
-                        String reference = RestAPI.getPhotoReference(result.getResult());
-                        Avatar avatar = new Avatar(reference);
-                        wpKMemberDto.setAvatar(avatar);
-                        updateData();
-                    }catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+        try {
+            if (requestCode==AVATAR) {
+                if (data.getData()!=null) {
+                    appFuncs.showProgressWaiting(getActivity());
+                    File file = new File(data.getData().getPath());
+                    RestAPI.uploadFile(getActivity(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            appFuncs.dismissProgressWaiting();
+                            try {
+                                String reference = RestAPI.getPhotoReference(result.getResult());
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, data.getData().toString(), true);
+                                Avatar avatar = new Avatar(reference);
+                                wpKMemberDto.setAvatar(avatar);
+                                updateData();
+                            }catch (Exception ex) {
+                                AppFuncs.alert(getActivity(),"Upload fail",false);
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
                 }
-            });
-            getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                imgPhotoAvatar.setImageBitmap(photoAvatar);
-                                            }
-                                        }
-            );
 
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
