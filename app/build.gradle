@@ -40,11 +40,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
             resValue "string", "google_place_api_key", "[YOUR PROD KEY]"
+            resValue "string", "fabric_api_key", "9ebe0e16d1080723d689921d921604890f1a06c2"
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
             resValue "string", "google_place_api_key", "[YOUR DEV KEY]"
+            resValue "string", "fabric_api_key", ""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }

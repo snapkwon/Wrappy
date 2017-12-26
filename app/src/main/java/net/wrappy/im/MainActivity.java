@@ -151,7 +151,6 @@ public class MainActivity extends BaseActivity {
     private ChatSessionInitTask task;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -292,9 +291,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.VISIBLE);
                         mFab.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-                    } else if (tab.getPosition() == 2) {
-                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
-                    } else if (tab.getPosition() == 3) {
+//                    } else if (tab.getPosition() == 2) {
+//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
+                    } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
@@ -314,9 +313,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.GONE);
                         mFab.setVisibility(View.GONE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
-                    } else if (tab.getPosition() == 2) {
-                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
-                    } else if (tab.getPosition() == 3) {
+//                    } else if (tab.getPosition() == 2) {
+//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
+                    } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
                     }
                 } catch (Exception ex) {
@@ -822,7 +821,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
         @Override
