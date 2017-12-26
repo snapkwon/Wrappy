@@ -303,25 +303,25 @@ public class SettingConversationActivity extends AppCompatActivity {
         GridView mGridView;
 
         public int[] mThumbIds = {
-                R.drawable.chat_bg_1,
-                R.drawable.chat_bg_2,
-                R.drawable.chat_bg_3,
-                R.drawable.chat_bg_4,
-                R.drawable.chat_bg_5,
-                R.drawable.chat_bg_6,
-                R.drawable.chat_bg_7,
-                R.drawable.chat_bg_8
+                R.drawable.chat_bg_thumb_1,
+                R.drawable.chat_bg_thumb_2,
+                R.drawable.chat_bg_thumb_3,
+                R.drawable.chat_bg_thumb_4,
+                R.drawable.chat_bg_thumb_5,
+                R.drawable.chat_bg_thumb_6,
+                R.drawable.chat_bg_thumb_7,
+                R.drawable.chat_bg_thumb_8
         };
 
         public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_thumb_1.png",
-                "backgrounds/page_1/chat_bg_thumb_2.png",
-                "backgrounds/page_1/chat_bg_thumb_3.png",
-                "backgrounds/page_1/chat_bg_thumb_4.png",
-                "backgrounds/page_1/chat_bg_thumb_5.png",
-                "backgrounds/page_1/chat_bg_thumb_6.png",
-                "backgrounds/page_1/chat_bg_thumb_7.png",
-                "backgrounds/page_1/chat_bg_thumb_8.png",
+                "backgrounds/page_1/chat_bg_1.png",
+                "backgrounds/page_1/chat_bg_2.png",
+                "backgrounds/page_1/chat_bg_3.png",
+                "backgrounds/page_1/chat_bg_4.png",
+                "backgrounds/page_1/chat_bg_5.png",
+                "backgrounds/page_1/chat_bg_6.png",
+                "backgrounds/page_1/chat_bg_7.png",
+                "backgrounds/page_1/chat_bg_8.png",
         };
 
         public static final BackgroundBottomSheetFragment getInstance() {
