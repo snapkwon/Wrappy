@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.model.T;
 import net.wrappy.im.util.PopupUtils;
@@ -88,7 +90,7 @@ public class AppFuncs {
     public static void log(String string) {
         try {
             Log.i("wrappy_log", string);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -153,21 +155,58 @@ public class AppFuncs {
 
     public static void openCamera(Activity activity, int requestCode) {
         if ((ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ContextCompat.checkSelfPermission(activity,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             activity.startActivityForResult(cameraIntent, requestCode);
         } else {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                     199);
         }
     }
 
     public static void openGallery(Activity activity, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        activity.startActivityForResult(intent, requestCode);
+        if ((ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            Intent intent = new Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+            intent.setType("image/*");
+            activity.startActivityForResult(intent, requestCode);
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    199);
+        }
+
+
+    }
+
+    public static void cropImage(Activity activity, Uri source, boolean isAvarta) {
+        Uri destination = Uri.fromFile(new File(activity.getCacheDir(), UUID.randomUUID().toString()));
+        if (isAvarta) {
+            UCrop.of(source, destination)
+                    .withAspectRatio(1, 1)
+                    .start(activity);
+        } else {
+            UCrop.of(source, destination)
+                    .withAspectRatio(16, 9)
+                    .start(activity);
+        }
+
+    }
+
+    public static void cropImage(Activity activity, Uri source, int requestCode, boolean isAvarta) {
+        Uri destination = Uri.fromFile(new File(activity.getCacheDir(), UUID.randomUUID().toString()));
+        if (isAvarta) {
+            UCrop.of(source, destination)
+                    .withAspectRatio(1, 1)
+                    .start(activity, requestCode);
+        } else {
+            UCrop.of(source, destination)
+                    .withAspectRatio(16, 9)
+                    .start(activity, requestCode);
+        }
+
     }
 
     public static String bitmapToBase64String(Bitmap bitmap) {
@@ -265,6 +304,7 @@ public class AppFuncs {
         Gson gson = new Gson();
         return gson.toJsonTree(ob);
     }
+
     public static float getPixelsInCM(float cm, boolean isX) {
         return (cm / 2.54f) * (isX ? displayMetrics.xdpi : displayMetrics.ydpi);
     }

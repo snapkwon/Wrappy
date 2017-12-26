@@ -3,6 +3,8 @@ package net.wrappy.im.ui;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -22,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -58,12 +61,10 @@ public class ProfileFragment extends Fragment {
     WpKMemberDto wpKMemberDto;
     private long mContactId = -1;
     private String mNickname = null;
-    String mUsername = null;
-    long mProviderId = -1;
-    long mAccountId = -1;
     private String reference = "";
     private ImApp mApp;
     private boolean isSelf;
+    Bitmap photoAvatar;
 
     MainActivity mainActivity;
 
@@ -87,9 +88,12 @@ public class ProfileFragment extends Fragment {
     ImageButton btnPhotoCameraAvatar;
     @BindView(R.id.btnProfileSubmit)
     Button btnProfileSubmit;
-    @BindView(R.id.btnProfileChangeEmail) ImageButton btnProfileChangeEmail;
-    @BindView(R.id.btnProfileChangePhone) ImageButton btnProfileChangePhone;
-    @BindView(R.id.btnProfileChangeGender) ImageButton btnProfileChangeGender;
+    @BindView(R.id.btnProfileChangeEmail)
+    ImageButton btnProfileChangeEmail;
+    @BindView(R.id.btnProfileChangePhone)
+    ImageButton btnProfileChangePhone;
+    @BindView(R.id.btnProfileChangeGender)
+    ImageButton btnProfileChangeGender;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -131,7 +135,7 @@ public class ProfileFragment extends Fragment {
             btnProfileChangePhone.setVisibility(View.GONE);
             btnProfileChangeGender.setVisibility(View.GONE);
         } else {
-            mainActivity = (MainActivity)getActivity();
+            mainActivity = (MainActivity) getActivity();
         }
 
         return mainView;
@@ -159,7 +163,7 @@ public class ProfileFragment extends Fragment {
                             edPhone.setText(wpKMemberDto.getMobile());
                             edGender.setText(wpKMemberDto.getGender());
                             if (wpKMemberDto.getAvatar() != null) {
-                                GlideHelper.loadBitmapToCircleImage(getContext(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                             }
                             if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                                 GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
@@ -178,6 +182,7 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
     @OnTextChanged({R.id.edProfileEmail, R.id.edProfilePhone, R.id.edProfileGender})
     protected void handleTextChange(Editable editable) {
         String email = edEmail.getText().toString().trim();
@@ -190,7 +195,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void confirmDeleteAccount(int mAccountId,int mProviderId) {
+    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
 
         //need to delete
         ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
@@ -203,7 +208,7 @@ public class ProfileFragment extends Fragment {
         System.exit(0);
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnPhotoCameraAvatar,R.id.btnProfileChangeEmail,R.id.btnProfileChangePhone,R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnPhotoCameraAvatar, R.id.btnProfileChangeEmail, R.id.btnProfileChangePhone, R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
             edEmail.clearFocus();
@@ -213,7 +218,7 @@ public class ProfileFragment extends Fragment {
             String phone = edPhone.getText().toString().trim();
             String gender = edGender.getText().toString().trim();
             if (!AppFuncs.isEmailValid(email)) {
-                AppFuncs.alert(getActivity(),"Invalid email format", true);
+                AppFuncs.alert(getActivity(), "Invalid email format", true);
                 return;
             }
             wpKMemberDto.setEmail(email);
@@ -223,14 +228,15 @@ public class ProfileFragment extends Fragment {
             btnProfileSubmit.setVisibility(View.GONE);
         } else if (view.getId() == R.id.btnPhotoCameraAvatar) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
+            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, "Take Photo");
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,"Choose from Gallery");
+            sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, "Choose from Gallery");
             sheetCells.add(sheetCell);
-            if (wpKMemberDto!=null) if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())){
-                sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,"Delete Photo");
-                sheetCells.add(sheetCell);
-            }
+            if (wpKMemberDto != null) if (wpKMemberDto.getAvatar() != null)
+                if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, "Delete Photo");
+                    sheetCells.add(sheetCell);
+                }
             PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
@@ -242,26 +248,27 @@ public class ProfileFragment extends Fragment {
                             AppFuncs.openGallery(getActivity(), AVATAR);
                             break;
                         case 3:
-                            if (wpKMemberDto.getAvatar()!=null) if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                                RestAPI.apiDELETE(getActivity(),RestAPI.DELETE_AVATAR,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Response<String> result) {
-                                        if (result!=null) {
-                                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                                wpKMemberDto.setAvatar(null);
-                                                imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                                                AppFuncs.alert(getActivity(),"Remove Avatar Success",true);
+                            if (wpKMemberDto.getAvatar() != null)
+                                if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                                    RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+                                        @Override
+                                        public void onCompleted(Exception e, Response<String> result) {
+                                            if (result != null) {
+                                                if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                    wpKMemberDto.setAvatar(null);
+                                                    imgPhotoAvatar.setImageResource(R.drawable.avatar);
+                                                    AppFuncs.alert(getActivity(), "Remove Avatar Success", true);
+                                                }
                                             }
                                         }
-                                    }
-                                });
-                            }
+                                    });
+                                }
                             break;
                         default:
                     }
                 }
             }).show();
-        }else if (view.getId() == R.id.lnProfileSendMessage) {
+        } else if (view.getId() == R.id.lnProfileSendMessage) {
             startChat();
         } else if (view.getId() == R.id.lnProfileChangeQuestion) {
             Intent intent = new Intent(getActivity(), SecurityQuestionActivity.class);
@@ -276,7 +283,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     if (index == 1) {
-                        confirmDeleteAccount(mainActivity.getDefaultAcountid(),mainActivity.getDefaultProviderid());
+                        confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
                         AppFuncs.alert(getActivity(), "Logout all devices", true);
@@ -291,30 +298,37 @@ public class ProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode==AVATAR) {
-                if (data.getData()!=null) {
-                    appFuncs.showProgressWaiting(getActivity());
-                    File file = new File(data.getData().getPath());
-                    RestAPI.uploadFile(getActivity(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                        @Override
-                        public void onCompleted(Exception e, Response<String> result) {
-                            appFuncs.dismissProgressWaiting();
-                            try {
-                                String reference = RestAPI.getPhotoReference(result.getResult());
-                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, data.getData().toString(), true);
+            if (requestCode == AVATAR) {
+                if (data.getData() != null) {
+                    AppFuncs.cropImage(getActivity(), data.getData(), true);
+                }
+
+            } else if (requestCode == UCrop.REQUEST_CROP) {
+                final Uri resultUri = UCrop.getOutput(data);
+                appFuncs.showProgressWaiting(getActivity());
+                RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        appFuncs.dismissProgressWaiting();
+                        try {
+                            String reference = RestAPI.getPhotoReference(result.getResult());
+                            if (!TextUtils.isEmpty(reference)) {
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
                                 Avatar avatar = new Avatar(reference);
                                 wpKMemberDto.setAvatar(avatar);
                                 updateData();
-                            }catch (Exception ex) {
-                                AppFuncs.alert(getActivity(),"Upload fail",false);
-                                ex.printStackTrace();
+                            } else {
+                                AppFuncs.alert(getActivity(), "Upload fail", false);
                             }
-                        }
-                    });
-                }
 
+                        } catch (Exception ex) {
+                            AppFuncs.alert(getActivity(), "Upload fail", false);
+                            ex.printStackTrace();
+                        }
+                    }
+                });
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -322,14 +336,14 @@ public class ProfileFragment extends Fragment {
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
         AppFuncs.log("update: " + jsonObject.toString());
-        RestAPI.apiPUT(getActivity(),RestAPI.GET_MEMBER_INFO,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.apiPUT(getActivity(), RestAPI.GET_MEMBER_INFO, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
+                if (result != null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.alert(getActivity(),"Update Success",true);
+                        AppFuncs.alert(getActivity(), "Update Success", true);
                     } else {
-                        AppFuncs.alert(getActivity(),"Update Fail",true);
+                        AppFuncs.alert(getActivity(), "Update Fail", true);
                     }
                 }
             }
@@ -337,14 +351,8 @@ public class ProfileFragment extends Fragment {
     }
 
     public void startChat() {
-
-        Intent intent = ConversationDetailActivity.getStartIntent(getActivity());
-        intent.putExtra("id", mContactId);
-        intent.putExtra("nickname", mNickname);
-        intent.putExtra("reference", reference);
+        Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, mNickname, reference);
         startActivity(intent);
         getActivity().finish();
-
-
     }
 }

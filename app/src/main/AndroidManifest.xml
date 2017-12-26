@@ -498,7 +498,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="9ebe0e16d1080723d689921d921604890f1a06c2" />
+            android:value="" />
 
         <meta-data
             android:name="net.wrappy.im.tasks.GlideVFSModule"
@@ -559,9 +559,11 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        android:name=".ui.PatternActivity"
-        android:launchMode="singleTop" />
         <activity android:name=".ui.qr.QrScanFriendActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".ui.ConferenceActivity"
             android:theme="@style/AppTheme"

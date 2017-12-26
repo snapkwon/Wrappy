@@ -59,6 +59,7 @@ import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.helper.AppFuncs;
@@ -149,7 +150,6 @@ public class MainActivity extends BaseActivity {
     SyncDataRunnable<WpKChatGroupDto> syncGroupChatRunnable;
     SyncDataRunnable<WpKChatRoster> syncContactRunnable;
     private ChatSessionInitTask task;
-
 
 
     @Override
@@ -292,9 +292,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.VISIBLE);
                         mFab.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-                    } else if (tab.getPosition() == 3) {
-                        //appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
-                    } else if (tab.getPosition() == 2) {
+//                    } else if (tab.getPosition() == 2) {
+//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
+                    } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
@@ -314,9 +314,9 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.GONE);
                         mFab.setVisibility(View.GONE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
-                    } else if (tab.getPosition() == 3) {
-                        //appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
-                    } else if (tab.getPosition() == 2) {
+//                    } else if (tab.getPosition() == 2) {
+//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
+                    } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
                     }
                 } catch (Exception ex) {
@@ -469,11 +469,8 @@ public class MainActivity extends BaseActivity {
             Uri data = intent.getData();
             String type = intent.getType();
             if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
-
                 long chatId = ContentUris.parseId(data);
-                Intent intentChat = ConversationDetailActivity.getStartIntent(this);
-                intentChat.putExtra("id", chatId);
-                startActivity(intentChat);
+                startActivity(ConversationDetailActivity.getStartIntent(this, chatId));
             } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());
                 long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mApp.getDefaultAccountId());
@@ -495,7 +492,7 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == ProfileFragment.AVATAR) {
+            if (requestCode == ProfileFragment.AVATAR || requestCode == UCrop.REQUEST_CROP) {
                 try {
                     ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
                     profileFragment.onActivityResult(requestCode, resultCode, data);
@@ -843,16 +840,15 @@ public class MainActivity extends BaseActivity {
         //startCrypto is not actually used anymore, as we move to OMEMO
 
         if (username != null) {
-            task = new ChatSessionInitTask(this, providerId, accountId, Imps.Contacts.TYPE_NORMAL) {
+            task = new ChatSessionInitTask(this, providerId, accountId, Imps.Contacts.TYPE_NORMAL);
+            task.setListener(new ChatSessionInitTask.OnFinishTask() {
                 @Override
-                protected void onPostExecute(Long chatId) {
-                    if (task.isStable() && chatId != -1 && openChat) {
-                        Intent intent = ConversationDetailActivity.getStartIntent(MainActivity.this);
-                        intent.putExtra("id", chatId);
-                        startActivity(intent);
+                public void onFinishTask(Long chatId) {
+                    if (chatId != -1 && openChat) {
+                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId));
                     }
                 }
-            };
+            });
             task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
         }
     }

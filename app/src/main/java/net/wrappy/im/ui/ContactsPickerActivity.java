@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -107,7 +106,7 @@ public class ContactsPickerActivity extends BaseActivity {
     View mLayoutContactSelect;
     View mLayoutGroupSelect;
     ListView mListView = null;
-    private MenuItem mMenuStartGroupChat,mMenuContactsList,mMenuContactsAdd;
+    private MenuItem mMenuStartGroupChat, mMenuContactsList, mMenuContactsAdd;
     private boolean isClickedMenu;
     ProgressDialog dialog;
 
@@ -233,8 +232,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
         doFilterAsync("");
 
-        if (getIntent()!=null) {
-            if (getIntent().getBooleanExtra("isGroup",false)){
+        if (getIntent() != null) {
+            if (getIntent().getBooleanExtra("isGroup", false)) {
                 setGroupMode(true);
             }
         }
@@ -276,19 +275,18 @@ public class ContactsPickerActivity extends BaseActivity {
             ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
             final String groupName = groupFragment.getGroupName();
             final ArrayList<String> members = groupFragment.getListUsername();
-            Bitmap bitmap = groupFragment.getGroupPhoto();
+            Uri uri = groupFragment.getGroupUri();
             String error = "";
             if (groupName.isEmpty()) {
                 error = "Group Name is empty";
-            } else if (members.size()==0) {
+            } else if (members.size() == 0) {
                 error = "No member in group";
             }
 
             if (error.isEmpty()) {
                 showWaitinDialog();
-                if (bitmap!=null) {
-                    File file = AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap);
-                    RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                if (uri != null) {
+                    RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
                         public void onCompleted(Exception e, Response<String> result) {
                             String reference = "";
@@ -305,10 +303,10 @@ public class ContactsPickerActivity extends BaseActivity {
                                 wpKChatGroup.setMemberIds(members);
                                 wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
                                 JsonObject json = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-                                createGroupXMPP(groupName,reference, json);
-                            }catch (Exception ex){
+                                createGroupXMPP(groupName, reference, json);
+                            } catch (Exception ex) {
                                 dismissWaitinDialog();
-                                AppFuncs.alert(getApplicationContext(),"Upload group photo fail!",true);
+                                AppFuncs.alert(getApplicationContext(), "Upload group photo fail!", true);
                             }
                         }
                     });
@@ -321,14 +319,14 @@ public class ContactsPickerActivity extends BaseActivity {
                         wpKChatGroup.setMemberIds(members);
                         wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
                         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-                        createGroupXMPP(groupName,"", jsonObject);
-                    }catch (Exception ex) {
+                        createGroupXMPP(groupName, "", jsonObject);
+                    } catch (Exception ex) {
                         dismissWaitinDialog();
-                        AppFuncs.alert(getApplicationContext(),"Upload group photo fail!",true);
+                        AppFuncs.alert(getApplicationContext(), "Upload group photo fail!", true);
                     }
                 }
             } else {
-                AppFuncs.alert(getApplicationContext(),error,true);
+                AppFuncs.alert(getApplicationContext(), error, true);
             }
 
         }
@@ -341,12 +339,12 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void dismissWaitinDialog() {
-        if (dialog!=null && dialog.isShowing()) {
+        if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
     }
 
-    private void createGroupXMPP(final String groupName,final String reference, JsonObject jsonObject){
+    private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
         RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
@@ -363,7 +361,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         providers.add(contact.provider);
                         accounts.add(contact.account);
                     }
-                    Store.putStringData(getApplicationContext(),groupName,reference);
+                    Store.putStringData(getApplicationContext(), groupName, reference);
                     Intent data = new Intent();
                     data.putExtra(EXTRA_RESULT_GROUP_NAME, chatGroupDto);
                     data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
@@ -372,7 +370,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     setResult(RESULT_OK, data);
                     finish();
                 } else {
-                    AppFuncs.alert(getApplicationContext(),"Create Group Fail",true);
+                    AppFuncs.alert(getApplicationContext(), "Create Group Fail", true);
                 }
             }
         });
@@ -382,13 +380,14 @@ public class ContactsPickerActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
-        try {
-            ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
-            groupFragment.onActivityResult(request, response, data);
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        if (response == RESULT_OK)
+
+        if (response == RESULT_OK) {
+            try {
+                ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+                groupFragment.onActivityResult(request, response, data);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             if (request == REQUEST_CODE_ADD_CONTACT) {
                 String newContact = data.getExtras().getString(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
 
@@ -405,8 +404,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                 }
             }
-
-
+        }
     }
 
 
@@ -451,7 +449,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void updateStartGroupChatMenu() {
-        if (mMenuStartGroupChat != null && mMenuContactsList!=null && mMenuContactsAdd!=null) {
+        if (mMenuStartGroupChat != null && mMenuContactsList != null && mMenuContactsAdd != null) {
             mMenuStartGroupChat.setVisible(isGroupMode());
             //mMenuContactsList.setVisible(!isGroupMode());
             mMenuContactsAdd.setVisible(!isGroupMode());

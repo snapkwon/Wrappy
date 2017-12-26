@@ -167,7 +167,7 @@ public class ContactListItem extends FrameLayout {
             } else {
                 GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(reference)) {
-                    GlideHelper.loadBitmapToCircleImage(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference));
+                    GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
                 }
 
             }
