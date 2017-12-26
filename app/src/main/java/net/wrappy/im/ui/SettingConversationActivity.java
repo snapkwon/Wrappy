@@ -303,14 +303,14 @@ public class SettingConversationActivity extends AppCompatActivity {
         GridView mGridView;
 
         public int[] mThumbIds = {
-                R.drawable.chat_bg_thumb_1,
-                R.drawable.chat_bg_thumb_2,
-                R.drawable.chat_bg_thumb_3,
-                R.drawable.chat_bg_thumb_4,
-                R.drawable.chat_bg_thumb_5,
-                R.drawable.chat_bg_thumb_6,
-                R.drawable.chat_bg_thumb_7,
-                R.drawable.chat_bg_thumb_8
+                R.drawable.chat_bg_1,
+                R.drawable.chat_bg_2,
+                R.drawable.chat_bg_3,
+                R.drawable.chat_bg_4,
+                R.drawable.chat_bg_5,
+                R.drawable.chat_bg_6,
+                R.drawable.chat_bg_7,
+                R.drawable.chat_bg_8
         };
 
         public String[] mImagePath = {
