@@ -342,14 +342,8 @@ public class ProfileFragment extends Fragment {
     }
 
     public void startChat() {
-
-        Intent intent = ConversationDetailActivity.getStartIntent(getActivity());
-        intent.putExtra("id", mContactId);
-        intent.putExtra("nickname", mNickname);
-        intent.putExtra("reference", reference);
+        Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, mNickname, reference);
         startActivity(intent);
         getActivity().finish();
-
-
     }
 }

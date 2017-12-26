@@ -2,7 +2,6 @@ package net.wrappy.im.tasks;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 
@@ -66,14 +65,11 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     @Override
     protected String doInBackground(String... params) {
-
         String subject = group.getName();
         String chatRoom = group.getXmppGroup();
         String server = params[0];
 
-
         try {
-
             IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
 
             String roomAddress = (chatRoom + '@' + server).toLowerCase(Locale.US);
@@ -116,7 +112,6 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         } catch (RemoteException e) {
             return e.toString();
         }
-
     }
 
     @Override
@@ -136,9 +131,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            Intent intent = ConversationDetailActivity.getStartIntent(getActivity());
-            intent.putExtra("id", chatId);
-            getActivity().startActivity(intent);
+            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId));
         }
     }
 

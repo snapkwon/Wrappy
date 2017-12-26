@@ -17,10 +17,19 @@ import java.lang.ref.WeakReference;
  */
 public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
 
+    public interface OnFinishTask {
+        void onFinishTask(Long chatId);
+    }
+
+    private OnFinishTask listener;
     private long mProviderId;
     private long mAccountId;
     private int mContactType;
     private WeakReference<Activity> weakReference;
+
+    public void setListener(OnFinishTask listener) {
+        this.listener = listener;
+    }
 
     public ChatSessionInitTask(long providerId, long accountId, int contactType) {
         init(providerId, accountId, contactType);
@@ -69,6 +78,12 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
         }
 
         return -1L;
+    }
+
+    @Override
+    protected void onPostExecute(Long aLong) {
+        if (isStable() && listener != null)
+            listener.onFinishTask(aLong);
     }
 
     public boolean isStable() {

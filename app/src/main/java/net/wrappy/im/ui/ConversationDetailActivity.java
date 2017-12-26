@@ -54,7 +54,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -112,6 +111,19 @@ import butterknife.OnClick;
 public class ConversationDetailActivity extends BaseActivity {
 
     private AddContactAsyncTask task;
+
+    public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
+        Intent intent = getStartIntent(context, chatId);
+        intent.putExtra("id", chatId);
+        intent.putExtra("nickname", nickname);
+        intent.putExtra("reference", reference);
+        return intent;
+    }
+    public static Intent getStartIntent(Context context, long chatId) {
+        Intent intent = getStartIntent(context);
+        intent.putExtra("id", chatId);
+        return intent;
+    }
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, ConversationDetailActivity.class);

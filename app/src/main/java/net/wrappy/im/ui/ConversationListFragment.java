@@ -19,7 +19,6 @@ package net.wrappy.im.ui;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -365,7 +364,7 @@ public class ConversationListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor,int position) {
+        public void onBindViewHolder(ConversationViewHolder viewHolder, Cursor cursor, int position) {
 
             if (TextUtils.isEmpty(mSearchString)) {
                 String s = DatabaseUtils.dumpCursorToString(cursor);
@@ -400,12 +399,7 @@ public class ConversationListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Context context = v.getContext();
-                        Intent intent = ConversationDetailActivity.getStartIntent(context);
-                        intent.putExtra("id", chatId);
-//                        intent.putExtra("address", address);
-                        intent.putExtra("nickname", nickname);
-                        intent.putExtra("reference", reference);
-                        context.startActivity(intent);
+                        context.startActivity(ConversationDetailActivity.getStartIntent(v.getContext(), chatId, nickname, reference));
                     }
                 });
 
@@ -434,13 +428,7 @@ public class ConversationListFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Context context = v.getContext();
-                                Intent intent = ConversationDetailActivity.getStartIntent(context);
-                                intent.putExtra("id", chatId);
-//                                intent.putExtra("address", nickname);
-                                intent.putExtra("nickname", nickname);
-                                intent.putExtra("reference", reference);
-
-                                context.startActivity(intent);
+                                context.startActivity(ConversationDetailActivity.getStartIntent(v.getContext(), chatId, nickname, reference));
                             }
                         });
                     }

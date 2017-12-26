@@ -468,11 +468,8 @@ public class MainActivity extends BaseActivity {
             Uri data = intent.getData();
             String type = intent.getType();
             if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
-
                 long chatId = ContentUris.parseId(data);
-                Intent intentChat = ConversationDetailActivity.getStartIntent(this);
-                intentChat.putExtra("id", chatId);
-                startActivity(intentChat);
+                startActivity(ConversationDetailActivity.getStartIntent(this, chatId));
             } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());
                 long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mApp.getDefaultAccountId());
@@ -838,16 +835,15 @@ public class MainActivity extends BaseActivity {
         //startCrypto is not actually used anymore, as we move to OMEMO
 
         if (username != null) {
-            task = new ChatSessionInitTask(this, providerId, accountId, Imps.Contacts.TYPE_NORMAL) {
+            task = new ChatSessionInitTask(this, providerId, accountId, Imps.Contacts.TYPE_NORMAL);
+            task.setListener(new ChatSessionInitTask.OnFinishTask() {
                 @Override
-                protected void onPostExecute(Long chatId) {
-                    if (task.isStable() && chatId != -1 && openChat) {
-                        Intent intent = ConversationDetailActivity.getStartIntent(MainActivity.this);
-                        intent.putExtra("id", chatId);
-                        startActivity(intent);
+                public void onFinishTask(Long chatId) {
+                    if (chatId != -1 && openChat) {
+                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId));
                     }
                 }
-            };
+            });
             task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
         }
     }
