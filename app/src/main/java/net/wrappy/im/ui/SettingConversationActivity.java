@@ -314,14 +314,14 @@ public class SettingConversationActivity extends AppCompatActivity {
         };
 
         public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_thumb_1.png",
-                "backgrounds/page_1/chat_bg_thumb_2.png",
-                "backgrounds/page_1/chat_bg_thumb_3.png",
-                "backgrounds/page_1/chat_bg_thumb_4.png",
-                "backgrounds/page_1/chat_bg_thumb_5.png",
-                "backgrounds/page_1/chat_bg_thumb_6.png",
-                "backgrounds/page_1/chat_bg_thumb_7.png",
-                "backgrounds/page_1/chat_bg_thumb_8.png",
+                "backgrounds/page_1/chat_bg_1.png",
+                "backgrounds/page_1/chat_bg_2.png",
+                "backgrounds/page_1/chat_bg_3.png",
+                "backgrounds/page_1/chat_bg_4.png",
+                "backgrounds/page_1/chat_bg_5.png",
+                "backgrounds/page_1/chat_bg_6.png",
+                "backgrounds/page_1/chat_bg_7.png",
+                "backgrounds/page_1/chat_bg_8.png",
         };
 
         public static final BackgroundBottomSheetFragment getInstance() {
