@@ -309,8 +309,7 @@ public class ConversationView {
         }
     }
 
-    public  boolean getSearchMode()
-    {
+    public boolean getSearchMode() {
         return isSearchMode;
     }
 
@@ -321,8 +320,7 @@ public class ConversationView {
         searchView.setVisibility(View.VISIBLE);
     }
 
-    public  void focusSearchmode()
-    {
+    public void focusSearchmode() {
         searchView.setIconifiedByDefault(true);
         searchView.setFocusable(true);
         searchView.setIconified(false);
@@ -841,18 +839,18 @@ public class ConversationView {
         llm.setStackFromEnd(true);
         mHistory.setLayoutManager(llm);
 
-        searchView = (SearchView) mActivity.findViewById(R.id.searchtext) ;
+        searchView = (SearchView) mActivity.findViewById(R.id.searchtext);
         searchView.setVisibility(View.GONE);
 
-        inputlayout = (LinearLayout)mActivity.findViewById(R.id.inputLayout) ;
+        inputlayout = (LinearLayout) mActivity.findViewById(R.id.inputLayout);
 
-        searchlayout = (LinearLayout)mActivity.findViewById(R.id.searchlayout) ;
+        searchlayout = (LinearLayout) mActivity.findViewById(R.id.searchlayout);
 
         searchlayout.setVisibility(View.VISIBLE);
 
-        btnsearchup = (ImageButton) mActivity.findViewById(R.id.btnArrowup) ;
+        btnsearchup = (ImageButton) mActivity.findViewById(R.id.btnArrowup);
 
-        btnsearchbottom = (ImageButton)mActivity.findViewById(R.id.btnArrowbottom) ;
+        btnsearchbottom = (ImageButton) mActivity.findViewById(R.id.btnArrowbottom);
 
         btnsearchup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2621,12 +2619,10 @@ public class ConversationView {
         }
 
 
-
-
         private List<BodyTranslate> bodytranslate = new ArrayList<>();
-        private String textsearch ="";
+        private String textsearch = "";
         private List<Integer> searchCol = new ArrayList<>();
-        private int searchpos =0;
+        private int searchpos = 0;
         private InAppTranslation iapptranslater;
         private String targetlanguage = "ja";
         // private String bodytranalate = "";
@@ -2647,8 +2643,7 @@ public class ConversationView {
 
             if (c.moveToFirst()) {
                 do {
-                    if(c.getString(mBodyColumn).contains(text))
-                    {
+                    if (c.getString(mBodyColumn).contains(text)) {
                         searchCol.add(c.getPosition());
                     }
                 } while (c.moveToNext());
@@ -2657,24 +2652,20 @@ public class ConversationView {
 
             notifyDataSetChanged();
 
-            if(searchCol.size() > 0)
+            if (searchCol.size() > 0)
                 mCallback.search(searchCol.get(searchpos));
 
         }
 
-        public void searchUp()
-        {
-            if(searchpos > 0)
-            {
+        public void searchUp() {
+            if (searchpos > 0) {
                 searchpos--;
                 mCallback.search(searchCol.get(searchpos));
             }
         }
 
-        public  void searchBottom()
-        {
-            if(searchpos < searchCol.size()-1)
-            {
+        public void searchBottom() {
+            if (searchpos < searchCol.size() - 1) {
                 searchpos++;
                 mCallback.search(searchCol.get(searchpos));
             }
@@ -2832,7 +2823,6 @@ public class ConversationView {
         }
 
 
-
         @Override
         public void onBindViewHolder(final MessageViewHolder viewHolder, final Cursor cursor, final int position) {
 
@@ -2977,7 +2967,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference,textsearch);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference, textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -2988,7 +2978,7 @@ public class ConversationView {
                         messageView.bindErrorMessage(errCode);
                     } else {
                         messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, mMarkup, false,
-                                deliveryState, encState,textsearch);
+                                deliveryState, encState, textsearch);
                     }
 
                     break;
@@ -3304,17 +3294,15 @@ public class ConversationView {
     private void startChat(String username) {
 
         if (username != null) {
-            task = new ChatSessionInitTask(mActivity, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL) {
+            task = new ChatSessionInitTask(mActivity, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL);
+            task.setListener(new ChatSessionInitTask.OnFinishTask() {
                 @Override
-                protected void onPostExecute(Long chatId) {
-                    if (task.isStable() && chatId != -1) {
-                        Intent intent = ConversationDetailActivity.getStartIntent(mActivity);
-                        intent.putExtra("id", chatId);
-                        mActivity.startActivity(intent);
+                public void onFinishTask(Long chatId) {
+                    if (chatId != -1) {
+                        mActivity.startActivity(ConversationDetailActivity.getStartIntent(mActivity, chatId));
                     }
                 }
-
-            };
+            });
             task.executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(username)));
 
             mActivity.finish();

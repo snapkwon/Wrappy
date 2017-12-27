@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -23,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -38,6 +40,7 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.util.PopupUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -51,7 +54,7 @@ import butterknife.OnTextChanged;
 
 public class ProfileFragment extends Fragment {
 
-    private final int AVATAR = 321;
+    public static final int AVATAR = 321;
     View mainView;
     AppFuncs appFuncs;
     String jid = "";
@@ -160,7 +163,7 @@ public class ProfileFragment extends Fragment {
                             edPhone.setText(wpKMemberDto.getMobile());
                             edGender.setText(wpKMemberDto.getGender());
                             if (wpKMemberDto.getAvatar() != null) {
-                                GlideHelper.loadBitmapToCircleImage(getContext(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                             }
                             if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                                 GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
@@ -294,33 +297,40 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AVATAR) {
-            appFuncs.showProgressWaiting(getActivity());
-            photoAvatar = AppFuncs.getBitmapFromIntentResult(getActivity(), data);
-            RestAPI.uploadFile(getActivity(), AppFuncs.convertBitmapToFile(getActivity(), photoAvatar), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    appFuncs.dismissProgressWaiting();
-                    try {
-                        String reference = RestAPI.getPhotoReference(result.getResult());
-                        Avatar avatar = new Avatar(reference);
-                        wpKMemberDto.setAvatar(avatar);
-                        updateData();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+        try {
+            if (requestCode == AVATAR) {
+                if (data.getData() != null) {
+                    AppFuncs.cropImage(getActivity(), data.getData(), true);
                 }
-            });
-            getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                imgPhotoAvatar.setImageBitmap(photoAvatar);
-                                            }
-                                        }
-            );
+            } else if (requestCode == UCrop.REQUEST_CROP) {
+                final Uri resultUri = UCrop.getOutput(data);
+                appFuncs.showProgressWaiting(getActivity());
+                RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        appFuncs.dismissProgressWaiting();
+                        try {
+                            String reference = RestAPI.getPhotoReference(result.getResult());
+                            if (!TextUtils.isEmpty(reference)) {
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
+                                Avatar avatar = new Avatar(reference);
+                                wpKMemberDto.setAvatar(avatar);
+                                updateData();
+                            } else {
+                                AppFuncs.alert(getActivity(), "Upload fail", false);
+                            }
 
+                        } catch (Exception ex) {
+                            AppFuncs.alert(getActivity(), "Upload fail", false);
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -342,14 +352,8 @@ public class ProfileFragment extends Fragment {
     }
 
     public void startChat() {
-
-        Intent intent = ConversationDetailActivity.getStartIntent(getActivity());
-        intent.putExtra("id", mContactId);
-        intent.putExtra("nickname", mNickname);
-        intent.putExtra("reference", reference);
+        Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, mNickname, reference);
         startActivity(intent);
         getActivity().finish();
-
-
     }
 }

@@ -40,13 +40,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
             resValue "string", "google_place_api_key", "[YOUR PROD KEY]"
-            resValue "string", "fabric_api_key", "9ebe0e16d1080723d689921d921604890f1a06c2"
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
             resValue "string", "google_place_api_key", "[YOUR DEV KEY]"
-            resValue "string", "fabric_api_key", ""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }
@@ -81,7 +79,7 @@ android {
         checkReleaseBuilds false
     }
 
-    // set timeouts to 10 minutes to prevent random failures
+// set timeouts to 10 minutes to prevent random failures
     com.android.ddmlib.DdmPreferences.setTimeOut(600000)
     adbOptions {
         timeOutInMs 600000
@@ -104,7 +102,7 @@ def getProps(String propName) {
         def props = new Properties()
         props.load(new FileInputStream(propsFile))
         if (props.getProperty("google_translate_apikey")) {
-              return props[propName]
+            return props[propName]
         }
     }
     return null;
@@ -185,4 +183,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
+    compile 'com.github.yalantis:ucrop:2.2.1'
+
 }
