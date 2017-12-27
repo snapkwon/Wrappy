@@ -154,17 +154,12 @@ public class ConversationListItem extends FrameLayout {
                     if (!TextUtils.isEmpty(reference)) {
                         GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
                     } else {
-                        String groupId = address.split("@")[0];
-                        Drawable avatar = new GroupAvatar(groupId);
-                        holder.mAvatar.setImageDrawable(avatar);
+                        holder.mAvatar.setImageResource(R.drawable.chat_group);
                     }
 
                     //
                 } catch (Exception ignored) {
-                    if (AVATAR_DEFAULT_GROUP == null)
-                        AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
-                                R.drawable.group_chat));
-                    holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
+                    holder.mAvatar.setImageResource(R.drawable.chat_group);
                 }
             }
             else {
