@@ -1224,7 +1224,7 @@ public class PatternView extends View {
 
     private void drawCirclegray(Canvas canvas, float centerX, float centerY, float radius,
                             boolean partOfPattern, float alpha) {
-        mPaint.setColor(0xEFEEEE);
+        mPaint.setColor(0xD8D8D8);
         mPaint.setAlpha((int) (alpha * 255));
         canvas.drawCircle(centerX, centerY, radius, mPaint);
     }
