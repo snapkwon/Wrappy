@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="#80000000"
+    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +29,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Ringing..."
+            android:text="@string/ringing"
             android:textColor="@android:color/holo_purple"
             android:textSize="15sp" />
 
@@ -57,7 +57,7 @@
                 android:layout_margin="10dp"
                 android:background="@android:color/holo_blue_bright"
                 android:padding="10dp"
-                android:text="Accept"
+                android:text="@string/accept_invitation"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -67,7 +67,7 @@
                 android:layout_margin="10dp"
                 android:background="@android:color/holo_red_light"
                 android:padding="10dp"
-                android:text="Decline"
+                android:text="@string/decline_invitation"
                 android:textColor="@android:color/white" />
         </LinearLayout>
 
