@@ -744,7 +744,7 @@ public class ContactListManagerAdapter extends
             if (mAdaptee != null && from != null && from.getAddress() != null) {
                 String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
                 String nickname = from.getName();
-                Uri uri = insertOrUpdateSubscription(username, nickname,
+                insertOrUpdateSubscription(username, nickname,
                         subType,
                         subStatus);
             }
@@ -827,7 +827,7 @@ public class ContactListManagerAdapter extends
             String nickname = from.getName();
 
             queryOrInsertContact(from); // FIXME Miron
-            Uri uri = insertOrUpdateSubscription(username, nickname,
+            insertOrUpdateSubscription(username, nickname,
                     Imps.Contacts.SUBSCRIPTION_TYPE_NONE,
                     Imps.Contacts.SUBSCRIPTION_STATUS_NONE);
 
@@ -967,8 +967,8 @@ public class ContactListManagerAdapter extends
      * @param subscriptionType
      * @param subscriptionStatus
      */
-    Uri insertOrUpdateSubscription(final String username, String nickname, int subscriptionType,
-                                   int subscriptionStatus) {
+    private void insertOrUpdateSubscription(final String username, String nickname, final int subscriptionType,
+                                            final int subscriptionStatus) {
 
         String selection = Imps.Contacts.USERNAME + "='" + username + "'";
         String[] selectionArgs = null;
@@ -976,7 +976,7 @@ public class ContactListManagerAdapter extends
                 selection, selectionArgs, null);
         if (cursor == null) {
             RemoteImService.debug("query contact " + username + " failed");
-            return null;
+            return;
         }
 
         Uri uri;
@@ -989,35 +989,30 @@ public class ContactListManagerAdapter extends
             uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
             mResolver.update(uri, values, null, null);
         } else {
-            ContentValues values = new ContentValues(6);
-            values.put(Imps.Contacts.USERNAME, username);
-//            values.put(Imps.Contacts.NICKNAME, nickname);
-            values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_NORMAL);
-            values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
-            values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
-            values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
-
-            uri = mResolver.insert(mContactUrl, values);
-            Debug.i("Subscription : " + username);
             RestAPI.apiGET(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser())).setCallback(new FutureCallback<Response<String>>() {
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
                     if (result != null) {
                         if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                             try {
-                                ImApp.updateContact(username, (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+                                ContentValues values = new ContentValues(6);
+                                values.put(Imps.Contacts.USERNAME, username);
+                                values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_NORMAL);
+                                values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
+                                values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
+                                values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
+                                ImApp.updateContact(values, username, (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
                             } catch (Exception ex) {
-                                removeContact(username);
+                                ex.printStackTrace();
                             }
                         } else {
-                            removeContact(username);
+                            ImApp.removeContact(mResolver, username, mConn);
                         }
                     }
                 }
             });
         }
         cursor.close();
-        return uri;
     }
 
     boolean isSubscribed(String username) {
