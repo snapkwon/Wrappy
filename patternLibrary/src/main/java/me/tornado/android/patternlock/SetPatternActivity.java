@@ -24,16 +24,19 @@ public class SetPatternActivity extends BasePatternActivity
 
 
 
+
     public void setTypePattern(int type)
     {
         m_typePattern = type;
         if(m_typePattern == TYPE_NOCONFIRM)
         {
+            view.setVisibility(View.GONE);
             bottomText.setVisibility(View.VISIBLE);
             bottomText.setText("Forget password");
         }
         else if(m_typePattern == TYPE_CONFIRM)
         {
+            view.setVisibility(View.VISIBLE);
             bottomText.setVisibility(View.GONE);
         }
     }

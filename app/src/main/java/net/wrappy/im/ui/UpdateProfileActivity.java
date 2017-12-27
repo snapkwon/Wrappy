@@ -1,5 +1,6 @@
 package net.wrappy.im.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -10,11 +11,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -86,7 +89,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.btnProfileCameraHeader) ImageButton btnCameraHeader;
     @BindView(R.id.btnPhotoCameraAvatar) ImageButton btnCameraAvatar;
 
-    ArrayAdapter<String> countryAdapter;
+    MySpinnerAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
     @Override
@@ -134,7 +137,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         for (int i=0; i < wpkCountry.size(); i++) {
                             strings.add(wpkCountry.get(i).getPrefix());
                         }
-                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
+
+                        countryAdapter = new MySpinnerAdapter(UpdateProfileActivity.this,R.layout.update_profile_textview, wpkCountry);
+                       // countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
+
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                     }
                 }catch (Exception ex) {
@@ -386,7 +392,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (TextUtils.isEmpty(phone)) {
                 phone = null;
             } else {
-                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()) + phone;
+                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix() + phone;
             }
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -488,4 +494,47 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
         return true;
     }
+
+    //custom adapter
+    public class MySpinnerAdapter extends ArrayAdapter<WpkCountry>{
+
+        private Context context;
+        private List<WpkCountry> myObjs;
+
+        public MySpinnerAdapter(Context context, int textViewResourceId,
+                                List<WpkCountry> myObjs) {
+            super(context,textViewResourceId,myObjs);
+            this.context = context;
+            this.myObjs = myObjs;
+        }
+
+        public int getCount(){
+            return myObjs.size();
+        }
+
+        public WpkCountry getItem(int position){
+            return myObjs.get(position);
+        }
+
+        public long getItemId(int position){
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView label = new TextView(context);
+            label.setText(myObjs.get(position).getPrefix());
+            return label;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView,
+                                    ViewGroup parent) {
+            TextView label = new TextView(context);
+            label.setText(myObjs.get(position).getL10N().get("en_US") + " " + myObjs.get(position).getPrefix());
+            return label;
+        }
+    }
+
+
 }

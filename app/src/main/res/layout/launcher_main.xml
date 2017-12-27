@@ -20,6 +20,7 @@
         android:orientation="vertical"
         android:layout_gravity="top"
         android:layout_marginTop="68dp"
+        android:layout_marginBottom="50dp"
        >
 
 
@@ -41,6 +42,8 @@
             android:layout_marginTop="2dp"
             android:src="@drawable/text_1" />
     </LinearLayout>
+
+
 
     <net.wrappy.im.helper.layout.AppEditTextView
         android:id="@+id/edtUserMame"
