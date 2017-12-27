@@ -20,7 +20,7 @@
     android:id="@+id/convoitemview"
     class="net.wrappy.im.ui.ConversationListItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="72dp"
     android:padding="3dp"
     android:layout_marginLeft="16dp">
 
@@ -110,8 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#bebebe"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginTop="20dp"/>
 
 
     </LinearLayout>
