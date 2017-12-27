@@ -136,6 +136,10 @@ public class ConferenceMessage {
         return mType == ConferenceType.AUDIO;
     }
 
+    public boolean isDecline() {
+        return mState == ConferenceState.DECLINED;
+    }
+
     public boolean isEnded() {
         return mState != null && mState == ConferenceState.END;
     }

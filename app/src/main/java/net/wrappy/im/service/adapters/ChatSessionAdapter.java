@@ -50,6 +50,7 @@ import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ChatSession;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.GroupListener;
 import net.wrappy.im.model.GroupMemberListener;
@@ -67,6 +68,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IDataListener;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
+import net.wrappy.im.ui.ConferenceActivity;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conference.ConferencePopupActivity;
 import net.wrappy.im.util.ConferenceUtils;
@@ -1071,6 +1073,12 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 ConferenceUtils.saveBitmapPreferences(imageName, msg.getFrom().getUser(), mConnection.getContext());
                 Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
                 mConnection.getContext().sendBroadcast(i);
+            } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
+                ConferenceMessage conferenceMessage = new ConferenceMessage(body);
+                if (conferenceMessage.isDecline() && ConferenceActivity.getsIntance() != null) {
+                    ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
+                    return true;
+                }
             }
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
@@ -1256,9 +1264,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 Intent intent;
                 if (isGroupChatSession()) {
-                    intent = ConferencePopupActivity.newIntentGroup(nickname, body, uri);
+                    intent = ConferencePopupActivity.newIntentGroup(bareAddress, nickname, body, uri);
                 } else {
-                    intent = ConferencePopupActivity.newIntentP2P(nickname, body, uri);
+                    intent = ConferencePopupActivity.newIntentP2P(bareAddress, nickname, body, uri);
                 }
                 mConnection.getContext().startActivity(intent);
             }
