@@ -54,6 +54,7 @@ import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -166,6 +167,28 @@ public class ConversationListItem extends FrameLayout {
                 GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(referenceAvatar)) {
                     GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
+                }
+            }
+        }
+
+        if (holder.mAvatarStatus != null) {
+            if (Imps.Contacts.TYPE_GROUP != contactType) {
+                holder.mAvatarStatus.setVisibility(VISIBLE);
+
+                switch (presence) {
+                    case Imps.Presence.AVAILABLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_active);
+                        break;
+                    case Imps.Presence.AWAY:
+                    case Imps.Presence.IDLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_aw);
+                        break;
+                    case Imps.Presence.OFFLINE:
+                    case Imps.Presence.INVISIBLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_disable);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

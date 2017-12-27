@@ -21,6 +21,7 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
     public View mContainer;
     public ImageView mMediaThumb;
     public ImageView mPinIcon;
+    public ImageView mAvatarStatus;
 
     public ConversationViewHolder(View view)
     {
@@ -32,13 +33,13 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
         mAvatar = (ImageView)view.findViewById(R.id.avatar);
         mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
         mStatusText = (TextView)view.findViewById(R.id.statusText);
+        mAvatarStatus = (ImageView)view.findViewById(R.id.avatarStatus);
 
         mContainer = view.findViewById(R.id.message_container);
 
         mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
 
         mPinIcon = (ImageView)view.findViewById(R.id.pinIcon);
-
     }
 
     public void onItemSelected ()
