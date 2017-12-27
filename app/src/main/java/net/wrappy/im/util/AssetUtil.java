@@ -1,12 +1,5 @@
 package net.wrappy.im.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -16,6 +9,13 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class AssetUtil {
 
@@ -93,7 +93,7 @@ public class AssetUtil {
                 values.put(MediaStore.MediaColumns.DATA, fileTone.getAbsolutePath() );
                 values.put(MediaStore.MediaColumns.TITLE, toneName );
                 values.put(MediaStore.Audio.Media.MIME_TYPE, "audio/mp3");
-                values.put(MediaStore.Audio.Media.ARTIST, "zom");
+                values.put(MediaStore.Audio.Media.ARTIST, "wrappy");
 
                 //new
                 values.put(MediaStore.Audio.Media.IS_RINGTONE, true);

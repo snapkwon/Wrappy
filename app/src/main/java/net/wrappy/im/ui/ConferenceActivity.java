@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import net.wrappy.im.BuildConfig;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetView;
@@ -19,7 +20,6 @@ public class ConferenceActivity extends JitsiMeetActivity {
     JitsiMeetView view;
     private static final String AUDIO_MUTED = "startWithAudioMuted";
     private static final String VIDEO_MUTED = "startWithVideoMuted";
-    private static final String ROOM_ID = "roomId";
 
     private int numberParticipants = 0;
 
@@ -38,7 +38,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
         bundle.putBoolean(AUDIO_MUTED, !isAudioCall);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ROOM_ID, roomId);
+        intent.putExtra(BundleKeyConstant.ROOM_ID, roomId);
         context.startActivity(intent);
     }
 
@@ -133,7 +133,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
             config.putBoolean(VIDEO_MUTED, intent.getBooleanExtra(VIDEO_MUTED, false));
             Bundle urlObject = new Bundle();
             urlObject.putBundle("config", config);
-            String roomId = intent.getStringExtra(ROOM_ID);
+            String roomId = intent.getStringExtra(BundleKeyConstant.ROOM_ID);
             urlObject.putString("url", "https://meet.jit.si/" + roomId);
 //            urlObject.putString("url", String.format(ConferenceConstant.CONFERENCE_HOST, roomId));
             if (view != null) {

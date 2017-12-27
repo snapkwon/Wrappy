@@ -62,6 +62,7 @@ import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.widgets.FlowLayout;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,18 +71,6 @@ import java.util.ArrayList;
  * Activity used to pick a contact.
  */
 public class ContactsPickerActivity extends BaseActivity {
-
-    public final static String EXTRA_EXCLUDED_CONTACTS = "excludes";
-    public final static String EXTRA_SHOW_GROUPS = "show_groups";
-
-    public final static String EXTRA_RESULT_USERNAME = "result";
-    public final static String EXTRA_RESULT_USERNAMES = "results";
-
-    public final static String EXTRA_RESULT_PROVIDER = "provider";
-    public final static String EXTRA_RESULT_ACCOUNT = "account";
-    public final static String EXTRA_RESULT_MESSAGE = "message";
-    public final static String EXTRA_RESULT_GROUP_NAME = "groupname";
-    public final static String EXTRA_RESULT_GROUP_ID = "groupid";
 
     private int REQUEST_CODE_ADD_CONTACT = 9999;
 
@@ -150,8 +139,8 @@ public class ContactsPickerActivity extends BaseActivity {
         });
 
         boolean isGroupOnlyMode = isGroupOnlyMode();
-        excludedContacts = getIntent().getStringArrayListExtra(EXTRA_EXCLUDED_CONTACTS);
-        mShowGroups = getIntent().getBooleanExtra(EXTRA_SHOW_GROUPS, false);
+        excludedContacts = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS);
+        mShowGroups = getIntent().getBooleanExtra(BundleKeyConstant.EXTRA_SHOW_GROUPS, false);
 
         View btnCreateGroup = findViewById(R.id.btnCreateGroup);
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
@@ -219,9 +208,9 @@ public class ContactsPickerActivity extends BaseActivity {
                 } else {
                     Cursor cursor = (Cursor) mAdapter.getItem(position);
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_RESULT_USERNAME, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
-                    data.putExtra(EXTRA_RESULT_PROVIDER, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
-                    data.putExtra(EXTRA_RESULT_ACCOUNT, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
+                    data.putExtra(BundleKeyConstant.RESULT_KEY, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
+                    data.putExtra(BundleKeyConstant.PROVIDER_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+                    data.putExtra(BundleKeyConstant.ACCOUNT_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
 
                     setResult(RESULT_OK, data);
                     finish();
@@ -233,7 +222,7 @@ public class ContactsPickerActivity extends BaseActivity {
         doFilterAsync("");
 
         if (getIntent() != null) {
-            if (getIntent().getBooleanExtra("isGroup", false)) {
+            if (getIntent().getBooleanExtra(BundleKeyConstant.KEY_GROUP, false)) {
                 setGroupMode(true);
             }
         }
@@ -252,7 +241,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private boolean isGroupOnlyMode() {
-        return getIntent().hasExtra(EXTRA_EXCLUDED_CONTACTS);
+        return getIntent().hasExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS);
     }
 
     private boolean isGroupMode() {
@@ -278,9 +267,9 @@ public class ContactsPickerActivity extends BaseActivity {
             Uri uri = groupFragment.getGroupUri();
             String error = "";
             if (groupName.isEmpty()) {
-                error = "Group Name is empty";
+                error = getString(R.string.error_group_name_empty);
             } else if (members.size() == 0) {
-                error = "No member in group";
+                error = getString(R.string.error_group_empty);
             }
 
             if (error.isEmpty()) {
@@ -306,7 +295,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                 createGroupXMPP(groupName, reference, json);
                             } catch (Exception ex) {
                                 dismissWaitinDialog();
-                                AppFuncs.alert(getApplicationContext(), "Upload group photo fail!", true);
+                                AppFuncs.alert(getApplicationContext(), getString(R.string.error_upload_photo), true);
                             }
                         }
                     });
@@ -322,7 +311,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         createGroupXMPP(groupName, "", jsonObject);
                     } catch (Exception ex) {
                         dismissWaitinDialog();
-                        AppFuncs.alert(getApplicationContext(), "Upload group photo fail!", true);
+                        AppFuncs.alert(getApplicationContext(), getString(R.string.error_upload_photo), true);
                     }
                 }
             } else {
@@ -363,14 +352,14 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                     Store.putStringData(getApplicationContext(), groupName, reference);
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_RESULT_GROUP_NAME, chatGroupDto);
-                    data.putStringArrayListExtra(EXTRA_RESULT_USERNAMES, users);
-                    data.putIntegerArrayListExtra(EXTRA_RESULT_PROVIDER, providers);
-                    data.putIntegerArrayListExtra(EXTRA_RESULT_ACCOUNT, accounts);
+                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, chatGroupDto);
+                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+                    data.putIntegerArrayListExtra(BundleKeyConstant.PROVIDER_KEY, providers);
+                    data.putIntegerArrayListExtra(BundleKeyConstant.ACCOUNT_KEY, accounts);
                     setResult(RESULT_OK, data);
                     finish();
                 } else {
-                    AppFuncs.alert(getApplicationContext(), "Create Group Fail", true);
+                    AppFuncs.alert(getApplicationContext(), getString(R.string.error_creating_group), true);
                 }
             }
         });
@@ -389,15 +378,15 @@ public class ContactsPickerActivity extends BaseActivity {
                 ex.printStackTrace();
             }
             if (request == REQUEST_CODE_ADD_CONTACT) {
-                String newContact = data.getExtras().getString(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String newContact = data.getExtras().getString(BundleKeyConstant.RESULT_KEY);
 
                 if (newContact != null) {
                     Intent dataNew = new Intent();
 
-                    long providerId = data.getExtras().getLong(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
+                    long providerId = data.getExtras().getLong(BundleKeyConstant.PROVIDER_KEY);
 
-                    dataNew.putExtra(EXTRA_RESULT_USERNAME, newContact);
-                    dataNew.putExtra(EXTRA_RESULT_PROVIDER, providerId);
+                    dataNew.putExtra(BundleKeyConstant.RESULT_KEY, newContact);
+                    dataNew.putExtra(BundleKeyConstant.PROVIDER_KEY, providerId);
                     setResult(RESULT_OK, dataNew);
 
                     finish();

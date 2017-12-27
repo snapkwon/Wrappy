@@ -543,5 +543,12 @@
     <string name="complete">COMPLETE</string>
     <string name="username_title">Username *</string>
     <string name="current_balance">Current Balance</string>
+    <string name="add_photo">Add Photo!</string>
+    <string name="error_group_name_empty">Group Name is empty</string>
+    <string name="error_group_empty">No member in group</string>
+    <string name="error_upload_photo">Upload group photo fail!</string>
+    <string name="error_creating_group">Create Group Fail</string>
+    <string name="select_file_to_send">Select File</string>
+    <string name="google_play_services_not_available">Google Play Services is not available.</string>
 
 </resources>

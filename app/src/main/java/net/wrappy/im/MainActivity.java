@@ -82,7 +82,6 @@ import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.tasks.sync.SyncDataListener;
 import net.wrappy.im.tasks.sync.SyncDataRunnable;
-import net.wrappy.im.ui.AccountsActivity;
 import net.wrappy.im.ui.AddContactNewActivity;
 import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ContactsPickerActivity;
@@ -96,6 +95,7 @@ import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
@@ -426,13 +426,13 @@ public class MainActivity extends BaseActivity {
                         || conn.getState() == ImConnection.SUSPENDING) {
 
                     Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
-                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
-                            startActivity(i);
-                        }
-                    });
+//                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
+//                            startActivity(i);
+//                        }
+//                    });
                     sb.show();
 
                     return false;
@@ -504,29 +504,29 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
 
-                String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String username = data.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
                 if (username != null) {
-                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+                    long providerId = data.getLongExtra(BundleKeyConstant.PROVIDER_KEY, -1);
+                    long accountId = data.getLongExtra(BundleKeyConstant.ACCOUNT_KEY, -1);
 
                     startChat(providerId, accountId, username, true, true);
                 }
 
             } else if (requestCode == REQUEST_CHOOSE_CONTACT) {
-                String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String username = data.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
                 if (username != null) {
-                    long providerId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                    long accountId = data.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+                    long providerId = data.getLongExtra(BundleKeyConstant.PROVIDER_KEY, -1);
+                    long accountId = data.getLongExtra(BundleKeyConstant.ACCOUNT_KEY, -1);
 
                     startChat(providerId, accountId, username, true, true);
                 } else {
-                    WpKChatGroupDto group = data.getParcelableExtra(ContactsPickerActivity.EXTRA_RESULT_GROUP_NAME);
+                    WpKChatGroupDto group = data.getParcelableExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME);
 //                    if (groupName == null) {
 //                        groupName = "groupchat" + UUID.randomUUID().toString().substring(0, 8);
 //                    }
-                    ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                    ArrayList<String> users = data.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
                     if (users != null) {
                         //start group and do invite hereartGrou
                         try {
@@ -721,15 +721,6 @@ public class MainActivity extends BaseActivity {
 //                enableArchiveFilter();
                 return true;
 
-            case R.id.menu_lock:
-                handleLock();
-                return true;
-
-            case R.id.menu_new_account:
-                Intent i = new Intent(MainActivity.this, AccountsActivity.class);
-                startActivity(i);
-                return true;
-
             case R.id.menu_lock_reset:
                 resetPassphrase();
                 return true;
@@ -769,24 +760,6 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(this, LockScreenActivity.class);
         intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
         startActivity(intent);
-    }
-
-
-    public void handleLock() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
-            //need to setup new user passphrase
-            Intent intent = new Intent(this, LockScreenActivity.class);
-            intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
-            startActivity(intent);
-        } else {
-
-            //time to do the lock
-            Intent intent = new Intent(this, RouterActivity.class);
-            intent.setAction(RouterActivity.ACTION_LOCK_APP);
-            startActivity(intent);
-            finish();
-        }
     }
 
     public class Adapter extends FragmentPagerAdapter {

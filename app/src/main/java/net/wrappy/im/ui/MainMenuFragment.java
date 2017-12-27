@@ -20,6 +20,7 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.ui.legacy.SettingActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class MainMenuFragment extends Fragment {
         switch (v.getId()) {
             case R.id.lnMainMenuNewGroup:
                 Intent intentGroup = new Intent(getActivity(), ContactsPickerActivity.class);
-                intentGroup.putExtra("isGroup", true);
+                intentGroup.putExtra(BundleKeyConstant.KEY_GROUP, true);
                 getActivity().startActivityForResult(intentGroup, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
             case R.id.lnMainMenuContact:
