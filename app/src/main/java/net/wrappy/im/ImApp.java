@@ -219,7 +219,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         Languages.setLanguage(this, Preferences.getLanguage(), false);
 
         sImApp = this;
-        Fabric.with(this, new Crashlytics());
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
