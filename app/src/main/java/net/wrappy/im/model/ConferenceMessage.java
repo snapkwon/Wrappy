@@ -4,6 +4,7 @@ package net.wrappy.im.model;
 * */
 
 import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.util.Debug;
 
 /**
  * Represents an instant conference type between users.
@@ -18,6 +19,7 @@ public class ConferenceMessage {
     private ConferenceState mState;
 
     public ConferenceMessage(String mFrom, String mTo, boolean isGroup, ConferenceType mType, ConferenceState mState) {
+        Debug.e("mFrom: " + mFrom + ", mTo: " + mTo, ", isGroup: " + isGroup + ", mType: " + mType, ", mState: " + mState);
         this.mFrom = mFrom;
         this.mTo = mTo;
         this.mType = mType;
@@ -31,15 +33,20 @@ public class ConferenceMessage {
     }
 
     private ConferenceMessage(String[] params) {
+        Debug.e("params.length: " + params.length);
         if (params != null) {
             if (params.length > 2) {
+                Debug.e("params[1]" +params[1]);
+                Debug.e("params[2]" +params[2]);
                 roomId = params[1].replace(ConferenceConstant.CONFERENCE_BRIDGE, "");
                 this.mType = ConferenceType.getEnumByValue(params[2]);
                 this.isGroup = roomId.contains("group.");
             }
             if (!ConferenceConstant.KEY.equals(params[0])) {
+                Debug.e("params[0]" +params[0]);
                 this.mState = ConferenceState.END;
             } else if (params.length > 3) {
+                Debug.e("params[3]" +params[3]);
                 this.mState = ConferenceState.getEnumByValue(params[3]);
             }
         }
@@ -145,6 +152,7 @@ public class ConferenceMessage {
     }
 
     public ConferenceState getState() {
+        Debug.e("getState: " + mState);
         return mState != null ? mState : ConferenceState.END;
     }
 
@@ -153,10 +161,12 @@ public class ConferenceMessage {
     }
 
     public void accept() {
+        Debug.e("accept: ");
         mState = ConferenceState.ACCEPTED;
     }
 
     public void decline() {
+        Debug.e("decline: ");
         mState = ConferenceState.DECLINED;
     }
 
@@ -165,6 +175,7 @@ public class ConferenceMessage {
         if (isGroup) {
             roomId = "group." + roomId;
         }
+        Debug.e("roomId: " + roomId);
         return roomId;
     }
 }

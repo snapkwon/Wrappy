@@ -256,8 +256,10 @@ public class ConversationListItem extends FrameLayout {
 //                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         String resultMessage = message;
+                        Debug.e("message: " + message);
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                             resultMessage = ConferenceUtils.convertConferenceMessage(message);
+                            Debug.e("resultMessage: " + resultMessage);
                         }
                         holder.mLine2.setText(resultMessage);
                         holder.mLine2.setLines(1);
