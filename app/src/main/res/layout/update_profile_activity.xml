@@ -184,26 +184,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginTop="20dp"
-                        android:padding="10dp">
+                        android:layout_marginTop="20dp">
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileComplete"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="COMPLETE"
-                            style="@style/AppButton01"
-                            />
-
-                        <net.wrappy.im.helper.layout.AppButton
-                            android:id="@+id/btnProfileSkip"
-                            android:layout_marginTop="20dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="SKIP"
-                            android:visibility="invisible"
-                            style="@style/AppButton02"
-                            android:textColor="#676767"
+                            style="@style/AppButton_OK"
                             />
 
                     </LinearLayout>

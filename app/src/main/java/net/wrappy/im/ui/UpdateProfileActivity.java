@@ -203,7 +203,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     };
 
     @Optional
-    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar})
     @Override
     public void onClick(View view) {
         if (isFlag) {
@@ -234,11 +234,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 } else {
                     handler.postDelayed(runnablePostData, 10000);
                 }
-            }
-            if (view.getId() == R.id.btnProfileSkip) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
