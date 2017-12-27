@@ -21,14 +21,16 @@
     class="net.wrappy.im.ui.ConversationListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp">
+    android:padding="3dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
 
 
     <LinearLayout
         android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="62dp"
+        android:layout_marginLeft="72dp"
         android:orientation="vertical"
         android:padding="0dp">
 
