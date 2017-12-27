@@ -22,7 +22,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="3dp"
-    android:layout_marginTop="10dp"
     android:layout_marginLeft="16dp">
 
 
@@ -45,8 +44,7 @@
                 android:fontFamily="sans-serif-light"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?contactTextPrimary"
-                android:text="dabanh"/>
+                android:textColor="?contactTextPrimary" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/statusText"
@@ -72,8 +70,7 @@
                 android:maxLines="3"
                 android:paddingBottom="6dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?contactTextSecondary"
-                android:text="abc"/>
+                android:textColor="?contactTextSecondary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,7 +108,10 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/background_gainsboro" />
+            android:background="@color/background_gainsboro"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
 
     </LinearLayout>
 
