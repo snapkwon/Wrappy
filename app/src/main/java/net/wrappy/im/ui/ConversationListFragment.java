@@ -52,6 +52,7 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
+import net.wrappy.im.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -610,7 +611,7 @@ public class ConversationListFragment extends Fragment {
             mUpgradeImage.setImageResource(R.drawable.olo_thinking);
 
 
-            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), "home.zom.im", mMigrateTaskListener);
+            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), Constant.EMAIL_DOMAIN, mMigrateTaskListener);
 
         }
     }

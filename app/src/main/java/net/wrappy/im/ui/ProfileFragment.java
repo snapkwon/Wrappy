@@ -183,7 +183,7 @@ public class ProfileFragment extends Fragment {
 
                     }
                 } else {
-                    AppFuncs.alert(getActivity(), "Connnect time out", true);
+                    AppFuncs.alert(getActivity(), getString(R.string.error_get_user_profile), true);
                     getActivity().finish();
                 }
             }
@@ -225,7 +225,7 @@ public class ProfileFragment extends Fragment {
             String phone = edPhone.getText().toString().trim();
             String gender = edGender.getText().toString().trim();
             if (!AppFuncs.isEmailValid(email)) {
-                AppFuncs.alert(getActivity(), "Invalid email format", true);
+                AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
             wpKMemberDto.setEmail(email);
@@ -235,13 +235,13 @@ public class ProfileFragment extends Fragment {
             btnProfileSubmit.setVisibility(View.GONE);
         } else if (view.getId() == R.id.btnPhotoCameraAvatar) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, "Take Photo");
+            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, "Choose from Gallery");
+            sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
             sheetCells.add(sheetCell);
             if (wpKMemberDto != null) if (wpKMemberDto.getAvatar() != null)
                 if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, "Delete Photo");
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
             PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
@@ -266,7 +266,7 @@ public class ProfileFragment extends Fragment {
                                                 if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                                                     wpKMemberDto.setAvatar(null);
                                                     imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                                                    AppFuncs.alert(getActivity(), "Remove Avatar Success", true);
+                                                    AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
                                                 }
                                             }
                                         }
@@ -284,9 +284,9 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         } else if (view.getId() == R.id.lnProfileLogout) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
+            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, "Logout all devices");
+            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
             sheetCells.add(sheetCell);
             BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                 @Override
@@ -295,7 +295,7 @@ public class ProfileFragment extends Fragment {
                         confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
-                        AppFuncs.alert(getActivity(), "Logout all devices", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
                     }
                 }
             });
@@ -326,11 +326,11 @@ public class ProfileFragment extends Fragment {
                                 wpKMemberDto.setAvatar(avatar);
                                 updateData();
                             } else {
-                                AppFuncs.alert(getActivity(), "Upload fail", false);
+                                AppFuncs.alert(getActivity(), getString(R.string.error_upload_image), false);
                             }
 
                         } catch (Exception ex) {
-                            AppFuncs.alert(getActivity(), "Upload fail", false);
+                            AppFuncs.alert(getActivity(), getString(R.string.error_upload_image), false);
                             ex.printStackTrace();
                         }
                     }
@@ -349,7 +349,7 @@ public class ProfileFragment extends Fragment {
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.alert(getActivity(), "Update Success", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                         if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                             String avatarReference = wpKMemberDto.getAvatar().getReference();
                             String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
@@ -368,7 +368,7 @@ public class ProfileFragment extends Fragment {
                             }
                         }
                     } else {
-                        AppFuncs.alert(getActivity(), "Update Fail", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
                     }
                 }
             }

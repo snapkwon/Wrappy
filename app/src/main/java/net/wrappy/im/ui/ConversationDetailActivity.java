@@ -84,6 +84,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PreferenceUtils;
@@ -96,7 +97,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -114,14 +114,15 @@ public class ConversationDetailActivity extends BaseActivity {
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
-        intent.putExtra("id", chatId);
-        intent.putExtra("nickname", nickname);
-        intent.putExtra("reference", reference);
+        intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
+        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
+        intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
         return intent;
     }
+
     public static Intent getStartIntent(Context context, long chatId) {
         Intent intent = getStartIntent(context);
-        intent.putExtra("id", chatId);
+        intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         return intent;
     }
 
@@ -134,7 +135,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private String mNickname = null;
     private String mReference = null;
 
-    private  Menu menuitem;
+    private Menu menuitem;
     private ConversationView mConvoView = null;
 
     MediaRecorder mMediaRecorder = null;
@@ -349,10 +350,10 @@ public class ConversationDetailActivity extends BaseActivity {
         mApp = (ImApp) getApplication();
 
         if (mChatId == -1)
-            mChatId = intent.getLongExtra("id", -1);
-        mAddress = intent.getStringExtra("address");
-        mNickname = intent.getStringExtra("nickname");
-        mReference = intent.getStringExtra("reference");
+            mChatId = intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY, -1);
+        mAddress = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
+        mNickname = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+        mReference = intent.getStringExtra(BundleKeyConstant.REFERENCE_KEY);
 
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
@@ -463,15 +464,12 @@ public class ConversationDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(mConvoView.getSearchMode())
-                {
+                if (mConvoView.getSearchMode()) {
                     mConvoView.unActiveSearchmode();
-                    for(int i=0;i<4;i++)
-                    {
+                    for (int i = 0; i < 4; i++) {
                         menuitem.getItem(i).setVisible(true);
                     }
-                }
-                else {
+                } else {
                     finish();
                 }
                 return true;
@@ -690,7 +688,7 @@ public class ConversationDetailActivity extends BaseActivity {
             // it would be "*/*".
             intent.setType("*/*");
 
-            startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SEND_FILE);
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_to_send)), REQUEST_SEND_FILE);
         }
     }
 
@@ -703,7 +701,7 @@ public class ConversationDetailActivity extends BaseActivity {
             GooglePlayServicesUtil
                     .getErrorDialog(e.getConnectionStatusCode(), this, 0);
         } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, "Google Play Services is not available.",
+            Toast.makeText(this, R.string.google_play_services_not_available,
                     Toast.LENGTH_LONG)
                     .show();
         }
@@ -788,12 +786,12 @@ public class ConversationDetailActivity extends BaseActivity {
 
                 ArrayList<String> invitees = new ArrayList<>();
 
-                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String username = resultIntent.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
                 if (username != null)
                     invitees.add(username);
                 else
-                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                    invitees = resultIntent.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
 
                 mConvoView.inviteContacts(invitees);
 
@@ -824,14 +822,12 @@ public class ConversationDetailActivity extends BaseActivity {
             } else if (requestCode == REQUEST_FROM_SETTING) {
                 Bundle extras = resultIntent.getExtras();
                 int type = extras.getInt("type");
-                if(type == TYPE_SEARCH)
-                {
+                if (type == TYPE_SEARCH) {
                     mConvoView.activeSearchmode();
-                    for(int i =0 ;i <4;i++) {
+                    for (int i = 0; i < 4; i++) {
                         menuitem.getItem(i).setVisible(false);
                     }
-                }
-                else if(type == TYPE_REQUEST_CHANGE_BACKGROUND) {
+                } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
                     String imagePath = extras.getString("imagePath");
 
                     ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
@@ -979,7 +975,7 @@ public class ConversationDetailActivity extends BaseActivity {
         super.onSaveInstanceState(savedInstanceState);
 
         if (mLastPhoto != null)
-            savedInstanceState.putString("lastphoto", mLastPhoto.toString());
+            savedInstanceState.putString(BundleKeyConstant.LAST_PHOTO_KEY, mLastPhoto.toString());
 
     }
 
@@ -989,24 +985,10 @@ public class ConversationDetailActivity extends BaseActivity {
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
 
-        String lastPhotoPath = savedInstanceState.getString("lastphoto");
+        String lastPhotoPath = savedInstanceState.getString(BundleKeyConstant.LAST_PHOTO_KEY);
         if (lastPhotoPath != null)
             mLastPhoto = Uri.parse(lastPhotoPath);
     }
-
-    private TextView getActionBarTextView(Toolbar toolbar) {
-        TextView titleTextView = null;
-
-        try {
-            Field f = toolbar.getClass().getDeclaredField("mTitleTextView");
-            f.setAccessible(true);
-            titleTextView = (TextView) f.get(toolbar);
-        } catch (NoSuchFieldException e) {
-        } catch (IllegalAccessException e) {
-        }
-        return titleTextView;
-    }
-
 
     @TargetApi(Build.VERSION_CODES.N)
     public Locale getCurrentLocale() {

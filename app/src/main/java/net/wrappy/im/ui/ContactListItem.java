@@ -354,10 +354,7 @@ public class ContactListItem extends FrameLayout {
     public void applyStyleColors(ContactViewHolder holder) {
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor", -1);
         int themeColorText = settings.getInt("themeColorText", -1);
-        int themeColorBg = settings.getInt("themeColorBg", -1);
-
 
         if (themeColorText != -1) {
             if (holder.mLine1 != null)
@@ -365,12 +362,7 @@ public class ContactListItem extends FrameLayout {
 
             if (holder.mLine2 != null)
                 holder.mLine2.setTextColor(themeColorText);
-
             //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
-
         }
-
     }
-
-
 }

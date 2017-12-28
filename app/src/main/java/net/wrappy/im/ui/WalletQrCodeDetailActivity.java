@@ -213,9 +213,9 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
     public void onClick(View v) {
         if (v.getId() == wallet_qr_btn_coppy.getId()) {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", hexAddress);
+            android.content.ClipData clip = android.content.ClipData.newPlainText(getString(R.string.copied_text), hexAddress);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this, "clip to board", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.copy_clipboard, Toast.LENGTH_SHORT).show();
         }
         if (v.getId() == wallet_qr_btn_backup.getId()) {
             pickFolder();

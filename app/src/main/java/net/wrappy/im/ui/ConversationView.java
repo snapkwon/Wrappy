@@ -2254,16 +2254,11 @@ public class ConversationView {
                     break;
                 case SHOW_DATA_ERROR:
 
-                    String fileName = msg.getData().getString("file");
                     String error = msg.getData().getString("err");
 
-                    Toast.makeText(mContext, "Error transferring file: " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, mActivity.getString(R.string.error_tranferring_file) + error, Toast.LENGTH_LONG).show();
                     break;
                 case SHOW_DATA_PROGRESS:
-
-                    int percent = msg.getData().getInt("progress");
-
-
                     break;
                 case SHOW_TYPING:
 
@@ -2665,16 +2660,15 @@ public class ConversationView {
             }
         }
 
-
-        public void setTargetLanguage(String target) {
+        public void setTargetLanguage(int target) {
             switch (target) {
-                case "English":
+                case 0:
                     targetlanguage = "en";
                     break;
-                case "Japanese":
+                case 1:
                     targetlanguage = "ja";
                     break;
-                case "Vietnamese":
+                case 2:
                     targetlanguage = "vi";
                     break;
             }
@@ -3332,14 +3326,12 @@ public class ConversationView {
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
-        mMessageAdapter.setTargetLanguage(spinner.getSelectedItem().toString());
+        mMessageAdapter.setTargetLanguage(spinner.getSelectedItemPosition());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
-                mMessageAdapter.setTargetLanguage(arraySpinner[position]);
+                mMessageAdapter.setTargetLanguage(position);
                 mMessageAdapter.notifyDataSetChanged();
             }
 

@@ -321,7 +321,7 @@ public class ContactListFilterView extends LinearLayout {
                     IContactListManager manager = conn.getContactListManager();
                     int res = manager.removeContact(address);
                     if (res != ImErrorInfo.NO_ERROR) {
-                        mHandler.showAlert(R.string.error,
+                        mHandler.showAlert(R.string.attention,
                                 ErrorResUtils.getErrorRes(getResources(), res, address));
                     }
                 } catch (RemoteException e) {
@@ -362,7 +362,7 @@ public class ContactListFilterView extends LinearLayout {
                         res = manager.blockContact(address);
 
                         if (res != ImErrorInfo.NO_ERROR) {
-                            mHandler.showAlert(R.string.error,
+                            mHandler.showAlert(R.string.attention,
                                     ErrorResUtils.getErrorRes(getResources(), res, address));
                         }
                     }

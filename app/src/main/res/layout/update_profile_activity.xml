@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f2f2f2">
+    android:background="#f2f2f2"
+    android:orientation="vertical">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,25 +19,26 @@
                 android:id="@+id/imgProfileHeader"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:scaleType="centerCrop"
-                android:background="#e8e8e8"/>
+                android:background="#e8e8e8"
+                android:scaleType="centerCrop" />
 
             <ImageButton
                 android:id="@+id/btnProfileCameraHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/ic_camera_profile"
                 android:background="@null"
-                android:padding="10dp"/>
+                android:padding="10dp"
+                android:src="@drawable/ic_camera_profile" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical">
-                <include layout="@layout/add_avarta_layout"/>
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <include layout="@layout/add_avarta_layout" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -47,107 +49,109 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:background="#fff"
+                        android:orientation="vertical"
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText03"
-                            android:text="Username *"/>
+                            android:text="@string/username_title" />
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:background="#000"/>
+                            android:layout_marginTop="10dp" />
+
                         <net.wrappy.im.helper.layout.AppEditTextView
                             android:id="@+id/edProfileUsername"
+                            style="@style/AppText02"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Username"
+                            android:background="@null"
+                            android:hint="@string/username"
                             android:imeOptions="actionNext"
-                            style="@style/AppText02"
                             android:textColorHint="#bebebe"
-                            android:textSize="14sp"
-                            android:background="@null"/>
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="#fff"
                         android:layout_marginTop="10dp"
+                        android:background="#fff"
+                        android:orientation="vertical"
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText03"
-                            android:text="Email"/>
+                            android:text="@string/email" />
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:background="#000"/>
+                            android:layout_marginTop="10dp" />
+
                         <net.wrappy.im.helper.layout.AppEditTextView
                             android:id="@+id/edProfileEmail"
+                            style="@style/AppText02"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Email"
-                            android:inputType="textEmailAddress"
+                            android:background="@null"
+                            android:hint="@string/email"
                             android:imeOptions="actionNext"
-                            style="@style/AppText02"
+                            android:inputType="textEmailAddress"
                             android:textColorHint="#bebebe"
-                            android:textSize="14sp"
-                            android:background="@null"/>
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="#fff"
                         android:layout_marginTop="10dp"
+                        android:background="#fff"
+                        android:orientation="vertical"
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText03"
-                            android:text="Mobile Phone"/>
+                            android:text="@string/mobile_phone" />
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:background="#000"/>
+                            android:layout_marginTop="10dp" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
+
                             <android.support.v7.widget.AppCompatSpinner
                                 android:id="@+id/spnProfileCountryCodes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
+
                             <net.wrappy.im.helper.layout.AppEditTextView
                                 android:id="@+id/edProfilePhone"
+                                style="@style/AppText02"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Phone"
-                                android:inputType="phone"
-                                android:imeOptions="actionNext"
+                                android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="5dp"
-                                style="@style/AppText02"
-                                android:textColorHint="#bebebe"
-                                android:textSize="14sp"
                                 android:background="@null"
-                                android:layout_gravity="center_vertical"/>
+                                android:hint="@string/mobile_phone"
+                                android:imeOptions="actionNext"
+                                android:inputType="phone"
+                                android:textColorHint="#bebebe"
+                                android:textSize="14sp" />
                         </LinearLayout>
 
 
@@ -156,22 +160,22 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="#fff"
                         android:layout_marginTop="10dp"
+                        android:background="#fff"
+                        android:orientation="vertical"
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText03"
-                            android:text="Gender"/>
+                            android:text="@string/gender" />
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:background="#000"/>
+                            android:layout_marginTop="10dp" />
+
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/spinnerProfileGender"
                             android:layout_width="match_parent"
@@ -182,40 +186,18 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_marginTop="20dp"
-                        android:padding="10dp">
+                        android:orientation="vertical">
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileComplete"
+                            style="@style/AppButton_OK"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="COMPLETE"
-                            style="@style/AppButton01"
-                            />
-
-                        <net.wrappy.im.helper.layout.AppButton
-                            android:id="@+id/btnProfileSkip"
-                            android:layout_marginTop="20dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="SKIP"
-                            android:visibility="invisible"
-                            style="@style/AppButton02"
-                            android:textColor="#676767"
-                            />
-
+                            android:text="@string/complete" />
                     </LinearLayout>
-
-
                 </LinearLayout>
-
             </LinearLayout>
-
-
         </RelativeLayout>
-
     </ScrollView>
-
-
 </LinearLayout>
