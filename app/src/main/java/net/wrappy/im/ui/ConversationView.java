@@ -56,13 +56,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -116,7 +112,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -156,7 +151,6 @@ import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -2856,6 +2850,8 @@ public class ConversationView {
             ;
             final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
+            final String avatar = Imps.Avatars.getAvatar(mActivity.getContentResolver(), address);
+
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -2967,7 +2963,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference, textsearch);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, avatar, textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:

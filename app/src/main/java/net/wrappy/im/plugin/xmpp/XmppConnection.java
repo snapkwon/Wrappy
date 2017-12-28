@@ -440,22 +440,23 @@ public class XmppConnection extends ImConnection {
                 contact.setForwardingAddress(null);
             }
 
-            // If VCard is loaded, then save the avatar to the personal folder.
-//            String avatarHash = vCard.getAvatarHash();
-//
-//            if (avatarHash != null) {
-//                byte[] avatarBytes = vCard.getAvatar();
-//
-//                if (avatarBytes != null) {
-//
-//                    debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
-//                    debug(TAG, "start avatar length: " + avatarBytes.length);
-//
-//                    DatabaseUtils.insertAvatarBlob(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, avatarBytes, avatarHash, bareJid.toString());
-//
-//                    return true;
-//                }
-//            }
+            //If VCard is loaded, then save the avatar to the personal folder.
+            String avatarHash = vCard.getAvatarHash();
+
+            if (avatarHash != null) {
+                byte[] avatarBytes = vCard.getAvatar();
+
+                if (avatarBytes != null) {
+
+                    debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
+                    debug(TAG, "start avatar length: " + avatarBytes.length);
+                    //Convert base64 String to UUID reference which was recieved from server
+                    String reference = DatabaseUtils.convertByteArrayToUUID(avatarBytes);
+                    DatabaseUtils.insertAvatarHash(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, reference, avatarHash, bareJid.toString());
+
+                    return true;
+                }
+            }
 
 
         } catch (Exception e) {
@@ -1737,8 +1738,8 @@ public class XmppConnection extends ImConnection {
             }
 
             if (setAvatar) {
-                byte[] avatar = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
-                if (avatar != null) {
+                String avatar = DatabaseUtils.getAvatarFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
+                if (!TextUtils.isEmpty(avatar)) {
                     vCard.setAvatar(avatar, "image/jpeg");
                 }
             }

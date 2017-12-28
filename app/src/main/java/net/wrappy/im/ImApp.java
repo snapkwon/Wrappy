@@ -1282,8 +1282,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
             String avatarReference = "";
             String bannerReference = "";
+            String hash = "";
             if (wpKMemberDto.getAvatar()!=null) {
                 avatarReference = wpKMemberDto.getAvatar().getReference();
+                hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
             }
             if (wpKMemberDto.getBanner()!=null) {
                 bannerReference = wpKMemberDto.getBanner().getReference();
@@ -1296,10 +1298,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
                 sImApp.getContentResolver().update(uri, values, null, null);
             } else {
+                values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
 
-            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
+            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
         }
     }
 
