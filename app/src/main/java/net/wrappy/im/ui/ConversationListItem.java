@@ -31,6 +31,7 @@ import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,6 +40,7 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.thefinestartist.wip.DateUtil;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -60,6 +62,7 @@ import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -295,7 +298,28 @@ public class ConversationListItem extends FrameLayout {
 
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-                holder.mStatusText.setText(sPrettyTime.format(dateLast));
+                Debug.e("messageDate: " + messageDate);
+                Debug.e("dateLast: " + dateLast);
+
+                if (checkCurrentDay(dateLast)) {
+                    SimpleDateFormat hourMinuteFormat = new SimpleDateFormat("HH:mm");
+                    String hm = hourMinuteFormat.format(dateLast);
+                    Debug.e("hm: " + hm);
+
+                    holder.mStatusText.setText(hm);
+                }
+
+//                holder.mStatusText.setText(sPrettyTime.format(dateLast));
+
+                SimpleDateFormat todaysDayFormat = new SimpleDateFormat("EEE");
+                String today = todaysDayFormat.format(dateLast);
+                Debug.e("today: " + today);
+
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM dd");
+                String month = monthFormat.format(dateLast);
+                Debug.e("month: " + month);
+
+                holder.mStatusText.setText(month);
 
             } else {
                 holder.mStatusText.setText("");
@@ -318,6 +342,18 @@ public class ConversationListItem extends FrameLayout {
         } else {
             holder.mPinIcon.setVisibility(GONE);
         }
+    }
+
+    private boolean checkCurrentDay(Date date) {
+        Date currentDay = new Date();
+        Debug.e("currentDay: " + currentDay);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        boolean isCurrentDay = sdf.format(date).equals(sdf.format(currentDay));
+
+        Debug.e("isCurrentDay: " + isCurrentDay);
+
+        return isCurrentDay;
     }
 
     private void getEncryptionState(long providerId, long accountId, String address, ConversationViewHolder holder) {
