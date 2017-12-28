@@ -225,9 +225,8 @@
                             android:layout_height="wrap_content"
                             android:text="Submit"
                             android:visibility="gone"
-                            android:layout_marginTop="10dp"
-                            android:background="@color/menu_text_active"
-                            android:textColor="@android:color/white"/>
+                            style="@style/AppButton_OK"
+                            android:layout_marginTop="10dp"/>
 
                     </LinearLayout>
 
