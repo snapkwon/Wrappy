@@ -4,76 +4,70 @@
     android:id="@+id/LinearLayoutwallet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:orientation="horizontal">
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/IconCoin"
-        android:layout_centerVertical="true"
-        android:padding="10dp"
-        />
-
-    <LinearLayout
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/IconCoin">
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/IconCoin"
+        android:orientation="vertical">
 
         <net.ironrabbit.type.CustomTypefaceTextView
-            android:text="TextView"
-            android:textSize="15dp"
+            android:id="@+id/TVNameCoin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/TVNameCoin" />
+            android:textSize="15dp" />
 
         <net.ironrabbit.type.CustomTypefaceTextView
-            android:text="TextView"
-            android:textSize="15dp"
-
+            android:id="@+id/TVPercent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/TVPercent" />
+            android:textSize="15dp" />
     </LinearLayout>
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_height="wrap_content"
         android:id="@+id/imNext"
-        android:layout_alignParentEnd="true"
-        android:padding="10dp"
-        android:background="@drawable/ic_arrow"
-        android:layout_alignParentRight="true" />
-    <LinearLayout
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_arrow"
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/imNext"
-        android:layout_centerVertical="true">
+        android:orientation="vertical">
 
         <net.ironrabbit.type.CustomTypefaceTextView
-            android:text="TextView"
+            android:id="@+id/TVPrice"
             android:layout_width="wrap_content"
-            android:textSize="15dp"
-            android:layout_gravity="center"
-            android:textStyle="bold"
             android:layout_height="wrap_content"
-            android:id="@+id/TVPrice" />
+            android:layout_gravity="center"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
         <net.ironrabbit.type.CustomTypefaceTextView
-            android:text="TextView"
-            android:textSize="15dp"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/TVValue"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="15dp" />
     </LinearLayout>
-
 
 
 </RelativeLayout>

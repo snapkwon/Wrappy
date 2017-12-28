@@ -13,10 +13,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import net.wrappy.im.Preferences;
+import net.wrappy.im.R;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.util.ArrayList;
 
-import net.wrappy.im.R;
 import info.guardianproject.panic.PanicResponder;
 
 public class PanicSetupActivity extends BaseActivity {
@@ -125,11 +126,11 @@ public class PanicSetupActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHOOSE_CONTACT && resultCode == Activity.RESULT_OK) {
-            String username = data.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+            String username = data.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
             if (username != null) {
             } else {
-                ArrayList<String> users = data.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                ArrayList<String> users = data.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
                 if (users != null) {
                     //int[] providers = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
                     //int[] accounts = data.getIntArrayExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <ImageView
@@ -12,35 +11,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_receive_pink2x"
-        />
+        android:src="@drawable/ic_receive_pink2x" />
+
     <net.ironrabbit.type.CustomTypefaceTextView
         android:id="@+id/transaction_detail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="18sp"
-        android:textColor="#000"/>
+        android:textColor="#000"
+        android:textSize="18sp" />
+
     <LinearLayout
-        android:paddingTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
+        android:paddingTop="20dp">
 
         <ImageView
             android:id="@+id/wallet_tx_coin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_ethereum"/>
+            android:src="@drawable/ic_ethereum" />
 
         <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="48sp"
-            android:text="0.000"
-            android:textColor="@color/textethereum"/>
+            android:textColor="@color/textethereum"
+            android:textSize="48sp" />
 
     </LinearLayout>
 
@@ -51,8 +50,8 @@
         <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
@@ -63,17 +62,19 @@
         <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
-            android:textSize="16sp"/>
+            android:text="@string/date"
+            android:textSize="16sp" />
+
         <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10/27/2016 13:22 PM (2 months ago)"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </RelativeLayout>
 
-    <View android:layout_width="match_parent" android:layout_height="1dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -82,40 +83,47 @@
         <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Confirmations"
             android:layout_centerVertical="true"
-            android:textSize="16sp"/>
+            android:text="@string/confirmations"
+            android:textSize="16sp" />
+
         <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/transaction_detail_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="6+"
             android:padding="5dp"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </RelativeLayout>
 
-    <View android:layout_width="match_parent" android:layout_height="1dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="20dp"
+        android:orientation="horizontal"
         android:weightSum="5">
-        <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <RelativeLayout
             android:id="@+id/transaction_detail_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            >
+            android:layout_weight="3">
+
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VIEW MORE"
                 android:layout_centerInParent="true"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:text="@string/view_more" />
         </RelativeLayout>
     </LinearLayout>
 

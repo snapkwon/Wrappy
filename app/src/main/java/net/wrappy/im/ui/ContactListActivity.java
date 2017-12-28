@@ -26,13 +26,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.wrappy.im.R;
 
 public class ContactListActivity extends AppCompatActivity {
 
@@ -113,9 +113,9 @@ public class ContactListActivity extends AppCompatActivity {
     {
 
         Intent data = new Intent();
-        data.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER,providerId);
-        data.putExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT,accountId);
-        data.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME,username);
+        data.putExtra(BundleKeyConstant.PROVIDER_KEY,providerId);
+        data.putExtra(BundleKeyConstant.ACCOUNT_KEY,accountId);
+        data.putExtra(BundleKeyConstant.RESULT_KEY,username);
         setResult(RESULT_OK,data);
         finish();
     }

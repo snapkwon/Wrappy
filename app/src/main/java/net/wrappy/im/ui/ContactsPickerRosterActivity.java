@@ -54,7 +54,7 @@ public class ContactsPickerRosterActivity extends BaseActivity {
     }
 
     private void initView() {
-        headerbarTitleLeft.setText("List");
+        headerbarTitleLeft.setText(R.string.new_list);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerViewRoster.setLayoutManager(mLayoutManager);

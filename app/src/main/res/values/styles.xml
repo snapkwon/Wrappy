@@ -220,7 +220,7 @@
     <style name="AppText02_Menu">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -282,8 +282,14 @@
 
     <style name="dividerMainMenu" parent="divider">
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_marginLeft">40dp</item>
+        <item name="android:layout_marginLeft">48dp</item>
         <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="mainmenu_icon">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:adjustViewBounds">true</item>
     </style>
 
 </resources>

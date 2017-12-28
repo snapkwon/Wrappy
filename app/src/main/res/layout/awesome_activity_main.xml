@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,96 +18,94 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/menu_text_active">
+
         <ImageView
             android:id="@+id/imgLogo"
-            android:layout_height="24dp"
             android:layout_width="match_parent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/logo_wrappy"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
             android:adjustViewBounds="true"
-            android:layout_centerInParent="true" />
-
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_wrappy" />
 
 
         <net.wrappy.im.helper.layout.AppEditTextView
             android:id="@+id/edSearchConversation"
+            style="@style/AppText02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:visibility="gone"
-            android:textColorHint="@android:color/white"
-            android:hint="search"
-            android:inputType="text"
+            android:hint="@string/setting_search"
             android:imeOptions="actionSearch"
-            style="@style/AppText02"/>
+            android:inputType="text"
+            android:padding="16dp"
+            android:textColorHint="@android:color/white"
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/btnHeaderSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_search"
-            android:background="@android:color/transparent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:padding="16dp"/>
+            android:background="@android:color/transparent"
+            android:padding="16dp"
+            android:src="@drawable/ic_action_search" />
 
 
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="56dp"
         android:orientation="vertical"
         android:weightSum="1">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1">
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_margin="@dimen/fab_margin"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/fab_margin"
                 android:src="@drawable/ic_add_white_24dp" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@color/bg_menu_tab"
-            android:layout_alignParentBottom="true">
+            android:orientation="vertical">
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/line"/>
+                android:background="@color/line" />
+
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabIndicatorColor="@null"
-                />
+                app:tabIndicatorColor="@null" />
 
         </LinearLayout>
     </LinearLayout>
-
-
-
-
-
-
 </RelativeLayout>

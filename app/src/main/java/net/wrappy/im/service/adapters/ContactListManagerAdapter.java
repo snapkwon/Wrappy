@@ -279,7 +279,6 @@ public class ContactListManagerAdapter extends
         try {
             mAdaptee.unblockContactAsync(address);
         } catch (ImException e) {
-            RemoteImService.debug(e.getMessage());
             return e.getImError().getCode();
         }
 
@@ -290,7 +289,6 @@ public class ContactListManagerAdapter extends
         try {
             return mAdaptee.isBlocked(address);
         } catch (ImException e) {
-            RemoteImService.debug(e.getMessage());
             return false;
         }
     }
@@ -687,7 +685,6 @@ public class ContactListManagerAdapter extends
                     break;
 
                 default:
-                    RemoteImService.debug("Unknown list update event!");
                     break;
             }
 
@@ -960,7 +957,6 @@ public class ContactListManagerAdapter extends
         Cursor cursor = mResolver.query(mContactUrl, new String[]{Imps.Contacts._ID},
                 selection, selectionArgs, null);
         if (cursor == null) {
-            RemoteImService.debug("query contact " + username + " failed");
             return;
         }
 
@@ -1025,7 +1021,6 @@ public class ContactListManagerAdapter extends
                         + " OR " + Imps.Contacts.SUBSCRIPTION_TYPE + "=" + Imps.Contacts.SUBSCRIPTION_TYPE_TO + ")"
                 , new String[]{username}, null);
         if (cursor == null) {
-            RemoteImService.debug("query contact " + username + " failed");
             return false;
         }
 
@@ -1429,7 +1424,6 @@ public class ContactListManagerAdapter extends
         }
 
         // impossible...
-        RemoteImService.debug("Illegal presence status value " + presence.getStatus());
         return Presence.AVAILABLE;
     }
 
