@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="0dp"
@@ -11,9 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginTop="68dp"
-        android:layout_marginBottom="50dp"
+        android:layout_centerVertical="true"
         android:orientation="vertical">
 
         <ImageView
@@ -32,24 +30,6 @@
             android:layout_marginBottom="20dp"
             android:layout_marginTop="2dp"
             android:src="@drawable/text_1" />
-    </LinearLayout>
-
-    <net.wrappy.im.helper.layout.AppEditTextView
-        android:id="@+id/edtUserMame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/id_or_username"
-        android:padding="5dp"
-        android:drawablePadding="5dp"
-        android:layout_margin="20dp"
-        android:layout_gravity="bottom"
-        android:textColor="@android:color/black"
-        android:background="@drawable/button_border"
-        android:textStyle="bold"
-        android:inputType="text"
-        android:imeOptions="actionDone"
-        android:gravity="left"
-        android:drawableLeft="@drawable/logo_register" />
 
         <net.wrappy.im.helper.layout.AppEditTextView
             android:id="@+id/edtUserMame"
@@ -86,7 +66,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/create_an_account" />
+
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

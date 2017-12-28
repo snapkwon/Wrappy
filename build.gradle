@@ -32,7 +32,7 @@ allprojects {
     }
     project.ext {
         // these are common variables used in */build.gradle
-        buildToolsVersion="27.0.1"
+        buildToolsVersion="26.0.2"
         compileSdkVersion=25
         minSdkVersion=16
         targetSdkVersion=25

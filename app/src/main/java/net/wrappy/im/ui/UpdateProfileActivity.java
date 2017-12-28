@@ -106,7 +106,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnCameraAvatar;
 
-    MySpinnerAdapter countryAdapter;
+    ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
@@ -153,7 +153,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         }.getType();
                         wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
-                        ArrayList<String> strings = new ArrayList<>();
+                        List<String> strings = new ArrayList<>();
                         for (int i = 0; i < wpkCountry.size(); i++) {
                             strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
