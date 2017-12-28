@@ -563,6 +563,7 @@
     <string name="logout_all_devices">Logout all devices</string>
     <string name="logout_device">Logout this device</string>
     <string name="message_remove_avatar_success">Remove Avatar Success</string>
+    <string name="message_remove_banner_success">Remove Banner Success</string>
     <string name="error_invalid_email">Invalid email format</string>
     <string name="error_get_user_profile">Could note get user profile</string>
     <string name="hint_password"><small><i>Input Password</i></small></string>

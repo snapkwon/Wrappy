@@ -49,7 +49,7 @@ public class MainMenuFragment extends Fragment {
         ButterKnife.bind(this, mainView);
         mainActivity = (MainActivity) getActivity();
         String versionName = BuildConfig.VERSION_NAME;
-        if (versionName!=null) {
+        if (versionName != null) {
             txtMainMenuVersionName.setText(getString(R.string.app_version) + " " + versionName);
         }
         return mainView;
