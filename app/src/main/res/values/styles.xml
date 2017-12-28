@@ -244,14 +244,14 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:background">@drawable/btn_default</item>
-        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
     </style>
 
-    <style name="AppButton_Cancel">
-        <item name="android:textSize">16sp</item>
+    <style name="AppButton_Cancel" parent="AppButton_OK">
         <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:background">@drawable/btn_cancel</item>
-        <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
     <style name="match_parent">

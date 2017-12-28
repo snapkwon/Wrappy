@@ -1,5 +1,6 @@
 package eu.siacs.conversations;
 
+import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
@@ -46,6 +47,8 @@ public class Downloader {
             InputStream inputStream = connection.getInputStream();
             connection.connect();
             mMimeType = getMimeType(urlString);
+            if (TextUtils.isEmpty(mMimeType))
+                mMimeType = connection.getContentType();
 
             byte[] buffer = new byte[4096];
             int count;
@@ -135,7 +138,7 @@ public class Downloader {
         return fileNew;
     }
 
-    private String getFilenameFromUrl(String urlString) {
+    public static String getFilenameFromUrl(String urlString) {
         String fileName = URLUtil.guessFileName(urlString, null, null);
 
         if (fileName.contains("#"))

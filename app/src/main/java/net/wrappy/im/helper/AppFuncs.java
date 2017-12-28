@@ -28,6 +28,7 @@ import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.R;
 import net.wrappy.im.model.T;
+import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
@@ -167,8 +168,25 @@ public class AppFuncs {
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     199);
         }
+    }
 
+    public static void openPickFolder(Activity activity, int requestCode) {
+        openPickFolder(activity, requestCode, null);
+    }
 
+    public static void openPickFolder(Activity activity, int requestCode, Uri uri) {
+        if ((ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            activity.startActivityForResult(intent, requestCode);
+            if (uri != null && activity instanceof ConversationDetailActivity)
+                ((ConversationDetailActivity) activity).setSelectedUri(uri);
+
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    199);
+        }
     }
 
     public static void cropImage(Activity activity, Uri source, boolean isAvarta) {

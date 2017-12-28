@@ -19,6 +19,7 @@ package net.wrappy.im.ui;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -50,7 +51,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -75,6 +75,7 @@ import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
@@ -96,7 +97,10 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +109,8 @@ import java.util.Locale;
 import java.util.UUID;
 
 import butterknife.OnClick;
+import eu.siacs.conversations.Downloader;
+import info.guardianproject.iocipher.FileInputStream;
 
 //import com.bumptech.glide.Glide;
 
@@ -134,6 +140,11 @@ public class ConversationDetailActivity extends BaseActivity {
     private String mAddress = null;
     private String mNickname = null;
     private String mReference = null;
+    private Uri mSelectedUri;// selected file to download
+
+    public void setSelectedUri(Uri mSelectedUri) {
+        this.mSelectedUri = mSelectedUri;
+    }
 
     private Menu menuitem;
     private ConversationView mConvoView = null;
@@ -151,35 +162,34 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-    // offset position for popup window
-    private static final int OFFSET_X = 130;
-    private static final int OFFSET_Y = 80;
+    private Handler mHandler;
 
-    private int convertDpToPx(int dp) {
-        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
+    private class MyHandler extends Handler {
+        private WeakReference<Activity> weakReference;
 
+        MyHandler(Activity activity) {
+            weakReference = new WeakReference<>(activity);
+        }
 
-    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            if (weakReference != null && weakReference.get() != null) {
+                if (msg.what == 1) {
+                    if (mConvoView.getLastSeen() != null) {
+                        getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+                    } else {
+                        if (mConvoView.getRemotePresence() == Presence.AWAY)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+                        else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+                        else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                            getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
 
-            if (msg.what == 1) {
-                if (mConvoView.getLastSeen() != null) {
-                    getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
-                } else {
-                    if (mConvoView.getRemotePresence() == Presence.AWAY)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-                    else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
-                    else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
-                        getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
-
+                    }
                 }
             }
         }
-    };
+    }
 
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -207,7 +217,7 @@ public class ConversationDetailActivity extends BaseActivity {
         mApp = (ImApp) getApplication();
 
         mConvoView = new ConversationView(this);
-
+        mHandler = new MyHandler(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
@@ -779,67 +789,99 @@ public class ConversationDetailActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
-
         if (resultCode == RESULT_OK) {
-
-            if (requestCode == REQUEST_PICK_CONTACTS) {
-
-                ArrayList<String> invitees = new ArrayList<>();
-
-                String username = resultIntent.getStringExtra(BundleKeyConstant.RESULT_KEY);
-
-                if (username != null)
-                    invitees.add(username);
-                else
-                    invitees = resultIntent.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
-
-                mConvoView.inviteContacts(invitees);
-
-            }
-            if (requestCode == REQUEST_SEND_IMAGE) {
-                Uri uri = resultIntent.getData();
-
-                if (uri == null) {
-                    return;
-                }
-
-                handleSendDelete(uri, "image/jpeg", false, true, true);
-            } else if (requestCode == REQUEST_SEND_FILE || requestCode == REQUEST_SEND_AUDIO) {
-                Uri uri = resultIntent.getData();
-                if (uri == null) {
-                    return;
-                }
-
-                String defaultType = resultIntent.getType();
-
-                handleSendDelete(uri, defaultType, false, false, true);
-            } else if (requestCode == REQUEST_TAKE_PICTURE) {
-                if (mLastPhoto != null) {
-                    handleSendDelete(mLastPhoto, "image/jpeg", true, true, true);
-                    mLastPhoto = null;
-                }
-
-            } else if (requestCode == REQUEST_FROM_SETTING) {
-                Bundle extras = resultIntent.getExtras();
-                int type = extras.getInt("type");
-                if (type == TYPE_SEARCH) {
-                    mConvoView.activeSearchmode();
-                    for (int i = 0; i < 4; i++) {
-                        menuitem.getItem(i).setVisible(false);
+            Uri uri;
+            switch (requestCode) {
+                case REQUEST_PICK_CONTACTS:
+                    ArrayList<String> invitees = new ArrayList<>();
+                    String username = resultIntent.getStringExtra(BundleKeyConstant.RESULT_KEY);
+                    if (username != null)
+                        invitees.add(username);
+                    else
+                        invitees = resultIntent.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
+                    mConvoView.inviteContacts(invitees);
+                    break;
+                case REQUEST_SEND_IMAGE:
+                    uri = resultIntent.getData();
+                    if (uri != null) {
+                        handleSendDelete(uri, "image/jpeg", false, true, true);
                     }
-                } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
-                    String imagePath = extras.getString("imagePath");
+                    break;
+                case REQUEST_SEND_FILE:
+                case REQUEST_SEND_AUDIO:
+                    uri = resultIntent.getData();
+                    if (uri != null) {
+                        String defaultType = resultIntent.getType();
+                        handleSendDelete(uri, defaultType, false, false, true);
+                    }
+                    break;
+                case REQUEST_TAKE_PICTURE:
+                    if (mLastPhoto != null) {
+                        handleSendDelete(mLastPhoto, "image/jpeg", true, true, true);
+                        mLastPhoto = null;
+                    }
+                    break;
+                case REQUEST_FROM_SETTING:
+                    Bundle extras = resultIntent.getExtras();
+                    int type = extras.getInt("type");
+                    if (type == TYPE_SEARCH) {
+                        mConvoView.activeSearchmode();
+                        for (int i = 0; i < 4; i++) {
+                            menuitem.getItem(i).setVisible(false);
+                        }
+                    } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
+                        String imagePath = extras.getString("imagePath");
 
-                    ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
+                        ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
 
-                    loadBitmapPreferences();
+                        loadBitmapPreferences();
 
-                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + imagePath);
-                }
+                        mConvoView.sendMessageAsync(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX + imagePath);
+                    }
+                    break;
+                case REQUEST_PLACE_PICKER:
+                    Place place = PlacePicker.getPlace(resultIntent, this);
+                    mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
+                    break;
+                case REQUEST_PICK_FOLDER:
+                    uri = resultIntent.getData();
+                    if (mSelectedUri != null) {
+                        try {
+                            info.guardianproject.iocipher.File fileDownload = new info.guardianproject.iocipher.File(mSelectedUri.getPath());
+                            FileInputStream inputStream = new FileInputStream(fileDownload);
+                            try {
+                                String fileName = Downloader.getFilenameFromUrl(mSelectedUri.getPath());
+                                File file = new File(FileUtil.getFullPathFromTreeUri(uri, this), fileName);
+                                if (!file.exists())
+                                    file.createNewFile();
 
-            } else if (requestCode == REQUEST_PLACE_PICKER) {
-                Place place = PlacePicker.getPlace(resultIntent, this);
-                mConvoView.sendMessageAsync(ConferenceConstant.SEND_LOCATION_FREFIX + place.getLatLng().latitude + ":" + place.getLatLng().longitude);
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                try {
+                                    // Transfer bytes from in to out
+                                    byte[] buf = new byte[1024];
+                                    int len;
+                                    while ((len = inputStream.read(buf)) > 0) {
+                                        fileOutputStream.write(buf, 0, len);
+                                    }
+                                } finally {
+                                    fileOutputStream.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    inputStream.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        mSelectedUri = null;
+
+                    }
+                    break;
             }
         }
     }
@@ -847,6 +889,7 @@ public class ConversationDetailActivity extends BaseActivity {
     /**
      * loading bitmap to set background this screen
      */
+
     private void loadBitmapPreferences() {
         String imagePath = PreferenceUtils.getString(new XmppAddress(mConvoView.mRemoteAddress).getUser(), "", getApplicationContext());
         if (!TextUtils.isEmpty(imagePath)) {
@@ -861,16 +904,13 @@ public class ConversationDetailActivity extends BaseActivity {
         }
     }
 
-
     public boolean handleSendData(IChatSession session, Uri uri, String mimeType) {
         try {
-
             if (session != null) {
 
                 String offerId = UUID.randomUUID().toString();
                 return session.offerData(offerId, uri.toString(), mimeType);
             }
-
         } catch (RemoteException e) {
             Log.e(ImApp.LOG_TAG, "error sending file", e);
         }
@@ -1010,6 +1050,7 @@ public class ConversationDetailActivity extends BaseActivity {
     public static final int REQUEST_ADD_CONTACT = REQUEST_TAKE_PICTURE_SECURE + 1;
     public static final int REQUEST_FROM_SETTING = REQUEST_ADD_CONTACT + 1;
     private static final int REQUEST_PLACE_PICKER = REQUEST_FROM_SETTING + 1;
+    public static final int REQUEST_PICK_FOLDER = REQUEST_PLACE_PICKER + 1;
 
 
     public static final int TYPE_SEARCH = 0;
