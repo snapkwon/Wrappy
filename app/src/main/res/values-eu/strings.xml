@@ -163,7 +163,7 @@ Sareko datuen konektibitatea (baita atzeko planoko datuena) beharrezkoa da aplik
   <string name="new_messages_notify">Mezu berria(k):</string>
   <string name="app_unlocked">Gaituta eta desblokeatuta</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Arreta</string>
+  <string name="attention">Arreta</string>
   <string name="general_error"><xliff:g id="code">%1$d</xliff:g> errore kodea</string>
   <string name="add_list_failed">Zerrenda ez da gehitu.</string>
   <string name="block_contact_failed">Kontaktua ez zegoen blokeatuta</string>

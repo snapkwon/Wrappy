@@ -176,7 +176,7 @@ Kliknij aby zaprosić.</string>
   <string name="new_messages_notify">Nowa/e wiadomość/i od</string>
   <string name="app_unlocked">Aktywowany &amp; odblokowany</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Uwaga</string>
+  <string name="attention">Uwaga</string>
   <string name="error_prefix">Błąd:</string>
   <string name="general_error">Kod błędu <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Nie można zalogować do usługi <xliff:g id="SERVICE">%1$s</xliff:g>. Spróbuj ponownie później."\n"(Szczegóły: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

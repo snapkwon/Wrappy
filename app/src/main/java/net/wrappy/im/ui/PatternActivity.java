@@ -106,15 +106,15 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         if (type_request == REQUEST_CODE_LOGIN) {
             this.setTypePattern(TYPE_NOCONFIRM);
-            actionbar.setTitle("Login");
+            actionbar.setTitle(R.string.login);
 
         } else {
             this.setTypePattern(TYPE_CONFIRM);
 
             if (hashResetPassword.isEmpty()) {
-                actionbar.setTitle("Registration");
+                actionbar.setTitle(R.string.registration);
             } else {
-                actionbar.setTitle("FORGET PASSWORD");
+                actionbar.setTitle(R.string.forget_password);
             }
         }
 
@@ -207,7 +207,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         login(pass);
                     } else {
                         Log.i(TAG,WpErrors.getErrorMessage(result.getResult()));
-                        AppFuncs.alert(getApplicationContext(), "Reset password fail",true);
+                        AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password),true);
                         finish();
                     }
                 }
@@ -225,7 +225,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 try {
                     if (!RestAPI.checkHttpCode(httpCode)) {
                         appFuncs.dismissProgressWaiting();
-                        PopupUtils.showCustomDialog(PatternActivity.this, "Error", "The username or password is incorrect", R.string.yes, null, false);
+                        PopupUtils.showCustomDialog(PatternActivity.this, getString(R.string.error), getString(R.string.error_username_or_password), R.string.yes, null, false);
                         mPatternView.clearPattern();
                         //AppFuncs.alert(getApplicationContext(),s,true);
 

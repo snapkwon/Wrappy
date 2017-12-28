@@ -161,7 +161,7 @@ Sentuh untuk mengundang.</string>
   <string name="new_messages_notify">Pesan baru dari</string>
   <string name="app_unlocked">Diaktifkan &amp; tak terkunci</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Perhatian</string>
+  <string name="attention">Perhatian</string>
   <string name="general_error">Kode kesalahan <xliff:g id="code">%1$d</xliff:g></string>
   <string name="add_list_failed">Daftar tidak ditambahkan.</string>
   <string name="block_contact_failed">Kontak tidak diblokir.</string>

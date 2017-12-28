@@ -15,6 +15,7 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
+import net.wrappy.im.R;
 import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
@@ -352,8 +353,6 @@ public class RestAPI {
     static int numberRefreshToken = 0;
 
     public static void refreshTokenHttps(final Context context, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
-        final String header = getHeaderHttps(context, url);
-
         Ion.with(context).load("POST", refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -368,7 +367,7 @@ public class RestAPI {
                         AppFuncs.alert(context, error, true);
                         if (numberRefreshToken >= NUMBER_REQUEST_TOKEN) {
                             numberRefreshToken = 0;
-                            listenner.OnComplete(-1, "can not refresh access token : please retry!", null);
+                            listenner.OnComplete(-1, context.getString(R.string.error_when_refresh_token), null);
 
                         } else {
                             numberRefreshToken++;

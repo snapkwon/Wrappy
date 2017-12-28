@@ -4,7 +4,18 @@
 
 package net.wrappy.im.GethService.contracts;
 
-import org.ethereum.geth.*;
+import net.wrappy.im.util.BundleKeyConstant;
+
+import org.ethereum.geth.Address;
+import org.ethereum.geth.BigInt;
+import org.ethereum.geth.BoundContract;
+import org.ethereum.geth.CallOpts;
+import org.ethereum.geth.EthereumClient;
+import org.ethereum.geth.Geth;
+import org.ethereum.geth.Interface;
+import org.ethereum.geth.Interfaces;
+import org.ethereum.geth.TransactOpts;
+import org.ethereum.geth.Transaction;
 
 
 	public class WrappyKYC {
@@ -177,7 +188,7 @@ import org.ethereum.geth.*;
 				args.set(0, Geth.newInterface()); args.get(0).setBigInt(phone);
 				
 
-				return this.Contract.transact(opts, "newUser"	, args);
+				return this.Contract.transact(opts, BundleKeyConstant.NEW_USER_KEY	, args);
 			}
 		
 			// newWrappyAccount is a paid mutator transaction binding the contract method 0xf206e912.

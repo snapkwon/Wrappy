@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f2f2f2"
@@ -59,11 +60,9 @@
                             android:text="@string/username_title" />
 
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#000" />
+                            android:layout_marginTop="10dp" />
 
                         <net.wrappy.im.helper.layout.AppEditTextView
                             android:id="@+id/edProfileUsername"
@@ -93,11 +92,9 @@
                             android:text="@string/email" />
 
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#000" />
+                            android:layout_marginTop="10dp" />
 
                         <net.wrappy.im.helper.layout.AppEditTextView
                             android:id="@+id/edProfileEmail"
@@ -128,11 +125,9 @@
                             android:text="@string/mobile_phone" />
 
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#000" />
+                            android:layout_marginTop="10dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -143,9 +138,9 @@
                                 android:id="@+id/spnProfileCountryCodes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:prompt="@string/_via_orbot" />
+                                android:prompt="@string/_via_orbot"/>
 
-                            <net.wrappy.im.helper.layout.AppEditTextView
+                          <net.wrappy.im.helper.layout.AppEditTextView
                                 android:id="@+id/edProfilePhone"
                                 style="@style/AppText02"
                                 android:layout_width="match_parent"
@@ -178,11 +173,9 @@
                             android:text="@string/gender" />
 
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            style="@style/divider"
                             android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#000" />
+                            android:layout_marginTop="10dp" />
 
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/spinnerProfileGender"
@@ -194,27 +187,19 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginTop="20dp">
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileComplete"
-                            style="@style/AppButton_OK"
+                            style="@style/AppButton01"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/complete" />
-
+                            android:text="@string/complete"
+                            style="@style/AppButton_OK" />
                     </LinearLayout>
-
-
                 </LinearLayout>
-
             </LinearLayout>
-
-
         </RelativeLayout>
-
     </ScrollView>
-
-
 </LinearLayout>

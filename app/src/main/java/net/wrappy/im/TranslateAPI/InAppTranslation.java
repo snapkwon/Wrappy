@@ -36,18 +36,18 @@ public class InAppTranslation {
     private List<String> listresult;
 
 
-    public InAppTranslation(Context context , CompleteTransaction complete) {
+    public InAppTranslation(Context context, CompleteTransaction complete) {
         m_context = context;
         this.callback = complete;
         target = "en";
 
     }
 
-    public  void setSourceLanguage(String languageCode){
+    public void setSourceLanguage(String languageCode) {
         source = languageCode;
     }
 
-    public  void setTargetLanguage(String languageCode){
+    public void setTargetLanguage(String languageCode) {
         target = languageCode;
     }
 
@@ -56,35 +56,36 @@ public class InAppTranslation {
     }
 
     public void detectlanguage(final String query, final int position) {
-        if(query == null){
+        if (query == null) {
             return;
         }
 
         GetDetectLanguageAsyncTask task = new GetDetectLanguageAsyncTask() {
             @Override
             protected void onPostExecute(String result) {
-                if(result != null){;
+                if (result != null) {
+                    ;
                     m_result = result;
-                    callback.onTaskDetectComplete(result,query,position);
+                    callback.onTaskDetectComplete(result, query, position);
                 }
             }
         };
         task.execute(query);
     }
 
-    public void translate(String query, String source, String target , final int position) {
-        if(source == null){
+    public void translate(String query, String source, String target, final int position) {
+        if (source == null) {
             source = this.source;
         }
 
-        if(target == null){
+        if (target == null) {
             target = this.target;
         }
 
         GetTranslationAsyncTask task = new GetTranslationAsyncTask() {
             @Override
             protected void onPostExecute(String result) {
-                if(result != null){
+                if (result != null) {
                     Log.d(TAG, "Translated test is " + result);
                     m_result = result;
                     callback.onTaskTranslateComplete(result, position);
@@ -94,19 +95,19 @@ public class InAppTranslation {
         task.execute(query, source, target);
     }
 
-    public void translate(List<String> query, String source, String target,int position) {
-        if(source == null){
+    public void translate(List<String> query, String source, String target, int position) {
+        if (source == null) {
             source = this.source;
         }
 
-        if(target == null){
+        if (target == null) {
             target = this.target;
         }
 
         GetArrayTranslationAsyncTask task = new GetArrayTranslationAsyncTask() {
             @Override
             protected void onPostExecute(List<String> result) {
-                if(result != null){
+                if (result != null) {
                     listresult = result;
                     callback.onTaskLListTranslateComplete(result);
                 }
@@ -118,7 +119,9 @@ public class InAppTranslation {
 
     public interface CompleteTransaction {
         public void onTaskTranslateComplete(String result, int position);
-        public void onTaskDetectComplete(String result,String src,int position);
+
+        public void onTaskDetectComplete(String result, String src, int position);
+
         public void onTaskLListTranslateComplete(List<String> result);
     }
 
@@ -170,8 +173,7 @@ public class InAppTranslation {
                     } else {
                         // query.get(i) == ;
                     }
-                    if(source.equals(target))
-                    {
+                    if (source.equals(target)) {
                         return query;
                     }
 
@@ -225,15 +227,12 @@ public class InAppTranslation {
                                 errorResult.append(errorLine);
                             }
                             errorIn.close();
-                            String errorResponseString = errorResult.toString();
-
-                            String errorText = String.format("Failed to get data from Google Translate. Status code = %d, Response = %s", resp, errorResponseString);
                             break;
                     }
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            } finally{
+            } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
@@ -247,7 +246,6 @@ public class InAppTranslation {
 
         }
     }
-
 
 
     private class GetTranslationAsyncTask extends
@@ -278,24 +276,24 @@ public class InAppTranslation {
             try {
                 String urlString;
 
-                if(query == null || query.isEmpty()){
+                if (query == null || query.isEmpty()) {
                     Log.d(TAG, "query is null or empty");
                     return query;
                 }
 
                 String apiKey = BuildConfig.GoogleTranslateApiKey;
-                if(apiKey == null || apiKey.isEmpty()){
+                if (apiKey == null || apiKey.isEmpty()) {
                     Log.d(TAG, "Google Translate Api Key is not set in local.properties");
                     return query;
                 }
 
                 String queryEncoded = URLEncoder.encode(query, "utf-8");
 
-                if(source == null && target != null){
+                if (source == null && target != null) {
                     urlString = String.format(urlTemplateWithoutSource, apiKey, target, queryEncoded);
-                }else if(source != null && target != null){
+                } else if (source != null && target != null) {
                     urlString = String.format(urlTemplate, apiKey, source, target, queryEncoded);
-                }else{
+                } else {
                     Log.d(TAG, "The source and target langauges are both not set.");
                     return query;
                 }
@@ -309,7 +307,7 @@ public class InAppTranslation {
 
                 int resp = urlConnection.getResponseCode();
 
-                switch (resp){
+                switch (resp) {
                     case HttpURLConnection.HTTP_OK:
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
@@ -325,19 +323,19 @@ public class InAppTranslation {
                         JSONTokener json = new JSONTokener(result.toString());
                         if (json != null) {
                             JSONObject rootObject = (JSONObject) json.nextValue();
-                            if(rootObject != null){
+                            if (rootObject != null) {
                                 JSONObject dataObject = rootObject.getJSONObject("data");
-                                if(dataObject != null){
+                                if (dataObject != null) {
                                     JSONArray translations = dataObject.getJSONArray("translations");
                                     for (int i = 0; i < translations.length(); i++) {
                                         JSONObject translation = translations.getJSONObject(i);
                                         translatedText = translation.getString("translatedText");
                                         break;
                                     }
-                                }else{
+                                } else {
                                     Log.e(TAG, "[Google Translate API] Data is missing in the response" + rootObject.toString());
                                 }
-                            }else{
+                            } else {
                                 Log.e(TAG, "[Google Translate API] Root json object is missing in the response");
                             }
                         }
@@ -362,20 +360,20 @@ public class InAppTranslation {
                 Log.d(TAG, "Got exception while accessing Google Translation");
                 e.printStackTrace();
             } finally {
-                if(urlConnection != null){
+                if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
             }
 
-            if(translatedText == null){
+            if (translatedText == null) {
                 return query;
-            }else{
+            } else {
                 return translatedText;
             }
         }
     }
 
-    private class GetDetectLanguageAsyncTask extends  AsyncTask<Object, Void, String> {
+    private class GetDetectLanguageAsyncTask extends AsyncTask<Object, Void, String> {
 
         final String urlTemplate = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
 
@@ -451,9 +449,7 @@ public class InAppTranslation {
                             errorResult.append(errorLine);
                         }
                         errorIn.close();
-                        String errorResponseString = errorResult.toString();
 
-                        String errorText = String.format("Failed to get data from Google Translate. Status code = %d, Response = %s", resp, errorResponseString);
                         break;
                 }
 

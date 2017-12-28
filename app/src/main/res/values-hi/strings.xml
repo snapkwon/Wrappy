@@ -50,7 +50,7 @@
   <string name="prompt_create_new_account_">नया खाता बनाएँ ?</string>
   <!--Alerts: Notifications-->
   <!--Alerts: Exceptions-->
-  <string name="error">ध्यान </string>
+  <string name="attention">ध्यान </string>
   <string name="error_prefix">त्रुटि:</string>
   <string name="general_error">त्रुटि कोड  <xliff:g id="code">%1$d</xliff:g></string>
   <string name="msg_sent_failed">संदेश नहीं भेजा गया </string>

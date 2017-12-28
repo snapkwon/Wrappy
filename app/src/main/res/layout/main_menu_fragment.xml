@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="New Group" />
+                    android:text="@string/new_group" />
 
             </LinearLayout>
 
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="Contact" />
+                    android:text="@string/search_label" />
 
             </LinearLayout>
 
@@ -85,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="New List" />
+                    android:text="@string/new_list" />
 
             </LinearLayout>
 
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="Settings" />
+                    android:text="@string/menu_settings" />
 
             </LinearLayout>
 
@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="About us" />
+                    android:text="@string/about_us" />
 
             </LinearLayout>
 
@@ -148,7 +148,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="FAQ" />
+                    android:text="@string/faq" />
 
             </LinearLayout>
 
@@ -169,7 +169,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="Logout" />
+                    android:text="@string/logout" />
 
             </LinearLayout>
 

@@ -19,8 +19,6 @@ package net.wrappy.im.ui.legacy;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
-import net.wrappy.im.model.Contact;
-import net.wrappy.im.model.ContactListListener;
 import net.wrappy.im.model.ImErrorInfo;
 
 import android.app.Activity;
@@ -49,11 +47,11 @@ public class SimpleAlertHandler extends Handler {
         }
         else
         {
-            promptMsg = mActivity.getString(R.string.error);
+            promptMsg = mActivity.getString(R.string.attention);
         }
 
         if (promptMsg != null)
-            showAlert(R.string.error, promptMsg);
+            showAlert(R.string.attention, promptMsg);
 
     }
 
@@ -96,35 +94,7 @@ public class SimpleAlertHandler extends Handler {
     }
 
     public void showServiceErrorAlert(String msg) {
-        showAlert(R.string.error, msg);
-    }
-
-    public void showContactError(int errorType, ImErrorInfo error, String listName, Contact contact) {
-        int id = 0;
-        switch (errorType) {
-        case ContactListListener.ERROR_LOADING_LIST:
-            id = R.string.load_contact_list_failed;
-            break;
-
-        case ContactListListener.ERROR_CREATING_LIST:
-            id = R.string.add_list_failed;
-            break;
-
-        case ContactListListener.ERROR_BLOCKING_CONTACT:
-            id = R.string.block_contact_failed;
-            break;
-
-        case ContactListListener.ERROR_UNBLOCKING_CONTACT:
-            id = R.string.unblock_contact_failed;
-            break;
-        }
-
-        String errorInfo = ErrorResUtils.getErrorRes(mRes, error.getCode());
-        if (id != 0) {
-            errorInfo = mRes.getText(id) + "\n" + errorInfo;
-        }
-
-        showAlert(R.string.error, errorInfo);
+        showAlert(R.string.attention, msg);
     }
 
 }

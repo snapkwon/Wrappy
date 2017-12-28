@@ -147,7 +147,7 @@ Es necesario tener conexión a la red de datos (incluyendo datos en segundo plan
   <string name="notify_groupchat_label">Invitación a chat de grupo</string>
   <string name="new_messages_notify">Nuevo mensaje(s) de</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Atención</string>
+  <string name="attention">Atención</string>
   <string name="general_error">Código de error <xliff:g id="code">%1$d</xliff:g></string>
   <string name="add_list_failed">La lista no fue agregada.</string>
   <string name="block_contact_failed">El contacto no fue bloqueado.</string>

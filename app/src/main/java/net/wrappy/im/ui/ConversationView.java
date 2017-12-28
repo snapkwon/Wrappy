@@ -56,13 +56,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -116,7 +112,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -156,7 +151,6 @@ import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -2260,16 +2254,11 @@ public class ConversationView {
                     break;
                 case SHOW_DATA_ERROR:
 
-                    String fileName = msg.getData().getString("file");
                     String error = msg.getData().getString("err");
 
-                    Toast.makeText(mContext, "Error transferring file: " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, mActivity.getString(R.string.error_tranferring_file) + error, Toast.LENGTH_LONG).show();
                     break;
                 case SHOW_DATA_PROGRESS:
-
-                    int percent = msg.getData().getInt("progress");
-
-
                     break;
                 case SHOW_TYPING:
 
@@ -2671,16 +2660,15 @@ public class ConversationView {
             }
         }
 
-
-        public void setTargetLanguage(String target) {
+        public void setTargetLanguage(int target) {
             switch (target) {
-                case "English":
+                case 0:
                     targetlanguage = "en";
                     break;
-                case "Japanese":
+                case 1:
                     targetlanguage = "ja";
                     break;
-                case "Vietnamese":
+                case 2:
                     targetlanguage = "vi";
                     break;
             }
@@ -3336,14 +3324,12 @@ public class ConversationView {
         spinner.setAdapter(adapter);
 
         spinner.setSelection(1);
-        mMessageAdapter.setTargetLanguage(spinner.getSelectedItem().toString());
+        mMessageAdapter.setTargetLanguage(spinner.getSelectedItemPosition());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
-                mMessageAdapter.setTargetLanguage(arraySpinner[position]);
+                mMessageAdapter.setTargetLanguage(position);
                 mMessageAdapter.notifyDataSetChanged();
             }
 

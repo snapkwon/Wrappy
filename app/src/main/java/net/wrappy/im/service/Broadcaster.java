@@ -138,26 +138,6 @@ public class Broadcaster {
         }
     }
 
-    /** For debugging purposes, print the registrations to System.out */
-    public void dumpRegistrations() {
-        synchronized (this) {
-            Registration start = mReg;
-            System.out.println("Broadcaster " + this + " {");
-            if (start != null) {
-                Registration r = start;
-                do {
-                    System.out.println("    senderWhat=" + r.senderWhat);
-                    int n = r.targets.length;
-                    for (int i = 0; i < n; i++) {
-                        System.out.println("        [" + r.targetWhats[i] + "] " + r.targets[i]);
-                    }
-                    r = r.next;
-                } while (r != start);
-            }
-            System.out.println("}");
-        }
-    }
-
     /**
      * Send out msg. Anyone who has registered via the request() method will be
      * sent the message.

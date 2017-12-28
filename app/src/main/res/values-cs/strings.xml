@@ -167,7 +167,7 @@ Klikněte pro pozvání.</string>
   <string name="new_messages_notify">Nová zpráva(y) od</string>
   <string name="app_unlocked">Aktivováno &amp; odemknuto</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Upozornění</string>
+  <string name="attention">Upozornění</string>
   <string name="error_prefix">Chyba:</string>
   <string name="general_error">Kód chyby: <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Nepodařilo se přihlásit ke službě <xliff:g id="SERVICE">%1$s</xliff:g>. Zkuste to prosím znovu později."\n"(Podrobnosti: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

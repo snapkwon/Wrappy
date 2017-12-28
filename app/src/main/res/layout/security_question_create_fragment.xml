@@ -19,7 +19,7 @@
                 android:gravity="center_horizontal"
                 android:paddingBottom="20dp"
                 android:paddingTop="20dp"
-                android:text="@string/choose_your_secret_question"
+                android:text="@string/choose_secret_question"
                 android:textColor="#464546"
                 android:textSize="16sp" />
 
@@ -35,15 +35,15 @@
                     android:layout_gravity="center_horizontal"
                     android:padding="10dp" />
             </LinearLayout>
-
+          
             <net.wrappy.im.helper.layout.AppButton
                 android:id="@+id/btnQuestionComplete"
-                style="@style/AppButton_OK"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/btn_next"
+                style="@style/AppButton_OK"
                 android:layout_margin="16dp"
-                android:enabled="true"
-                android:text="@string/next" />
+                android:enabled="true" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

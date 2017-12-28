@@ -134,6 +134,7 @@
                                     android:src="@drawable/ic_edit" />
                             </RelativeLayout>
 
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -228,18 +229,21 @@
                                     android:background="@android:color/transparent"
                                     android:src="@drawable/ic_edit" />
                             </RelativeLayout>
+
+
                         </LinearLayout>
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileSubmit"
-                            style="@style/AppButton_OK"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/submit"
-                            android:visibility="gone" />
+                            android:text="@string/btn_submit"
+                            android:visibility="gone"
+                            style="@style/AppButton_OK"
+                            android:layout_marginTop="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
+
             </RelativeLayout>
 
             <LinearLayout
@@ -276,7 +280,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="@string/send_message" />
+                            android:text="Send Message" />
 
                     </LinearLayout>
 
@@ -303,7 +307,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="@string/share_contact" />
+                            android:text="Share Contact" />
+
                     </LinearLayout>
 
                     <View
@@ -329,7 +334,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="@string/block_user" />
+                            android:text="Block user" />
+
                     </LinearLayout>
                 </LinearLayout>
 
@@ -359,7 +365,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="@string/change_security_question" />
+                            android:text="Change Security Question" />
 
                     </LinearLayout>
 
@@ -389,6 +395,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
                             android:text="@string/logout" />
+
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

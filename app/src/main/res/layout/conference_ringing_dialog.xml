@@ -80,7 +80,5 @@
                 android:text="@string/accept_invitation"
                 android:textColor="@color/finestWhite" />
         </LinearLayout>
-
-
     </LinearLayout>
 </LinearLayout>

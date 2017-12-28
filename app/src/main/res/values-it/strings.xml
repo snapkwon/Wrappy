@@ -178,7 +178,7 @@
   <string name="starting_the_chatsecure_service_">Avvio il servizio di Zom…</string>
   <string name="app_unlocked">Zom è in esecuzione</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Attenzione</string>
+  <string name="attention">Attenzione</string>
   <string name="error_prefix">Errore:</string>
   <string name="general_error">Codice errore <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Impossibile accedere al servizio <xliff:g id="SERVICE">%1$s</xliff:g>. Riprova più tardi."\n"(Dettagli: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

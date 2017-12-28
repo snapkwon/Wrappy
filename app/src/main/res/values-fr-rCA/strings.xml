@@ -170,7 +170,7 @@
   <string name="new_messages_notify">Nouveau(x) message(s) de</string>
   <string name="app_unlocked">Activé &amp; déverrouillé</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Attention</string>
+  <string name="attention">Attention</string>
   <string name="error_prefix">Erreur :</string>
   <string name="general_error">Code d\'erreur <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Impossible de se connecter au service <xliff:g id="service">%1$s</xliff:g>. Veuillez ressayer ultérieurement.\n"(Détails : <xliff:g id="description">%2$s</xliff:g>)</string>
