@@ -35,7 +35,7 @@
             android:gravity="center"
             android:lines="1"
             android:singleLine="true"
-            android:text="Ringing..."
+            android:text="@string/ringing"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             app:font_type="bold" />
@@ -68,7 +68,7 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/btn_cancel_dialog"
                 android:padding="10dp"
-                android:text="Decline" />
+                android:text="@string/decline_invitation" />
 
             <net.ironrabbit.type.CustomTypefaceButton
                 android:id="@+id/btnAccept"
@@ -77,7 +77,7 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/btn_ok_dialog"
                 android:padding="10dp"
-                android:text="Accept"
+                android:text="@string/accept_invitation"
                 android:textColor="@color/finestWhite" />
         </LinearLayout>
 

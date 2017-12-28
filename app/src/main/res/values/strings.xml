@@ -489,5 +489,20 @@
     <string name="message_fail_import">Failed to import , please try again</string>
     <string name="backup">BACKUP</string>
     <string name="title_member_group_setting">Member</string>
+    <string name="ringing">Ringing...</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="mobile_phone">Mobile Phone</string>
+    <string name="gender">Gender</string>
+    <string name="submit">Submit</string>
+    <string name="change_security_question">Change Security Question</string>
+    <string name="logout">Logout</string>
+    <string name="block_user">Block user</string>
+    <string name="share_contact">Share Contact</string>
+    <string name="send_message">Send Message</string>
+    <string name="choose_your_secret_question">Choose your secret question</string>
+    <string name="next">NEXT</string>
+    <string name="complete">COMPLETE</string>
+    <string name="username_title">Username *</string>
 
 </resources>
