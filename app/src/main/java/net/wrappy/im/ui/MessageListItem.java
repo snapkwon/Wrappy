@@ -17,6 +17,7 @@
 
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -58,6 +59,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.provider.Imps;
@@ -68,6 +70,7 @@ import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.LinkifyHelper;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.Utils;
 
@@ -176,7 +179,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
-                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference ,String textsearch) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference, String textsearch) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -215,7 +218,7 @@ public class MessageListItem extends FrameLayout {
                     mHolder.mTextViewForMessages.setVisibility(View.GONE);
                     boolean isJpeg = mimeType.contains("jpg") || mimeType.contains("jpeg");
 
-                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg);
+                    showMediaThumbnail(mimeType, mediaUri, id, mHolder, isJpeg, true);
 
                     mHolder.mMediaContainer.setVisibility(View.VISIBLE);
 
@@ -243,7 +246,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + assetPath);
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
                 } catch (Exception e) {
                     Log.e(ImApp.LOG_TAG, "error loading sticker bitmap: " + cmds[1], e);
                     cmdSuccess = false;
@@ -272,7 +275,7 @@ public class MessageListItem extends FrameLayout {
                     Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 
                     //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
                 } catch (Exception e) {
                     cmdSuccess = false;
                 }
@@ -290,11 +293,9 @@ public class MessageListItem extends FrameLayout {
             //    mHolder.mContainer.setBackgroundColor(getResources().getColor(R.color.holo_blue_bright));
 
             if (lastMessage.length() > 0) {
-                if(textsearch.isEmpty())
-                {
+                if (textsearch.isEmpty()) {
                     mHolder.mTextViewForMessages.setText(new SpannableString((lastMessage)));
-                }
-                else {
+                } else {
                     lastMessage = lastMessage.replaceAll(textsearch, "<font color='red'>" + textsearch + "</font>");
                     mHolder.mTextViewForMessages.setText(new SpannableString(Html.fromHtml(lastMessage)));
                 }
@@ -376,6 +377,10 @@ public class MessageListItem extends FrameLayout {
     }
 
     private boolean showMediaThumbnail(String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop) {
+        return showMediaThumbnail(mimeType, mediaUri, id, holder, centerCrop, false);
+    }
+
+    private boolean showMediaThumbnail(String mimeType, Uri mediaUri, int id, MessageViewHolder holder, boolean centerCrop, boolean isIncoming) {
         this.mediaUri = mediaUri;
         this.mimeType = mimeType;
 
@@ -390,7 +395,7 @@ public class MessageListItem extends FrameLayout {
             }
         }
 
-        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
+        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
 
         holder.mTextViewForMessages.setText(lastMessage);
         holder.mTextViewForMessages.setVisibility(View.GONE);
@@ -403,22 +408,13 @@ public class MessageListItem extends FrameLayout {
         if (mimeType.startsWith("image/")) {
             setImageThumbnail(getContext().getContentResolver(), id, holder, mediaUri);
             holder.mMediaThumbnail.setBackgroundResource(android.R.color.transparent);
+            holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
 
         } else {
-
-            Glide.clear(holder.mMediaThumbnail);
-
-            try {
-                Glide.with(context)
-                        .load(R.drawable.ic_file)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(holder.mMediaThumbnail);
-            } catch (Exception e) {
-                Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
-            }
             holder.mMediaThumbnail.setImageResource(R.drawable.ic_file); // generic file icon
             holder.mTextViewForMessages.setText(mediaUri.getLastPathSegment() + " (" + mimeType + ")");
             holder.mTextViewForMessages.setVisibility(View.VISIBLE);
+            holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, isIncoming);
         }
 
         holder.mMediaContainer.setVisibility(View.VISIBLE);
@@ -440,7 +436,7 @@ public class MessageListItem extends FrameLayout {
             }
         }
 
-        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri);
+        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
         mHolder.mTextViewForMessages.setText("");
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView, mHolder.mTextViewForMessages);
         holder.mContainer.setBackgroundResource(android.R.color.transparent);
@@ -466,7 +462,7 @@ public class MessageListItem extends FrameLayout {
 
     private AudioPlayer mAudioPlayer;
 
-    public void onClickMediaIcon(String mimeType, Uri mediaUri) {
+    public void onClickMediaIcon(String mimeType, final Uri mediaUri, boolean isIncoming) {
 
 
         if (mimeType.startsWith("image")) {
@@ -493,7 +489,14 @@ public class MessageListItem extends FrameLayout {
 
 
         } else {
-            exportMediaFile();
+            if (isIncoming)
+                PopupUtils.showOKCancelDialog(context, "", context.getString(R.string.message_download_attachment), new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AppFuncs.openPickFolder((Activity) context, ConversationDetailActivity.REQUEST_PICK_FOLDER, mediaUri);
+                    }
+                }, null);
+//            exportMediaFile();
         }
     }
 
@@ -638,7 +641,7 @@ public class MessageListItem extends FrameLayout {
             Spannable highlighted = new SpannableString(original);
             while (start >= 0) {
                 int spanStart = Math.min(start, original.length());
-                int spanEnd = Math.min(start+word.length(), original.length());
+                int spanEnd = Math.min(start + word.length(), original.length());
 
                 highlighted.setSpan(new ForegroundColorSpan(color), spanStart,
                         spanEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -651,7 +654,7 @@ public class MessageListItem extends FrameLayout {
 
 
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
-                                    DeliveryState delivery, EncryptionState encryption , String textsearch ) {
+                                    DeliveryState delivery, EncryptionState encryption, String textsearch) {
 
         if (mAudioPlayer != null)
             mAudioPlayer.stop();
@@ -757,11 +760,9 @@ public class MessageListItem extends FrameLayout {
             }
 
         } else {
-            if(textsearch.isEmpty())
-            {
+            if (textsearch.isEmpty()) {
                 mHolder.mTextViewForMessages.setText(new SpannableString((lastMessage)));
-            }
-            else {
+            } else {
                 lastMessage = lastMessage.replaceAll(textsearch, "<font color='red'>" + textsearch + "</font>");
                 mHolder.mTextViewForMessages.setText(new SpannableString(Html.fromHtml(lastMessage)));
             }

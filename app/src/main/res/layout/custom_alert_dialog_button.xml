@@ -7,7 +7,7 @@
     android:layout_margin="10dp">
 
 
-    <net.wrappy.im.helper.layout.AppButton
+    <net.wrappy.im.helper.layout.AppTextView
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_weight="1"
@@ -16,7 +16,7 @@
         style="@style/AppButton_Cancel"
         android:text="@string/cancel" />
 
-    <net.ironrabbit.type.CustomTypefaceButton
+    <net.wrappy.im.helper.layout.AppTextView
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
