@@ -7,6 +7,7 @@ package me.tornado.android.patternlock;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ public class BasePatternActivity extends AppCompatActivity {
     protected Button mLeftButton;
     protected Button mRightButton;
     protected TextView bottomText;
+    protected View view;
 
     private final Runnable clearPatternRunnable = new Runnable() {
         public void run() {
@@ -40,6 +42,7 @@ public class BasePatternActivity extends AppCompatActivity {
         mLeftButton = (Button)findViewById(R.id.pl_left_button);
         mRightButton = (Button)findViewById(R.id.pl_right_button);
         bottomText = (TextView)findViewById(R.id.bottomText);
+        view = (View) findViewById(R.id.viewspan);
     }
 
     protected void removeClearPatternRunnable() {

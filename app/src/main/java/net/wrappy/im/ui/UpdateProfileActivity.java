@@ -106,7 +106,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnCameraAvatar;
 
-    ArrayAdapter<String> countryAdapter;
+    MySpinnerAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
@@ -534,4 +534,47 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
         return true;
     }
+
+    //custom adapter
+    public class MySpinnerAdapter extends ArrayAdapter<WpkCountry>{
+
+        private Context context;
+        private List<WpkCountry> myObjs;
+
+        public MySpinnerAdapter(Context context, int textViewResourceId,
+                                List<WpkCountry> myObjs) {
+            super(context,textViewResourceId,myObjs);
+            this.context = context;
+            this.myObjs = myObjs;
+        }
+
+        public int getCount(){
+            return myObjs.size();
+        }
+
+        public WpkCountry getItem(int position){
+            return myObjs.get(position);
+        }
+
+        public long getItemId(int position){
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView label = new TextView(context);
+            label.setText(myObjs.get(position).getPrefix());
+            return label;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView,
+                                    ViewGroup parent) {
+            TextView label = new TextView(context);
+            label.setText(myObjs.get(position).getL10N().get("en_US") + " " + myObjs.get(position).getPrefix());
+            return label;
+        }
+    }
+
+
 }
