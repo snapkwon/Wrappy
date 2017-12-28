@@ -91,7 +91,7 @@ Deja que las aplicaciones escriban datos al proveedor de contenido MI. </string>
   <string name="notify_groupchat_label">Invitación para chat en grupo</string>
   <string name="new_messages_notify">Nuevo(s) mensaje(s) de</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Atención</string>
+  <string name="attention">Atención</string>
   <string name="general_error">Código de error <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">No es posible iniciar sesión en el servicio <xliff:g id="SERVICE">%1$s</xliff:g>. Vuelve a intentarlo más tarde."\n"(Detalle:<xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La lista no se agregó.</string>

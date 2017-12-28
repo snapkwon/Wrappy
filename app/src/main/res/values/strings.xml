@@ -220,7 +220,8 @@
     <string name="starting_the_chatsecure_service_">Starting the Wrappy service…</string>
     <string name="app_unlocked">Wrappy is running</string>
     <!-- Alerts: Exceptions -->
-    <string name="error">Attention</string>
+    <string name="error">Error</string>
+    <string name="attention">Attention</string>
     <string name="error_prefix">Error: </string>
     <string name="general_error">Error code <xliff:g id="code">%1$d</xliff:g></string>
     <string name="login_service_failed">Unable to sign in to the <xliff:g id="service">%1$s</xliff:g> service. Please try again later.\n(Detail: <xliff:g id="description">%2$s</xliff:g>)</string>
@@ -550,5 +551,25 @@
     <string name="error_creating_group">Create Group Fail</string>
     <string name="select_file_to_send">Select File</string>
     <string name="google_play_services_not_available">Google Play Services is not available.</string>
+    <string name="english">English</string>
+    <string name="copied_text">Copied Text</string>
+    <string name="history">HISTORY</string>
+    <string name="activity">Activity</string>
+    <string name="error_when_refresh_token">can not refresh access token : please retry!</string>
+    <string name="registration">Registration</string>
+    <string name="update_profile_success">Update Success</string>
+    <string name="update_profile_fail">Update Fail</string>
+    <string name="error_upload_image">Upload fail</string>
+    <string name="logout_all_devices">Logout all devices</string>
+    <string name="logout_device">Logout this device</string>
+    <string name="message_remove_avatar_success">Remove Avatar Success</string>
+    <string name="error_invalid_email">Invalid email format</string>
+    <string name="error_get_user_profile">Could note get user profile</string>
+    <string name="hint_password"><small><i>Input Password</i></small></string>
+    <string name="error_reset_password">Reset password fail</string>
+    <string name="error_username_or_password">The username or password is incorrect</string>
+    <string name="error_empty_username">username cannot be empty</string>
+    <string name="warning">Warning</string>
+    <string name="error_tranferring_file">Error transferring file:</string><!-- this flow should be defined again -->
 
 </resources>

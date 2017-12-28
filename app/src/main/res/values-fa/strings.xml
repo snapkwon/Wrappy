@@ -144,7 +144,7 @@
   <string name="notify_groupchat_label">دعوتنامه گفتگوی گروهی</string>
   <string name="new_messages_notify">پیام(های) تازه از طرف</string>
   <!--Alerts: Exceptions-->
-  <string name="error">توجه</string>
+  <string name="attention">توجه</string>
   <string name="error_prefix">خطا:</string>
   <string name="general_error">خطای شماره <xliff:g id="code">%1$d</xliff:g></string>
   <string name="add_list_failed">لیست اضافه نشد.</string>

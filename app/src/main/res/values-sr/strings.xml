@@ -170,7 +170,7 @@
   <string name="new_messages_notify">Нове поруке од</string>
   <string name="app_unlocked">Активирано и откључано</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Пажња</string>
+  <string name="attention">Пажња</string>
   <string name="error_prefix">Грешка: </string>
   <string name="general_error">Код грешке <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Не могу да се пријавим на <xliff:g id="service">%1$s</xliff:g> сервис. Покушајте поново касније.\n(Детаљи: <xliff:g id="description">%2$s</xliff:g>)</string>

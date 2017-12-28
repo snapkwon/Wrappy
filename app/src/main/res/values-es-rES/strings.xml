@@ -171,7 +171,7 @@ cuentas configuradas.\n\n¡Pulse aquí para añadir una!</string>
   <string name="new_messages_notify">Nuevo mensaje de:</string>
   <string name="app_unlocked">Activado y desclausurado</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Atención</string>
+  <string name="attention">Atención</string>
   <string name="error_prefix">Error:</string>
   <string name="general_error">Código de error <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">No se pudo abrir sesión en el servicio <xliff:g id="SERVICE">%1$s</xliff:g>. Inténtelo de nuevo más tarde.\n(Detalle: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

@@ -46,7 +46,6 @@ public class ContactListAdapter extends IContactList.Stub {
 
     public int addContact(String address, String nickname) {
         if (address == null) {
-            RemoteImService.debug("Address can't be null!");
             return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;
         }
 
@@ -90,7 +89,6 @@ public class ContactListAdapter extends IContactList.Stub {
 
     public void setName(String name) {
         if (name == null) {
-            RemoteImService.debug("Name can't be null!");
             return;
         }
 

@@ -176,7 +176,7 @@
   <string name="starting_the_chatsecure_service_">Wrappy 서비스 시작 중…</string>
   <string name="app_unlocked">Wrappy이 작동중입니다</string>
   <!--Alerts: Exceptions-->
-  <string name="error">주의</string>
+  <string name="attention">주의</string>
   <string name="error_prefix">오류:</string>
   <string name="general_error">오류 코드 <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed"><xliff:g id="SERVICE">%1$s</xliff:g> 서비스에 로그인할 수 없습니다. 잠시 후에 다시 시도해 주세요."\n"(세부정보: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

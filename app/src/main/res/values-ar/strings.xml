@@ -171,7 +171,7 @@
   <string name="new_messages_notify">رسالة جديدة من</string>
   <string name="app_unlocked">تم التفعيل و فتح القفل</string>
   <!--Alerts: Exceptions-->
-  <string name="error">انتباه</string>
+  <string name="attention">انتباه</string>
   <string name="error_prefix">خطأ:</string>
   <string name="general_error">رمز الخطأ: <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">غير قادر على تسجيل الدخول إلى <xliff:g id="service">%1$s</xliff:g> . حاول مرة أخرى لاحقاً. التفاصيل:    <xliff:g id="description">%2$s</xliff:g>

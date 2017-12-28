@@ -145,7 +145,7 @@ public class PopupUtils {
         handleTexts(dialogView, title, message);
         EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
         if (isPassword) {
-            edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+            edt.setHint(Html.fromHtml(context.getString(R.string.hint_password)));
         } else {
             edt.setInputType(InputType.TYPE_CLASS_TEXT);
             edt.setText(data);

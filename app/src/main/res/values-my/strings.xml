@@ -104,7 +104,7 @@
   <string name="notify_groupchat_label">အုပ်စုလိုက် စကားဝိုင်း တောင်းဆိုခြင်း</string>
   <string name="new_messages_notify">စာအသစ်၊ ပို့သူမှာ </string>
   <!--Alerts: Exceptions-->
-  <string name="error">အာရုံစိုက်ရန်</string>
+  <string name="attention">အာရုံစိုက်ရန်</string>
   <string name="add_list_failed">စာရင်းအားမပေါင်းထည့်လိုက်ပါ</string>
   <string name="block_contact_failed">အဆက်အသွယ်ကို ပိတ်ဆို့ထားခြင်း မရှိပါ။</string>
   <string name="unblock_contact_failed">အဆက်အသွယ်ကို ပိတ်ဆို့မှုဖွင့်ထားခြင်း မရှိပါ။</string>

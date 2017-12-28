@@ -68,7 +68,7 @@
   <!--Alerts: Notifications-->
   <string name="notify_groupchat_label">Skupina pozvánky do chatu</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Pozor</string>
+  <string name="attention">Pozor</string>
   <string name="add_list_failed">Zoznam nebol pridaný.</string>
   <string name="block_contact_failed">Kontakt nebol blokovaný.</string>
   <string name="unblock_contact_failed">Kontakt nebol odblokovaný.</string>

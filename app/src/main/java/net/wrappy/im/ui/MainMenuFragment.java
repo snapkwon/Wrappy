@@ -102,18 +102,18 @@ public class MainMenuFragment extends Fragment {
                 break;
             case R.id.lnMainMenuLogout:
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, "Logout all devices");
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
                 sheetCells.add(sheetCell);
                 BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
                             confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
-                            AppFuncs.alert(getActivity(), "Logout this device", true);
+                            AppFuncs.alert(getActivity(), getString(R.string.logout_device), true);
                         } else if (index == 2) {
-                            AppFuncs.alert(getActivity(), "Logout all devices", true);
+                            AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
                         }
                     }
                 });

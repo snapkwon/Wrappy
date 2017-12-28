@@ -162,7 +162,7 @@ Chạm vào để mời kết nối.</string>
   <string name="new_messages_notify">(Các) phần chat mới từ</string>
   <string name="app_unlocked">Đã kích hoạt&amp; mở khóa</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Lưu Ý</string>
+  <string name="attention">Lưu Ý</string>
   <string name="general_error">Mã số lỗi &lt;xliff id=\"code\"&gt;%1$d&lt;/xliff&gt;</string>
   <string name="add_list_failed">Không thêm vào được danh sách.</string>
   <string name="block_contact_failed">Bạn chat chưa bị chặn.</string>

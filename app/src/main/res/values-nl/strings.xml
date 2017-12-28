@@ -178,7 +178,7 @@
   <string name="starting_the_chatsecure_service_">De Wrappy-dienst wordt gestart…</string>
   <string name="app_unlocked">Wrappy draait</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Opgelet</string>
+  <string name="attention">Opgelet</string>
   <string name="error_prefix">Fout:</string>
   <string name="general_error">Foutcode <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Kan niet aanmelden bij de <xliff:g id="service">%1$s</xliff:g>-dienst. Probeer het later opnieuw.\n(Details: <xliff:g id="description">%2$s</xliff:g>)</string>

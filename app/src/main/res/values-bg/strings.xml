@@ -175,7 +175,7 @@
   <string name="new_messages_notify">Ново съобщение от</string>
   <string name="app_unlocked">Активиран &amp; отключен</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Внимание</string>
+  <string name="attention">Внимание</string>
   <string name="error_prefix">Грешка:</string>
   <string name="general_error">Грешка с код <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Неуспешен опит за вписване в <xliff:g id="service">%1$s</xliff:g>. Моля, опитайте отново по-късно\n(Информация: <xliff:g id="description">%2$s</xliff:g>)</string>

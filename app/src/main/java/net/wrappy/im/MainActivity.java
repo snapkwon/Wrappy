@@ -92,7 +92,6 @@ import net.wrappy.im.ui.MainMenuFragment;
 import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.WalletFragment;
 import net.wrappy.im.ui.Welcome_Wallet_Fragment;
-import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -706,23 +705,6 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-
-            case R.id.menu_settings:
-                Intent sintent = new Intent(this, SettingActivity.class);
-                startActivityForResult(sintent, REQUEST_CHANGE_SETTINGS);
-                return true;
-
-            case R.id.menu_list_normal:
-//                clearFilters();
-                return true;
-
-            case R.id.menu_list_archive:
-//                enableArchiveFilter();
-                return true;
-
-            case R.id.menu_lock_reset:
-                resetPassphrase();
                 return true;
         }
         return super.onOptionsItemSelected(item);

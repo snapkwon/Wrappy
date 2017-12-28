@@ -180,7 +180,7 @@
   <string name="starting_the_chatsecure_service_">Wrappy サービスを開始しています…</string>
   <string name="app_unlocked">有効化 &amp; ロック解除しました</string>
   <!--Alerts: Exceptions-->
-  <string name="error">注意</string>
+  <string name="attention">注意</string>
   <string name="error_prefix">エラー: </string>
   <string name="general_error">エラーコード<xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed"><xliff:g id="SERVICE">%1$s</xliff:g>サービスにログインできませんでした。しばらくしてからやり直してください。"\n"（詳細:<xliff:g id="DESCRIPTION">%2$s</xliff:g>）</string>
