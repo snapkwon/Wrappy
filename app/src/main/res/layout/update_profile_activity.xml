@@ -138,9 +138,9 @@
                                 android:id="@+id/spnProfileCountryCodes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:prompt="@string/_via_orbot"/>
+                                android:prompt="@string/_via_orbot" />
 
-                          <net.wrappy.im.helper.layout.AppEditTextView
+                            <net.wrappy.im.helper.layout.AppEditTextView
                                 android:id="@+id/edProfilePhone"
                                 style="@style/AppText02"
                                 android:layout_width="match_parent"
@@ -187,16 +187,15 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="20dp">
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical">
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileComplete"
-                            style="@style/AppButton01"
+                            style="@style/AppButton_OK"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/complete"
-                            style="@style/AppButton_OK" />
+                            android:text="@string/complete" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

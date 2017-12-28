@@ -35,15 +35,15 @@
                     android:layout_gravity="center_horizontal"
                     android:padding="10dp" />
             </LinearLayout>
-          
+
             <net.wrappy.im.helper.layout.AppButton
                 android:id="@+id/btnQuestionComplete"
+                style="@style/AppButton_OK"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_next"
-                style="@style/AppButton_OK"
                 android:layout_margin="16dp"
-                android:enabled="true" />
+                android:enabled="true"
+                android:text="@string/btn_next" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

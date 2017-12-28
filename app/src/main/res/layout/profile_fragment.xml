@@ -235,12 +235,12 @@
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileSubmit"
+                            style="@style/AppButton_OK"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="@string/btn_submit"
-                            android:visibility="gone"
-                            style="@style/AppButton_OK"
-                            android:layout_marginTop="10dp"/>
+                            android:visibility="gone" />
                     </LinearLayout>
                 </LinearLayout>
 
