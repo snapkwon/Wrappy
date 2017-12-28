@@ -31,6 +31,7 @@
         android:layout_height="72dp"
         android:layout_marginLeft="72dp"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="0dp">
 
         <RelativeLayout
@@ -110,8 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#bebebe"
-            android:layout_marginTop="20dp"/>
-
+            android:layout_marginTop="13dp"/>
 
     </LinearLayout>
 
