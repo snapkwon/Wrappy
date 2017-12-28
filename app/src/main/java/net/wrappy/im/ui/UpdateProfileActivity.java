@@ -479,8 +479,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             signInHelper.activateAccount(account.providerId, account.accountId);
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
+            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+
             try {
-                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, account.username);
+                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, hash, account.username);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -26,6 +26,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
@@ -36,8 +37,12 @@ import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.jivesoftware.smack.util.stringencoder.Base64;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.UUID;
 
 public class DatabaseUtils {
 
@@ -47,7 +52,7 @@ public class DatabaseUtils {
     }
 
     public static Cursor queryAccountsForProvider(ContentResolver cr, String[] projection,
-            long providerId) {
+                                                  long providerId) {
         StringBuilder where = new StringBuilder(Imps.Account.ACTIVE);
         where.append("=1 AND ").append(Imps.Account.PROVIDER).append('=').append(providerId);
         Cursor c = cr.query(Imps.Account.CONTENT_URI, projection, where.toString(), null, null);
@@ -79,7 +84,7 @@ public class DatabaseUtils {
     }
 
     public static Drawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height) throws DecoderException {
-        return getAvatarFromAddress(cr,address,width,height,true);
+        return getAvatarFromAddress(cr, address, width, height, true);
     }
 
     public static Drawable getAvatarFromAddress(ContentResolver cr, String address, int width, int height, boolean getRound) throws DecoderException {
@@ -88,7 +93,7 @@ public class DatabaseUtils {
 
         if (data != null)
             if (getRound)
-              return decodeRoundAvatar(data, width, height);
+                return decodeRoundAvatar(data, width, height);
             else
                 return decodeSquareAvatar(data, width, height);
         else
@@ -98,7 +103,7 @@ public class DatabaseUtils {
 
     public static byte[] getAvatarBytesFromAddress(ContentResolver cr, String address) throws DecoderException {
 
-        String[] projection =  {Imps.Avatars.DATA};
+        String[] projection = {Imps.Avatars.DATA};
         String[] args = {address};
         String query = Imps.Avatars.CONTACT + " LIKE ?";
         Cursor cursor = cr.query(Imps.Avatars.CONTENT_URI, projection,
@@ -117,6 +122,27 @@ public class DatabaseUtils {
 
     }
 
+    public static String getAvatarFromAddress(ContentResolver cr, String address) {
+
+        String[] projection = {Imps.Avatars.DATA};
+        String[] args = {address};
+        String query = Imps.Avatars.CONTACT + " LIKE ?";
+        Cursor cursor = cr.query(Imps.Avatars.CONTENT_URI, projection,
+                query, args, Imps.Avatars.DEFAULT_SORT_ORDER);
+
+        String data = null;
+
+        if (cursor != null) {
+            if (cursor.moveToFirst())
+                data = cursor.getString(0);
+
+            cursor.close();
+        }
+
+        return data;
+
+    }
+
     public static Uri getAvatarUri(Uri baseUri, long providerId, long accountId) {
         Uri.Builder builder = baseUri.buildUpon();
         ContentUris.appendId(builder, providerId);
@@ -125,65 +151,83 @@ public class DatabaseUtils {
     }
 
     public static void updateAvatarBlob(ContentResolver resolver, Uri updateUri, byte[] data,
-            String username) {
+                                        String username) {
         ContentValues values = new ContentValues(3);
         values.put(Imps.Avatars.DATA, data);
 
         StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
         buf.append("=?");
 
-        String[] selectionArgs = new String[] { username };
+        String[] selectionArgs = new String[]{username};
 
         resolver.update(updateUri, values, buf.toString(), selectionArgs);
 
     }
 
     public static boolean hasAvatarContact(ContentResolver resolver, Uri updateUri,
-            String username) {
+                                           String username) {
         ContentValues values = new ContentValues(3);
         values.put(Imps.Avatars.CONTACT, username);
 
         StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
         buf.append("=?");
 
-        String[] selectionArgs = new String[] { username };
+        String[] selectionArgs = new String[]{username};
 
         return resolver.update(updateUri, values, buf.toString(), selectionArgs) > 0;
 
     }
 
     public static boolean doesAvatarHashExist(ContentResolver resolver, Uri queryUri,
-            String jid, String hash) {
+                                              String jid, String hash) {
 
-//        StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
-//        buf.append("=?");
-//        buf.append(" AND ");
-//        buf.append(Imps.Avatars.HASH);
-//        buf.append("=?");
-//
-//        String[] selectionArgs = new String[] { jid, hash };
-//
-//        Cursor cursor = resolver.query(queryUri, null, buf.toString(), selectionArgs, null);
-//        if (cursor == null)
-//            return false;
-//        try {
-//            return cursor.getCount() > 0;
-//        } finally {
-//            cursor.close();
-//        }
-        return false;
+        StringBuilder buf = new StringBuilder(Imps.Avatars.CONTACT);
+        buf.append("=?");
+        buf.append(" AND ");
+        buf.append(Imps.Avatars.HASH);
+        buf.append("=?");
+
+        String[] selectionArgs = new String[]{jid, hash};
+
+        Cursor cursor = resolver.query(queryUri, null, buf.toString(), selectionArgs, null);
+        if (cursor == null)
+            return false;
+        try {
+            return cursor.getCount() > 0;
+        } finally {
+            cursor.close();
+        }
     }
 
-    public static void insertAvatarBlob(ContentResolver resolver, Uri updateUri, long providerId, long accountId, String avatarReference, String bannerReference,
-            String contact) {
+    public static void insertAvatarHash(ContentResolver resolver, Uri updateUri, long providerId, long accountId, String avatarReference, String hash,
+                                        String contact) {
+        insertAvatarBlob(resolver, updateUri, providerId, accountId, avatarReference, null, hash, contact);
+    }
+
+    public static void insertAvatarBlob(ContentResolver resolver, Uri updateUri, long providerId, long accountId, String avatarReference, String bannerReference, String hash,
+                                        String contact) {
         AppFuncs.log("insertAvatarBlob");
-        ContentValues values = new ContentValues(5);
+        ContentValues values = new ContentValues();
         values.put(Imps.Avatars.CONTACT, contact);
         values.put(Imps.Avatars.DATA, avatarReference);
         values.put(Imps.Avatars.PROVIDER, providerId);
         values.put(Imps.Avatars.ACCOUNT, accountId);
-        values.put(Imps.Avatars.BANNER, bannerReference);
+        if (!TextUtils.isEmpty(bannerReference)) {
+            values.put(Imps.Avatars.BANNER, bannerReference);
+        }
+        values.put(Imps.Avatars.HASH, hash);
         AppFuncs.log(values.toString());
+
+        String selection = Imps.Avatars.CONTACT + "='" + contact + "'";
+        Cursor cursor = resolver.query(updateUri, new String[]{Imps.Avatars._ID},
+                selection, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            long avatarId = cursor.getLong(0);
+            Uri uri = ContentUris.withAppendedId(updateUri, avatarId);
+            resolver.update(uri, values, null, null);
+        } else {
+            resolver.insert(updateUri, values);
+        }
         resolver.insert(updateUri, values);
 
     }
@@ -195,12 +239,10 @@ public class DatabaseUtils {
         BitmapFactory.decodeByteArray(data, 0, data.length, options);
         options.inSampleSize = calculateInSampleSize(options, width, height);
         options.inJustDecodeBounds = false;
-        Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length,options);
-        if (b != null)
-        {
+        Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        if (b != null) {
             return new BitmapDrawable(b);
-        }
-        else
+        } else
             return null;
     }
 
@@ -208,54 +250,52 @@ public class DatabaseUtils {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(data, 0, data.length,options);
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
         options.inSampleSize = calculateInSampleSize(options, width, height);
         options.inJustDecodeBounds = false;
-        Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length,options);
-        if (b != null)
-        {
+        Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        if (b != null) {
             RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(b);
             return avatar;
-        }
-        else
+        } else
             return null;
     }
 
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
-    // Raw height and width of image
-    final int height = options.outHeight;
-    final int width = options.outWidth;
-    int inSampleSize = 1;
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
 
-    if (height > reqHeight || width > reqWidth) {
+        if (height > reqHeight || width > reqWidth) {
 
-        // Calculate ratios of height and width to requested height and width
-        final int heightRatio = Math.round((float) height / (float) reqHeight);
-        final int widthRatio = Math.round((float) width / (float) reqWidth);
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
 
-        // Choose the smallest ratio as inSampleSize value, this will guarantee
-        // a final image with both dimensions larger than or equal to the
-        // requested height and width.
-        inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
     }
-
-    return inSampleSize;
-}
 
     /**
      * Update IM provider database for a plugin using newly loaded information.
      *
-     * @param cr the resolver
-     * @param providerName the plugin provider name
+     * @param cr               the resolver
+     * @param providerName     the plugin provider name
      * @param providerFullName the full name
-     * @param signUpUrl the plugin's service signup URL
-     * @param config the plugin's settings
+     * @param signUpUrl        the plugin's service signup URL
+     * @param config           the plugin's settings
      * @return the provider ID of the plugin
      */
     public static long updateProviderDb(ContentResolver cr, String providerName,
-            String providerFullName, String signUpUrl, Map<String, String> config) {
+                                        String providerFullName, String signUpUrl, Map<String, String> config) {
         boolean versionChanged;
 
         // query provider data
@@ -273,13 +313,13 @@ public class DatabaseUtils {
             clearBrandingResourceMapCache(cr, providerId);
 
             Log.d(TAG, "Plugin " + providerName + "(" + providerId
-                       + ") has a version change. Database updated.");
+                    + ") has a version change. Database updated.");
         } else {
             // new plugin, not loaded before, insert the provider data
             providerId = insertProviderRow(cr, providerName, providerFullName, signUpUrl);
 
             Log.d(TAG, "Plugin " + providerName + "(" + providerId
-                       + ") is new. Provider added to IM db.");
+                    + ") is new. Provider added to IM db.");
         }
 
         // plugin provider has been inserted/updated, we need to update settings
@@ -288,7 +328,9 @@ public class DatabaseUtils {
         return providerId;
     }
 
-    /** Clear the branding resource map cache. */
+    /**
+     * Clear the branding resource map cache.
+     */
     private static int clearBrandingResourceMapCache(ContentResolver cr, long providerId) {
         StringBuilder where = new StringBuilder();
         where.append(Imps.BrandingResourceMapCache.PROVIDER_ID);
@@ -297,9 +339,11 @@ public class DatabaseUtils {
         return cr.delete(Imps.BrandingResourceMapCache.CONTENT_URI, where.toString(), null);
     }
 
-    /** Insert the plugin settings into the database. */
+    /**
+     * Insert the plugin settings into the database.
+     */
     private static int saveProviderSettings(ContentResolver cr, long providerId,
-            Map<String, String> config) {
+                                            Map<String, String> config) {
         ContentValues[] settingValues = new ContentValues[config.size()];
         int index = 0;
         for (Map.Entry<String, String> entry : config.entrySet()) {
@@ -312,9 +356,11 @@ public class DatabaseUtils {
         return cr.bulkInsert(Imps.ProviderSettings.CONTENT_URI, settingValues);
     }
 
-    /** Insert a new plugin provider to the provider table. */
+    /**
+     * Insert a new plugin provider to the provider table.
+     */
     private static long insertProviderRow(ContentResolver cr, String providerName,
-            String providerFullName, String signUpUrl) {
+                                          String providerFullName, String signUpUrl) {
         ContentValues values = new ContentValues(3);
         values.put(Imps.Provider.NAME, providerName);
         values.put(Imps.Provider.FULLNAME, providerFullName);
@@ -324,9 +370,11 @@ public class DatabaseUtils {
         return ContentUris.parseId(result);
     }
 
-    /** Update the data of a plugin provider. */
+    /**
+     * Update the data of a plugin provider.
+     */
     private static int updateProviderRow(ContentResolver cr, long providerId,
-            String providerFullName, String signUpUrl) {
+                                         String providerFullName, String signUpUrl) {
         // Update the full name, signup url and category each time when the plugin change
         // instead of specific version change because this is called only once.
         // It's ok to update them even the values are not changed.
@@ -345,12 +393,32 @@ public class DatabaseUtils {
      * version.
      */
     private static boolean isPluginVersionChanged(ContentResolver cr, long providerId,
-            String newVersion) {
+                                                  String newVersion) {
         String oldVersion = Imps.ProviderSettings.getStringValue(cr, providerId,
                 ImConfigNames.PLUGIN_VERSION);
         if (oldVersion == null) {
             return true;
         }
         return !oldVersion.equals(newVersion);
+    }
+
+    public static String convertByteArrayToUUID(byte[] bytes) {
+        String encodedAvatar = Base64.encodeToString(bytes);
+        byte[] data = new byte[0];
+        try {
+            data = Hex.decodeHex(encodedAvatar.toCharArray());
+        } catch (DecoderException e) {
+            e.printStackTrace();
+        }
+        return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong()).toString();
+    }
+
+    public static String generateHashFromAvatar(String avatar) {
+        if (!TextUtils.isEmpty(avatar)) {
+            VCard vCard = new VCard();
+            vCard.setAvatar(avatar, "image/jpeg");
+            return vCard.getAvatarHash();
+        }
+        return "";
     }
 }

@@ -2844,6 +2844,8 @@ public class ConversationView {
             ;
             final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
+            final String avatar = Imps.Avatars.getAvatar(mActivity.getContentResolver(), address);
+
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -2955,7 +2957,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, mRemoteReference, textsearch);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, avatar, textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:

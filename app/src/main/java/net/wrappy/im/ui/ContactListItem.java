@@ -123,7 +123,7 @@ public class ContactListItem extends FrameLayout {
 
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
-        final String reference = cursor.getString(COLUMN_AVATAR_HASH);
+        final String reference = cursor.getString(COLUMN_AVATAR_DATA);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
         String s = DatabaseUtils.dumpCursorToString(cursor);
