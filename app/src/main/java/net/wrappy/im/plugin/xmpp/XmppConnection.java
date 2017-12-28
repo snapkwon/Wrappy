@@ -3124,7 +3124,7 @@ public class XmppConnection extends ImConnection {
                 }
             } catch (Exception e) {
                 debug(TAG, "remove entry failed: " + e.getMessage());
-                throw new RuntimeException(e);
+//                throw new RuntimeException(e);
             }
 
 
