@@ -3241,6 +3241,8 @@ public class ConversationView {
 
         stickerCode.append(":");
 
+        stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
+
         sendMessageAsync(stickerCode.toString());
     }
 

@@ -45,6 +45,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
@@ -256,12 +257,22 @@ public class ConversationListItem extends FrameLayout {
 //                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         String resultMessage = message;
-                        Debug.e("message: " + message);
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                             resultMessage = ConferenceUtils.convertConferenceMessage(message);
-                            Debug.e("resultMessage: " + resultMessage);
+                            holder.mLine2.setText(resultMessage);
+                        } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
+                                        message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
+                                        message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
+
+                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
+                            String senderSticker = message.split(":")[2];
+
+                            if (senderSticker.startsWith(account)) {
+                                holder.mLine2.setText("You sent a sticker");
+                            } else {
+                                holder.mLine2.setText(senderSticker + " sent a sticker");
+                            }
                         }
-                        holder.mLine2.setText(resultMessage);
                         holder.mLine2.setLines(1);
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
