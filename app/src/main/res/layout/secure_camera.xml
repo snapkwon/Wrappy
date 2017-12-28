@@ -18,7 +18,6 @@
         android:layout_marginRight="35dp"
         android:layout_marginTop="118dp"        
         android:padding="10dip"
-        android:text="zero"
         android:textSize="30sp"
         android:visibility="gone" />
 

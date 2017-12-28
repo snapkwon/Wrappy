@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/wallet_sent"
-        android:title="Sent"/>
+        android:title="@string/sent"/>
     <item
         android:id="@+id/wallet_receiver"
-        android:title="Received"/>
+        android:title="@string/received"/>
     <item
         android:id="@+id/wallet_all"
-        android:title="All"/>
+        android:title="@string/all"/>
 </menu>

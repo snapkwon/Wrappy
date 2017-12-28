@@ -185,7 +185,7 @@
   <string name="starting_the_chatsecure_service_">འཛོམས་ཀྱི་ཞབས་ཞུ་འགོ་འཛུགས་བཞིན་པ།</string>
   <string name="app_unlocked">&amp; ནུས་ཅན་བཟོས་ཚར། སྒོ་ཕྱེས་ཡོད། </string>
   <!--Alerts: Exceptions-->
-  <string name="error">དོ་སྣང་བྱོས། </string>
+  <string name="attention">དོ་སྣང་བྱོས། </string>
   <string name="error_prefix">ནོར་འཁྲུལ།</string>
   <string name="general_error">ཨང་ཚབ་ནོར་བ། <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed"> <xliff:g id="service">%1$s</xliff:g> འདི་ལ་འཛུལ་ཐུབ་ཀྱི་མི་འདུག རྗེས་སུ་བསྐྱར་དུ་ཚོད་ལྟ་བྱེད་རོགས།(ཞིབ་ཕྲ། <xliff:g id="description">%2$s</xliff:g>)</string>

@@ -40,10 +40,10 @@ import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.AccountViewFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
-import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -58,7 +58,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import static net.wrappy.im.ui.ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS;
+import static net.wrappy.im.util.BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS;
 
 public class ImUrlActivity extends Activity {
     private static final String TAG = "ImUrlActivity";
@@ -262,28 +262,6 @@ public class ImUrlActivity extends Activity {
             createNewAccount();
             return;
         }
-    }
-
-    /*
-    private void addAccount(long providerId) {
-        Intent intent = new Intent(this, AccountActivity.class);
-        intent.setAction(Intent.ACTION_INSERT);
-        intent.setData(ContentUris.withAppendedId(Imps.Provider.CONTENT_URI, providerId));
-//        intent.putExtra(ImApp.EXTRA_INTENT_SEND_TO_USER, mToAddress);
-
-        if (mFromAddress != null)
-            intent.putExtra("newuser", mFromAddress + '@' + mHost);
-
-        startActivity(intent);
-    }*/
-
-    private void editAccount(long accountId) {
-        Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-        Intent intent = new Intent(this, AccountViewFragment.class);
-        intent.setAction(Intent.ACTION_EDIT);
-        intent.setData(accountUri);
-        intent.putExtra(ImApp.EXTRA_INTENT_SEND_TO_USER, mToAddress);
-        startActivityForResult(intent, REQUEST_SIGNIN_ACCOUNT);
     }
 
     private void signInAccount(long accountId, long providerId, String password) {
@@ -609,21 +587,21 @@ public class ImUrlActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_PICK_CONTACTS) {
 
-                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String username = resultIntent.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
                 if (username != null) {
-                    long providerId = resultIntent.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, -1);
-                    long accountId = resultIntent.getLongExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT, -1);
+                    long providerId = resultIntent.getLongExtra(BundleKeyConstant.PROVIDER_KEY, -1);
+                    long accountId = resultIntent.getLongExtra(BundleKeyConstant.ACCOUNT_KEY, -1);
 
                     sendOtrInBand(username, providerId, accountId);
 
                 } else {
 
                     //send to multiple
-                    ArrayList<String> usernames = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                    ArrayList<String> usernames = resultIntent.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
                     if (usernames != null) {
-                        ArrayList<Integer> providers = resultIntent.getIntegerArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER);
-                        ArrayList<Integer> accounts = resultIntent.getIntegerArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_ACCOUNT);
+                        ArrayList<Integer> providers = resultIntent.getIntegerArrayListExtra(BundleKeyConstant.PROVIDER_KEY);
+                        ArrayList<Integer> accounts = resultIntent.getIntegerArrayListExtra(BundleKeyConstant.ACCOUNT_KEY);
 
                         if (providers != null && accounts != null)
                             for (int i = 0; i < providers.size(); i++) {
@@ -750,7 +728,7 @@ public class ImUrlActivity extends Activity {
                 ArrayList<String> extras = new ArrayList<>();
                 extras.add("");
                 i.putExtra(EXTRA_EXCLUDED_CONTACTS, extras);
-                i.putExtra(ContactsPickerActivity.EXTRA_SHOW_GROUPS, true);
+                i.putExtra(BundleKeyConstant.EXTRA_SHOW_GROUPS, true);
                 startActivityForResult(i, REQUEST_PICK_CONTACTS);
 
                 break;
@@ -759,15 +737,6 @@ public class ImUrlActivity extends Activity {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    void showLockScreen() {
-        Intent intent = new Intent(this, LockScreenActivity.class);
-        //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(RouterActivity.EXTRA_ORIGINAL_INTENT, getIntent());
-        startActivity(intent);
-        finish();
-
     }
 
     private void doOnCreate() {

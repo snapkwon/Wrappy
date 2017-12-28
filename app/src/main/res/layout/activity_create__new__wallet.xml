@@ -1,73 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
+
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        style="@style/match_width"
+        android:orientation="vertical">
 
         <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enter a password"
-            android:textColor="#444344"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:textSize="16sp"/>
+            android:text="@string/message_enter_password"
+            android:textColor="#444344"
+            android:textSize="16sp" />
 
         <net.ironrabbit.type.CustomTypefaceEditText
             android:id="@+id/edtpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:textColor="#444344"
-            android:inputType="textPassword"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:hint="password"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:paddingLeft="5dp"
             android:drawableRight="@drawable/ic_visibility_black_24dp"
-            />
+            android:ems="10"
+            android:hint="@string/lock_screen_passphrase_hint"
+            android:inputType="textPassword"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingTop="10dp"
+            android:textColor="#444344" />
 
         <net.ironrabbit.type.CustomTypefaceTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Repeat password"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
+            android:text="@string/repeat_password_title"
             android:textColor="#444344"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <net.ironrabbit.type.CustomTypefaceEditText
             android:id="@+id/edtrepassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:textColor="#444344"
-            android:inputType="textPassword"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
+            android:ems="10"
+            android:hint="@string/lock_screen_passphrase_hint"
+            android:inputType="textPassword"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:paddingLeft="5dp"
-            android:hint="password"
-            />
+            android:paddingTop="10dp"
+            android:textColor="#444344" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/alert_password_wallet_background"
-            >
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -75,35 +72,33 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="15dp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
-                android:background="@drawable/icon_warning"
-                />
+                android:layout_marginTop="15dp"
+                android:background="@drawable/icon_warning" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="#676767"
                 android:layout_marginBottom="15dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
-                android:textSize="12sp"
-                android:text="@string/alert_password_wallet"/>
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:text="@string/alert_password_wallet"
+                android:textColor="#676767"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <net.ironrabbit.type.CustomTypefaceButton
             android:id="@+id/btcreatenew"
             android:layout_width="300dp"
-            android:layout_gravity="center"
-            android:background="@drawable/regbtn_states"
             android:layout_height="wrap_content"
-            android:text="Create New Wallet"
-            android:textColor="#fff"
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp"
             android:layout_marginTop="25dp"
-            android:layout_marginBottom="15dp"/>
-
+            android:background="@drawable/regbtn_states"
+            android:text="@string/title_create_new_wallet"
+            android:textColor="#fff" />
 
     </LinearLayout>
 </ScrollView>

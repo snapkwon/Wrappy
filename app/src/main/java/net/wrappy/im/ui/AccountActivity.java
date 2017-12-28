@@ -55,6 +55,7 @@ import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SignoutActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.LogCleaner;
 
 import java.lang.ref.WeakReference;
@@ -64,7 +65,6 @@ import java.util.Locale;
 public class AccountActivity extends BaseActivity {
 
     public static final String TAG = "AccountActivity";
-    private static final String ACCOUNT_URI_KEY = "accountUri";
     private long mProviderId = 0;
     private long mAccountId = 0;
     static final int REQUEST_SIGN_IN = RESULT_FIRST_USER + 1;
@@ -121,8 +121,8 @@ public class AccountActivity extends BaseActivity {
 
         String action = i.getAction();
 
-        if (i.hasExtra("isSignedIn"))
-            isSignedIn = i.getBooleanExtra("isSignedIn", false);
+        if (i.hasExtra(BundleKeyConstant.IS_SIGN_IN))
+            isSignedIn = i.getBooleanExtra(BundleKeyConstant.IS_SIGN_IN, false);
 
 
         final ProviderDef provider;
@@ -287,7 +287,7 @@ public class AccountActivity extends BaseActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mIsNewAccount = getIntent().getBooleanExtra("register", false);
+        mIsNewAccount = getIntent().getBooleanExtra(BundleKeyConstant.REGISTER_KEY, false);
 
         mEditUserAccount = (EditText) findViewById(R.id.edtName);
         mEditUserAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -452,13 +452,13 @@ public class AccountActivity extends BaseActivity {
 
         updateWidgetState();
 
-        if (i.hasExtra("title")) {
-            String title = i.getExtras().getString("title");
+        if (i.hasExtra(BundleKeyConstant.TITLE_KEY)) {
+            String title = i.getExtras().getString(BundleKeyConstant.TITLE_KEY);
             setTitle(title);
         }
 
-        if (i.hasExtra("newuser")) {
-            String newuser = i.getExtras().getString("newuser");
+        if (i.hasExtra(BundleKeyConstant.NEW_USER_KEY)) {
+            String newuser = i.getExtras().getString(BundleKeyConstant.NEW_USER_KEY);
             mEditUserAccount.setText(newuser);
 
             parseAccount(newuser);
@@ -466,15 +466,11 @@ public class AccountActivity extends BaseActivity {
 
         }
 
-        if (i.hasExtra("newpass")) {
-            mEditPass.setText(i.getExtras().getString("newpass"));
+        if (i.hasExtra(BundleKeyConstant.NEW_PASS_KEY)) {
+            mEditPass.setText(i.getExtras().getString(BundleKeyConstant.NEW_PASS_KEY));
             mEditPass.setVisibility(View.GONE);
             //     mRememberPass.setChecked(true);((MainActivity)getActivity()).showGroupChatDialog();
             //     mRememberPass.setVisibility(View.GONE);
-        }
-
-        if (i.getBooleanExtra("hideTor", false)) {
-            //     mUseTor.setVisibility(View.GONE);
         }
 
     }
@@ -643,13 +639,13 @@ public class AccountActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mAccountUri = savedInstanceState.getParcelable(ACCOUNT_URI_KEY);
+        mAccountUri = savedInstanceState.getParcelable(BundleKeyConstant.ACCOUNT_URI_KEY);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(ACCOUNT_URI_KEY, mAccountUri);
+        outState.putParcelable(BundleKeyConstant.ACCOUNT_URI_KEY, mAccountUri);
     }
 
     void signOutUsingActivity() {

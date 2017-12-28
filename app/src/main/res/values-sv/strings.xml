@@ -175,7 +175,7 @@ Nätverkstrafik (även i bakgrunden) krävs för att kunna logga in med appen.</
   <string name="new_messages_notify">Nytt meddelande(n) från</string>
   <string name="app_unlocked">Aktiverad &amp; olåst</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Obs!</string>
+  <string name="attention">Obs!</string>
   <string name="error_prefix">Fel:</string>
   <string name="general_error">Felkod <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Det gick inte att logga in till tjänsten <xliff:g id="SERVICE">%1$s</xliff:g>. Försök igen senare."\n"(Information: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>

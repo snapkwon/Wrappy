@@ -5,16 +5,14 @@
     <item
         android:id="@+id/removewallet"
         android:icon="@drawable/ic_trash"
-        android:title="Remove"
-        app:showAsAction="always"
-        android:orderInCategory="1"/>
+        android:orderInCategory="1"
+        android:title="@string/remove"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/changepasswallet"
         android:icon="@drawable/ic_launcher"
-        android:title="Remove"
-        app:showAsAction="always"
-        android:orderInCategory="0"/>
-
-
+        android:orderInCategory="0"
+        android:title="@string/title_change_password_wallet"
+        app:showAsAction="always" />
 </menu>

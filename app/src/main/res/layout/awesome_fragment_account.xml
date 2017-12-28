@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -18,19 +17,17 @@
  */
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:padding="0dp"
-		android:gravity="center_horizontal"
-		>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="0dp">
 
 
         <com.theartofdev.edmodo.cropper.CropImageView
@@ -38,240 +35,224 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
+
         <ImageView
+            android:id="@+id/imageAvatar"
             android:layout_width="match_parent"
             android:layout_height="198dp"
-            android:src="@drawable/avatar_unknown"
-            android:id="@+id/imageAvatar"
-            android:scaleType="centerCrop"
             android:layout_margin="0dp"
-            />
+            android:scaleType="centerCrop"
+            android:src="@drawable/avatar_unknown" />
 
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:padding="10dp">
-
-			<RelativeLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				>
-			<net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/tvNickname"
-				android:selectAllOnFocus="true"
-				android:layout_width="wrap_content"
-				android:ellipsize="end"
-				android:maxWidth="200dp"
-				android:layout_height="wrap_content"
-				android:hint="@string/account_setup_example_email_address"
-				android:autoLink="none"
-				android:cursorVisible="true"
-				android:inputType="textEmailAddress"
-				android:text="user person"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				/>
-				<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:src="@drawable/ic_mode_edit_black_18dp"
-					android:id="@+id/edit_account_nickname"
-					android:padding="6dp"
-					android:layout_toRightOf="@+id/tvNickname"
-					/>
-
-
-</RelativeLayout>
-
-
-			<RelativeLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				>
-			<net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/edtName"
-			                               android:selectAllOnFocus="true"
-			                               android:layout_width="wrap_content"
-			                               android:layout_height="wrap_content"
-			                               android:hint="@string/account_setup_example_email_address"
-			                               android:autoLink="none"
-				android:visibility="gone"
-			                               android:cursorVisible="true"
-			                               android:inputType="textEmailAddress"
-			                               android:text="user@domain.com"
-			                               android:textAppearance="?android:attr/textAppearanceMedium"
-			                               android:textColor="?contactTextSecondary"
-			
-			                               />
-
-				</RelativeLayout>
-			
-			                       <RelativeLayout
-			                               android:layout_width="match_parent"
-			                               android:layout_height="wrap_content"
-			                               android:orientation="horizontal"
-			                           >
-			                       <TextView android:id="@+id/edtPass"
-			                               android:layout_width="wrap_content"
-			                               android:layout_height="wrap_content"
-			                               android:selectAllOnFocus="true"
-			                               android:text="*************"
-			                               android:textAppearance="?android:attr/textAppearanceMedium"
-			                               />
-			                               <ImageView
-			                                       android:layout_width="wrap_content"
-			                                       android:layout_height="20dp"
-			                                       android:id="@+id/btnShowPass"
-			                                       android:src="@drawable/ic_visibility_black_24dp"
-			                                       android:background="@android:color/transparent"
-											   android:layout_alignParentRight="true"
-
-											   />
-									   <ImageView
-										   android:layout_width="wrap_content"
-										   android:layout_height="wrap_content"
-										   android:src="@drawable/ic_mode_edit_black_18dp"
-										   android:layout_toStartOf="@+id/btnShowPass"
-										   android:layout_toLeftOf="@+id/btnShowPass"
-										   android:id="@+id/edit_account_password"
-										   android:layout_marginRight="6dp"
-
-										   />
-			                               </RelativeLayout>
-
-
-
-
-
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autoLink="none"
-            android:text="@string/security_code"
-			android:visibility="gone"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?contactTextSecondary"
-            android:layout_gravity="start"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/tvNickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="none"
+                    android:cursorVisible="true"
+                    android:ellipsize="end"
+                    android:hint="@string/account_setup_example_email_address"
+                    android:inputType="textEmailAddress"
+                    android:maxWidth="200dp"
+                    android:selectAllOnFocus="true"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <ImageView
+                    android:id="@+id/edit_account_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tvNickname"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_mode_edit_black_18dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/edtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="none"
+                    android:cursorVisible="true"
+                    android:hint="@string/account_setup_example_email_address"
+                    android:inputType="textEmailAddress"
+                    android:selectAllOnFocus="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?contactTextSecondary"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/edtPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:selectAllOnFocus="true"
+                    android:text="*************"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ImageView
+                    android:id="@+id/btnShowPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_visibility_black_24dp"
+
+                    />
+
+                <ImageView
+                    android:id="@+id/edit_account_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:layout_toLeftOf="@+id/btnShowPass"
+                    android:layout_toStartOf="@+id/btnShowPass"
+                    android:src="@drawable/ic_mode_edit_black_18dp"
+
+                    />
+            </RelativeLayout>
+
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:autoLink="none"
+                android:text="@string/security_code"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?contactTextSecondary"
+                android:visibility="gone" />
+
+            <!--
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left"
+        >
+
+
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/qrcode"
+                android:background="#dddddd"
+                android:src="@drawable/qr"
+                android:layout_alignParentLeft="true"
+                />
+CustomTypefaceTextViewView android:id="@+id/tvFingerprint"
+                               android:selectAllOnFocus="true"
+                               android:layout_width="200dp"
+                               android:layout_height="wrap_content"
+                                android:layout_marginLeft="6dp"
+                               android:autoLink="none"
+                               android:text=""
+                               android:textAppearance="?android:attr/textAppearanceSmall"
+                               android:textColor="?contactTextSecondary"
+
+            android:layout_toRightOf="@+id/qrcode"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/qrshare"
+            android:layout_centerVertical="true"
+
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_menu_share"
             />
 
-			<!--
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:gravity="left"
-		>
+    </RelativeLayout>
+    -->
+
+            <RelativeLayout
+                android:id="@+id/omemodisplay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="left"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
 
+                <ImageView
+                    android:id="@+id/omemoqrcode"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="#dddddd"
+                    android:src="@drawable/qr" />
 
-			<ImageView
-				android:layout_width="64dp"
-				android:layout_height="64dp"
-				android:id="@+id/qrcode"
-				android:background="#dddddd"
-				android:src="@drawable/qr"
-				android:layout_alignParentLeft="true"
-				/>
-CustomTypefaceTextViewView android:id="@+id/tvFingerprint"
-		                       android:selectAllOnFocus="true"
-		                       android:layout_width="200dp"
-		                       android:layout_height="wrap_content"
-								android:layout_marginLeft="6dp"
-		                       android:autoLink="none"
-		                       android:text=""
-		                       android:textAppearance="?android:attr/textAppearanceSmall"
-		                       android:textColor="?contactTextSecondary"
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/omemoFingerprint"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/omemoqrcode"
+                    android:autoLink="none"
+                    android:selectAllOnFocus="true"
+                    android:text=""
 
-			android:layout_toRightOf="@+id/qrcode"
-			android:layout_centerVertical="true"
-			/>
-		<ImageView
-			android:layout_width="48dp"
-			android:layout_height="48dp"
-			android:id="@+id/qrshare"
-			android:layout_centerVertical="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?contactTextSecondary" />
 
-			android:layout_alignParentRight="true"
-			android:src="@android:drawable/ic_menu_share"
-			/>
+                <ImageView
+                    android:id="@+id/omemoqrshare"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@android:drawable/ic_menu_share" />
 
-	</RelativeLayout>
-	-->
+            </RelativeLayout>
 
-		<RelativeLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="left"
-			android:visibility="gone"
-            android:id="@+id/omemodisplay"
-            android:layout_marginTop="6dp"
-			>
+            <!--
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp"
+                android:layout_margin="10dp"
+                >
+            <Button android:id="@+id/btnLock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lock_app"
+                android:drawableLeft="@drawable/ic_menu_encrypt"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                android:background="?toolbarBackground"
+                android:padding="6dp"
+                android:layout_margin="1dp"
 
+                />
 
-			<ImageView
-				android:layout_width="64dp"
-				android:layout_height="64dp"
-				android:id="@+id/omemoqrcode"
-				android:background="#dddddd"
-				android:src="@drawable/qr"
-				android:layout_alignParentLeft="true"
-				/>
-
-			<net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/omemoFingerprint"
-				android:selectAllOnFocus="true"
-				android:layout_width="200dp"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="6dp"
-				android:autoLink="none"
-				android:text=""
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?contactTextSecondary"
-
-				android:layout_toRightOf="@+id/omemoqrcode"
-				android:layout_centerVertical="true"
-				/>
-			<ImageView
-				android:layout_width="48dp"
-				android:layout_height="48dp"
-				android:id="@+id/omemoqrshare"
-				android:layout_centerVertical="true"
-
-				android:layout_alignParentRight="true"
-				android:src="@android:drawable/ic_menu_share"
-				/>
-
-		</RelativeLayout>
-
-		<!--
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:layout_marginTop="5dp"
-            android:layout_margin="10dp"
-			>
-		<Button android:id="@+id/btnLock"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/lock_app"
-			android:drawableLeft="@drawable/ic_menu_encrypt"
-			android:textAppearance="?android:attr/textAppearanceMediumInverse"
-			android:background="?toolbarBackground"
-			android:padding="6dp"
-            android:layout_margin="1dp"
-
-			/>
-
-		</LinearLayout>
--->
+            </LinearLayout>
+    -->
 
         </LinearLayout>
-	</LinearLayout>
+    </LinearLayout>
 </ScrollView>

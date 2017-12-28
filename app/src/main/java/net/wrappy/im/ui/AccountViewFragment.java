@@ -57,6 +57,7 @@ import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.XmppUriHelper;
 
@@ -66,8 +67,7 @@ import java.util.Locale;
 
 public class AccountViewFragment extends Fragment {
 
-    public static final String TAG = "AccountActivity";
-    private static final String ACCOUNT_URI_KEY = "accountUri";
+    public static final String TAG = "AccountViewFragment";
     private long mProviderId = 0;
     private long mAccountId = 0;
     static final int REQUEST_SIGN_IN = 100001;
@@ -132,8 +132,8 @@ public class AccountViewFragment extends Fragment {
 
         String action = i.getAction();
 
-        if (i.hasExtra("isSignedIn"))
-            isSignedIn = i.getBooleanExtra("isSignedIn", false);
+        if (i.hasExtra(BundleKeyConstant.IS_SIGN_IN))
+            isSignedIn = i.getBooleanExtra(BundleKeyConstant.IS_SIGN_IN, false);
 
 
         final ProviderDef provider;
@@ -287,7 +287,7 @@ public class AccountViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.account_activity, container, false);
 
 
-        mIsNewAccount = getIntent().getBooleanExtra("register", false);
+        mIsNewAccount = getIntent().getBooleanExtra(BundleKeyConstant.REGISTER_KEY, false);
 
 
         mEditUserAccount = (EditText) view.findViewById(R.id.edtName);
@@ -461,12 +461,12 @@ public class AccountViewFragment extends Fragment {
 
         updateWidgetState();
 
-        if (i.hasExtra("title")) {
-            String title = i.getExtras().getString("title");
+        if (i.hasExtra(BundleKeyConstant.TITLE_KEY)) {
+            String title = i.getExtras().getString(BundleKeyConstant.TITLE_KEY);
         }
 
-        if (i.hasExtra("newuser")) {
-            String newuser = i.getExtras().getString("newuser");
+        if (i.hasExtra(BundleKeyConstant.NEW_USER_KEY)) {
+            String newuser = i.getExtras().getString(BundleKeyConstant.NEW_USER_KEY);
             mEditUserAccount.setText(newuser);
 
             parseAccount(newuser);
@@ -474,17 +474,12 @@ public class AccountViewFragment extends Fragment {
 
         }
 
-        if (i.hasExtra("newpass")) {
-            mEditPass.setText(i.getExtras().getString("newpass"));
+        if (i.hasExtra(BundleKeyConstant.NEW_PASS_KEY)) {
+            mEditPass.setText(i.getExtras().getString(BundleKeyConstant.NEW_PASS_KEY));
             mEditPass.setVisibility(View.GONE);
             //mRememberPass.setChecked(true);
             //mRememberPass.setVisibility(View.GONE);
         }
-
-        if (i.getBooleanExtra("hideTor", false)) {
-            //mUseTor.setVisibility(View.GONE);
-        }
-
     }
 
     private boolean checkForKey(String userid) {

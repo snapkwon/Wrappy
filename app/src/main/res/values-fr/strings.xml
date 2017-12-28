@@ -161,7 +161,7 @@ Appuyez pour inviter.</string>
   <string name="new_messages_notify">Nouveau(x) message(s) de</string>
   <string name="app_unlocked">Activé &amp; déverrouillé</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Avertissement</string>
+  <string name="attention">Avertissement</string>
   <string name="general_error">Code d\'erreur <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">Connexion au service <xliff:g id="SERVICE">%1$s</xliff:g> impossible. Veuillez réessayer ultérieurement.\"\n\"(Détails : <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La liste n\'a pas été ajoutée.</string>

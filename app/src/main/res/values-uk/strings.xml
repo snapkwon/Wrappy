@@ -92,7 +92,7 @@
   <string name="prompt_create_new_account_">Створити новий екаунт?</string>
   <!--Alerts: Notifications-->
   <!--Alerts: Exceptions-->
-  <string name="error">Увага</string>
+  <string name="attention">Увага</string>
   <string name="error_prefix">Помилка:</string>
   <string name="service_unavaiable">Сервер недосяжний.</string>
   <string name="timeout">Час очікування сервера минув.</string>

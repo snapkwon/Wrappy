@@ -177,7 +177,7 @@ Für die Anmeldung wird eine Datenverbindung (inklusive Hintergrunddaten) benöt
   <string name="new_messages_notify">Neue Nachricht(en) von</string>
   <string name="app_unlocked">Aktiviert und entsperrt</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Achtung</string>
+  <string name="attention">Achtung</string>
   <string name="error_prefix">Fehler: </string>
   <string name="general_error">Fehlercode <xliff:g id="code">%1$d</xliff:g></string>
   <string name="login_service_failed">Anmeldung beim <xliff:g id="service">%1$s</xliff:g>-Dienst nicht möglich. Bitte versuchen Sie es später erneut. (Details: <xliff:g id="description">%2$s</xliff:g>)</string>

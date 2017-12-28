@@ -33,6 +33,7 @@ import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.ChatSessionInitTask;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.List;
@@ -60,15 +61,15 @@ public class ContactDisplayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mContactId = getIntent().getLongExtra("contactId", -1);
+        mContactId = getIntent().getLongExtra(BundleKeyConstant.CONTACT_ID_KEY, -1);
 
-        mNickname = getIntent().getStringExtra("nickname");
-        mUsername = getIntent().getStringExtra("address");
-        mProviderId = getIntent().getLongExtra("provider", -1);
-        mAccountId = getIntent().getLongExtra("account", -1);
+        mNickname = getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+        mUsername = getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY);
+        mProviderId = getIntent().getLongExtra(BundleKeyConstant.PROVIDER_KEY, -1);
+        mAccountId = getIntent().getLongExtra(BundleKeyConstant.ACCOUNT_KEY, -1);
         String email = ImApp.getEmail(mUsername);
 
-        String remoteFingerprint = getIntent().getStringExtra("fingerprint");
+        String remoteFingerprint = getIntent().getStringExtra(BundleKeyConstant.FINGER_PRINT_KEY);
         try {// TungNP: finish activity to avoid crash
             mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
         } catch (Exception e) {
@@ -142,7 +143,7 @@ public class ContactDisplayActivity extends BaseActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         GalleryListFragment fragment = new GalleryListFragment();
         Bundle args = new Bundle();
-        args.putInt("contactId", contactId);
+        args.putInt(BundleKeyConstant.CONTACT_ID_KEY, contactId);
         fragment.setArguments(args);
         fragmentTransaction.add(R.id.fragment_container, fragment, "MyActivity");
         fragmentTransaction.commit();
@@ -230,8 +231,7 @@ public class ContactDisplayActivity extends BaseActivity {
         } catch (RemoteException re) {
         }
 
-        Intent intent = ConversationDetailActivity.getStartIntent(this);
-        intent.putExtra("id", mContactId);
+        Intent intent = ConversationDetailActivity.getStartIntent(this, mContactId);
         startActivity(intent);
         finish();
     }

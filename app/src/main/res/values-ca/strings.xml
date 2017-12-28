@@ -143,7 +143,7 @@
   <string name="notify_groupchat_label">Invitació de xat de grup</string>
   <string name="new_messages_notify">Nou(s) missatge(S) de</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Atenció</string>
+  <string name="attention">Atenció</string>
   <string name="add_list_failed">No s\'ha afegit la llista.</string>
   <string name="block_contact_failed">No s\'ha bloquejat el contacte.</string>
   <string name="unblock_contact_failed">No s\'ha desbloquejat el contacte.</string>

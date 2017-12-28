@@ -128,7 +128,7 @@
   <string name="group_chat_invite_notify_text">Nueva invitación a conversación en grupo de <xliff:g id="USER">%s</xliff:g></string>
   <string name="new_messages_notify">Nuevo mensaje de:</string>
   <!--Alerts: Exceptions-->
-  <string name="error">Atención</string>
+  <string name="attention">Atención</string>
   <string name="general_error">Código de error <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">No ha sido posible acceder al servicio <xliff:g id="SERVICE">%1$s</xliff:g>. Inténtelo de nuevo más tarde."\n"(Detalles: <xliff:g id="DESCRIPTION">%2$s</xliff:g>)</string>
   <string name="add_list_failed">La lista no se ha añadido.</string>

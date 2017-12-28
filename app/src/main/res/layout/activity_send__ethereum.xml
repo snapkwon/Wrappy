@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
     android:isScrollContainer="false">
+
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        style="@style/match_width"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,31 +18,31 @@
                 android:id="@+id/textbalancesendethereum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:text="Available Balance"
-                android:layout_marginTop="25dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="25dp"
+                android:gravity="left"
+                android:text="@string/available_balance"
+                android:textColor="#666666"
+                android:textSize="14sp" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/textbalance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textSize="32sp"
-                android:textColor="#EC657B"
-                android:text="0.000"
                 android:layout_marginBottom="25dp"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:gravity="left"
+                android:text="0.000"
+                android:textColor="#EC657B"
+                android:textSize="32sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
             android:layout_marginBottom="15dp"
+            android:layout_marginTop="25dp"
             android:orientation="vertical">
 
             <net.ironrabbit.type.CustomTypefaceTextView
@@ -51,7 +51,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="15dp"
                 android:layout_weight="1"
-                android:text="To address"
+                android:text="@string/to_address"
                 android:textColor="#2F3234"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -59,11 +59,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:weightSum="2"
-                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <net.ironrabbit.type.CustomTypefaceEditText
                     android:id="@+id/editETHadress"
@@ -71,8 +71,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
-                    android:hint="To address"
                     android:layout_weight="0.3"
+                    android:hint="@string/to_address"
                     android:textColor="#666666"
                     android:textColorHint="#666666"
                     android:textSize="14sp" />
@@ -88,13 +88,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|right"
-                        android:background="@drawable/icon_wallet_address"
-                        android:layout_marginRight="5dp" />
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/icon_wallet_address" />
                 </FrameLayout>
 
             </LinearLayout>
-
-
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:layout_width="match_parent"
@@ -102,7 +100,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="15dp"
                 android:layout_weight="1"
-                android:text="AMOUNT"
+                android:text="@string/amount"
                 android:textColor="#2F3234"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -111,9 +109,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:orientation="horizontal"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <net.ironrabbit.type.CustomTypefaceEditText
@@ -121,28 +119,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
                     android:hint="0"
                     android:inputType="numberDecimal"
                     android:textColor="#666666"
                     android:textColorHint="#666666"
-                    android:layout_weight="1"
                     android:textSize="14sp" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
 
                     <net.ironrabbit.type.CustomTypefaceButton
                         android:id="@+id/buttonETH"
-                        android:background="@drawable/regbtn_states"
                         android:layout_width="50dp"
                         android:layout_height="25dp"
                         android:layout_gravity="right|center"
                         android:layout_marginRight="15dp"
-                        android:text="ETH"
-                        android:textColor="#fff"/>
+                        android:background="@drawable/regbtn_states"
+                        android:text="@string/eth_unit"
+                        android:textColor="#fff" />
                 </FrameLayout>
 
             </LinearLayout>
@@ -150,11 +148,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:weightSum="2"
+                android:layout_marginBottom="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp">
+                android:layout_marginTop="10dp"
+                android:weightSum="2">
 
 
                 <net.ironrabbit.type.CustomTypefaceEditText
@@ -162,20 +160,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:hint="0"
                     android:layout_weight="1"
-                    android:focusableInTouchMode="false"
                     android:focusable="false"
-                    android:textIsSelectable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="0"
                     android:textColor="#666666"
                     android:textColorHint="#666666"
+                    android:textIsSelectable="false"
                     android:textSize="14sp" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
 
                     <net.ironrabbit.type.CustomTypefaceButton
                         android:id="@+id/buttonUSD"
@@ -184,7 +182,7 @@
                         android:layout_gravity="right|center"
                         android:layout_marginRight="15dp"
                         android:background="@drawable/whitebtn_states"
-                        android:text="USD" />
+                        android:text="@string/USD" />
                 </FrameLayout>
 
             </LinearLayout>
@@ -196,7 +194,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="15dp"
                 android:layout_weight="1"
-                android:text="DESCRIPTION"
+                android:text="@string/description"
                 android:textColor="#2F3234"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -216,11 +214,10 @@
                     android:layout_gravity="left"
                     android:layout_marginLeft="5dp"
                     android:gravity="top"
-                    android:hint="Description"
+                    android:hint="@string/description"
                     android:textColor="#666666"
                     android:textColorHint="#666666"
-                    android:textSize="14sp"
-                    />
+                    android:textSize="14sp" />
             </FrameLayout>
 
         </LinearLayout>
@@ -230,6 +227,6 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Send" />
+            android:text="@string/otr_qa_send" />
     </LinearLayout>
 </ScrollView>

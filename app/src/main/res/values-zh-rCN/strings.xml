@@ -182,7 +182,7 @@
   <string name="starting_the_chatsecure_service_">启动Zom服务</string>
   <string name="app_unlocked">激活的 &amp; 已解锁的</string>
   <!--Alerts: Exceptions-->
-  <string name="error">注意</string>
+  <string name="attention">注意</string>
   <string name="error_prefix">错误</string>
   <string name="general_error">错误代码 <xliff:g id="CODE">%1$d</xliff:g></string>
   <string name="login_service_failed">无法登录<xliff:g id="SERVICE">%1$s</xliff:g>服务。请稍后再试。"\n"（详细信息：<xliff:g id="DESCRIPTION">%2$s</xliff:g>）</string>

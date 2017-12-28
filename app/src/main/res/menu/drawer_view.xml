@@ -24,7 +24,7 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_verified_user_white_48dp"
-            android:title="Key Manager" />
+            android:title="@string/key_manager" />
         <item
             android:id="@+id/nav_messages"
             android:icon="@drawable/ic_people_white_36dp"
@@ -38,6 +38,6 @@
     <item
         android:id="@+id/menu_add_account"
         android:icon="@drawable/ic_menu_add_contact"
-        android:title="Add Another Account" />
+        android:title="@string/add_another_account" />
 
 </menu>

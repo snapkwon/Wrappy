@@ -55,6 +55,7 @@ import net.wrappy.im.provider.Imps;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.util.BundleKeyConstant;
 
 //import com.bumptech.glide.Glide;
 
@@ -478,12 +479,12 @@ public class ContactsListFragment extends Fragment {
                         */
 
                     Intent intent = new Intent(mContext,ProfileActivity.class);
-                    intent.putExtra("address", viewHolder.mAddress);
-                    intent.putExtra("nickname", viewHolder.mNickname);
-                    intent.putExtra("provider", viewHolder.mProviderId);
-                    intent.putExtra("account", viewHolder.mAccountId);
-                    intent.putExtra("contactId", viewHolder.mContactId);
-                    intent.putExtra("reference",reference);
+                    intent.putExtra(BundleKeyConstant.ADDRESS_KEY, viewHolder.mAddress);
+                    intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, viewHolder.mNickname);
+                    intent.putExtra(BundleKeyConstant.PROVIDER_KEY, viewHolder.mProviderId);
+                    intent.putExtra(BundleKeyConstant.ACCOUNT_KEY, viewHolder.mAccountId);
+                    intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, viewHolder.mContactId);
+                    intent.putExtra(BundleKeyConstant.REFERENCE_KEY,reference);
                     mContext.startActivity(intent);
 
                 }

@@ -14,6 +14,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.ConferenceActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
 
 import butterknife.BindView;
@@ -34,10 +35,6 @@ public class ConferencePopupActivity extends Activity {
     boolean isGroupChat;
     ConferenceMessage conference;
 
-    private static String KEY_NICK_NAME = "nickname";
-    private static String KEY_MESSAGE = "message";
-    private static String KEY_GROUP = "isGroup";
-
     public static Intent newIntentP2P(String nickname, String message, Uri uri) {
         return newIntent(nickname, message, uri, false);
     }
@@ -49,9 +46,9 @@ public class ConferencePopupActivity extends Activity {
     private static Intent newIntent(String nickname, String message, Uri uri, boolean isGroupChat) {
         Intent intent = new Intent(ImApp.sImApp, ConferencePopupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(KEY_NICK_NAME, nickname);
-        intent.putExtra(KEY_MESSAGE, message);
-        intent.putExtra(KEY_GROUP, isGroupChat);
+        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
+        intent.putExtra(BundleKeyConstant.KEY_MESSAGE, message);
+        intent.putExtra(BundleKeyConstant.KEY_GROUP, isGroupChat);
         intent.setData(uri);
         return intent;
     }
@@ -70,9 +67,9 @@ public class ConferencePopupActivity extends Activity {
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         if (intent != null) {
-            name = intent.getStringExtra(KEY_NICK_NAME);
-            message = intent.getStringExtra(KEY_MESSAGE);
-            isGroupChat = intent.getBooleanExtra(KEY_GROUP, false);
+            name = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+            message = intent.getStringExtra(BundleKeyConstant.KEY_MESSAGE);
+            isGroupChat = intent.getBooleanExtra(BundleKeyConstant.KEY_GROUP, false);
             messageUri = intent.getData();
             tvNameOfContact.setText(name);
             conference = new ConferenceMessage(message);
