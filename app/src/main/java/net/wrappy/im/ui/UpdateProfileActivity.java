@@ -106,7 +106,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnCameraAvatar;
 
-    MySpinnerAdapter countryAdapter;
+    ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
