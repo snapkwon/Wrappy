@@ -491,14 +491,14 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == ProfileFragment.AVATAR || requestCode == UCrop.REQUEST_CROP) {
+            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER || requestCode == UCrop.REQUEST_CROP) {
                 try {
                     ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
                     profileFragment.onActivityResult(requestCode, resultCode, data);
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            }else if (requestCode == REQUEST_CHANGE_SETTINGS) {
+            } else if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {

@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.ui.legacy.SettingActivity;
@@ -25,6 +27,7 @@ import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -36,6 +39,8 @@ public class MainMenuFragment extends Fragment {
 
     View mainView;
     MainActivity mainActivity;
+    @BindView(R.id.txtMainMenuVersionName)
+    AppTextView txtMainMenuVersionName;
 
     @Nullable
     @Override
@@ -43,6 +48,10 @@ public class MainMenuFragment extends Fragment {
         mainView = inflater.inflate(R.layout.main_menu_fragment, null);
         ButterKnife.bind(this, mainView);
         mainActivity = (MainActivity) getActivity();
+        String versionName = BuildConfig.VERSION_NAME;
+        if (versionName != null) {
+            txtMainMenuVersionName.setText(getString(R.string.app_version) + " " + versionName);
+        }
         return mainView;
     }
 
