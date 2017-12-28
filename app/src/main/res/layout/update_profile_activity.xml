@@ -137,8 +137,7 @@
                             <android.support.v7.widget.AppCompatSpinner
                                 android:id="@+id/spnProfileCountryCodes"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:prompt="@string/_via_orbot" />
+                                android:layout_height="wrap_content"/>
 
                             <net.wrappy.im.helper.layout.AppEditTextView
                                 android:id="@+id/edProfilePhone"
