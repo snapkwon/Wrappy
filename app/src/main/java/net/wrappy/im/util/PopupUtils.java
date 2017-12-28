@@ -97,8 +97,8 @@ public class PopupUtils {
     private static void handleButtons(final Dialog dialog, View dialogView, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, final EditText editText) {
         Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
         Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
-
         if (resOK > 0) {
+            btnOk.setStateListAnimator(null);
             btnOk.setText(resOK);
             btnOk.setVisibility(View.VISIBLE);
             btnOk.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +113,7 @@ public class PopupUtils {
             });
         } else btnOk.setVisibility(View.GONE);
         if (resCancel > 0) {
+            btnCancel.setStateListAnimator(null);
             btnCancel.setText(resCancel);
             btnCancel.setVisibility(View.VISIBLE);
             btnCancel.setOnClickListener(new View.OnClickListener() {

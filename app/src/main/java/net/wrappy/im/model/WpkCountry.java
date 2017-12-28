@@ -10,6 +10,9 @@ import java.util.HashMap;
  */
 
 public class WpkCountry extends T implements Parcelable {
+
+    final public static String country_en_US = "en_US";
+
     int id;
     HashMap<String,String> l10N;
     String code;

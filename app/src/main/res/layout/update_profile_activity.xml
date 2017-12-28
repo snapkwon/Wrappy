@@ -137,9 +137,10 @@
                             <android.support.v7.widget.AppCompatSpinner
                                 android:id="@+id/spnProfileCountryCodes"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:prompt="@string/_via_orbot"/>
 
-                            <net.wrappy.im.helper.layout.AppEditTextView
+                          <net.wrappy.im.helper.layout.AppEditTextView
                                 android:id="@+id/edProfilePhone"
                                 style="@style/AppText02"
                                 android:layout_width="match_parent"
@@ -186,26 +187,16 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
                         android:orientation="vertical"
-                        android:padding="10dp">
+                        android:layout_marginTop="20dp">
 
                         <net.wrappy.im.helper.layout.AppButton
                             android:id="@+id/btnProfileComplete"
                             style="@style/AppButton01"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/complete" />
-
-                        <net.wrappy.im.helper.layout.AppButton
-                            android:id="@+id/btnProfileSkip"
-                            style="@style/AppButton02"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:text="@string/skip"
-                            android:textColor="#676767"
-                            android:visibility="invisible" />
+                            android:text="@string/complete"
+                            style="@style/AppButton_OK" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

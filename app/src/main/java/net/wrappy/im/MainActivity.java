@@ -1040,7 +1040,7 @@ public class MainActivity extends BaseActivity {
             ImApp mApp = ImApp.sImApp;
             IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             if (conn.getState() == ImConnection.LOGGED_IN) {
-                String address = roster.getContact().getReference() + Constant.EMAIL_DOMAIN;
+                String address = roster.getContact().getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
                 ImApp.updateContact(address, roster.getContact(), conn);
                 IContactListManager manager = conn.getContactListManager();
                 Contact contact = new Contact(new XmppAddress(address), roster.getContact().getIdentifier(), Imps.Contacts.TYPE_NORMAL);

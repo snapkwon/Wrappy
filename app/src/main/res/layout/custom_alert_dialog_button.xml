@@ -7,21 +7,22 @@
     android:layout_margin="10dp">
 
 
-    <net.ironrabbit.type.CustomTypefaceButton
+    <net.wrappy.im.helper.layout.AppButton
         android:id="@+id/btnCancel"
-        android:layout_width="130dp"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@drawable/btn_cancel_dialog"
+        style="@style/AppButton_Cancel"
         android:text="@string/cancel" />
 
     <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/btnOk"
-        android:layout_width="130dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_margin="5dp"
-        android:background="@drawable/btn_ok_dialog"
-        android:text="@string/ok"
-        android:textColor="@color/finestWhite" />
+        style="@style/AppButton_OK"
+        android:text="@string/ok" />
 
 </LinearLayout>

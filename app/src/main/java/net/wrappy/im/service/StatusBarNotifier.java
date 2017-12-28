@@ -17,22 +17,6 @@
 
 package net.wrappy.im.service;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.Preferences;
-import net.wrappy.im.R;
-import net.wrappy.im.RouterActivity;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.provider.Imps;
-
-
-import net.wrappy.im.model.Contact;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.util.SystemServices;
-
-import java.util.ArrayList;
-
-import net.wrappy.im.MainActivity;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -46,6 +30,19 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.MainActivity;
+import net.wrappy.im.Preferences;
+import net.wrappy.im.R;
+import net.wrappy.im.RouterActivity;
+import net.wrappy.im.model.Contact;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.SystemServices;
+
+import java.util.ArrayList;
 
 public class StatusBarNotifier {
     private static final boolean DBG = false;
@@ -131,7 +128,9 @@ public class StatusBarNotifier {
         if (!Preferences.isNotificationEnabled()) {
             return;
         }
-        String title = contact.getName();
+
+        String title = ImApp.getNickname(contact.getAddress().getBareAddress());
+        ;
         String message = mContext.getString(R.string.invite_accepted);
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
