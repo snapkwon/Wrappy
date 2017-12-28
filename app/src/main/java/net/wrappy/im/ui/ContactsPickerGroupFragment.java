@@ -8,6 +8,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
@@ -22,8 +23,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yalantis.ucrop.UCrop;
+
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.BottomSheetCell;
@@ -67,6 +71,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     private Handler mHandler = new Handler();
     Bitmap bmpThumbnail;
     public Cursor cursor;
+    Uri resultUri;
 
     public static ContactsPickerGroupFragment newsIntance() {
         return new ContactsPickerGroupFragment();
@@ -113,9 +118,9 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     @Override
     public void onClick(View view) {
         ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-        BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+        BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
         sheetCells.add(sheetCell);
-        sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,getString(R.string.popup_choose_gallery));
+        sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
         sheetCells.add(sheetCell);
         PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
             @Override
@@ -139,21 +144,23 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         try {
             if (data != null) {
                 if (requestCode == IMAGE_AVARTA) {
-                    bmpThumbnail = AppFuncs.getBitmapFromIntentResult(getActivity(), data);
-                    if (bmpThumbnail!=null) {
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT,RelativeLayout.TRUE);
-                        imgGroupPhoto.setLayoutParams(layoutParams);
-                        imgGroupPhoto.requestLayout();
-                        imgGroupPhoto.setImageBitmap(bmpThumbnail);
+
+                    if (data.getData() != null) {
+                        AppFuncs.cropImage(getActivity(), data.getData(), true);
+
                     }
+                } else if (requestCode == UCrop.REQUEST_CROP) {
+                    resultUri = UCrop.getOutput(data);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                    imgGroupPhoto.setLayoutParams(layoutParams);
+                    imgGroupPhoto.requestLayout();
+                    GlideHelper.loadBitmap(getActivity(), imgGroupPhoto, resultUri.toString(), true);
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
     }
 
     public String getGroupName() {
@@ -163,23 +170,22 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     public ArrayList<String> getListUsername() {
         ArrayList<String> arrListMember = new ArrayList<>();
         try {
-            if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
-                do{
+            if (cursor != null && cursor.moveToFirst()) { //make sure you got results, and move to first row
+                do {
                     String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME); //column 1 for the current row
                     arrListMember.add(mName);
                 } while (cursor.moveToNext()); //move to next row in the query result
             }
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return arrListMember;
     }
 
-    public Bitmap getGroupPhoto() {
-        return bmpThumbnail;
+    public Uri getGroupUri() {
+        return resultUri;
     }
-
 
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<android.database.Cursor> {
@@ -236,7 +242,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
             cursor = newCursor;
             mAdapter.swapCursor(newCursor);
 
-            if(mActivity != null && isAdded())
+            if (mActivity != null && isAdded())
                 txtGroupNumbers.setText(getString(R.string.num_member_group_chat, String.valueOf(mAdapter.getCount())));
         }
 
@@ -262,7 +268,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
-            if(mActivity != null && isAdded())
+            if (mActivity != null && isAdded())
                 v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             return v;
         }

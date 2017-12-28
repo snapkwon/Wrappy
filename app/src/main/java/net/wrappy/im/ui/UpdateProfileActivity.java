@@ -2,13 +2,16 @@ package net.wrappy.im.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -55,12 +59,14 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
@@ -72,30 +78,43 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     private final int IMAGE_HEADER = 100;
     private final int IMAGE_AVATAR = 101;
+    private final int IMAGE_HEADER_UCROP = 102;
+    private final int IMAGE_AVATAR_UCROP = 103;
 
 
     boolean isFlag;
-    String user,email,phone,gender,password;
+    String user, email, phone, gender, password;
     Registration registrationData;
     AppFuncs appFuncs;
 
-    @BindView(R.id.spnProfileCountryCodes) AppCompatSpinner spnProfileCountryCodes;
-    @BindView(R.id.imgPhotoAvatar) CircleImageView imgAvatar;
-    @BindView(R.id.imgProfileHeader) ImageView imgHeader;
-    @BindView(R.id.edProfileUsername) EditText edUsername;
-    @BindView(R.id.edProfileEmail) EditText edEmail;
-    @BindView(R.id.edProfilePhone) EditText edPhone;
-    @BindView(R.id.spinnerProfileGender) AppCompatSpinner spinnerProfileGender;
-    @BindView(R.id.btnProfileCameraHeader) ImageButton btnCameraHeader;
-    @BindView(R.id.btnPhotoCameraAvatar) ImageButton btnCameraAvatar;
+    @BindView(R.id.spnProfileCountryCodes)
+    AppCompatSpinner spnProfileCountryCodes;
+    @BindView(R.id.imgPhotoAvatar)
+    CircleImageView imgAvatar;
+    @BindView(R.id.imgProfileHeader)
+    ImageView imgHeader;
+    @BindView(R.id.edProfileUsername)
+    EditText edUsername;
+    @BindView(R.id.edProfileEmail)
+    EditText edEmail;
+    @BindView(R.id.edProfilePhone)
+    EditText edPhone;
+    @BindView(R.id.spinnerProfileGender)
+    AppCompatSpinner spinnerProfileGender;
+    @BindView(R.id.btnProfileCameraHeader)
+    ImageButton btnCameraHeader;
+    @BindView(R.id.btnPhotoCameraAvatar)
+    ImageButton btnCameraAvatar;
 
     MySpinnerAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
+    List<WpkCountry> wpkCountry;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
         super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
         getSupportActionBar().setTitle("Update Profile");
@@ -129,26 +148,35 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (s!=null) {
-                        Type listType = new TypeToken<ArrayList<WpkCountry>>(){}.getType();
-                        List<WpkCountry> wpkCountry = new Gson().fromJson(s, listType);
+                    if (s != null) {
+                        Type listType = new TypeToken<ArrayList<WpkCountry>>() {
+                        }.getType();
+                        wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
                         ArrayList<String> strings = new ArrayList<>();
-                        for (int i=0; i < wpkCountry.size(); i++) {
-                            strings.add(wpkCountry.get(i).getPrefix());
+                        for (int i = 0; i < wpkCountry.size(); i++) {
+                            strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
-
-                        countryAdapter = new MySpinnerAdapter(UpdateProfileActivity.this,R.layout.update_profile_textview, wpkCountry);
-                       // countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
-
+                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings) {
+                            @NonNull
+                            @Override
+                            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
+                                final TextView t = (TextView)v.findViewById(android.R.id.text1);
+                                t.setText(wpkCountry.get(position).getPrefix());
+                                return v;
+                            }
+                        };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
     }
+
     Handler handler = new Handler();
     Runnable runnablePostData = new Runnable() {
         @Override
@@ -156,69 +184,65 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             appFuncs.dismissProgressWaiting();
             boolean isFileFail = false;
 
-             if (photoAvatar!=null && TextUtils.isEmpty(avatarReference)) {
-                 AppFuncs.log("avatar null");
-                 isFileFail = true;
-             }
-             if (photoHeader!=null && TextUtils.isEmpty(bannerReference)) {
-                 AppFuncs.log("banner null");
-                 isFileFail = true;
-             }
+            if (uriAvatar != null && TextUtils.isEmpty(avatarReference)) {
+                AppFuncs.log("avatar null");
+                isFileFail = true;
+            }
+            if (uriHeader != null && TextUtils.isEmpty(bannerReference)) {
+                AppFuncs.log("banner null");
+                isFileFail = true;
+            }
             AppFuncs.log("check");
-             if (!isFileFail) {
-                 postDataToServer();
-             } else {
-                 AppFuncs.log("update success");
-                 AppFuncs.alert(getApplicationContext(),"Upload File Fail", true);
-             }
+            if (!isFileFail) {
+                postDataToServer();
+            } else {
+                AppFuncs.log("update success");
+                AppFuncs.alert(getApplicationContext(), "Upload File Fail", true);
+            }
         }
     };
 
     @Optional
-    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar})
     @Override
     public void onClick(View view) {
         if (isFlag) {
             return;
-        } isFlag = true;
+        }
+        isFlag = true;
         try {
             if (view.getId() == R.id.btnProfileComplete) {
                 String error = validateData();
                 if (!TextUtils.isEmpty(error)) {
-                    AppFuncs.alert(getApplicationContext(),error,true);
+                    AppFuncs.alert(getApplicationContext(), error, true);
                     return;
                 }
                 appFuncs.showProgressWaiting(this);
                 boolean isFileExist = false;
-                if (photoAvatar!=null) {
+                if (uriAvatar != null) {
                     isFileExist = true;
                     AppFuncs.log("Upload Avatar");
-                    uploadFileProfile(photoAvatar, RestAPI.PHOTO_AVATAR);
+                    uploadFileProfile(uriAvatar, RestAPI.PHOTO_AVATAR);
                 }
-                if (photoHeader!=null) {
+                if (uriHeader != null) {
                     isFileExist = true;
                     AppFuncs.log("Upload Banner");
-                    uploadFileProfile(photoHeader, RestAPI.PHOTO_BRAND);
+                    uploadFileProfile(uriHeader, RestAPI.PHOTO_BRAND);
                 }
-                if (!isFileExist){
+                if (!isFileExist) {
                     postDataToServer();
                 } else {
-                    handler.postDelayed(runnablePostData,10000);
+                    handler.postDelayed(runnablePostData, 10000);
                 }
-            }
-            if (view.getId() == R.id.btnProfileSkip) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,getString(R.string.popup_choose_gallery));
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
                 sheetCells.add(sheetCell);
-                if (photoAvatar!=null) {
-                    sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,getString(R.string.popup_delete_photo));
+                if (uriAvatar != null) {
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
                 PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
@@ -232,7 +256,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                 AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
                                 break;
                             case 3:
-                                photoAvatar = null;
+                                uriAvatar = null;
                                 imgAvatar.setImageResource(R.drawable.avatar);
                                 break;
                             default:
@@ -242,12 +266,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1,R.drawable.ic_choose_camera, "Take Photo");
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, "Take Photo");
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2,R.drawable.ic_choose_gallery,"Choose from Gallery");
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, "Choose from Gallery");
                 sheetCells.add(sheetCell);
-                if (photoHeader!=null) {
-                    sheetCell = new BottomSheetCell(3,R.drawable.setting_delete,"Delete Photo");
+                if (uriHeader != null) {
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, "Delete Photo");
                     sheetCells.add(sheetCell);
                 }
                 PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
@@ -261,7 +285,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                 AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
                                 break;
                             case 3:
-                                photoHeader = null;
+                                uriHeader = null;
                                 imgHeader.setImageBitmap(null);
                                 break;
                             default:
@@ -269,38 +293,38 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     }
                 }).show();
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-        }finally {
+        } finally {
             isFlag = false;
         }
     }
 
-    private void uploadFileProfile(final Bitmap bitmap, final String type) {
-        RestAPI.uploadFile(getApplicationContext(),AppFuncs.convertBitmapToFile(getApplicationContext(),bitmap),RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+    private void uploadFileProfile(final Uri resultUri, final String type) {
+        RestAPI.uploadFile(getApplicationContext(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
 
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
                     AppFuncs.log("Upload " + reference);
-                    if (result!=null) {
-                        if (type==RestAPI.PHOTO_AVATAR) {
+                    if (result != null) {
+                        if (type == RestAPI.PHOTO_AVATAR) {
                             avatarReference = reference;
                         } else {
                             bannerReference = reference;
                         }
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
     }
 
-    private void postDataToServer(){
+    private void postDataToServer() {
         AppFuncs.log("postDataToServer");
-        WpKMemberDto wpKMemberDto = new WpKMemberDto(user,email,phone,adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
+        WpKMemberDto wpKMemberDto = new WpKMemberDto(user, email, phone, adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
         wpKMemberDto.setIdentifier(user);
         wpKMemberDto.setEmail(email);
         wpKMemberDto.setMobile(phone);
@@ -325,19 +349,19 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!RestAPI.checkHttpCode(httpCode)) {
-                    if (s!=null) {
+                    if (s != null) {
                         String er = WpErrors.getErrorMessage(s);
                         if (!TextUtils.isEmpty(er)) {
-                            AppFuncs.alert(getApplicationContext(),er,true);
+                            AppFuncs.alert(getApplicationContext(), er, true);
                         } else {
-                            AppFuncs.alert(getApplicationContext(),"Registration fail. Try Again!",true);
+                            AppFuncs.alert(getApplicationContext(), "Registration fail. Try Again!", true);
                         }
                     }
                     appFuncs.dismissProgressWaiting();
                     return;
                 }
-                Store.putStringData(getApplicationContext(),Store.USERNAME,user);
-                String url = RestAPI.loginUrl(user,password);
+                Store.putStringData(getApplicationContext(), Store.USERNAME, user);
+                String url = RestAPI.loginUrl(user, password);
                 AppFuncs.log(url);
                 RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
 
@@ -347,7 +371,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                             if (!RestAPI.checkHttpCode(httpCode)) {
                                 String er = WpErrors.getErrorMessage(s);
                                 if (!TextUtils.isEmpty(er)) {
-                                    AppFuncs.alert(getApplicationContext(),er,true);
+                                    AppFuncs.alert(getApplicationContext(), er, true);
                                 }
                                 appFuncs.dismissProgressWaiting();
                                 return;
@@ -357,8 +381,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                             Gson gson = new Gson();
                             WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                             wpkToken.saveToken(getApplicationContext());
-                            doExistingAccountRegister(wpkToken.getJid()+ Constant.EMAIL_DOMAIN,wpkToken.getXmppPassword());
-                        }catch (Exception ex) {
+                            doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
+                        } catch (Exception ex) {
                             appFuncs.dismissProgressWaiting();
                             ex.printStackTrace();
                         }
@@ -381,10 +405,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 error = "Length of username must be more than 6 characters";
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = "Username contains special characters";
-            }
-            else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
+            } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = "Invalid email format";
-            } else {}
+            } else {
+            }
 
             if (TextUtils.isEmpty(email)) {
                 email = null;
@@ -392,9 +416,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (TextUtils.isEmpty(phone)) {
                 phone = null;
             } else {
-                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix() + phone;
+                if (wpkCountry!=null) {
+                    String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
+                    phone = countryName + phone;
+                }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             return error;
@@ -404,8 +431,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ExistingAccountTask mExistingAccountTask;
     SimpleAlertHandler mHandler;
 
-    private void doExistingAccountRegister (String username , String password)
-    {
+    private void doExistingAccountRegister(String username, String password) {
         RegistrationAccount account = new RegistrationAccount(username, password);
         account.setNickname(edUsername.getText().toString());
         account.setEmail(edEmail.getText().toString());
@@ -427,17 +453,15 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 KeyPair keyPair = keyMan.generateLocalKeyPair();
 
                 RegistrationAccount account = accounts[0];
-                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler,account);
+                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, account);
 
                 if (result != null) {
                     String jabberId = result.username + '@' + result.domain;
-                    keyMan.storeKeyPair(jabberId,keyPair);
+                    keyMan.storeKeyPair(jabberId, keyPair);
                 }
 
                 return result;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
                 return null;
             }
@@ -448,11 +472,11 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
             // mUsername = account.username + '@' + account.domain;
             appFuncs.dismissProgressWaiting();
-            ImApp mApp = (ImApp)getApplication();
-            mApp.setDefaultAccount(account.providerId,account.accountId);
+            ImApp mApp = (ImApp) getApplication();
+            mApp.setDefaultAccount(account.providerId, account.accountId);
 
             SignInHelper signInHelper = new SignInHelper(UpdateProfileActivity.this, mHandler);
-            signInHelper.activateAccount(account.providerId,account.accountId);
+            signInHelper.activateAccount(account.providerId, account.accountId);
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
             try {
@@ -467,28 +491,44 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             startActivity(intent);
         }
     }
-    Bitmap photoAvatar, photoHeader;
+
+    Uri uriHeader, uriAvatar;
+    boolean isAvatarRequest = false;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+
         try {
-            if (data!=null) {
-                if (requestCode==IMAGE_HEADER) {
-                    photoHeader = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
-                    imgHeader.setImageBitmap(photoHeader);
+            if (data != null) {
+                if (requestCode == IMAGE_HEADER) {
+                    isAvatarRequest = false;
+                    AppFuncs.cropImage(this, data.getData(), false);
                 } else if (requestCode == IMAGE_AVATAR) {
-                    photoAvatar = AppFuncs.getBitmapFromIntentResult(UpdateProfileActivity.this,data);
-                    imgAvatar.setImageBitmap(photoAvatar);
+                    isAvatarRequest = true;
+                    AppFuncs.cropImage(this, data.getData(), true);
+                } else if (requestCode == UCrop.REQUEST_CROP) {
+                    if (resultCode == UCrop.RESULT_ERROR) {
+                        final Throwable cropError = UCrop.getError(data);
+                        AppFuncs.log(cropError.getLocalizedMessage());
+                        return;
+                    }
+                    if (isAvatarRequest) {
+                        uriAvatar = UCrop.getOutput(data);
+                        imgAvatar.setImageURI(uriAvatar);
+                    } else {
+                        uriHeader = UCrop.getOutput(data);
+                        imgHeader.setImageURI(uriHeader);
+                    }
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             LauncherActivity.start(UpdateProfileActivity.this);
             finish();
         }

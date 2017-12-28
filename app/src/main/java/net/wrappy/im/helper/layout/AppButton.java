@@ -24,12 +24,12 @@ public class AppButton extends Button {
     }
 
     public AppButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs, R.attr.borderlessButtonStyle);
         init(attrs);
     }
 
     public AppButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        super(context, attrs, R.attr.borderlessButtonStyle);
         init(attrs);
     }
     public void setTextFont(String font) {

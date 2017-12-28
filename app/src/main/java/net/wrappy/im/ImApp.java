@@ -219,7 +219,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         Languages.setLanguage(this, Preferences.getLanguage(), false);
 
         sImApp = this;
-        Fabric.with(this, new Crashlytics());
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -1225,8 +1227,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             final IImConnection mConn = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
             if (mConn != null) {
                 try {
-                    IContactListManager manager = mConn.getContactListManager();
-                    manager.approveSubscription(contact);
+                    if (mConn.getState() == ImConnection.LOGGED_IN) {
+                        IContactListManager manager = mConn.getContactListManager();
+                        manager.approveSubscription(contact);
+                    }
                 } catch (RemoteException e) {
                     LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
                 }
@@ -1234,10 +1238,25 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
     }
 
+
+    public static void removeContact(ContentResolver resolver, String address, IImConnection mConn) {
+        String selection = Imps.Contacts.USERNAME + "='" + address + "'";
+        Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
+        resolver.delete(builder.build(), selection, null);
+        try {
+            mConn.getContactListManager().removeContact(address);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
     /*
     * Auto update contact name in list which were loaded from Xmpp server
     * */
     public static void updateContact(String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
+        updateContact(null, address, wpKMemberDto, mConn);
+    }
+
+    public static void updateContact(ContentValues originValues, String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
         // update the server
         if (sImApp != null && wpKMemberDto != null && mConn != null) {
             String name = wpKMemberDto.getIdentifier();
@@ -1254,6 +1273,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             String selection = Imps.Contacts.USERNAME + "='" + address + "'";
             String[] selectionArgs = {address};
             ContentValues values = new ContentValues();
+            if (originValues != null) {
+                values = originValues;
+            }
             values.put(Imps.Contacts.NICKNAME, name);
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);

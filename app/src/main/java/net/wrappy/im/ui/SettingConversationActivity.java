@@ -106,10 +106,10 @@ public class SettingConversationActivity extends AppCompatActivity {
             return; //not going to work
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
                 cursor, getContentResolver(), mProviderId, false, null);
-        mConn = ((ImApp) getApplication()).getConnection(mProviderId, mAccountId);
-        mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
-
         try {
+            mConn = ImApp.getConnection(mProviderId, mAccountId);
+            mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
+
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
             if (mSession != null) {
                 mGroupOwner = mSession.getGroupChatOwner();
@@ -148,7 +148,7 @@ public class SettingConversationActivity extends AppCompatActivity {
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
 
                 String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
-                                Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
+                        Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
                 Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
                 ContentResolver cr = getContentResolver();
                 Cursor c = cr.query(memberUri, projection, null, null, null);
@@ -202,11 +202,11 @@ public class SettingConversationActivity extends AppCompatActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.layout_search_setting,R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
+    @OnClick({R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
-              searchActive();
+                searchActive();
                 break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
@@ -262,6 +262,7 @@ public class SettingConversationActivity extends AppCompatActivity {
             }
         return mSession;
     }
+
     private void searchActive() {
         Bundle bundle = new Bundle();
         bundle.putInt("type", ConversationDetailActivity.TYPE_SEARCH);
@@ -314,14 +315,14 @@ public class SettingConversationActivity extends AppCompatActivity {
         };
 
         public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_thumb_1.png",
-                "backgrounds/page_1/chat_bg_thumb_2.png",
-                "backgrounds/page_1/chat_bg_thumb_3.png",
-                "backgrounds/page_1/chat_bg_thumb_4.png",
-                "backgrounds/page_1/chat_bg_thumb_5.png",
-                "backgrounds/page_1/chat_bg_thumb_6.png",
-                "backgrounds/page_1/chat_bg_thumb_7.png",
-                "backgrounds/page_1/chat_bg_thumb_8.png",
+                "backgrounds/page_1/chat_bg_1.png",
+                "backgrounds/page_1/chat_bg_2.png",
+                "backgrounds/page_1/chat_bg_3.png",
+                "backgrounds/page_1/chat_bg_4.png",
+                "backgrounds/page_1/chat_bg_5.png",
+                "backgrounds/page_1/chat_bg_6.png",
+                "backgrounds/page_1/chat_bg_7.png",
+                "backgrounds/page_1/chat_bg_8.png",
         };
 
         public static final BackgroundBottomSheetFragment getInstance() {
