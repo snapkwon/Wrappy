@@ -36,6 +36,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
@@ -105,6 +106,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ImageButton btnCameraHeader;
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnCameraAvatar;
+    @BindView(R.id.edProfileReferral)
+    AppEditTextView edProfileReferral;
 
     ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;

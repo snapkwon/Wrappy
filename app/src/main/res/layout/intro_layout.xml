@@ -6,7 +6,7 @@
     android:fillViewport="true">
 
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fafafa">
@@ -57,10 +57,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="336dp"
-            android:background="@drawable/regbtn_states"
-            android:gravity="center_horizontal"
+            android:layout_marginBottom="150dp"
             android:padding="16dp"
+            android:layout_alignParentBottom="true"
+            android:text="@string/StartMessaging"
             style="@style/AppButton_OK"
             android:id="@+id/start_messaging_button"/>
         <ImageView
@@ -76,6 +76,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/bottom_pages"
             android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="26dp">
 
@@ -162,7 +164,7 @@
             android:layout_height="match_parent"
             android:id="@+id/intro_view_pager"/>
 
-    </FrameLayout>
+    </RelativeLayout>
 
 </ScrollView>
 
