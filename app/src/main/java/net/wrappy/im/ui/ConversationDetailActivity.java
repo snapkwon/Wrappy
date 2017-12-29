@@ -97,8 +97,6 @@ import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -849,37 +847,15 @@ public class ConversationDetailActivity extends BaseActivity {
                         try {
                             info.guardianproject.iocipher.File fileDownload = new info.guardianproject.iocipher.File(mSelectedUri.getPath());
                             FileInputStream inputStream = new FileInputStream(fileDownload);
-                            try {
-                                String fileName = Downloader.getFilenameFromUrl(mSelectedUri.getPath());
-                                File file = new File(FileUtil.getFullPathFromTreeUri(uri, this), fileName);
-                                if (!file.exists())
-                                    file.createNewFile();
-
-                                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                                try {
-                                    // Transfer bytes from in to out
-                                    byte[] buf = new byte[1024];
-                                    int len;
-                                    while ((len = inputStream.read(buf)) > 0) {
-                                        fileOutputStream.write(buf, 0, len);
-                                    }
-                                } finally {
-                                    fileOutputStream.close();
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } finally {
-                                try {
-                                    inputStream.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } catch (FileNotFoundException e) {
+                            String fileName = Downloader.getFilenameFromUrl(mSelectedUri.getPath());
+                            File file = new File(FileUtil.getFullPathFromTreeUri(uri, this), fileName);
+                            if (!file.exists())
+                                file.createNewFile();
+                            SecureMediaStore.copyToVfs(inputStream, file.getPath());
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                         mSelectedUri = null;
-
                     }
                     break;
             }
