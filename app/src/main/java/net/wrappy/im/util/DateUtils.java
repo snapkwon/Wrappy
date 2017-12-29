@@ -9,7 +9,7 @@ import java.util.Date;
  */
 
 public class DateUtils {
-    
+
     private DateUtils(){}
 
     public static boolean checkCurrentDay(Date date) {
