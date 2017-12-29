@@ -2683,6 +2683,15 @@ public class ConversationView {
                 case "Vietnamese":
                     targetlanguage = "vi";
                     break;
+                case "Chinese":
+                    targetlanguage = "zh-CN";
+                    break;
+                case "Korean":
+                    targetlanguage = "ko";
+                    break;
+                case "Thai":
+                    targetlanguage = "th";
+                    break;
             }
             resetTranslate();
             // bodytranslate.clear();
@@ -2807,6 +2816,10 @@ public class ConversationView {
                 public void onTaskDetectComplete(String result, String src, int position) {
                     if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
+                    }
+                    else
+                    {
+                        iapptranslater.translate(src, "en", targetlanguage, position);
                     }
                 }
 
@@ -3328,7 +3341,7 @@ public class ConversationView {
 
         // setting up Spinner
         arraySpinner = new String[]{
-                "English", "Japanese", "Vietnamese"
+                "English", "Japanese", "Vietnamese" , "Chinese" ,"Korean" ,"Thai"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
