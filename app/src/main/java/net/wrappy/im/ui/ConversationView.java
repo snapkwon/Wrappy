@@ -2671,13 +2671,13 @@ public class ConversationView {
                 case 2:
                     targetlanguage = "vi";
                     break;
-                case "Chinese":
+                case 3:
                     targetlanguage = "zh-CN";
                     break;
-                case "Korean":
+                case 4:
                     targetlanguage = "ko";
                     break;
-                case "Thai":
+                case 5:
                     targetlanguage = "th";
                     break;
             }
@@ -3345,6 +3345,16 @@ public class ConversationView {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mMessageAdapter.setTargetLanguage(position);
+
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                //Find the currently focused view, so we can grab the correct window token from it.
+                View viewfocus = activity.getCurrentFocus();
+                //If no view currently has focus, create a new one, just so we can grab a window token from it
+                if (viewfocus == null) {
+                    viewfocus = new View(activity);
+                }
+                imm.hideSoftInputFromWindow(viewfocus.getWindowToken(), 0);
+
                 mMessageAdapter.notifyDataSetChanged();
             }
 
