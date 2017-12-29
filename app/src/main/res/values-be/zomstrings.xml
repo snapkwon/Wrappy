@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE resources [
-    <!ENTITY appName "Wrappy">
-    ]>
-<resources>
-  <string name="app_name_zom">&appName;</string>
-  <string name="add_account_action">Дадаць акаўнт</string>
-</resources>

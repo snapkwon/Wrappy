@@ -27,7 +27,6 @@ import android.text.util.Rfc822Token;
 import android.text.util.Rfc822Tokenizer;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
@@ -45,6 +44,7 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.adapters.ContactAdapter;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
 
 import java.util.ArrayList;
@@ -132,13 +132,13 @@ public class AddContactNewActivity extends BaseActivity {
 
         if (!checkConnection()) {
             Snackbar sb = Snackbar.make(findViewById(R.id.main_content), R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
-            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(AddContactNewActivity.this, AccountsActivity.class);
-                    startActivity(i);
-                }
-            });
+//            sb.setAction(getString(R.string.connect), new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent i = new Intent(AddContactNewActivity.this, AccountsActivity.class);
+//                    startActivity(i);
+//                }
+//            });
             sb.show();
 
         }
@@ -162,8 +162,8 @@ public class AddContactNewActivity extends BaseActivity {
 
         if (foundOne) {
             Intent intent = new Intent();
-            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME, recipients[0].getAddress());
-            intent.putExtra(ContactsPickerActivity.EXTRA_RESULT_PROVIDER, mApp.getDefaultProviderId());
+            intent.putExtra(BundleKeyConstant.RESULT_KEY, recipients[0].getAddress());
+            intent.putExtra(BundleKeyConstant.PROVIDER_KEY, mApp.getDefaultProviderId());
             setResult(RESULT_OK, intent);
             finish();
         }

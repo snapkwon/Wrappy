@@ -21,7 +21,7 @@
     <string name="ic_launcher_name">Wrappy</string>
     <string name="app_name">Wrappy</string>
     <string name="im_label">Wrappy</string>
-
+    <string name="app_version">Version</string>
     <!-- General: Permissions -->
     <string name="ro_perm_label">read instant messages</string>
     <string name="ro_perm_desc">Allows applications to read data from the IM content provider.</string>
@@ -220,7 +220,8 @@
     <string name="starting_the_chatsecure_service_">Starting the Wrappy service…</string>
     <string name="app_unlocked">Wrappy is running</string>
     <!-- Alerts: Exceptions -->
-    <string name="error">Attention</string>
+    <string name="error">Error</string>
+    <string name="attention">Attention</string>
     <string name="error_prefix">Error: </string>
     <string name="general_error">Error code <xliff:g id="code">%1$d</xliff:g></string>
     <string name="login_service_failed">Unable to sign in to the <xliff:g id="service">%1$s</xliff:g> service. Please try again later.\n(Detail: <xliff:g id="description">%2$s</xliff:g>)</string>
@@ -489,5 +490,94 @@
     <string name="message_fail_import">Failed to import , please try again</string>
     <string name="backup">BACKUP</string>
     <string name="title_member_group_setting">Member</string>
+    <string name="old_password_title">Old password</string>
+    <string name="new_password_title">New password</string>
+    <string name="repeat_password_title">Repeat new password</string>
+    <string name="available_balance">Available Balance</string>
+    <string name="to_address">available_balance</string>
+    <string name="amount">AMOUNT</string>
+    <string name="eth_unit">ETH</string>
+    <string name="USD">USD</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="confirmations">Confirmations</string>
+    <string name="view_more">VIEW MORE</string>
+    <string name="wallet_created_success">WALLET CREATED SUCCESSFULLY</string>
+    <string name="warning_backup_wallet">We highly recommend you backup the Wallet or keystore immediately.</string>
+    <string name="backup_now_button">BACKUP NOW</string>
+    <string name="no_thanks">NO, THANKS</string>
+    <string name="copy_clipboard">Copy To Clipboard</string>
+    <string name="backup_address">Back up address</string>
+    <string name="welcome_wallet_title">WELCOME TO WALLET</string>
+    <string name="import_keystore">Import Keystore</string>
+    <string name="three_dots">\u2026</string>
+    <string name="ringing">Ringing\u2026</string>
+    <string name="enter_group_name">Enter group name</string>
+    <string name="add_new_list">Add new list</string>
+    <string name="new_list">New list</string>
+    <string name="key_manager">Key Manager</string>
+    <string name="add_another_account">Add Another Account</string>
+    <string name="check_email_passcode">Please check email or your message \n fill your Passcode</string>
+    <string name="send_again">Send again</string>
+    <string name="answer_secret_question">Answer secret question</string>
+    <string name="your_answer">Your Answer</string>
+    <string name="btn_next">Next</string>
+    <string name="input_your_email">Input your email</string>
+    <string name="hint_your_email">Your Email</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="new_group">New Group</string>
+    <string name="about_us">About us</string>
+    <string name="faq">FAQ</string>
+    <string name="logout">Logout</string>
+    <string name="remove">Remove</string>
+    <string name="sent">Sent</string>
+    <string name="received">Received</string>
+    <string name="all">All</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="mobile_phone">Mobile Phone</string>
+    <string name="gender">Gender</string>
+    <string name="referral">Referral</string>
+    <string name="referral_hint">Username or phone number</string>
+    <string name="btn_submit">Submit</string>
+    <string name="hint_answer">Answer</string>
+    <string name="choose_secret_question">Choose your secret question</string>
+    <string name="skip">SKIP</string>
+    <string name="complete">COMPLETE</string>
+    <string name="username_title">Username *</string>
+    <string name="current_balance">Current Balance</string>
+    <string name="add_photo">Add Photo!</string>
+    <string name="error_group_name_empty">Group Name is empty</string>
+    <string name="error_group_empty">No member in group</string>
+    <string name="error_upload_photo">Upload group photo fail!</string>
+    <string name="error_creating_group">Create Group Fail</string>
+    <string name="select_file_to_send">Select File</string>
+    <string name="google_play_services_not_available">Google Play Services is not available.</string>
+    <string name="english">English</string>
+    <string name="copied_text">Copied Text</string>
+    <string name="history">HISTORY</string>
+    <string name="activity">Activity</string>
+    <string name="error_when_refresh_token">can not refresh access token : please retry!</string>
+    <string name="registration">Registration</string>
+    <string name="update_profile_success">Update Success</string>
+    <string name="update_profile_fail">Update Fail</string>
+    <string name="error_upload_image">Upload fail</string>
+    <string name="logout_all_devices">Logout all devices</string>
+    <string name="logout_device">Logout this device</string>
+    <string name="message_remove_avatar_success">Remove Avatar Success</string>
+    <string name="message_remove_banner_success">Remove Banner Success</string>
+    <string name="error_invalid_email">Invalid email format</string>
+    <string name="error_get_user_profile">Could note get user profile</string>
+    <string name="hint_password"><small><i>Input Password</i></small></string>
+    <string name="error_reset_password">Reset password fail</string>
+    <string name="error_username_or_password">The username or password is incorrect</string>
+    <string name="error_empty_username">username cannot be empty</string>
+    <string name="warning">Warning</string>
+    <string name="error_tranferring_file">Error transferring file:</string>
+    <string name="message_download_attachment">Do you want to save this file?</string><!-- this flow should be defined again -->
+
+    <string name="error_invalid_text_length">Length of username must be more than 6 characters</string>
+    <string name="error_invalid_characters">Username contains special characters</string>
+    <string name="error_registration">Registration fail. Try Again!</string>
 
 </resources>

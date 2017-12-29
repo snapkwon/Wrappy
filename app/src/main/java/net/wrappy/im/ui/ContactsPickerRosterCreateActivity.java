@@ -21,8 +21,6 @@ import android.widget.ListView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
@@ -39,7 +37,6 @@ import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.widgets.FlowLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -82,7 +79,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
         mApp = (ImApp) getApplication();
         appFuncs = AppFuncs.getInstance();
         headerbarDone.setVisibility(View.VISIBLE);
-        headerbarTitle.setText("New List");
+        headerbarTitle.setText(R.string.new_list);
         mSelectedContacts.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -297,37 +294,6 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
         if (data!=null && requestCode==100){
             photo = AppFuncs.getBitmapFromIntentResult(getApplicationContext(),data);
             imgPhotoAvatar.setImageBitmap(photo);
-
-        }
-    }
-
-    private void createGroupContacts(){
-        rostername = txtRosterName.getText().toString().trim();
-        if (rostername.isEmpty()) {
-            AppFuncs.alert(getApplicationContext(),"Group's name is empty",true);
-            return;
-        }
-        if (mSelection.size()==0) {
-            AppFuncs.alert(getApplicationContext(),"list's members is empty",true);
-            return;
-        }
-        if (photo!=null) {
-            postDataToServer("");
-        } else {
-            File file = AppFuncs.convertBitmapToFile(getApplicationContext(),photo);
-            RestAPI.uploadFile(getApplicationContext(),file,RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    String reference = "";
-                    try {
-                        JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
-                        reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
-                        postDataToServer(reference);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
 
         }
     }

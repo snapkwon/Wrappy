@@ -13,8 +13,7 @@ import net.wrappy.im.R;
 /**
  * Created by n8fr8 on 12/11/15.
  */
-public class MessageViewHolder extends MediaViewHolder
-{
+public class MessageViewHolder extends MediaViewHolder {
     public TextView mTextViewForMessages;
     public TextView mTextViewForTimestamp;
     public ImageView mAvatar;
@@ -50,41 +49,36 @@ public class MessageViewHolder extends MediaViewHolder
     }
 
 
-    public void setOnClickListenerMediaThumbnail( final String mimeType, final Uri mediaUri ) {
+    public void setOnClickListenerMediaThumbnail(final String mimeType, final Uri mediaUri, final boolean isIncoming) {
 
-        if (mimeType.startsWith("audio") && mAudioContainer != null)
-        {
+        if (mimeType.startsWith("audio") && mAudioContainer != null) {
             mAudioContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MessageListItem)itemView).onClickMediaIcon(mimeType, mediaUri);
+                    ((MessageListItem) itemView).onClickMediaIcon(mimeType, mediaUri, isIncoming);
                 }
             });
 
-        }
-        else {
+        } else {
             mMediaThumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MessageListItem)itemView).onClickMediaIcon(mimeType, mediaUri);
+                    ((MessageListItem) itemView).onClickMediaIcon(mimeType, mediaUri, isIncoming);
                 }
             });
-
-
         }
-
     }
-    public void setPosition(int position){
+
+    public void setPosition(int position) {
         this.Pos = position;
     }
 
-    public int getPos()
-    {
+    public int getPos() {
         return this.Pos;
     }
 
     public void resetOnClickListenerMediaThumbnail() {
-        mMediaThumbnail.setOnClickListener( null );
+        mMediaThumbnail.setOnClickListener(null);
     }
 
     long mTimeDiff = -1;

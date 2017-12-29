@@ -3,9 +3,9 @@ package net.wrappy.im.ui;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
@@ -35,9 +35,16 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Avatar;
+import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
@@ -55,6 +62,7 @@ import butterknife.OnTextChanged;
 public class ProfileFragment extends Fragment {
 
     public static final int AVATAR = 321;
+    public static final int BANNER = 322;
     View mainView;
     AppFuncs appFuncs;
     String jid = "";
@@ -64,7 +72,7 @@ public class ProfileFragment extends Fragment {
     private String reference = "";
     private ImApp mApp;
     private boolean isSelf;
-    Bitmap photoAvatar;
+    boolean isRequestAvatar = true;
 
     MainActivity mainActivity;
 
@@ -94,6 +102,8 @@ public class ProfileFragment extends Fragment {
     ImageButton btnProfileChangePhone;
     @BindView(R.id.btnProfileChangeGender)
     ImageButton btnProfileChangeGender;
+    @BindView(R.id.btnProfileCameraHeader)
+    ImageButton btnProfileCameraHeader;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -144,6 +154,7 @@ public class ProfileFragment extends Fragment {
     private void preferenceView() {
         if (isSelf) {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
+            btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
         getDataMember();
     }
@@ -176,7 +187,7 @@ public class ProfileFragment extends Fragment {
 
                     }
                 } else {
-                    AppFuncs.alert(getActivity(), "Connnect time out", true);
+                    AppFuncs.alert(getActivity(), getString(R.string.error_get_user_profile), true);
                     getActivity().finish();
                 }
             }
@@ -208,7 +219,7 @@ public class ProfileFragment extends Fragment {
         System.exit(0);
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnPhotoCameraAvatar, R.id.btnProfileChangeEmail, R.id.btnProfileChangePhone, R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileChangeEmail, R.id.btnProfileChangePhone, R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
             edEmail.clearFocus();
@@ -218,7 +229,7 @@ public class ProfileFragment extends Fragment {
             String phone = edPhone.getText().toString().trim();
             String gender = edGender.getText().toString().trim();
             if (!AppFuncs.isEmailValid(email)) {
-                AppFuncs.alert(getActivity(), "Invalid email format", true);
+                AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
             wpKMemberDto.setEmail(email);
@@ -226,45 +237,79 @@ public class ProfileFragment extends Fragment {
             wpKMemberDto.setGender(gender);
             updateData();
             btnProfileSubmit.setVisibility(View.GONE);
-        } else if (view.getId() == R.id.btnPhotoCameraAvatar) {
+        } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, "Take Photo");
+            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, "Choose from Gallery");
+            sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
             sheetCells.add(sheetCell);
-            if (wpKMemberDto != null) if (wpKMemberDto.getAvatar() != null)
-                if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, "Delete Photo");
-                    sheetCells.add(sheetCell);
+
+            if (view.getId() == R.id.btnPhotoCameraAvatar) {
+                isRequestAvatar = true;
+                if (wpKMemberDto != null) if (wpKMemberDto.getAvatar() != null) {
+                    if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                        sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
+                        sheetCells.add(sheetCell);
+                    }
                 }
+            } else {
+                isRequestAvatar = false;
+                if (wpKMemberDto != null) if (wpKMemberDto.getBanner() != null) {
+                    if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
+                        sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
+                        sheetCells.add(sheetCell);
+                    }
+                }
+            }
+
             PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     switch (index) {
                         case 1:
-                            AppFuncs.openCamera(getActivity(), AVATAR);
+                            AppFuncs.openCamera(getActivity(), isRequestAvatar ? AVATAR : BANNER);
                             break;
                         case 2:
-                            AppFuncs.openGallery(getActivity(), AVATAR);
+                            AppFuncs.openGallery(getActivity(), isRequestAvatar ? AVATAR : BANNER);
                             break;
                         case 3:
-                            photoAvatar = null;
-                            imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                            if (wpKMemberDto.getAvatar() != null)
-                                if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                                    RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
-                                        @Override
-                                        public void onCompleted(Exception e, Response<String> result) {
-                                            if (result != null) {
-                                                if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                                    wpKMemberDto.setAvatar(null);
-                                                    imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                                                    AppFuncs.alert(getActivity(), "Remove Avatar Success", true);
+                            if (isRequestAvatar) {
+                                imgPhotoAvatar.setImageResource(R.drawable.avatar);
+                                if (wpKMemberDto.getAvatar() != null) {
+                                    if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                                        RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+                                            @Override
+                                            public void onCompleted(Exception e, Response<String> result) {
+                                                if (result != null) {
+                                                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                        wpKMemberDto.setAvatar(null);
+                                                        AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
+                            } else {
+                                imgProfileHeader.setImageResource(android.R.color.transparent);
+                                if (wpKMemberDto.getBanner() != null) {
+                                    if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
+                                        RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+                                            @Override
+                                            public void onCompleted(Exception e, Response<String> result) {
+                                                if (result != null) {
+                                                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                        wpKMemberDto.setBanner(null);
+                                                        AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+
                             break;
                         default:
                     }
@@ -277,9 +322,9 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         } else if (view.getId() == R.id.lnProfileLogout) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
+            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
             sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, "Logout all devices");
+            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
             sheetCells.add(sheetCell);
             BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                 @Override
@@ -288,7 +333,7 @@ public class ProfileFragment extends Fragment {
                         confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
-                        AppFuncs.alert(getActivity(), "Logout all devices", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
                     }
                 }
             });
@@ -300,7 +345,7 @@ public class ProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == AVATAR) {
+            if (requestCode == AVATAR || requestCode == BANNER) {
                 if (data.getData() != null) {
                     AppFuncs.cropImage(getActivity(), data.getData(), true);
                 }
@@ -314,9 +359,15 @@ public class ProfileFragment extends Fragment {
                         try {
                             String reference = RestAPI.getPhotoReference(result.getResult());
                             if (!TextUtils.isEmpty(reference)) {
-                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
-                                Avatar avatar = new Avatar(reference);
-                                wpKMemberDto.setAvatar(avatar);
+                                if (isRequestAvatar) {
+                                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
+                                    Avatar avatar = new Avatar(reference);
+                                    wpKMemberDto.setAvatar(avatar);
+                                } else {
+                                    GlideHelper.loadBitmap(getActivity(), imgProfileHeader, resultUri.toString(), false);
+                                    Banner banner = new Banner(reference);
+                                    wpKMemberDto.setBanner(banner);
+                                }
                                 updateData();
                             } else {
                                 AppFuncs.alert(getActivity(), "Upload fail", false);
@@ -342,9 +393,26 @@ public class ProfileFragment extends Fragment {
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.alert(getActivity(), "Update Success", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
+                        if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                            String avatarReference = wpKMemberDto.getAvatar().getReference();
+                            String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
+                            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+                            String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                            DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
+                            if (connection != null) {
+                                try {
+                                    if (connection.getState() == ImConnection.LOGGED_IN) {
+                                        connection.broadcastMigrationIdentity(null);
+                                    }
+                                } catch (RemoteException ex) {
+                                    LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
+                                }
+                            }
+                        }
                     } else {
-                        AppFuncs.alert(getActivity(), "Update Fail", true);
+                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
                     }
                 }
             }

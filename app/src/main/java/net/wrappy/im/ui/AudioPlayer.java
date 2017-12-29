@@ -20,8 +20,6 @@ import net.wrappy.im.util.HttpMediaStreamer;
 import net.wrappy.im.util.Utils;
 
 public class AudioPlayer {
-    private static final String TAG = "AudioPlayer";
-
     private Context mContext;
     private String mFileName;
     private String mMimeType;

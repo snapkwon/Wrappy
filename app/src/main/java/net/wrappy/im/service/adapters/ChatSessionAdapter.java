@@ -616,7 +616,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             Cursor c = mContentResolver.query(mMessageURI, projection, selection,
                     new String[]{Integer.toString(Imps.MessageType.QUEUED)}, null);
             if (c == null) {
-                RemoteImService.debug("Query error while querying postponed messages");
                 return;
             }
 

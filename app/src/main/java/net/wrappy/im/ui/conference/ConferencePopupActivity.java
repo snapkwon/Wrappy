@@ -20,6 +20,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.ConferenceActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LogCleaner;
 
@@ -42,11 +43,6 @@ public class ConferencePopupActivity extends Activity {
     boolean isGroupChat;
     ConferenceMessage conference;
 
-    private static String KEY_NICK_NAME = "nickname";
-    private static String KEY_MESSAGE = "message";
-    private static String KEY_GROUP = "isGroup";
-    private static String KEY_ADDRESS = "address";
-
     public static Intent newIntentP2P(String address, String nickname, String message, Uri uri) {
         return newIntent(address, nickname, message, uri, false);
     }
@@ -58,10 +54,10 @@ public class ConferencePopupActivity extends Activity {
     private static Intent newIntent(String address, String nickname, String message, Uri uri, boolean isGroupChat) {
         Intent intent = new Intent(ImApp.sImApp, ConferencePopupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(KEY_NICK_NAME, nickname);
-        intent.putExtra(KEY_MESSAGE, message);
-        intent.putExtra(KEY_GROUP, isGroupChat);
-        intent.putExtra(KEY_ADDRESS, address);
+        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
+        intent.putExtra(BundleKeyConstant.KEY_MESSAGE, message);
+        intent.putExtra(BundleKeyConstant.KEY_GROUP, isGroupChat);
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, address);
         intent.setData(uri);
         return intent;
     }
@@ -80,10 +76,10 @@ public class ConferencePopupActivity extends Activity {
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         if (intent != null) {
-            name = intent.getStringExtra(KEY_NICK_NAME);
-            message = intent.getStringExtra(KEY_MESSAGE);
-            isGroupChat = intent.getBooleanExtra(KEY_GROUP, false);
-            mRemoteAddress = intent.getStringExtra(KEY_ADDRESS);
+            name = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+            message = intent.getStringExtra(BundleKeyConstant.KEY_MESSAGE);
+            isGroupChat = intent.getBooleanExtra(BundleKeyConstant.KEY_GROUP, false);
+            mRemoteAddress = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
             messageUri = intent.getData();
             tvNameOfContact.setText(name);
             conference = new ConferenceMessage(message);

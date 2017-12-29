@@ -16,6 +16,7 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.util.ArrayList;
 
@@ -80,11 +81,11 @@ public class ContactAdapter
             line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
-            if (wpKMemberDto.getAvatar()!=null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                    GlideHelper.loadBitmapToCircleImage(mContext, mAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
+            if (wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                GlideHelper.loadBitmapToCircleImage(mContext, mAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()));
             } else {
-                    LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
-                    mAvatar.setImageDrawable(lavatar);
+                LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
+                mAvatar.setImageDrawable(lavatar);
             }
 
             container.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +93,8 @@ public class ContactAdapter
                 public void onClick(View v) {
                     if (wpKMemberDto.getXMPPAuthDto() != null) {
                         Intent intent = ConversationDetailActivity.getStartIntent(mContext);
-                        intent.putExtra("address", wpKMemberDto.getXMPPAuthDto().getAccount());
-                        intent.putExtra("nickname", wpKMemberDto.getIdentifier());
+                        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, wpKMemberDto.getXMPPAuthDto().getAccount());
+                        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, wpKMemberDto.getIdentifier());
                         mContext.startActivity(intent);
                     }
                 }

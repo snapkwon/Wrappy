@@ -55,6 +55,14 @@ public class PopupUtils {
         builder.show();
     }
 
+    public static void showOKDialog(Context context, String title, String message, View.OnClickListener onOkListener) {
+        showCustomDialog(context, title, message, R.string.ok, -1, onOkListener, null, true);
+    }
+
+    public static void showOKCancelDialog(Context context, String title, String message, View.OnClickListener onOkListener, View.OnClickListener onCancelListener) {
+        showCustomDialog(context, title, message, R.string.ok, R.string.cancel, onOkListener, onCancelListener, true);
+    }
+
     public static void showCustomDialog(Context context, String title, String message, int resOK, View.OnClickListener onOkListener) {
         showCustomDialog(context, title, message, resOK, -1, onOkListener, null, true);
     }
@@ -95,9 +103,8 @@ public class PopupUtils {
     }
 
     private static void handleButtons(final Dialog dialog, View dialogView, int resOK, int resCancel, final View.OnClickListener onOkListener, final View.OnClickListener onCancelListener, final EditText editText) {
-        Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
-        Button btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
-
+        TextView btnOk = (TextView) dialogView.findViewById(R.id.btnOk);
+        TextView btnCancel = (TextView) dialogView.findViewById(R.id.btnCancel);
         if (resOK > 0) {
             btnOk.setText(resOK);
             btnOk.setVisibility(View.VISIBLE);
@@ -145,7 +152,7 @@ public class PopupUtils {
         handleTexts(dialogView, title, message);
         EditText edt = (EditText) dialogView.findViewById(R.id.etinputpass);
         if (isPassword) {
-            edt.setHint(Html.fromHtml("<small><i>" + "Input Password" + "</i></small>"));
+            edt.setHint(Html.fromHtml(context.getString(R.string.hint_password)));
         } else {
             edt.setInputType(InputType.TYPE_CLASS_TEXT);
             edt.setText(data);

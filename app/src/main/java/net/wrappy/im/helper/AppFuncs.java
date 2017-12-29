@@ -26,7 +26,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.yalantis.ucrop.UCrop;
 
+import net.wrappy.im.R;
 import net.wrappy.im.model.T;
+import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
@@ -58,7 +60,7 @@ public class AppFuncs {
 
     public void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
-        dialog.setMessage("Waiting...");
+        dialog.setMessage(activity.getString(R.string.waiting_dialog));
         dialog.show();
     }
 
@@ -106,41 +108,30 @@ public class AppFuncs {
     }
 
     public static void getImageFromDevice(final Activity activity, final int requestCode) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {activity.getString(R.string.popup_take_photo), activity.getString(R.string.choose_photos), activity.getString(R.string.cancel)};
 
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            PopupUtils.getSelectionDialog(activity, "Add Photo!", options, new DialogInterface.OnClickListener() {
+            PopupUtils.getSelectionDialog(activity, activity.getString(R.string.add_photo), options, new DialogInterface.OnClickListener() {
 
                 @Override
 
                 public void onClick(DialogInterface dialog, int item) {
-
-                    if (options[item].equals("Take Photo"))
-
-                    {
-
-                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        activity.startActivityForResult(cameraIntent, requestCode);
-
-
-                    } else if (options[item].equals("Choose from Gallery"))
-
-                    {
-
-                        Intent intent = new Intent(Intent.ACTION_PICK,
-                                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        activity.startActivityForResult(intent, requestCode);
-
-
-                    } else if (options[item].equals("Cancel")) {
-
-                        dialog.dismiss();
-
+                    switch (item) {
+                        case 0:
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            activity.startActivityForResult(cameraIntent, requestCode);
+                            break;
+                        case 1:
+                            Intent intent = new Intent(Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            intent.setType("image/*");
+                            activity.startActivityForResult(intent, requestCode);
+                            break;
+                        default:
+                            dialog.dismiss();
                     }
-
                 }
 
             });
@@ -177,8 +168,25 @@ public class AppFuncs {
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     199);
         }
+    }
 
+    public static void openPickFolder(Activity activity, int requestCode) {
+        openPickFolder(activity, requestCode, null);
+    }
 
+    public static void openPickFolder(Activity activity, int requestCode, Uri uri) {
+        if ((ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            activity.startActivityForResult(intent, requestCode);
+            if (uri != null && activity instanceof ConversationDetailActivity)
+                ((ConversationDetailActivity) activity).setSelectedUri(uri);
+
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    199);
+        }
     }
 
     public static void cropImage(Activity activity, Uri source, boolean isAvarta) {

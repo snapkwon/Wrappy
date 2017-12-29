@@ -36,12 +36,12 @@ import android.widget.Toast;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.AddContactActivity;
 import net.wrappy.im.ui.IntroActivity;
-import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.LockScreenActivity;
+import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.legacy.ThemeableActivity;
-import net.wrappy.im.ui.onboarding.OnboardingActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.GeneralSecurityException;
@@ -49,7 +49,6 @@ import java.util.UUID;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicResponder;
 
@@ -330,7 +329,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     Intent getEditAccountIntent() {
         Intent intent = new Intent(Intent.ACTION_EDIT, ContentUris.withAppendedId(
                 Imps.Account.CONTENT_URI, mProviderCursor.getLong(ACTIVE_ACCOUNT_ID_COLUMN)));
-        intent.putExtra("isSignedIn", isSignedIn(mProviderCursor));
+        intent.putExtra(BundleKeyConstant.IS_SIGN_IN, isSignedIn(mProviderCursor));
         intent.addCategory(getProviderCategory(mProviderCursor));
         return intent;
     }

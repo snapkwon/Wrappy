@@ -1,20 +1,26 @@
 package net.wrappy.im.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,6 +36,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
@@ -99,10 +106,13 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ImageButton btnCameraHeader;
     @BindView(R.id.btnPhotoCameraAvatar)
     ImageButton btnCameraAvatar;
+    @BindView(R.id.edProfileReferral)
+    AppEditTextView edProfileReferral;
 
-    ArrayAdapter<String> countryAdapter;
+    ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
+    List<WpkCountry> wpkCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,13 +155,23 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     if (s != null) {
                         Type listType = new TypeToken<ArrayList<WpkCountry>>() {
                         }.getType();
-                        List<WpkCountry> wpkCountry = new Gson().fromJson(s, listType);
+                        wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
-                        ArrayList<String> strings = new ArrayList<>();
+                        List<String> strings = new ArrayList<>();
                         for (int i = 0; i < wpkCountry.size(); i++) {
-                            strings.add(wpkCountry.get(i).getPrefix());
+                            strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
-                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
+                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings) {
+                            @NonNull
+                            @Override
+                            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
+                                final TextView t = (TextView) v.findViewById(android.R.id.text1);
+                                t.setText(wpkCountry.get(position).getPrefix());
+                                return v;
+                            }
+                        };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                     }
                 } catch (Exception ex) {
@@ -187,7 +207,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     };
 
     @Optional
-    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar})
     @Override
     public void onClick(View view) {
         if (isFlag) {
@@ -218,11 +238,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 } else {
                     handler.postDelayed(runnablePostData, 10000);
                 }
-            }
-            if (view.getId() == R.id.btnProfileSkip) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
@@ -255,12 +270,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
             if (view.getId() == R.id.btnProfileCameraHeader) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, "Take Photo");
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, "Choose from Gallery");
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
                 sheetCells.add(sheetCell);
                 if (uriHeader != null) {
-                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, "Delete Photo");
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
                 PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
@@ -343,7 +358,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         if (!TextUtils.isEmpty(er)) {
                             AppFuncs.alert(getApplicationContext(), er, true);
                         } else {
-                            AppFuncs.alert(getApplicationContext(), "Registration fail. Try Again!", true);
+                            AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
                         }
                     }
                     appFuncs.dismissProgressWaiting();
@@ -389,13 +404,13 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             phone = edPhone.getText().toString().trim();
 
             if (TextUtils.isEmpty(user)) {
-                error = "Username is empty";
+                error = getString(R.string.error_empty_username);
             } else if (user.length() < 6) {
-                error = "Length of username must be more than 6 characters";
+                error = getString(R.string.error_invalid_text_length);
             } else if (AppFuncs.detectSpecialCharacters(user)) {
-                error = "Username contains special characters";
+                error = getString(R.string.error_invalid_characters);
             } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
-                error = "Invalid email format";
+                error = getString(R.string.error_invalid_email);
             } else {
             }
 
@@ -405,7 +420,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (TextUtils.isEmpty(phone)) {
                 phone = null;
             } else {
-                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()) + phone;
+                if (wpkCountry != null) {
+                    String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
+                    phone = countryName + phone;
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -455,7 +473,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
         @Override
         protected void onPostExecute(OnboardingAccount account) {
-
             // mUsername = account.username + '@' + account.domain;
             appFuncs.dismissProgressWaiting();
             ImApp mApp = (ImApp) getApplication();
@@ -465,8 +482,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             signInHelper.activateAccount(account.providerId, account.accountId);
             signInHelper.signIn(account.password, account.providerId, account.accountId, true);
 
+            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+
             try {
-                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, account.username);
+                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, hash, account.username);
             } catch (Exception e) {
                 e.printStackTrace();
             }
