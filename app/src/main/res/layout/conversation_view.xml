@@ -55,7 +55,8 @@
                 android:fontFamily="sans-serif-light"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="#bebebe" />
+                android:textColor="#bebebe"
+                android:layout_marginRight="16dp"/>
 
         </RelativeLayout>
 

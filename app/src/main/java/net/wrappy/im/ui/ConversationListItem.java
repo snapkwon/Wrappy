@@ -31,7 +31,6 @@ import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,7 +39,6 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.thefinestartist.wip.DateUtil;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -57,12 +55,14 @@ import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.DateUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -166,8 +166,7 @@ public class ConversationListItem extends FrameLayout {
                 } catch (Exception ignored) {
                     holder.mAvatar.setImageResource(R.drawable.chat_group);
                 }
-            }
-            else {
+            } else {
                 GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(referenceAvatar)) {
                     GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
@@ -218,7 +217,7 @@ public class ConversationListItem extends FrameLayout {
 //                            }
 
 //                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
-                                holder.mLine2.setText(R.string.incoming_attachment);
+                            holder.mLine2.setText(R.string.incoming_attachment);
 //                            holder.mLine2.setVisibility(View.GONE);
 
                         }
@@ -264,16 +263,16 @@ public class ConversationListItem extends FrameLayout {
                             resultMessage = ConferenceUtils.convertConferenceMessage(message);
                             holder.mLine2.setText(resultMessage);
                         } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
-                                        message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
-                                        message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
+                                message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
+                                message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
 
                             String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
                             String senderSticker = message.split(":")[2];
 
                             if (senderSticker.startsWith(account)) {
-                                holder.mLine2.setText("You sent a sticker");
+                                holder.mLine2.setText(getResources().getString(R.string.you_sent_sticker));
                             } else {
-                                holder.mLine2.setText(senderSticker + " sent a sticker");
+                                holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
                         }
                         holder.mLine2.setLines(1);
@@ -298,29 +297,18 @@ public class ConversationListItem extends FrameLayout {
 
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-                Debug.e("messageDate: " + messageDate);
                 Debug.e("dateLast: " + dateLast);
 
-                if (checkCurrentDay(dateLast)) {
-                    SimpleDateFormat hourMinuteFormat = new SimpleDateFormat("HH:mm");
-                    String hm = hourMinuteFormat.format(dateLast);
-                    Debug.e("hm: " + hm);
-
+                if (DateUtils.checkCurrentDay(dateLast)) {
+                    String hm = DateUtils.convertHourMinuteFormat(dateLast);
                     holder.mStatusText.setText(hm);
+                } else if (DateUtils.checkCurrentWeek(dateLast)) {
+                    String today = DateUtils.convertTodayFormat(dateLast);
+                    holder.mStatusText.setText(today);
+                } else {
+                    String monthDay = DateUtils.convertMonthDayFormat(dateLast);
+                    holder.mStatusText.setText(monthDay);
                 }
-
-//                holder.mStatusText.setText(sPrettyTime.format(dateLast));
-
-                SimpleDateFormat todaysDayFormat = new SimpleDateFormat("EEE");
-                String today = todaysDayFormat.format(dateLast);
-                Debug.e("today: " + today);
-
-                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM dd");
-                String month = monthFormat.format(dateLast);
-                Debug.e("month: " + month);
-
-                holder.mStatusText.setText(month);
-
             } else {
                 holder.mStatusText.setText("");
             }
@@ -342,18 +330,6 @@ public class ConversationListItem extends FrameLayout {
         } else {
             holder.mPinIcon.setVisibility(GONE);
         }
-    }
-
-    private boolean checkCurrentDay(Date date) {
-        Date currentDay = new Date();
-        Debug.e("currentDay: " + currentDay);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        boolean isCurrentDay = sdf.format(date).equals(sdf.format(currentDay));
-
-        Debug.e("isCurrentDay: " + isCurrentDay);
-
-        return isCurrentDay;
     }
 
     private void getEncryptionState(long providerId, long accountId, String address, ConversationViewHolder holder) {
