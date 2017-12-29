@@ -470,6 +470,7 @@
     <string name="setting_report_spam">Report spam</string>
     <string name="setting_notification">Notifications</string>
     <string name="setting_change_background">Change background</string>
+    <string name="setting_add_member">Add member</string>
     <string name="incoming_attachment">1 attachment</string>
 
     <string name="title_wallet">Wallet</string>
