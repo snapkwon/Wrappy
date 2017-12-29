@@ -3,17 +3,14 @@ package net.wrappy.im.ui;
 import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -25,7 +22,7 @@ import net.wrappy.im.R;
  * Created by PCPV on 11/08/2017.
  */
 
-public class IntroActivity extends AppCompatActivity {
+public class IntroActivity extends BaseActivity {
 
     private ViewPager viewPager;
     private ImageView topImage1;
