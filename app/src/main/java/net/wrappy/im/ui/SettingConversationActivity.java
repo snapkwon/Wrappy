@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -46,7 +44,7 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
-public class SettingConversationActivity extends AppCompatActivity {
+public class SettingConversationActivity extends BaseActivity {
     @BindView(R.id.layout_search_setting)
     LinearLayout mSearchLayout;
     @BindView(R.id.switch_notification)
@@ -78,18 +76,15 @@ public class SettingConversationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_conversation);
+        super.onCreate(savedInstanceState);
 
-        ButterKnife.bind(this);
 
         // back button at action bar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(getResources().getString(R.string.setting_screen));
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
-        }
+        getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        getSupportActionBar().setTitle("Change Security Question");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         if (intent != null) {
 //            mName = getIntent().getStringExtra("nickname");
