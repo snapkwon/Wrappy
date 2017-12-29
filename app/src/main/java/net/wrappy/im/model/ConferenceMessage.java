@@ -151,6 +151,10 @@ public class ConferenceMessage {
         return mState == ConferenceState.DECLINED;
     }
 
+    public boolean isMissedOrDeclined() {
+        return mState == ConferenceState.DECLINED || mState == ConferenceState.MISSED;
+    }
+
     public boolean isEnded() {
         return mState != null && mState == ConferenceState.END;
     }
@@ -171,8 +175,16 @@ public class ConferenceMessage {
         mState = ConferenceState.INCOMING;
     }
 
+    public void outgoing() {
+        mState = ConferenceState.OUTGOING;
+    }
+
     public void decline() {
         mState = ConferenceState.DECLINED;
+    }
+
+    public void missed() {
+        mState = ConferenceState.MISSED;
     }
 
     public String generateRoomId() {

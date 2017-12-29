@@ -50,6 +50,7 @@ import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ChatSession;
+import net.wrappy.im.model.ConferenceCall;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.GroupListener;
@@ -399,6 +400,11 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         long sendTime = System.currentTimeMillis();
 
         if (!isResend) {
+            if (text.contains(ConferenceConstant.CONFERENCE_PREFIX)) {
+                ConferenceMessage message = new ConferenceMessage(text);
+                message.outgoing();
+                text = message.toString();
+            }
             insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
             insertOrUpdateChat(text);
         }
@@ -1074,7 +1080,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 mConnection.getContext().sendBroadcast(i);
             } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
                 ConferenceMessage conferenceMessage = new ConferenceMessage(body);
-                if (conferenceMessage.isDecline()) {
+                if (conferenceMessage.isMissedOrDeclined()) {
                     if (ConferenceActivity.getsIntance() != null)
                         ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
                     return true;
@@ -1263,11 +1269,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, String body) {
             if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 Intent intent;
-                if (isGroupChatSession()) {
-                    intent = ConferencePopupActivity.newIntentGroup(bareAddress, nickname, body, uri);
-                } else {
-                    intent = ConferencePopupActivity.newIntentP2P(bareAddress, nickname, body, uri);
-                }
+                ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
+                conferenceCall.setGroup(isGroupChatSession());
+                intent = ConferencePopupActivity.newIntent(conferenceCall);
                 mConnection.getContext().startActivity(intent);
             }
         }

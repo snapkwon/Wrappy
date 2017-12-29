@@ -3386,7 +3386,7 @@ public class ConversationView {
 
     private String getRoomId(ConferenceMessage.ConferenceType type) {
         String roomId;
-        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.OUTGOING);
+        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.INCOMING);
         sendMessageAsync(message.toString());
         roomId = message.getRoomId();
         return roomId;

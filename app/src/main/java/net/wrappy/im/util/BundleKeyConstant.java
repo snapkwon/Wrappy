@@ -29,4 +29,8 @@ public class BundleKeyConstant {
     public static String FINGER_PRINT_KEY = "fingerprint";
     public static String REFERENCE_KEY = "reference";
     public static String LAST_PHOTO_KEY = "lastphoto";
+
+    //Chat keys
+    public static String MESSAGE_URI_KEY = "message_uri";
+    public static String CHAT_URI_KEY = "chat_uri";
 }
