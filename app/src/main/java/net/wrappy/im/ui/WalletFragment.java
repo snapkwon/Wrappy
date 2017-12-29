@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,7 +43,7 @@ import java.util.List;
  * Created by PCPV on 11/28/2017.
  */
 
-public class WalletFragment extends Fragment  {
+public class WalletFragment extends Fragment {
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private Intent serviceIntent;
@@ -57,7 +56,7 @@ public class WalletFragment extends Fragment  {
     private ModelWaletListView prd;
     TextView wallet_fragment_dola;
     ImageView imgBarCodeAddress;
-    String hexAddress="";
+    String hexAddress = "";
 
 
     final int TYPE_ETH = 0;
@@ -73,7 +72,7 @@ public class WalletFragment extends Fragment  {
     private BalanceRepo balanceRepo;
     private Balance balance;
 
-    private final BroadcastReceiver mBroadcastReceiver  = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(MAIN_WALLET_STARTED)) {
@@ -81,7 +80,7 @@ public class WalletFragment extends Fragment  {
             }
 
             if (intent.getAction().equals(MAIN_WALLET_IN_PROGRESS)) {
-                if(walletTask == null) {
+                if (walletTask == null) {
                     walletTask = new WalletTasks();
                     walletTask.execute();
                 }
@@ -117,10 +116,9 @@ public class WalletFragment extends Fragment  {
             outFile.getParentFile().mkdirs();
             out = new FileOutputStream(outFile);
             copyFile(in, out);
-        } catch(IOException e) {
+        } catch (IOException e) {
             //Log.e("tag", "Failed to copy asset file: " + filename, e);
-        }
-        finally {
+        } finally {
             if (in != null) {
                 try {
                     in.close();
@@ -141,19 +139,19 @@ public class WalletFragment extends Fragment  {
     private void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
-        while((read = in.read(buffer)) != -1){
+        while ((read = in.read(buffer)) != -1) {
             out.write(buffer, 0, read);
         }
-        buffer=null;
+        buffer = null;
     }
 
     @Override
     public void onResume() {
-        if (!isServiceRunning(GethLightService.class)){
+        if (!isServiceRunning(GethLightService.class)) {
             getActivity().startService(serviceIntent);
         }
 
-        if(walletTask == null) {
+        if (walletTask == null) {
             walletTask = new WalletTasks();
             walletTask.execute();
         }
@@ -165,7 +163,7 @@ public class WalletFragment extends Fragment  {
         super.onDestroy();
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
 
-        if (isServiceRunning(GethLightService.class)){
+        if (isServiceRunning(GethLightService.class)) {
             getActivity().stopService(serviceIntent);
         }
     }
@@ -180,91 +178,88 @@ public class WalletFragment extends Fragment  {
         return false;
     }
 
-        @Nullable
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(
                 R.layout.wallet_fragment, container, false);
         //getActivity().startService(serviceIntent);
-            lv = (RecyclerView) view.findViewById(R.id.recyclerviewcoins);
-            wallet_fragment_dola = (TextView) view.findViewById(R.id.wallet_fragment_dola);
-            imgBarCodeAddress = (ImageView) view.findViewById(R.id.imgBarCodeAddress);
-            imgBarCodeAddress.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), WalletQrCodeDetailActivity.class);
-                    intent.putExtra("hexAddress",hexAddress);
+        lv = (RecyclerView) view.findViewById(R.id.recyclerviewcoins);
+        wallet_fragment_dola = (TextView) view.findViewById(R.id.wallet_fragment_dola);
+        imgBarCodeAddress = (ImageView) view.findViewById(R.id.imgBarCodeAddress);
+        imgBarCodeAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), WalletQrCodeDetailActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+        try {
+            keyManager = KeyManager.newKeyManager(getActivity().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
+            hexAddress = keyManager.getAccounts().get(0).getAddress().getHex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        balanceRepo = new BalanceRepo();
+        balance = new Balance();
+        balance.setChain("4");
+        balance.setAddress(hexAddress);
+        balance.setTokenAddress(PRDToken.contractAddress);
+
+        walletInfo = new WalletInfo();
+        walletInfo.setETHAddress(hexAddress);
+        initContentListWallet();
+
+        adapter.setOnItemClickListener(new RecycleWalletAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                {
+                    Bundle b = new Bundle();
+                    b.putInt("namecoin", arrWallet.get(position).getTypeCoin());
+                    b.putString("number", arrWallet.get(position).getNumber());
+                    b.putString("value", arrWallet.get(position).getPriceCoin());
+                    if (arrWallet.get(position).getTypeCoin() == TYPE_PRO) {
+                        try {
+                            b.putDouble("rate", walletInfo.getPROPrice());
+                        } catch (Exception e) {
+                            b.putDouble("rate", 0);
+                        }
+                    } else {
+                        try {
+                            b.putDouble("rate", Double.parseDouble(walletInfo.coinInfo.getString("price_usd")));
+                        } catch (Exception e) {
+                            b.putDouble("rate", 0);
+                        }
+                    }
+                    Intent intent = new Intent(getActivity(), TransactionTab.class);
+                    intent.putExtras(b);
                     getActivity().startActivity(intent);
                 }
-            });
-            try {
-                keyManager = KeyManager.newKeyManager(getActivity().getFilesDir().getAbsolutePath() + WalletInfo.KEYSTORE_PATH);
-                hexAddress = keyManager.getAccounts().get(0).getAddress().getHex();
-            }catch(Exception e){
-                e.printStackTrace();
             }
 
-            balanceRepo = new BalanceRepo();
-            balance = new Balance();
-            balance.setChain("4");
-            balance.setAddress(hexAddress);
-            balance.setTokenAddress(PRDToken.contractAddress);
-
-            walletInfo = new WalletInfo();
-            walletInfo.setETHAddress(hexAddress);
-            initContentListWallet();
-
-            adapter.setOnItemClickListener(new RecycleWalletAdapter.ClickListener() {
-                @Override
-                public void onItemClick(int position, View v) {
-                    {
-                        Bundle b = new Bundle();
-                        b.putInt("namecoin",arrWallet.get(position).getTypeCoin());
-                        b.putString("number",arrWallet.get(position).getNumber());
-                        b.putString("value",arrWallet.get(position).getPriceCoin());
-                        if(arrWallet.get(position).getTypeCoin() == TYPE_PRO)
-                        {
-                            try {
-                                b.putDouble("rate", walletInfo.getPROPrice());
-                            } catch (Exception e) {
-                                b.putDouble("rate", 0);
-                            }
-                        }
-                        else {
-                            try {
-                                b.putDouble("rate", Double.parseDouble(walletInfo.coinInfo.getString("price_usd")));
-                            } catch (Exception e) {
-                                b.putDouble("rate", 0);
-                            }
-                        }
-                        Intent intent = new Intent(getActivity(), TransactionTab.class);
-                        intent.putExtras(b);
-                        getActivity().startActivity(intent);
-                    }
-                }
-
-            });
+        });
 
         return view;
     }
 
 
     private void initContentListWallet() {
-        arrWallet = new ArrayList<ModelWaletListView>();
+        arrWallet = new ArrayList<>();
         prd = new ModelWaletListView();
-        prd.setNameCoin("Proteusion");
+        prd.setNameCoin(getString(R.string.PRO));
         prd.setTypeCoin(TYPE_PRO);
         prd.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_proteusion));
         prd.setPriceCoin("0");
         prd.setPercent("0");
         prd.setValue("0");
         prd.setNumber("0");
-       prd.setTextCoin(getActivity().getResources().getColor(R.color.textproteusion));
+        prd.setTextCoin(getActivity().getResources().getColor(R.color.textproteusion));
         arrWallet.add(prd);
         eth = new ModelWaletListView();
-        eth.setNameCoin("Ethereum");
+        eth.setNameCoin(getString(R.string.ETH));
         eth.setTypeCoin(TYPE_ETH);
-       eth.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_ethereum));
+        eth.setIcon(getActivity().getResources().getDrawable(R.drawable.ic_ethereum));
         eth.setTextCoin(getActivity().getResources().getColor(R.color.textethereum));
         arrWallet.add(eth);
 
@@ -272,11 +267,11 @@ public class WalletFragment extends Fragment  {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         lv.setLayoutManager(layoutManager);
-        adapter=new RecycleWalletAdapter(arrWallet);
+        adapter = new RecycleWalletAdapter(arrWallet);
         lv.setBackgroundColor(0xaabbcc);
 
         lv.addItemDecoration(
-                new DividerItemDecoration(getActivity(),layoutManager.getOrientation()));
+                new DividerItemDecoration(getActivity(), layoutManager.getOrientation()));
         lv.setAdapter(adapter);
     }
 
@@ -296,18 +291,19 @@ public class WalletFragment extends Fragment  {
         protected void onPostExecute(Void arrs) {
 
             updateUIInfo();
-            if(walletTask != null){
+            if (walletTask != null) {
                 walletTask.cancel(true);
                 walletTask = null;
             }
         }
     }
-    private String formatNumber(Double number, String format){
-        return String.format( format, number );
+
+    private String formatNumber(Double number, String format) {
+        return String.format(format, number);
     }
 
 
-    private void updateUIInfo(){
+    private void updateUIInfo() {
         List<ModelWaletListView> arr = new ArrayList<ModelWaletListView>();
         try {
             eth.setPercent(formatNumber(walletInfo.getETHChange(), "%.2f"));
@@ -317,26 +313,26 @@ public class WalletFragment extends Fragment  {
             eth.setPriceCoin(formatNumber(walletInfo.getETHPrice(), "%.2f"));
 
             prd.setPercent(formatNumber(walletInfo.getPROChange(), "%.2f"));
-            String proBalance = formatNumber(walletInfo.getPROBalance(), "%.0f");;
+            String proBalance = formatNumber(walletInfo.getPROBalance(), "%.0f");
+            ;
             prd.setNumber(proBalance);
             prd.setValue(proBalance + " PRO");
             prd.setPriceCoin(formatNumber(walletInfo.getPROPrice(), "%.2f"));
 
             arr.add(prd);
             arr.add(eth);
-            if(arr.size() > 0) {
+            if (arr.size() > 0) {
                 SetListCoin(arr);
             }
             Double price = walletInfo.getETHPrice() + walletInfo.getPROPrice();
-            wallet_fragment_dola.setText(String.format( "$%.1f", price));
-        }catch (Exception ex) {}
+            wallet_fragment_dola.setText(String.format("$%.1f", price));
+        } catch (Exception ex) {
+        }
     }
 
-    public void SetListCoin(List<ModelWaletListView> list)
-    {
+    public void SetListCoin(List<ModelWaletListView> list) {
         arrWallet.clear();
-        for(ModelWaletListView item : list)
-        {
+        for (ModelWaletListView item : list) {
             arrWallet.add(item);
         }
         adapter.updateList(arrWallet);

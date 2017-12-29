@@ -58,7 +58,7 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (mEditUsername.getText().toString().isEmpty()) {
-                    PopupUtils.showCustomDialog(LauncherActivity.this, "Warning", "username cannot be empty"
+                    PopupUtils.showCustomDialog(LauncherActivity.this, getString(R.string.warning), getString(R.string.error_empty_username)
                             , R.string.yes, null, false);
                 } else {
                     Store.putStringData(getApplicationContext(), Store.USERNAME, mEditUsername.getText().toString().trim());

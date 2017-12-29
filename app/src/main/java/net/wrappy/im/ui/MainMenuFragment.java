@@ -13,17 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.ui.legacy.SettingActivity;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -35,6 +39,8 @@ public class MainMenuFragment extends Fragment {
 
     View mainView;
     MainActivity mainActivity;
+    @BindView(R.id.txtMainMenuVersionName)
+    AppTextView txtMainMenuVersionName;
 
     @Nullable
     @Override
@@ -42,6 +48,10 @@ public class MainMenuFragment extends Fragment {
         mainView = inflater.inflate(R.layout.main_menu_fragment, null);
         ButterKnife.bind(this, mainView);
         mainActivity = (MainActivity) getActivity();
+        String versionName = BuildConfig.VERSION_NAME;
+        if (versionName != null) {
+            txtMainMenuVersionName.setText(getString(R.string.app_version) + " " + versionName);
+        }
         return mainView;
     }
 
@@ -77,7 +87,7 @@ public class MainMenuFragment extends Fragment {
         switch (v.getId()) {
             case R.id.lnMainMenuNewGroup:
                 Intent intentGroup = new Intent(getActivity(), ContactsPickerActivity.class);
-                intentGroup.putExtra("isGroup", true);
+                intentGroup.putExtra(BundleKeyConstant.KEY_GROUP, true);
                 getActivity().startActivityForResult(intentGroup, MainActivity.REQUEST_CHOOSE_CONTACT);
                 break;
             case R.id.lnMainMenuContact:
@@ -101,18 +111,18 @@ public class MainMenuFragment extends Fragment {
                 break;
             case R.id.lnMainMenuLogout:
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, "Logout this device");
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
                 sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, "Logout all devices");
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
                 sheetCells.add(sheetCell);
                 BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
                             confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
-                            AppFuncs.alert(getActivity(), "Logout this device", true);
+                            AppFuncs.alert(getActivity(), getString(R.string.logout_device), true);
                         } else if (index == 2) {
-                            AppFuncs.alert(getActivity(), "Logout all devices", true);
+                            AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
                         }
                     }
                 });

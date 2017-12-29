@@ -18,5 +18,5 @@
             layout="@layout/launcher_main" />
 
     </ViewFlipper>
-ss
+
 </LinearLayout>

@@ -123,7 +123,7 @@ public class ContactListItem extends FrameLayout {
 
         final int subType = cursor.getInt(COLUMN_SUBSCRIPTION_TYPE);
         final int subStatus = cursor.getInt(COLUMN_SUBSCRIPTION_STATUS);
-        final String reference = cursor.getString(COLUMN_AVATAR_HASH);
+        final String reference = cursor.getString(COLUMN_AVATAR_DATA);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
         String s = DatabaseUtils.dumpCursorToString(cursor);
@@ -354,10 +354,7 @@ public class ContactListItem extends FrameLayout {
     public void applyStyleColors(ContactViewHolder holder) {
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int themeColorHeader = settings.getInt("themeColor", -1);
         int themeColorText = settings.getInt("themeColorText", -1);
-        int themeColorBg = settings.getInt("themeColorBg", -1);
-
 
         if (themeColorText != -1) {
             if (holder.mLine1 != null)
@@ -365,12 +362,7 @@ public class ContactListItem extends FrameLayout {
 
             if (holder.mLine2 != null)
                 holder.mLine2.setTextColor(themeColorText);
-
             //holder.mLine2.setTextColor(darker(themeColorText,2.0f));
-
         }
-
     }
-
-
 }

@@ -137,12 +137,10 @@ public class ImConnectionAdapter extends IImConnection.Stub {
         if ((mConnection.getCapability() & ImConnection.CAPABILITY_SESSION_REESTABLISHMENT) != 0) {
             Map<String, String> cookie = querySessionCookie(cr);
             if (cookie != null) {
-                RemoteImService.debug("re-establish session");
                 try {
                     mConnection.reestablishSessionAsync(cookie);
                     return true;
                 } catch (IllegalArgumentException e) {
-                    RemoteImService.debug("Invalid session cookie, probably modified by others.");
                     clearSessionCookie(cr);
                 }
             }

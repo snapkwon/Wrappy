@@ -69,8 +69,6 @@ public class StatusBarNotifier {
     public void notifyChat(long providerId, long accountId, long chatId, String username,
                            String nickname, String msg, boolean lightWeightNotify) {
         if (!Preferences.isNotificationEnabled()) {
-            if (DBG)
-                log("notification for chat " + username + " is not enabled");
             return;
         }
 
@@ -114,8 +112,6 @@ public class StatusBarNotifier {
     public void notifySubscriptionRequest(long providerId, long accountId, long contactId,
             String username, String nickname) {
         if (!Preferences.isNotificationEnabled()) {
-            if (DBG)
-                log("notification for subscription request " + username + " is not enabled");
             return;
         }
         String title = nickname;
@@ -130,8 +126,6 @@ public class StatusBarNotifier {
 
     public void notifySubscriptionApproved(Contact contact, long providerId, long accountId) {
         if (!Preferences.isNotificationEnabled()) {
-            if (DBG)
-                log("notification for subscription approved is not enabled");
             return;
         }
 
@@ -306,13 +300,8 @@ public class StatusBarNotifier {
         builder.setSound(ringtoneUri);
         mLastSoundPlayedMs = SystemClock.elapsedRealtime();
 
-        if (DBG)
-            log("setRinger: notification.sound = " + ringtoneUri);
-
         if (Preferences.getNotificationVibrate()) {
             builder.setDefaults(Notification.DEFAULT_VIBRATE);
-            if (DBG)
-                log("setRinger: defaults |= vibrate");
         }
     }
 
@@ -418,10 +407,6 @@ public class StatusBarNotifier {
 
             return mIntent;
         }
-    }
-
-    private static void log(String msg) {
-        RemoteImService.debug("[StatusBarNotify] " + msg);
     }
 
     private boolean shouldSuppressSoundNotification() {

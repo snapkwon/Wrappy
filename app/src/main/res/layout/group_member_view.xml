@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -23,67 +22,57 @@
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp"
-     >
-     
-			
+    android:padding="3dp">
+
+
     <LinearLayout
-        android:id="@+id/message_container" 
+        android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="0dp"         
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="62dp"
         android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        >
-        
-                <net.ironrabbit.type.CustomTypefaceTextView
-                    android:id="@+id/line1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:layout_gravity="left"
-              		android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceLarge"                    
-                    android:singleLine="true"
-                    android:textColor="?contactTextPrimary"
-                    android:text="line 1 text here" />
-       
-                  <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/line2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?contactTextSecondary"
+        android:padding="0dp">
 
-                      />
-
-<!--
-     CustomTypefaceTextViewView
-            android:id="@+id/line3"
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/line1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?contactTextSecondary"
-            android:text="line 3 text here"
+            android:fontFamily="sans-serif-light"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?contactTextPrimary" />
 
-            />
--->
-        
-          	</LinearLayout>
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/line2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?contactTextSecondary" />
+
+        <!--
+             CustomTypefaceTextViewView
+                    android:id="@+id/line3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?contactTextSecondary"
+                    android:text="line 3 text here"
+
+                    />
+        -->
+
+    </LinearLayout>
 
 
     <net.wrappy.im.helper.layout.CircleImageView
-            android:id="@+id/avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="centerCrop" 
-            android:layout_margin="3dp"
-            android:layout_gravity="left|top"
-            android:src="@drawable/avatar_unknown"
-
-            />
+        android:id="@+id/avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="left|top"
+        android:layout_margin="3dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar_unknown" />
 
     <ImageView
         android:id="@+id/avatarCrown"

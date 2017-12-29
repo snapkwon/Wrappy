@@ -275,10 +275,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    public  void resetDB()
-    {
-        if(mCacheWord !=null)
-        {
+    public void resetDB() {
+        if (mCacheWord != null) {
 
             ImpsProvider.resetDB();
             mCacheWord.deinitialize();
@@ -293,7 +291,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             settings.edit().clear().apply();
             forceStopImService();
 
-       //     RemoteImService.
+            //     RemoteImService.
             //  initDBHelper(mCacheWord.getEncryptionKey(), false);
 
         }
@@ -360,7 +358,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         }
     }
+
     Intent serviceIntent;
+
     public synchronized void startImServiceIfNeed() {
         startImServiceIfNeed(false);
     }
@@ -425,10 +425,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mImService = null;
         }
 
-       // Intent serviceIntent = new Intent(this, RemoteImService.class);
+        // Intent serviceIntent = new Intent(this, RemoteImService.class);
         serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
         mApplicationContext.stopService(serviceIntent);
-
 
 
     }
@@ -666,8 +665,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         resolver.delete(builder.build(), null, null);
 
         clearApplicationData();
-       // mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
-       // mApplicationContext.deleteDatabase(ImpsProvider.UNENCRYPTED_DATABASE_NAME);
+        // mApplicationContext.deleteDatabase(ImpsProvider.ENCRYPTED_DATABASE_NAME);
+        // mApplicationContext.deleteDatabase(ImpsProvider.UNENCRYPTED_DATABASE_NAME);
 
        /* SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mApplicationContext);
         SharedPreferences.Editor editor = preferences.edit();
@@ -679,10 +678,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static void clearApplicationData() {
         File cache = mApplicationContext.getCacheDir();
         File appDir = new File(cache.getParent());
-        if(appDir.exists()){
+        if (appDir.exists()) {
             String[] children = appDir.list();
-            for(String s : children){
-                if(!s.equals("lib")){
+            for (String s : children) {
+                if (!s.equals("lib")) {
                     deleteDir(new File(appDir, s));
                 }
             }
@@ -1249,6 +1248,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             e.printStackTrace();
         }
     }
+
     /*
     * Auto update contact name in list which were loaded from Xmpp server
     * */
@@ -1282,10 +1282,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
             String avatarReference = "";
             String bannerReference = "";
-            if (wpKMemberDto.getAvatar()!=null) {
+            String hash = "";
+            if (wpKMemberDto.getAvatar() != null) {
                 avatarReference = wpKMemberDto.getAvatar().getReference();
+                hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
             }
-            if (wpKMemberDto.getBanner()!=null) {
+            if (wpKMemberDto.getBanner() != null) {
                 bannerReference = wpKMemberDto.getBanner().getReference();
             }
 
@@ -1296,10 +1298,11 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
                 sImApp.getContentResolver().update(uri, values, null, null);
             } else {
+                values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
 
-            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI,  sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, address);
+            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
         }
     }
 
@@ -1320,7 +1323,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         } else {
             email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
         }
-        if (email==null) {
+        if (email == null) {
             email = address.split("@")[0];
         }
         return email;

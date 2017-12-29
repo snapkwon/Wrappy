@@ -23,19 +23,13 @@ public class SetPatternActivity extends BasePatternActivity
     private int m_typePattern;
 
 
-
-
-    public void setTypePattern(int type)
-    {
+    public void setTypePattern(int type) {
         m_typePattern = type;
-        if(m_typePattern == TYPE_NOCONFIRM)
-        {
+        if (m_typePattern == TYPE_NOCONFIRM) {
             view.setVisibility(View.GONE);
             bottomText.setVisibility(View.VISIBLE);
             bottomText.setText("Forget password");
-        }
-        else if(m_typePattern == TYPE_CONFIRM)
-        {
+        } else if (m_typePattern == TYPE_CONFIRM) {
             view.setVisibility(View.VISIBLE);
             bottomText.setVisibility(View.GONE);
         }
@@ -134,8 +128,6 @@ public class SetPatternActivity extends BasePatternActivity
         mRightButton.setVisibility(View.GONE);
 
 
-
-
         if (savedInstanceState == null) {
             updateStage(Stage.Draw);
         } else {
@@ -169,7 +161,8 @@ public class SetPatternActivity extends BasePatternActivity
     }
 
     @Override
-    public void onPatternCellAdded(List<PatternView.Cell> pattern) {}
+    public void onPatternCellAdded(List<PatternView.Cell> pattern) {
+    }
 
     @Override
     public void onPatternDetected(List<PatternView.Cell> newPattern) {
@@ -180,11 +173,9 @@ public class SetPatternActivity extends BasePatternActivity
                     updateStage(Stage.DrawTooShort);
                 } else {
                     mPattern = new ArrayList<>(newPattern);
-                    if(m_typePattern == TYPE_CONFIRM) {
+                    if (m_typePattern == TYPE_CONFIRM) {
                         updateStage(Stage.Confirm);
-                    }
-                    else if(m_typePattern == TYPE_NOCONFIRM)
-                    {
+                    } else if (m_typePattern == TYPE_NOCONFIRM) {
                         onSetPattern(mPattern);
                         onConfirmed();
                     }
@@ -193,7 +184,7 @@ public class SetPatternActivity extends BasePatternActivity
             case Confirm:
             case ConfirmWrong:
                 if (newPattern.equals(mPattern)) {
-                   // updateStage(Stage.ConfirmCorrect);
+                    // updateStage(Stage.ConfirmCorrect);
                     onSetPattern(mPattern);
                     onConfirmed();
                 } else {
@@ -225,7 +216,7 @@ public class SetPatternActivity extends BasePatternActivity
 
     protected void onCanceled() {
         setResult(RESULT_CANCELED);
-      //  finish();
+        //  finish();
     }
 
     private void onRightButtonClicked() {
@@ -302,5 +293,6 @@ public class SetPatternActivity extends BasePatternActivity
         return 4;
     }
 
-    protected void onSetPattern(List<PatternView.Cell> pattern) {}
+    protected void onSetPattern(List<PatternView.Cell> pattern) {
+    }
 }
