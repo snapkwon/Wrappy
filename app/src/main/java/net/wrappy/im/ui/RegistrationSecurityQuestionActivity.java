@@ -28,7 +28,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity_security_question);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle("Registration");
+        getSupportActionBar().setTitle(R.string.registration);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion,SecurityQuestionCreateFragment.newsIntance()).commit();
     }

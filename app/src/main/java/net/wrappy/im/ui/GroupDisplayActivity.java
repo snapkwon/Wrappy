@@ -46,6 +46,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.qr.QrShareAsyncTask;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
@@ -479,12 +480,12 @@ public class GroupDisplayActivity extends BaseActivity {
 
                 ArrayList<String> invitees = new ArrayList<String>();
 
-                String username = resultIntent.getStringExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAME);
+                String username = resultIntent.getStringExtra(BundleKeyConstant.RESULT_KEY);
 
                 if (username != null)
                     invitees.add(username);
                 else
-                    invitees = resultIntent.getStringArrayListExtra(ContactsPickerActivity.EXTRA_RESULT_USERNAMES);
+                    invitees = resultIntent.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
 
                 inviteContacts(invitees);
 
@@ -645,7 +646,7 @@ public class GroupDisplayActivity extends BaseActivity {
                         for (GroupMemberDisplay member : mMembers) {
                             usernames.add(member.username);
                         }
-                        intent.putExtra(ContactsPickerActivity.EXTRA_EXCLUDED_CONTACTS, usernames);
+                        intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, usernames);
                         startActivityForResult(intent, REQUEST_PICK_CONTACTS);
                     }
                 });

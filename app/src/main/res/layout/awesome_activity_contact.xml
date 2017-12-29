@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -18,181 +17,166 @@
  */
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<FrameLayout
-    android:orientation="vertical"
-    android:id="@+id/main_content"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:padding="0dp">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="0dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/contactmain">
-        <ImageView
-            android:id="@+id/imageAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:visibility="gone"
-            android:src='@drawable/avatar_unknown'
-            android:scaleType="centerCrop"/>
+        android:padding="0dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="horizontal"
-        android:id="@+id/imageSpacer"
-        >
-        </LinearLayout>
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/contactmain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            >
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="0dp">
+
+            <ImageView
+                android:id="@+id/imageAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src='@drawable/avatar_unknown'
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/imageSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:orientation="horizontal"></LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/tvNickname"
-                    android:selectAllOnFocus="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/account_setup_example_email_address"
                     android:autoLink="none"
                     android:cursorVisible="true"
+                    android:hint="@string/account_setup_example_email_address"
                     android:inputType="textEmailAddress"
-                    android:text="user person"
+                    android:selectAllOnFocus="true"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="30dp"
- />
+                    android:textSize="30dp" />
 
-            <ImageView android:id="@+id/btnStartChat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_message"
-                android:padding="6dp"
-                android:layout_marginTop="20dp"
-                android:layout_alignParentRight="true"
-                android:gravity="right"
-                />
+                <ImageView
+                    android:id="@+id/btnStartChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="20dp"
+                    android:gravity="right"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_action_message" />
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:id="@+id/tvUsername"
-                    android:selectAllOnFocus="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
+                    android:layout_below="@+id/tvNickname"
                     android:autoLink="none"
                     android:cursorVisible="true"
                     android:inputType="textEmailAddress"
+                    android:selectAllOnFocus="true"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="?contactTextSecondary"
-                    android:layout_below="@+id/tvNickname"
+                    android:visibility="visible" />
 
-                    />
+            </RelativeLayout>
 
-
-
-
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoLink="none"
-            android:visibility="gone"
-            android:text="@string/security_code"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?contactTextSecondary"
-            android:layout_gravity="start"
-            />
-</RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:id="@+id/listEncryptionKey"
-            android:visibility="gone"
-
-            >
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:id="@+id/qrcode"
-                android:background="#dddddd"
-                android:src="@drawable/qr"
-                android:layout_alignParentLeft="true"
-                />
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/tvFingerprint"
-                android:selectAllOnFocus="true"
-                android:layout_width="250dp"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:autoLink="none"
-                android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?contactTextSecondary"
+                android:padding="10dp">
 
-                android:layout_toRightOf="@+id/qrcode"
-                android:layout_centerVertical="true"
-                />
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:id="@+id/qrshare"
-                android:layout_alignParentRight="true"
-                android:src="@android:drawable/ic_menu_share"
-                android:padding="6dp"
-                android:layout_margin="1dp"
-                />
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:autoLink="none"
+                    android:text="@string/security_code"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?contactTextSecondary"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-            <net.ironrabbit.type.CustomTypefaceButton
-                android:id="@+id/btnVerify"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/listEncryptionKey"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/menu_verify"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?contactTextSecondary"
-                android:onClick="verifyClicked"
-                android:visibility="gone"
-                >
+                android:padding="10dp"
+                android:visibility="gone">
 
-            </net.ironrabbit.type.CustomTypefaceButton>
+                <ImageView
+                    android:id="@+id/qrcode"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="#dddddd"
+                    android:src="@drawable/qr" />
 
-        </RelativeLayout>
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/tvFingerprint"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/qrcode"
+                    android:autoLink="none"
+                    android:selectAllOnFocus="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?contactTextSecondary" />
+
+                <ImageView
+                    android:id="@+id/qrshare"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="1dp"
+                    android:padding="6dp"
+                    android:src="@android:drawable/ic_menu_share" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <net.ironrabbit.type.CustomTypefaceButton
+                    android:id="@+id/btnVerify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="verifyClicked"
+                    android:text="@string/menu_verify"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?contactTextSecondary"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:orientation="vertical"></LinearLayout>
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/transparent"
-        app:layout_collapseMode="pin" />
+        <LinearLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical" />
 
-</FrameLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:layout_collapseMode="pin" />
+
+    </FrameLayout>
 </ScrollView>

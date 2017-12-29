@@ -780,6 +780,8 @@ public class Imps {
 
         public static final String AVATAR_HASH = "avatars_hash";
 
+        public static final String AVATAR_BANNER = "avatars_banner";
+
         public static final String AVATAR_DATA = "avatars_data";
 
         public static final String getNicknameFromAddress(ContentResolver cr, String address) {
@@ -800,7 +802,7 @@ public class Imps {
             return ret;
         }
 
-      public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
+        public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
             String ret = null;
             String selection = NICKNAME + "=?";
             String[] selectionArgs = {nickname};
@@ -858,53 +860,57 @@ public class Imps {
     }
 
     public static final class Roster implements RosterColumns {
-        public Roster() {}
+        public Roster() {
+        }
+
         public static final Uri CONTENT_URI = Uri.parse("content://net.wrappy.im.provider.Imps/roster");
         public static final Uri CONTENT_URI_INSERT = Uri.parse("content://net.wrappy.im.provider.Imps/roster_insert");
+
         public static void insert(ContentResolver contentResolver, WpkRoster wpkRoster) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(GROUP_ID,wpkRoster.getId());
-            contentValues.put(NAME,wpkRoster.getName());
-            contentValues.put(REFERENCE,wpkRoster.getReference());
-            contentValues.put(TYPE,wpkRoster.getType());
-            if (wpkRoster.getListUsername()!=null) {
-                for (int i=0; i < wpkRoster.getListUsername().size();i++) {
-                    contentValues.put(USERNAME,wpkRoster.getListUsername().get(i));
+            contentValues.put(GROUP_ID, wpkRoster.getId());
+            contentValues.put(NAME, wpkRoster.getName());
+            contentValues.put(REFERENCE, wpkRoster.getReference());
+            contentValues.put(TYPE, wpkRoster.getType());
+            if (wpkRoster.getListUsername() != null) {
+                for (int i = 0; i < wpkRoster.getListUsername().size(); i++) {
+                    contentValues.put(USERNAME, wpkRoster.getListUsername().get(i));
                     contentResolver.insert(CONTENT_URI, contentValues);
                 }
             }
         }
+
         public static ArrayList<WpkRoster> getListRoster(ContentResolver contentResolver) {
-         ArrayList<WpkRoster> wpkRosters = new ArrayList<>();
-         try {
-             String[] projection = new String[]{GROUP_ID};
+            ArrayList<WpkRoster> wpkRosters = new ArrayList<>();
+            try {
+                String[] projection = new String[]{GROUP_ID};
 //            String where = "id =?";
 //            String[] selectAgr = new String[]{String.valueOf(rosterId)};
 
-             Cursor cursor = contentResolver.query(CONTENT_URI, projection, null, null, null);
-             int columnGroupID = cursor.getColumnIndex(GROUP_ID);
-             ArrayList<Integer> integers = new ArrayList<>();
-             if (cursor.moveToFirst()){
-                 do{
-                     int groupId = cursor.getInt(columnGroupID);
-                     integers.add(groupId);
-                 }while(cursor.moveToNext());
-             }
-             cursor.close();
-             if (integers.size() > 0) {
-                 for (int i=0; i < integers.size(); i++) {
-                     WpkRoster wpkRoster = getRosterByGroupID(contentResolver,integers.get(i));
-                     if (wpkRoster!=null) {
-                         wpkRosters.add(wpkRoster);
-                     }
-                 }
+                Cursor cursor = contentResolver.query(CONTENT_URI, projection, null, null, null);
+                int columnGroupID = cursor.getColumnIndex(GROUP_ID);
+                ArrayList<Integer> integers = new ArrayList<>();
+                if (cursor.moveToFirst()) {
+                    do {
+                        int groupId = cursor.getInt(columnGroupID);
+                        integers.add(groupId);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                if (integers.size() > 0) {
+                    for (int i = 0; i < integers.size(); i++) {
+                        WpkRoster wpkRoster = getRosterByGroupID(contentResolver, integers.get(i));
+                        if (wpkRoster != null) {
+                            wpkRosters.add(wpkRoster);
+                        }
+                    }
 
-             }
-         }catch (Exception ex){
-             ex.printStackTrace();
-         }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
-         return wpkRosters;
+            return wpkRosters;
         }
 
         public static WpkRoster getRosterByGroupID(ContentResolver contentResolver, int groupID) {
@@ -920,7 +926,7 @@ public class Imps {
                 int columnReference = cursor.getColumnIndex(REFERENCE);
                 int columnType = cursor.getColumnIndex(TYPE);
                 int columnUser = cursor.getColumnIndex(USERNAME);
-                if (cursor.moveToFirst()){
+                if (cursor.moveToFirst()) {
                     wpkRoster = new WpkRoster();
                     int groupId = cursor.getInt(columnGroupID);
                     String name = cursor.getString(columnName);
@@ -931,15 +937,15 @@ public class Imps {
                     wpkRoster.setReference(reference);
                     wpkRoster.setType(type);
                     ArrayList<String> listUsername = new ArrayList<>();
-                    do{
+                    do {
                         String username = cursor.getString(columnUser);
                         listUsername.add(username);
                         // do what ever you want here
-                    }while(cursor.moveToNext());
+                    } while (cursor.moveToNext());
                     wpkRoster.setListUsername(listUsername);
                 }
                 cursor.close();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
@@ -1677,6 +1683,11 @@ public class Imps {
         /**
          * The hash of the image data <P>Type: TEXT</P>
          */
+        String HASH = "hash";
+
+        /**
+         * The hash of the image data <P>Type: TEXT</P>
+         */
         String BANNER = "banner";
 
         /**
@@ -1721,6 +1732,17 @@ public class Imps {
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = "contact ASC";
+
+        public static String getAvatar(ContentResolver resolver, String address) {
+            String selection = Imps.Avatars.CONTACT + "='" + address + "'";
+            String result = "";
+            Cursor cursor = resolver.query(Avatars.CONTENT_URI, new String[]{Avatars.DATA},
+                    selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                result = cursor.getString(0);
+            }
+            return result;
+        }
 
     }
 
@@ -3131,7 +3153,7 @@ public class Imps {
         values.put(Imps.Messages.MIME_TYPE, mimeType);
         values.put(Imps.Messages.PACKET_ID, id);
 
-        if(ConferenceUtils.isInvisibleMessage(body))
+        if (ConferenceUtils.isInvisibleMessage(body))
             values.put(MessageColumns.STATUS, MessageColumns.UPDATE);
 
 //        return resolver.insert(isEncrypted ? Messages.getOtrMessagesContentUriByThreadId(contactId) : Messages.getContentUriByThreadId(contactId), values);
@@ -3238,12 +3260,12 @@ public class Imps {
         ContentValues values = new ContentValues(1);
         values.put(Messages.BODY, body);
         int result = resolver.update(builder.build(), values, where, args);
-        Debug.d("result " +result);
+        Debug.d("result " + result);
         if (result == 0) {
             builder = Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
             result = resolver.update(builder.build(), values, where, args);
         }
-        Debug.d("result2 " +result);
+        Debug.d("result2 " + result);
         return result;
     }
 
