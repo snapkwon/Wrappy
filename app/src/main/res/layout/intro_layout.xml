@@ -52,20 +52,16 @@
                 android:src="@drawable/text_1" />
         </LinearLayout>
 
-        <net.ironrabbit.type.CustomTypefaceTextView android:layout_width="wrap_content"
+        <net.wrappy.im.helper.layout.AppTextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="336dp"
             android:background="@drawable/regbtn_states"
-            android:layout_gravity="center_horizontal"
-            android:textSize="16dp"
-            android:textColor="#ffffff"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            style="@style/AppButton_OK"
             android:id="@+id/start_messaging_button"/>
         <ImageView
             android:layout_width="match_parent"
