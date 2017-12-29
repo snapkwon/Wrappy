@@ -1075,8 +1075,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 mConnection.getContext().sendBroadcast(i);
             } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
                 ConferenceMessage conferenceMessage = new ConferenceMessage(body);
-                if (conferenceMessage.isDecline() && ConferenceActivity.getsIntance() != null) {
-                    ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
+                if (conferenceMessage.isDecline()) {
+                    if (ConferenceActivity.getsIntance() != null)
+                        ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
                     return true;
                 }
             }

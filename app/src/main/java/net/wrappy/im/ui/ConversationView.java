@@ -56,13 +56,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -116,7 +112,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -156,7 +151,6 @@ import net.wrappy.im.util.SystemServices;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -2854,7 +2848,7 @@ public class ConversationView {
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
             ;
-            final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
+            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -3398,7 +3392,7 @@ public class ConversationView {
 
     private String getRoomId(ConferenceMessage.ConferenceType type) {
         String roomId;
-        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
+        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.OUTGOING);
         sendMessageAsync(message.toString());
         roomId = message.getRoomId();
         return roomId;

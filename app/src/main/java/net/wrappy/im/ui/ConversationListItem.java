@@ -239,11 +239,12 @@ public class ConversationListItem extends FrameLayout {
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                            resultMessage = ConferenceUtils.convertConferenceMessage(message);
-                        }
-                        holder.mLine2.setText(resultMessage);
-                        holder.mLine2.setLines(1);
+                            holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
+                        } else {
+                            holder.mLine2.setText(resultMessage);
+                            holder.mLine2.setLines(1);
 //                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        }
 
                     } catch (Exception e) {
 
