@@ -30,20 +30,15 @@
                     android:layout_gravity="center_horizontal"
                     android:padding="10dp"/>
             </LinearLayout>
-            <FrameLayout
+            <net.wrappy.im.helper.layout.AppButton
+                android:id="@+id/btnQuestionComplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
-
-                <net.wrappy.im.helper.layout.AppButton
-                    android:id="@+id/btnQuestionComplete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="NEXT"
-                    style="@style/AppButton01"
-                    android:enabled="true"
-                    />
-            </FrameLayout>
+                android:text="NEXT"
+                style="@style/AppButton_OK"
+                android:layout_margin="16dp"
+                android:enabled="true"
+                />
 
         </LinearLayout>
 

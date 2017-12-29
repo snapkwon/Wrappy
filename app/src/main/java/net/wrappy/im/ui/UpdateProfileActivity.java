@@ -6,9 +6,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +109,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     MySpinnerAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
-
+    List<WpkCountry> wpkCountry;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -148,16 +151,23 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     if (s != null) {
                         Type listType = new TypeToken<ArrayList<WpkCountry>>() {
                         }.getType();
-                        List<WpkCountry> wpkCountry = new Gson().fromJson(s, listType);
+                        wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
                         ArrayList<String> strings = new ArrayList<>();
                         for (int i = 0; i < wpkCountry.size(); i++) {
-                            strings.add(wpkCountry.get(i).getPrefix());
+                            strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
-
-                        countryAdapter = new MySpinnerAdapter(UpdateProfileActivity.this,R.layout.update_profile_textview, wpkCountry);
-                       // countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings);
-
+                        countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings) {
+                            @NonNull
+                            @Override
+                            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
+                                final TextView t = (TextView)v.findViewById(android.R.id.text1);
+                                t.setText(wpkCountry.get(position).getPrefix());
+                                return v;
+                            }
+                        };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                     }
                 } catch (Exception ex) {
@@ -193,7 +203,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     };
 
     @Optional
-    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileSkip})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar})
     @Override
     public void onClick(View view) {
         if (isFlag) {
@@ -224,11 +234,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 } else {
                     handler.postDelayed(runnablePostData, 10000);
                 }
-            }
-            if (view.getId() == R.id.btnProfileSkip) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
             }
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
@@ -411,7 +416,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (TextUtils.isEmpty(phone)) {
                 phone = null;
             } else {
-                phone = countryAdapter.getItem(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix() + phone;
+                if (wpkCountry!=null) {
+                    String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
+                    phone = countryName + phone;
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
