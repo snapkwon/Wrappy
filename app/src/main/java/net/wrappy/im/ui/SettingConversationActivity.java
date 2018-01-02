@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
@@ -13,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,16 +23,32 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
+import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -38,8 +56,10 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.BundleKeyConstant;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -60,6 +80,13 @@ public class SettingConversationActivity extends BaseActivity {
     LinearLayout mAddMemberLayout;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
+    @BindView(R.id.edGroupName)
+    AppEditTextView edGroupName;
+    @BindView(R.id.btnGroupPhoto)
+    CircleImageView btnGroupPhoto;
+    @BindView(R.id.lnChangeGroupNameController) LinearLayout lnChangeGroupNameController;
+    @BindView(R.id.btnEditGroupName)
+    ImageButton btnEditGroupName;
     @BindView(R.id.view_divider)
     View mViewDivider;
     @BindView(R.id.text_delete_setting)
@@ -76,6 +103,7 @@ public class SettingConversationActivity extends BaseActivity {
     private IChatSession mSession;
     private Contact mGroupOwner;
     private boolean mIsOwner = false;
+    WpKChatGroupDto wpKChatGroup;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
@@ -95,7 +123,6 @@ public class SettingConversationActivity extends BaseActivity {
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
-        getSupportActionBar().setTitle("Change Security Question");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         if (intent != null) {
@@ -108,7 +135,7 @@ public class SettingConversationActivity extends BaseActivity {
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
-
+        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
         if (cursor == null)
             return; //not going to work
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
@@ -122,9 +149,9 @@ public class SettingConversationActivity extends BaseActivity {
 
             if (mSession != null) {
                 mGroupOwner = mSession.getGroupChatOwner();
-                if (mGroupOwner != null)
+                if (mGroupOwner != null) {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
-                net.wrappy.im.util.Debug.e("mIsOwner: " + mIsOwner);
+                }
             }
         } catch (RemoteException e) {
         }
@@ -133,6 +160,26 @@ public class SettingConversationActivity extends BaseActivity {
 
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
+            String groupXmppId = mAddress;
+            if (mAddress.contains("@")) {
+                groupXmppId = mAddress.split("@")[0];
+            }
+            RestAPI.apiGET(getApplicationContext(),RestAPI.getGroupByXmppId(groupXmppId)).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    if (result!=null) {
+                        AppFuncs.log(result.getResult());
+                        try {
+                            Gson gson = new Gson();
+                            wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
+                            edGroupName.setText(wpKChatGroup.getName());
+                            GlideHelper.loadBitmapToImageView(getApplicationContext(),btnGroupPhoto,RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            });
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
             layout_leave_setting.setVisibility(View.GONE);
 
@@ -229,7 +276,7 @@ public class SettingConversationActivity extends BaseActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.layout_add_member})
+    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.layout_add_member})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
@@ -247,6 +294,49 @@ public class SettingConversationActivity extends BaseActivity {
             case R.id.layout_clean_setting:
                 clearHistory();
                 break;
+            case R.id.btnGroupPhoto:
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
+                sheetCells.add(sheetCell);
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        if (index == 1) {
+                            AppFuncs.openCamera(SettingConversationActivity.this,100);
+                        } else {
+                            AppFuncs.openGallery(SettingConversationActivity.this, 100);
+                        }
+                    }
+                }).show();
+                break;
+            case R.id.btnEditGroupName:
+                edGroupName.setEnabled(true);
+                edGroupName.setFocusable(true);
+                lnChangeGroupNameController.setVisibility(View.VISIBLE);
+                btnEditGroupName.setVisibility(View.GONE);
+                break;
+            case R.id.btnGroupNameCheck:
+                String name = edGroupName.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    return;
+                }
+                edGroupName.setText(name);
+                wpKChatGroup.setName(name);
+                updateData();
+                edGroupName.setFocusable(false);
+                edGroupName.setEnabled(false);
+                lnChangeGroupNameController.setVisibility(View.GONE);
+                btnEditGroupName.setVisibility(View.VISIBLE);
+                break;
+            case R.id.btnGroupNameClose:
+                edGroupName.setText(wpKChatGroup.getName());
+                edGroupName.setFocusable(false);
+                edGroupName.setEnabled(false);
+                lnChangeGroupNameController.setVisibility(View.GONE);
+                btnEditGroupName.setVisibility(View.VISIBLE);
+                break;
             case R.id.layout_add_member:
                 Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
                 ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
@@ -257,6 +347,51 @@ public class SettingConversationActivity extends BaseActivity {
                 startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 100) {
+                AppFuncs.cropImage(this,data,true);
+            } else if (requestCode == UCrop.REQUEST_CROP) {
+                Uri uri = UCrop.getOutput(data);
+                btnGroupPhoto.setImageURI(uri);
+                RestAPI.uploadFile(getApplicationContext(),new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        try {
+                            AppFuncs.log(result.getResult());
+                            final String reference = RestAPI.getPhotoReference(result.getResult());
+                            WpKIcon wpKIcon = new WpKIcon();
+                            wpKIcon.setReference(reference);
+                            wpKChatGroup.setIcon(wpKIcon);
+                            updateData();
+                        }catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        }
+
+    }
+
+    private void updateData() {
+        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+        RestAPI.apiPUT(getApplicationContext(),RestAPI.CHAT_GROUP,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    AppFuncs.log(result.getResult());
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.alert(getApplicationContext(),"Update Success", false);
+                    }
+                }
+            }
+        });
     }
 
     private void clearHistory() {
@@ -353,14 +488,14 @@ public class SettingConversationActivity extends BaseActivity {
         };
 
         public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_1.png",
-                "backgrounds/page_1/chat_bg_2.png",
-                "backgrounds/page_1/chat_bg_3.png",
-                "backgrounds/page_1/chat_bg_4.png",
-                "backgrounds/page_1/chat_bg_5.png",
-                "backgrounds/page_1/chat_bg_6.png",
-                "backgrounds/page_1/chat_bg_7.png",
-                "backgrounds/page_1/chat_bg_8.png",
+                "backgrounds/page_1/chat_bg_1.jpg",
+                "backgrounds/page_1/chat_bg_2.jpg",
+                "backgrounds/page_1/chat_bg_3.jpg",
+                "backgrounds/page_1/chat_bg_4.jpg",
+                "backgrounds/page_1/chat_bg_5.jpg",
+                "backgrounds/page_1/chat_bg_6.jpg",
+                "backgrounds/page_1/chat_bg_7.jpg",
+                "backgrounds/page_1/chat_bg_8.jpg",
         };
 
         public static final BackgroundBottomSheetFragment getInstance() {

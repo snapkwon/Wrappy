@@ -45,6 +45,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
@@ -54,10 +55,14 @@ import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.ui.widgets.GroupAvatar;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.DateUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -154,23 +159,39 @@ public class ConversationListItem extends FrameLayout {
                     if (!TextUtils.isEmpty(reference)) {
                         GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
                     } else {
-                        String groupId = address.split("@")[0];
-                        Drawable avatar = new GroupAvatar(groupId);
-                        holder.mAvatar.setImageDrawable(avatar);
+                        holder.mAvatar.setImageResource(R.drawable.chat_group);
                     }
 
                     //
                 } catch (Exception ignored) {
-                    if (AVATAR_DEFAULT_GROUP == null)
-                        AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
-                                R.drawable.group_chat));
-                    holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
+                    holder.mAvatar.setImageResource(R.drawable.chat_group);
                 }
-            }
-            else {
+            } else {
                 GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(referenceAvatar)) {
                     GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
+                }
+            }
+        }
+
+        if (holder.mAvatarStatus != null) {
+            if (Imps.Contacts.TYPE_GROUP != contactType) {
+                holder.mAvatarStatus.setVisibility(VISIBLE);
+
+                switch (presence) {
+                    case Imps.Presence.AVAILABLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_active);
+                        break;
+                    case Imps.Presence.AWAY:
+                    case Imps.Presence.IDLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_aw);
+                        break;
+                    case Imps.Presence.OFFLINE:
+                    case Imps.Presence.INVISIBLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_disable);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -196,7 +217,7 @@ public class ConversationListItem extends FrameLayout {
 //                            }
 
 //                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
-                                holder.mLine2.setText(R.string.incoming_attachment);
+                            holder.mLine2.setText(R.string.incoming_attachment);
 //                            holder.mLine2.setVisibility(View.GONE);
 
                         }
@@ -240,6 +261,18 @@ public class ConversationListItem extends FrameLayout {
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                             holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
+                        } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
+                                message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
+                                message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
+
+                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
+                            String senderSticker = message.split(":")[2];
+
+                            if (senderSticker.startsWith(account)) {
+                                holder.mLine2.setText(getResources().getString(R.string.you_sent_sticker));
+                            } else {
+                                holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
+                            }
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);
@@ -265,8 +298,17 @@ public class ConversationListItem extends FrameLayout {
 
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-                holder.mStatusText.setText(sPrettyTime.format(dateLast));
 
+                if (DateUtils.checkCurrentDay(dateLast)) {
+                    String hm = DateUtils.convertHourMinuteFormat(dateLast);
+                    holder.mStatusText.setText(hm);
+                } else if (DateUtils.checkCurrentWeek(dateLast)) {
+                    String today = DateUtils.convertTodayFormat(dateLast);
+                    holder.mStatusText.setText(today);
+                } else {
+                    String monthDay = DateUtils.convertMonthDayFormat(dateLast);
+                    holder.mStatusText.setText(monthDay);
+                }
             } else {
                 holder.mStatusText.setText("");
             }

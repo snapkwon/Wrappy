@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by ben on 06/12/2017.
  */
 
-public class WpKChatGroupDto implements Parcelable {
+public class WpKChatGroupDto extends T implements Parcelable {
     Integer id;
     Integer identifier;
     String name;

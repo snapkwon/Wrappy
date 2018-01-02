@@ -346,8 +346,8 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == AVATAR || requestCode == BANNER) {
-                if (data.getData() != null) {
-                    AppFuncs.cropImage(getActivity(), data.getData(), true);
+                if (data != null) {
+                    AppFuncs.cropImage(getActivity(), data, true);
                 }
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 final Uri resultUri = UCrop.getOutput(data);

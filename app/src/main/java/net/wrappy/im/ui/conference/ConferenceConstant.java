@@ -17,4 +17,8 @@ public class ConferenceConstant {
     public static final String EDIT_CHAT_FREFIX = ":wrappyedit:";//id length:text length:chat ID, new text
 
     public static final String SEND_BACKGROUND_CHAT_PREFIX = ":wrappychangebackground:"; // image uri
+
+    public static final String SEND_STICKER_BUNNY = ":bunny";
+    public static final String SEND_STICKER_EMOJI = ":emoji";
+    public static final String SEND_STICKER_ARTBOARD = ":sticker";
 }

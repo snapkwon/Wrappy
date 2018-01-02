@@ -583,7 +583,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
-        <activity android:name=".ui.SettingConversationActivity"></activity>
+        <activity android:name=".ui.SettingConversationActivity" android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.conference.ConferencePopupActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />

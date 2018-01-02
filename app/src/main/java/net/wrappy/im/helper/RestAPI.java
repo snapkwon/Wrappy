@@ -80,6 +80,8 @@ public class RestAPI {
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
     public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
     public static String DELETE_AVATAR = root_url + "member/avatar";
+    public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
+    public static String CHAT_GROUP = root_url + "chat/group";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -87,6 +89,9 @@ public class RestAPI {
 
     public static int NUMBER_REQUEST_TOKEN = 3;
 
+    public static String getGroupByXmppId(String xmppId) {
+        return String.format(GET_GROUP_BY_XMPP_ID, xmppId);
+    }
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
