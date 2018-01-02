@@ -507,10 +507,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (data != null) {
                 if (requestCode == IMAGE_HEADER) {
                     isAvatarRequest = false;
-                    AppFuncs.cropImage(this, data.getData(), false);
+                    AppFuncs.cropImage(this, data, false);
                 } else if (requestCode == IMAGE_AVATAR) {
                     isAvatarRequest = true;
-                    AppFuncs.cropImage(this, data.getData(), true);
+                    AppFuncs.cropImage(this, data, true);
                 } else if (requestCode == UCrop.REQUEST_CROP) {
                     if (resultCode == UCrop.RESULT_ERROR) {
                         final Throwable cropError = UCrop.getError(data);

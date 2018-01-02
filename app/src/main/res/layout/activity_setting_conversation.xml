@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:animateLayoutChanges="true"
             android:weightSum="1">
 
             <RelativeLayout
@@ -36,21 +37,56 @@
                     android:background="@android:color/transparent" />
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/lnShowGroupName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="10dp">
 
                 <net.wrappy.im.helper.layout.AppEditTextView
                     android:id="@+id/edGroupName"
-                    style="@style/AppText02"
-                    android:layout_width="match_parent"
+                    style="@style/app_edittext_default"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/enter_group_name"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:layout_gravity="center_vertical"
                     android:imeOptions="actionDone"
                     android:inputType="text" />
-            </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/btnEditGroupName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_edit"
+                    android:paddingLeft="16dp"
+                    android:background="@android:color/transparent"/>
+                <LinearLayout
+                    android:id="@+id/lnChangeGroupNameController"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <ImageButton
+                        android:id="@+id/btnGroupNameCheck"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_icon_check"
+                        android:paddingLeft="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent"/>
+                    <ImageButton
+                        android:id="@+id/btnGroupNameClose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_icon_close"
+                        android:paddingLeft="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent"/>
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
