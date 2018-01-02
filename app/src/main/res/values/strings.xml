@@ -580,4 +580,7 @@
     <string name="error_invalid_characters">Username contains special characters</string>
     <string name="error_registration">Registration fail. Try Again!</string>
 
+    <string name="you_sent_sticker">You sent a sticker</string>
+    <string name="user_sent_sticker">%1$s sent a sticker</string>
+
 </resources>

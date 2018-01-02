@@ -312,14 +312,14 @@ public class SettingConversationActivity extends BaseActivity {
         };
 
         public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_1.png",
-                "backgrounds/page_1/chat_bg_2.png",
-                "backgrounds/page_1/chat_bg_3.png",
-                "backgrounds/page_1/chat_bg_4.png",
-                "backgrounds/page_1/chat_bg_5.png",
-                "backgrounds/page_1/chat_bg_6.png",
-                "backgrounds/page_1/chat_bg_7.png",
-                "backgrounds/page_1/chat_bg_8.png",
+                "backgrounds/page_1/chat_bg_1.jpg",
+                "backgrounds/page_1/chat_bg_2.jpg",
+                "backgrounds/page_1/chat_bg_3.jpg",
+                "backgrounds/page_1/chat_bg_4.jpg",
+                "backgrounds/page_1/chat_bg_5.jpg",
+                "backgrounds/page_1/chat_bg_6.jpg",
+                "backgrounds/page_1/chat_bg_7.jpg",
+                "backgrounds/page_1/chat_bg_8.jpg",
         };
 
         public static final BackgroundBottomSheetFragment getInstance() {
