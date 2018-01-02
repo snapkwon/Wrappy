@@ -23,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
@@ -61,6 +62,8 @@ public class SettingConversationActivity extends BaseActivity {
     RecyclerView mGroupRecycleView;
     @BindView(R.id.view_divider)
     View mViewDivider;
+    @BindView(R.id.text_delete_setting)
+    TextView mTxtDelete;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -87,6 +90,7 @@ public class SettingConversationActivity extends BaseActivity {
         setContentView(R.layout.activity_setting_conversation);
         super.onCreate(savedInstanceState);
 
+        mTxtDelete.setText(getResources().getString(R.string.setting_delete_chat));
 
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
@@ -135,6 +139,9 @@ public class SettingConversationActivity extends BaseActivity {
             if (mIsOwner) {
                 mAddMemberLayout.setVisibility(View.VISIBLE);
                 mViewDivider.setVisibility(View.VISIBLE);
+                layout_leave_setting.setVisibility(View.VISIBLE);
+
+                mTxtDelete.setText(getResources().getString(R.string.setting_delete_and_leave_group));
             }
 
             memberGroupDisplays = new ArrayList<>();
