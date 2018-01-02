@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
@@ -38,13 +37,10 @@ import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.LogCleaner;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
@@ -400,16 +396,7 @@ public class ProfileFragment extends Fragment {
                             String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
                             String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
                             DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
-                            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
-                            if (connection != null) {
-                                try {
-                                    if (connection.getState() == ImConnection.LOGGED_IN) {
-                                        connection.broadcastMigrationIdentity(null);
-                                    }
-                                } catch (RemoteException ex) {
-                                    LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
-                                }
-                            }
+                            ImApp.broadcastIdentity(null);
                         }
                     } else {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);

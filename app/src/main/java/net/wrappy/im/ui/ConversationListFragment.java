@@ -549,7 +549,7 @@ public class ConversationListFragment extends Fragment {
                 Imps.Chats.LAST_UNREAD_MESSAGE,
                 Imps.Chats.CHAT_TYPE,
                 Imps.Chats.CHAT_FAVORITE,
-                Imps.Contacts.AVATAR_HASH
+                Imps.Contacts.AVATAR_DATA
                 //        Imps.Contacts.AVATAR_DATA
 
         };

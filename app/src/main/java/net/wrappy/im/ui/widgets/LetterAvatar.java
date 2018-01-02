@@ -39,8 +39,9 @@ public class LetterAvatar extends ColorDrawable {
 
             if (!TextUtils.isEmpty(nickname))
                 this.pLetters = nickname.substring(0,1);
-            else
-                this.pLetters = "?";
+            else {
+                nickname = this.pLetters = "?";
+            }
 
             this.pResources = context.getResources();
             ONE_DP = 1 * pResources.getDisplayMetrics().density;
