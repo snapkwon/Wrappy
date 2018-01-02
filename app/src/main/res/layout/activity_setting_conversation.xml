@@ -5,6 +5,7 @@
     style="@style/match_parent"
     android:orientation="vertical"
     tools:context="net.wrappy.im.ui.SettingConversationActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,11 +55,11 @@
 
         </LinearLayout>
 
-        <View style="@style/divider" android:layout_marginTop="16dp" />
+        <View
+            style="@style/divider"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
-
-
 
 
     <LinearLayout
@@ -230,27 +231,66 @@
             style="@style/wrap_content"
             android:src="@drawable/setting_color" />
 
-        <net.ironrabbit.type.CustomTypefaceTextView
+        <RelativeLayout style="@style/wrap_content">
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/text_change_background"
+                style="@style/wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/setting_change_background"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/view_divider"
+                style="@style/divider"
+                android:layout_alignLeft="@id/text_change_background"
+                android:layout_below="@id/text_change_background"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_add_member"
+        style="@style/match_width"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
             style="@style/wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/setting_change_background"
-            android:textSize="16sp" />
+            android:src="@drawable/setting_add" />
+
+
+        <RelativeLayout style="@style/wrap_content">
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/text_add_member"
+                style="@style/wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/setting_add_member"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_member_groups"
         style="@style/match_width"
-        android:orientation="vertical"
         android:layout_marginTop="10dp"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <net.ironrabbit.type.CustomTypefaceTextView
             style="@style/match_width"
-            android:text="@string/title_member_group_setting"
-            android:textAllCaps="true"
+            android:background="@color/background_gainsboro"
             android:paddingLeft="10dp"
-            android:background="@color/background_gainsboro"/>
+            android:text="@string/title_member_group_setting"
+            android:textAllCaps="true" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/member_group_recycler_view"

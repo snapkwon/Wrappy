@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -36,6 +37,7 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.util.ArrayList;
 
@@ -53,8 +55,12 @@ public class SettingConversationActivity extends BaseActivity {
     LinearLayout mMemberGroupsLayout;
     @BindView(R.id.layout_leave_setting)
     LinearLayout layout_leave_setting;
+    @BindView(R.id.layout_add_member)
+    LinearLayout mAddMemberLayout;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
+    @BindView(R.id.view_divider)
+    View mViewDivider;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -73,6 +79,8 @@ public class SettingConversationActivity extends BaseActivity {
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
     private Thread mThreadUpdate;
+
+    private final static int REQUEST_PICK_CONTACT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,11 +113,14 @@ public class SettingConversationActivity extends BaseActivity {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
             mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
 
+
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+
             if (mSession != null) {
                 mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                net.wrappy.im.util.Debug.e("mIsOwner: " + mIsOwner);
             }
         } catch (RemoteException e) {
         }
@@ -120,6 +131,11 @@ public class SettingConversationActivity extends BaseActivity {
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
             layout_leave_setting.setVisibility(View.GONE);
+
+            if (mIsOwner) {
+                mAddMemberLayout.setVisibility(View.VISIBLE);
+                mViewDivider.setVisibility(View.VISIBLE);
+            }
 
             memberGroupDisplays = new ArrayList<>();
 
@@ -162,6 +178,15 @@ public class SettingConversationActivity extends BaseActivity {
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
 
+                        if (member.getAffiliation() != null) {
+                            if (member.getAffiliation().contentEquals("owner") ||
+                                    member.getAffiliation().contentEquals("admin")) {
+                                    if (member.getUsername().equals(mLocalAddress)) {
+                                        mIsOwner = true;
+                                    }
+                            }
+                        }
+
                         members.add(member);
                     }
                     c.close();
@@ -197,7 +222,7 @@ public class SettingConversationActivity extends BaseActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
+    @OnClick({R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.layout_add_member})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
@@ -215,11 +240,22 @@ public class SettingConversationActivity extends BaseActivity {
             case R.id.layout_clean_setting:
                 clearHistory();
                 break;
+            case R.id.layout_add_member:
+                Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
+                ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
+                for (MemberGroupDisplay member : memberGroupDisplays) {
+                    usernames.add(member.getUsername());
+                }
+                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, usernames);
+                startActivityForResult(intent, REQUEST_PICK_CONTACT);
+                break;
         }
     }
 
     private void clearHistory() {
         Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+        Uri chatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
+        Imps.Chats.insertOrUpdateChat(getContentResolver(), chatURI, "", false);
         finish();
     }
 

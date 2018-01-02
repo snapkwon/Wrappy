@@ -3,6 +3,11 @@ package net.wrappy.im.model;
 * Created by Khoa.Nguyen
 * */
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 
 /**
@@ -87,15 +92,17 @@ public class ConferenceMessage {
     }
 
     public enum ConferenceState {
-        REQUEST("REQUEST"),
-        CALLED("CALLED"),
-        ACCEPTED("ACCEPTED"),
-        DECLINED("DECLINED"),
-        END("END");
+        OUTGOING("OUTGOING", R.drawable.chat_outcall),
+        INCOMING("INCOMING", R.drawable.chat_outcall),
+        MISSED("MISSED", R.drawable.chat_outcall),
+        DECLINED("DECLINED", R.drawable.chat_outcall),
+        END("END", R.drawable.chat_outcall);
         private String state;
+        private int icon;
 
-        ConferenceState(String state) {
+        ConferenceState(String state, int icon) {
             this.state = state;
+            this.icon = icon;
         }
 
         static ConferenceState getEnumByValue(String value) {
@@ -109,6 +116,10 @@ public class ConferenceMessage {
 
         public String getState() {
             return state;
+        }
+
+        public Drawable getIcon() {
+            return ContextCompat.getDrawable(ImApp.sImApp, icon);
         }
     }
 
@@ -136,6 +147,14 @@ public class ConferenceMessage {
         return mType == ConferenceType.AUDIO;
     }
 
+    public boolean isDecline() {
+        return mState == ConferenceState.DECLINED;
+    }
+
+    public boolean isMissedOrDeclined() {
+        return mState == ConferenceState.DECLINED || mState == ConferenceState.MISSED;
+    }
+
     public boolean isEnded() {
         return mState != null && mState == ConferenceState.END;
     }
@@ -153,11 +172,19 @@ public class ConferenceMessage {
     }
 
     public void accept() {
-        mState = ConferenceState.ACCEPTED;
+        mState = ConferenceState.INCOMING;
+    }
+
+    public void outgoing() {
+        mState = ConferenceState.OUTGOING;
     }
 
     public void decline() {
         mState = ConferenceState.DECLINED;
+    }
+
+    public void missed() {
+        mState = ConferenceState.MISSED;
     }
 
     public String generateRoomId() {
