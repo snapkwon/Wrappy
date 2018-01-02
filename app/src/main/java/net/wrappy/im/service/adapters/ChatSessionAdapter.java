@@ -50,6 +50,8 @@ import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ChatSession;
+import net.wrappy.im.model.ConferenceCall;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.GroupListener;
 import net.wrappy.im.model.GroupMemberListener;
@@ -67,6 +69,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IDataListener;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
+import net.wrappy.im.ui.ConferenceActivity;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conference.ConferencePopupActivity;
 import net.wrappy.im.util.ConferenceUtils;
@@ -397,6 +400,11 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         long sendTime = System.currentTimeMillis();
 
         if (!isResend) {
+            if (text.contains(ConferenceConstant.CONFERENCE_PREFIX)) {
+                ConferenceMessage message = new ConferenceMessage(text);
+                message.outgoing();
+                text = message.toString();
+            }
             insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
             insertOrUpdateChat(text);
         }
@@ -1070,6 +1078,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 ConferenceUtils.saveBitmapPreferences(imageName, msg.getFrom().getUser(), mConnection.getContext());
                 Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
                 mConnection.getContext().sendBroadcast(i);
+            } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
+                ConferenceMessage conferenceMessage = new ConferenceMessage(body);
+                if (conferenceMessage.isMissedOrDeclined()) {
+                    if (ConferenceActivity.getsIntance() != null)
+                        ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
+                    return true;
+                }
             }
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
@@ -1254,11 +1269,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, String body) {
             if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                 Intent intent;
-                if (isGroupChatSession()) {
-                    intent = ConferencePopupActivity.newIntentGroup(nickname, body, uri);
-                } else {
-                    intent = ConferencePopupActivity.newIntentP2P(nickname, body, uri);
-                }
+                ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
+                conferenceCall.setGroup(isGroupChatSession());
+                intent = ConferencePopupActivity.newIntent(conferenceCall);
                 mConnection.getContext().startActivity(intent);
             }
         }

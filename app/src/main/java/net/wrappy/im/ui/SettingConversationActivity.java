@@ -243,6 +243,8 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void clearHistory() {
         Imps.Messages.deleteOtrMessagesByThreadId(getContentResolver(), mLastChatId);
+        Uri chatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, mLastChatId);
+        Imps.Chats.insertOrUpdateChat(getContentResolver(), chatURI, "", false);
         finish();
     }
 

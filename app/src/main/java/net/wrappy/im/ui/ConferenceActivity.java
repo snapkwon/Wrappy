@@ -3,11 +3,13 @@ package net.wrappy.im.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import net.wrappy.im.BuildConfig;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.util.BundleKeyConstant;
 
 import org.jitsi.meet.sdk.JitsiMeetActivity;
@@ -22,6 +24,9 @@ public class ConferenceActivity extends JitsiMeetActivity {
     private static final String VIDEO_MUTED = "startWithVideoMuted";
 
     private int numberParticipants = 0;
+    String roomId;
+
+    private static ConferenceActivity sIntance;
 
     public static void startVideoCall(Context context, String roomId) {
         startConference(context, roomId, false);
@@ -40,6 +45,16 @@ public class ConferenceActivity extends JitsiMeetActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(BundleKeyConstant.ROOM_ID, roomId);
         context.startActivity(intent);
+    }
+
+    public static ConferenceActivity getsIntance() {
+        return sIntance;
+    }
+
+    public void onDenyConference(ConferenceMessage message) {
+        if (!TextUtils.isEmpty(roomId) && message.getRoomId().equals(roomId)) {
+            finish();
+        }
     }
 
     @Override
@@ -123,6 +138,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
         // about what we want anyway.
         setWelcomePageEnabled(false);
         super.onCreate(savedInstanceState);
+        sIntance = this;
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -133,7 +149,7 @@ public class ConferenceActivity extends JitsiMeetActivity {
             config.putBoolean(VIDEO_MUTED, intent.getBooleanExtra(VIDEO_MUTED, false));
             Bundle urlObject = new Bundle();
             urlObject.putBundle("config", config);
-            String roomId = intent.getStringExtra(BundleKeyConstant.ROOM_ID);
+            roomId = intent.getStringExtra(BundleKeyConstant.ROOM_ID);
             urlObject.putString("url", "https://meet.jit.si/" + roomId);
 //            urlObject.putString("url", String.format(ConferenceConstant.CONFERENCE_HOST, roomId));
             if (view != null) {
@@ -146,5 +162,11 @@ public class ConferenceActivity extends JitsiMeetActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        sIntance = null;
+        super.onDestroy();
     }
 }
