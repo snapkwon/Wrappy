@@ -189,8 +189,21 @@ public class AppFuncs {
         }
     }
 
-    public static void cropImage(Activity activity, Uri source, boolean isAvarta) {
+    public static void cropImage(Activity activity, Intent intent, boolean isAvarta) {
+        Uri source = null;
+        if (intent.getData()!=null) {
+            source = intent.getData();
+        } else {
+            if (intent.getExtras()!=null) {
+                Bitmap bitmap = (Bitmap) intent.getExtras().get("data");
+                source = getImageUri(activity,bitmap);
+            }
+        }
+        if (source==null) {
+            return;
+        }
         Uri destination = Uri.fromFile(new File(activity.getCacheDir(), UUID.randomUUID().toString()));
+
         if (isAvarta) {
             UCrop.of(source, destination)
                     .withAspectRatio(1, 1)
@@ -201,6 +214,13 @@ public class AppFuncs {
                     .start(activity);
         }
 
+    }
+
+    private static Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, UUID.randomUUID().toString(), null);
+        return Uri.parse(path);
     }
 
     public static void cropImage(Activity activity, Uri source, int requestCode, boolean isAvarta) {
