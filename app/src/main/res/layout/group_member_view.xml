@@ -17,7 +17,6 @@
  */
 -->
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
@@ -65,7 +64,7 @@
     </LinearLayout>
 
 
-    <net.wrappy.im.helper.layout.CircleImageView
+    <ImageView
         android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
