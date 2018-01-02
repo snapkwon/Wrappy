@@ -61,12 +61,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
-            android:color="?messageTextPrimary"
             android:fontFamily="sans-serif-light"
             android:gravity="left"
             android:padding="6dp"
             android:textAlignment="gravity"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?contactTextPrimary" />
 
 
         <TextView

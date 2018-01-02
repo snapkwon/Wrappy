@@ -5,12 +5,66 @@
     style="@style/match_parent"
     android:orientation="vertical"
     tools:context="net.wrappy.im.ui.SettingConversationActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <RelativeLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/rounded_shape">
+
+                <net.wrappy.im.helper.layout.CircleImageView
+                    android:id="@+id/imgGroupPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_camera_profile" />
+
+                <net.wrappy.im.helper.layout.CircleImageView
+                    android:id="@+id/btnGroupPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp">
+
+                <net.wrappy.im.helper.layout.AppEditTextView
+                    android:id="@+id/edGroupName"
+                    style="@style/AppText02"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_group_name"
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <View style="@style/divider" android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+
+
 
     <LinearLayout
         android:id="@+id/layout_search_setting"
         style="@style/match_width"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
         android:clickable="true"
         android:orientation="horizontal">
 

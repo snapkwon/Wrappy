@@ -517,7 +517,7 @@
     <string name="new_list">New list</string>
     <string name="key_manager">Key Manager</string>
     <string name="add_another_account">Add Another Account</string>
-    <string name="check_email_passcode">Please check email and fill your Passcode</string>
+    <string name="check_email_passcode">Please check email or your message \n fill your Passcode</string>
     <string name="send_again">Send again</string>
     <string name="answer_secret_question">Answer secret question</string>
     <string name="your_answer">Your Answer</string>
@@ -537,6 +537,8 @@
     <string name="email">Email</string>
     <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
+    <string name="referral">Referral</string>
+    <string name="referral_hint">Username or phone number</string>
     <string name="btn_submit">Submit</string>
     <string name="hint_answer">Answer</string>
     <string name="choose_secret_question">Choose your secret question</string>

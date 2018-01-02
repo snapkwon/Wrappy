@@ -1953,6 +1953,16 @@ public class Imps {
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = "last_message_date ASC";
+
+
+        public static void insertOrUpdateChat(ContentResolver resolver, Uri chatUri, String message, boolean isGroupChat) {
+            ContentValues values = new ContentValues(2);
+            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+            values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
+
+            values.put(Imps.Chats.GROUP_CHAT, isGroupChat);
+            resolver.insert(chatUri, values);
+        }
     }
 
     /**
@@ -3246,7 +3256,6 @@ public class Imps {
         ContentValues values = new ContentValues(1);
         values.put(Messages.BODY, body);
         int result = resolver.update(uri, values, null, null);
-
         return result;
     }
 

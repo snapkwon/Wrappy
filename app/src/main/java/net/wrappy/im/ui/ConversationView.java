@@ -2842,7 +2842,7 @@ public class ConversationView {
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
             ;
-            final String address = isGroupChat() ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
+            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
             final String avatar = Imps.Avatars.getAvatar(mActivity.getContentResolver(), address);
 
@@ -3388,7 +3388,7 @@ public class ConversationView {
 
     private String getRoomId(ConferenceMessage.ConferenceType type) {
         String roomId;
-        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.REQUEST);
+        ConferenceMessage message = new ConferenceMessage(String.valueOf(mAccountId), String.valueOf(mLastChatId), isGroupChat(), type, ConferenceMessage.ConferenceState.INCOMING);
         sendMessageAsync(message.toString());
         roomId = message.getRoomId();
         return roomId;

@@ -260,8 +260,11 @@ public class ConversationListItem extends FrameLayout {
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                            resultMessage = ConferenceUtils.convertConferenceMessage(message);
+                            holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
+                        } else {
                             holder.mLine2.setText(resultMessage);
+                            holder.mLine2.setLines(1);
+//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
                                 message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
                                 message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
@@ -275,8 +278,6 @@ public class ConversationListItem extends FrameLayout {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
                         }
-                        holder.mLine2.setLines(1);
-//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                     } catch (Exception e) {
 
@@ -297,7 +298,6 @@ public class ConversationListItem extends FrameLayout {
 
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-                Debug.e("dateLast: " + dateLast);
 
                 if (DateUtils.checkCurrentDay(dateLast)) {
                     String hm = DateUtils.convertHourMinuteFormat(dateLast);
