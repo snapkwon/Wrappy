@@ -12,7 +12,9 @@ import android.widget.TextView;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.widgets.LetterAvatar;
+import net.wrappy.im.util.Debug;
 
 import java.util.ArrayList;
 
@@ -27,10 +29,12 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
     private ArrayList<MemberGroupDisplay> mMembers;
     private Context mContext;
+    private long mAccountId;
 
-    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers) {
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, long mAccountId) {
         this.mContext = mContext;
         this.mMembers = mMembers;
+        this.mAccountId = mAccountId;
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -64,6 +68,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         CircleImageView avatar;
         @BindView(R.id.avatarCrown)
         ImageView avatarCrown;
+        @BindView(R.id.delete_member_group)
+        ImageView mDeleteMember;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -78,12 +84,45 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             LetterAvatar la = new LetterAvatar(mContext, member.getNickname(), padding);
             avatar.setImageDrawable(la);
 
-            if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
-                            member.getAffiliation().contentEquals("admin"))) {
-                avatarCrown.setVisibility(View.VISIBLE);
-            } else {
-                avatarCrown.setVisibility(View.GONE);
+            String currentUser = Imps.Account.getUserName(mContext.getContentResolver(), mAccountId);
+            String memberUsername = member.getUsername().split("@")[0];
+
+            Debug.e("currentUser: " + currentUser);
+            Debug.e("memberUsername: " + memberUsername);
+
+//            if (isAdminGroup(member)) {
+//                avatarCrown.setVisibility(View.VISIBLE);
+//                mDeleteMember.setVisibility(View.GONE);
+//            } else {
+//                avatarCrown.setVisibility(View.GONE);
+//                mDeleteMember.setVisibility(View.VISIBLE);
+//            }
+
+            if (member.getAffiliation() != null) {
+                if (member.getAffiliation().contentEquals("owner") ||
+                        member.getAffiliation().contentEquals("admin")) {
+
+                    avatarCrown.setVisibility(View.VISIBLE);
+                    mDeleteMember.setVisibility(View.GONE);
+
+                    if (member.getUsername().split("@")[0].equals(currentUser)) {
+                        Debug.e("true currentUser");
+                    } else {
+                        mDeleteMember.setVisibility(View.GONE);
+                    }
+                }
+                else {
+                    mDeleteMember.setVisibility(View.VISIBLE);
+                }
             }
         }
+    }
+
+    private boolean isAdminGroup(MemberGroupDisplay member) {
+        if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
+                member.getAffiliation().contentEquals("admin"))) {
+            return true;
+        }
+        return false;
     }
 }

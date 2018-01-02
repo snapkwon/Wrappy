@@ -194,7 +194,7 @@ public class SettingConversationActivity extends BaseActivity {
             memberGroupDisplays = new ArrayList<>();
 
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, mAccountId);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
