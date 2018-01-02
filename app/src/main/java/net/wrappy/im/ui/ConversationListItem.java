@@ -261,10 +261,6 @@ public class ConversationListItem extends FrameLayout {
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                             holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
-                        } else {
-                            holder.mLine2.setText(resultMessage);
-                            holder.mLine2.setLines(1);
-//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
                                 message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
                                 message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
@@ -277,6 +273,10 @@ public class ConversationListItem extends FrameLayout {
                             } else {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
+                        } else {
+                            holder.mLine2.setText(resultMessage);
+                            holder.mLine2.setLines(1);
+//                        holder.mMediaThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         }
 
                     } catch (Exception e) {
