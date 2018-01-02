@@ -37,6 +37,7 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.util.BundleKeyConstant;
 
 import java.util.ArrayList;
 
@@ -79,6 +80,8 @@ public class SettingConversationActivity extends BaseActivity {
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
     private Thread mThreadUpdate;
 
+    private final static int REQUEST_PICK_CONTACT = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
@@ -117,6 +120,7 @@ public class SettingConversationActivity extends BaseActivity {
                 mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null)
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                net.wrappy.im.util.Debug.e("mIsOwner: " + mIsOwner);
             }
         } catch (RemoteException e) {
         }
@@ -237,6 +241,13 @@ public class SettingConversationActivity extends BaseActivity {
                 clearHistory();
                 break;
             case R.id.layout_add_member:
+                Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
+                ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
+                for (MemberGroupDisplay member : memberGroupDisplays) {
+                    usernames.add(member.getUsername());
+                }
+                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, usernames);
+                startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
         }
     }
