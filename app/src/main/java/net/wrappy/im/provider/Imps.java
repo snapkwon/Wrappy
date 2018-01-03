@@ -31,6 +31,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -359,12 +360,32 @@ public class Imps {
             if (registration != null && registration.getWpKMemberDto() != null) {
                 ContentValues values = new ContentValues();
 
-                setValue(values, Account.ACCOUNT_EMAIL, registration.getWpKMemberDto().getEmail());
-                setValue(values, Account.ACCOUNT_PHONE, registration.getWpKMemberDto().getMobile());
-                setValue(values, Account.ACCOUNT_NAME, registration.getWpKMemberDto().getIdentifier());
+                WpKMemberDto memberDto = registration.getWpKMemberDto();
+                if (memberDto != null) {
+                    setValue(values, Account.ACCOUNT_EMAIL, memberDto.getEmail());
+                    setValue(values, Account.ACCOUNT_PHONE, memberDto.getMobile());
+                    setValue(values, Account.ACCOUNT_NAME, memberDto.getIdentifier());
 
-                Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-                id = cr.update(accountUri, values, null, null);
+                    Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+                    id = cr.update(accountUri, values, null, null);
+
+                    //Update avatar for user when login
+                    String avatarReference = "";
+                    String bannerReference = "";
+                    if (memberDto.getAvatar() != null) {
+                        avatarReference = memberDto.getAvatar().getReference();
+                    }
+                    if (memberDto.getBanner() != null) {
+                        bannerReference = memberDto.getBanner().getReference();
+                    }
+
+                    if (!TextUtils.isEmpty(avatarReference) || !TextUtils.isEmpty(bannerReference)) {
+                        String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
+                        String address = memberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                        net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                        ImApp.broadcastIdentity(null);
+                    }
+                }
             }
             return id;
         }
