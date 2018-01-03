@@ -578,6 +578,7 @@
         <activity android:name=".ui.ChangePasswordAccount" />
         <activity android:name=".ui.TransactionDetailActivity" />
         <activity android:name=".ui.Create_New_Wallet" />
+        <activity android:name=".ui.VerifyEmailOrPhoneActivity" android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

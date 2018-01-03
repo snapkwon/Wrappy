@@ -348,6 +348,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         Gson gson = new Gson();
         JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
+//        VerifyEmailOrPhoneActivity.start(this,null);
+//        appFuncs.dismissProgressWaiting();
         RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
 
             @Override
