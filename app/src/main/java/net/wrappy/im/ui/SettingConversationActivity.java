@@ -10,19 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -55,7 +49,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
-import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -64,7 +58,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
@@ -510,68 +503,4 @@ public class SettingConversationActivity extends BaseActivity {
         return false;
     }
 
-    /**
-     * Showing bottom sheet to change background
-     */
-    public static class BackgroundBottomSheetFragment extends BottomSheetDialogFragment {
-        @BindView(R.id.backgroundGridView)
-        GridView mGridView;
-
-        public int[] mThumbIds = {
-                R.drawable.chat_bg_thumb_1,
-                R.drawable.chat_bg_thumb_2,
-                R.drawable.chat_bg_thumb_3,
-                R.drawable.chat_bg_thumb_4,
-                R.drawable.chat_bg_thumb_5,
-                R.drawable.chat_bg_thumb_6,
-                R.drawable.chat_bg_thumb_7,
-                R.drawable.chat_bg_thumb_8
-        };
-
-        public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_1.jpg",
-                "backgrounds/page_1/chat_bg_2.jpg",
-                "backgrounds/page_1/chat_bg_3.jpg",
-                "backgrounds/page_1/chat_bg_4.jpg",
-                "backgrounds/page_1/chat_bg_5.jpg",
-                "backgrounds/page_1/chat_bg_6.jpg",
-                "backgrounds/page_1/chat_bg_7.jpg",
-                "backgrounds/page_1/chat_bg_8.jpg",
-        };
-
-        public static final BackgroundBottomSheetFragment getInstance() {
-
-            BackgroundBottomSheetFragment backgroundFragment = new BackgroundBottomSheetFragment();
-
-            return backgroundFragment;
-        }
-
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.background_grid, container, false);
-
-            ButterKnife.bind(this, view);
-
-            mGridView.setAdapter(new BackgroundGridAdapter(getContext(), mThumbIds));
-
-            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", ConversationDetailActivity.TYPE_REQUEST_CHANGE_BACKGROUND);
-                    bundle.putString("imagePath", mImagePath[i]);
-
-                    Intent intent = new Intent();
-                    intent.putExtras(bundle);
-
-                    getActivity().setResult(Activity.RESULT_OK, intent);
-                    getActivity().finish();
-                }
-            });
-
-            return view;
-        }
-    }
 }

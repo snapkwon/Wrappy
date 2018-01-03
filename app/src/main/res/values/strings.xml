@@ -594,4 +594,7 @@
     <string name="message_edit">Edit Message</string>
     <string name="message_delete">Delete Message</string>
     <string name="message_spam">Report Spam</string>
+    <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
+    <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
+    <string name="promotion_invite_friends">Invite friend</string>
 </resources>

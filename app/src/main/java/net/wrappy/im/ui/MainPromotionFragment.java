@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.wrappy.im.PromotionActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Promotions;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by ben on 02/01/2018.
@@ -50,4 +52,10 @@ public class MainPromotionFragment extends Fragment {
         recyclerPromotion.setAdapter(promotionAdapter);
         return mainView;
     }
+
+    @OnClick(R.id.btnPromotionInvite)
+    public void onClick(View v) {
+        PromotionActivity.start(getActivity(),null);
+    }
+
 }

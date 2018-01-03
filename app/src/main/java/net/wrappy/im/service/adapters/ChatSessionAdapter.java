@@ -1049,7 +1049,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
     public int updateMessageInDb(String id, String msg) {
-        return Imps.updateMessageBodyInDbByPacketId(mContentResolver, id, msg);
+        return Imps.updateMessageBodyInThreadByPacketId(mContentResolver, mMessageURI, id, msg);
     }
 
     public int deleteMessageInDb(String id) {
