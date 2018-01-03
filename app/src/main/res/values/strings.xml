@@ -588,5 +588,8 @@
     <string name="tab_menu_my_page">My page</string>
     <string name="promotion_invite_friend">Invite friend</string>
     <string name="promotion_history">History</string>
-
+    <string name="page_verify">Verify Code</string>
+    <string name="message_edit">Edit Message</string>
+    <string name="message_delete">Delete Message</string>
+    <string name="message_spam">Report Spam</string>
 </resources>
