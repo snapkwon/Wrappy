@@ -582,5 +582,11 @@
 
     <string name="you_sent_sticker">You sent a sticker</string>
     <string name="user_sent_sticker">%1$s sent a sticker</string>
+    <string name="tab_menu_menu">Menu</string>
+    <string name="tab_menu_conversation">Chat</string>
+    <string name="tab_menu_promotion">Promotion</string>
+    <string name="tab_menu_my_page">My page</string>
+    <string name="promotion_invite_friend">Invite friend</string>
+    <string name="promotion_history">History</string>
 
 </resources>

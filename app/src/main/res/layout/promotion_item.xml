@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/IconCoin"
+            android:orientation="vertical">
+
+            <net.wrappy.im.helper.layout.AppTextView
+                android:id="@+id/txtPromotionName"
+                style="@style/AppText02"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Title 01" />
+
+            <net.wrappy.im.helper.layout.AppTextView
+                android:id="@+id/txtPromotionTime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="time"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <net.wrappy.im.helper.layout.AppTextView
+                android:id="@+id/txtPromotionCoin"
+                style="@style/AppText02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="+100"
+                app:font_type="bold" />
+
+            <ImageView
+                android:id="@+id/imNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:src="@drawable/ic_arrow" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        style="@style/divider"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>
