@@ -7,14 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.SettingConversationActivity;
 import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 
@@ -72,13 +77,15 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         ImageView avatarCrown;
         @BindView(R.id.delete_member_group)
         ImageView mDeleteMember;
+        @BindView(R.id.layout_remove_member)
+        RelativeLayout mRemoveMember;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(MemberGroupDisplay member) {
+        public void bind(final MemberGroupDisplay member) {
             line1.setText(member.getNickname());
             int padding = 24;
 
@@ -94,6 +101,13 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                     mDeleteMember.setVisibility(View.GONE);
                 } else {
                     mDeleteMember.setVisibility(View.VISIBLE);
+
+                    mRemoveMember.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            confirmRemoveMember(member);
+                        }
+                    });
                 }
             } else {
                 if (isAdminGroup(member)) {
@@ -110,5 +124,14 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             return true;
         }
         return false;
+    }
+
+    private void confirmRemoveMember(final MemberGroupDisplay member) {
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.action_leave), mContext.getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mContext, "" + member.getNickname(), Toast.LENGTH_SHORT).show();
+            }
+        }, null, false);
     }
 }

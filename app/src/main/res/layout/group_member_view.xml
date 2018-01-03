@@ -34,6 +34,7 @@
         android:padding="0dp">
 
         <RelativeLayout
+            android:id="@+id/layout_remove_member"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
