@@ -3697,6 +3697,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     private int updateInternal(Uri url, ContentValues values, String userWhere, String[] whereArgs) {
         String tableToChange;
+        String tableInMemoryToChange = null;
         String idColumnName = null;
         String changedItemId = null;
         String accountStr = null;
@@ -3812,6 +3813,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_MESSAGES_BY_THREAD_ID:
                 tableToChange = TABLE_MESSAGES;
+                tableInMemoryToChange = TABLE_IN_MEMORY_MESSAGES;
 
                 try {
                     threadId = Long.parseLong(decodeURLSegment(url.getPathSegments().get(1)));
@@ -3832,6 +3834,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_OTR_MESSAGES:
                 tableToChange = TABLE_IN_MEMORY_MESSAGES;
+                notifyMessagesContentUri = true;
                 break;
 
             case MATCH_OTR_MESSAGES_BY_CONTACT:
@@ -3885,12 +3888,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 threadId = values.getAsLong(Imps.Messages.THREAD_ID);
                 // Try updating OTR message
                 //    count += db.update(TABLE_IN_MEMORY_MESSAGES, values, whereClause.toString(), whereArgs);
-                break;
-
-            case MATCH_OTR_MESSAGE:
-                tableToChange = TABLE_IN_MEMORY_MESSAGES;
-                changedItemId = url.getPathSegments().get(1);
-                notifyMessagesContentUri = true;
                 break;
 
             case MATCH_AVATARS:
@@ -4024,6 +4021,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         if (tableToChange != null)
             count += db.update(tableToChange, values, whereClause.toString(), whereArgs);
 
+        if (tableInMemoryToChange != null)
+            count += db.update(tableInMemoryToChange, values, whereClause.toString(), whereArgs);
+
         if (count > 0) {
             ContentResolver resolver = getContext().getContentResolver();
 
@@ -4038,6 +4038,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
                 //     log("notify change for " + Imps.Messages.CONTENT_URI);
                 resolver.notifyChange(Imps.Messages.CONTENT_URI, null);
+                resolver.notifyChange(Imps.Messages.OTR_MESSAGES_CONTENT_URI, null);
             }
 
             if (notifyMessagesByContactContentUri) {

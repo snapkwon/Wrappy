@@ -1420,6 +1420,21 @@ public class Imps {
         }
 
         /**
+         * Get nick name by address
+         */
+        public static boolean isDelivered(ContentResolver cr, String nickname, long date) {
+            Cursor c = cr.query(Messages.CONTENT_URI,
+                    new String[]{IS_DELIVERED}, NICKNAME + "='?' AND " + IS_DELIVERED + "=?", new String[]{nickname, String.valueOf(date)}, null);
+            long ret = 0;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getLong(c.getColumnIndexOrThrow(IS_DELIVERED));
+                }
+            }
+            return ret > 0;
+        }
+
+        /**
          * Delete messages of conversation by thread id.
          *
          * @param threadId the thread id of the message.
@@ -3302,6 +3317,14 @@ public class Imps {
             result = resolver.update(builder.build(), values, where, args);
         }
         Debug.d("result2 " + result);
+        return result;
+    }
+
+    public static int updateMessageBodyInThreadByPacketId(ContentResolver resolver, Uri uri, String msgId, String body) {
+        String where = Messages.PACKET_ID + "='" + msgId + "'";
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        int result = resolver.update(uri, values, where, null);
         return result;
     }
 
