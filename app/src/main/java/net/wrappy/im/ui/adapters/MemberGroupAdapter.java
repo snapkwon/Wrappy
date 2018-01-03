@@ -29,12 +29,16 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
     private ArrayList<MemberGroupDisplay> mMembers;
     private Context mContext;
-    private long mAccountId;
+    private String currentUser;
+    private String mAdminGroup;
 
-    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, long mAccountId) {
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup) {
         this.mContext = mContext;
         this.mMembers = mMembers;
-        this.mAccountId = mAccountId;
+        this.currentUser = currentUser;
+        this.mAdminGroup = mAdminGroup;
+
+        Debug.e("currentUser: " + currentUser + ", mAdminGroup: " + mAdminGroup);
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -86,36 +90,18 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                 GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(referenceAvatar));
             }
 
-            String currentUser = Imps.Account.getUserName(mContext.getContentResolver(), mAccountId);
-            String memberUsername = member.getUsername().split("@")[0];
-
-            Debug.e("currentUser: " + currentUser);
-            Debug.e("memberUsername: " + memberUsername);
-
-//            if (isAdminGroup(member)) {
-//                avatarCrown.setVisibility(View.VISIBLE);
-//                mDeleteMember.setVisibility(View.GONE);
-//            } else {
-//                avatarCrown.setVisibility(View.GONE);
-//                mDeleteMember.setVisibility(View.VISIBLE);
-//            }
-
-            if (member.getAffiliation() != null) {
-                if (member.getAffiliation().contentEquals("owner") ||
-                        member.getAffiliation().contentEquals("admin")) {
-
+            if (currentUser.equals(mAdminGroup)) {
+                if (isAdminGroup(member)) {
                     avatarCrown.setVisibility(View.VISIBLE);
                     mDeleteMember.setVisibility(View.GONE);
-
-                    if (member.getUsername().split("@")[0].equals(currentUser)) {
-                        Debug.e("true currentUser");
-                    } else {
-                        mDeleteMember.setVisibility(View.GONE);
-                    }
-                }
-                else {
+                } else {
                     mDeleteMember.setVisibility(View.VISIBLE);
                 }
+            } else {
+                if (isAdminGroup(member)) {
+                    avatarCrown.setVisibility(View.VISIBLE);
+                }
+                mDeleteMember.setVisibility(View.GONE);
             }
         }
     }

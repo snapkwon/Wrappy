@@ -111,6 +111,7 @@ public class SettingConversationActivity extends BaseActivity {
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
     private Thread mThreadUpdate;
+    private String mAdminGroup;
 
     private final static int REQUEST_PICK_CONTACT = 100;
 
@@ -152,6 +153,7 @@ public class SettingConversationActivity extends BaseActivity {
                 mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null) {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                    mAdminGroup = mGroupOwner.getName();
                 }
             }
         } catch (RemoteException e) {
@@ -200,8 +202,10 @@ public class SettingConversationActivity extends BaseActivity {
 
             memberGroupDisplays = new ArrayList<>();
 
+            String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
+
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, mAccountId);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
