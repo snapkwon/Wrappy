@@ -1148,9 +1148,7 @@ public class ConversationView {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if (!TextUtils.isEmpty(tempPacketIDSelect)) {
-                    sendEditChat(tempPacketIDSelect,mComposeMessage.getText().toString().trim());
-                }else if (mComposeMessage.getVisibility() == View.VISIBLE) {
+                if (mComposeMessage.getVisibility() == View.VISIBLE) {
                     checkBeforeSubmit();
                 } else {
                     mSendButton.setImageResource(R.drawable.ic_send_holo_light);
@@ -1924,7 +1922,10 @@ public class ConversationView {
     }
 
     void sendMessage() {
-
+        if (!TextUtils.isEmpty(tempPacketIDSelect)) {
+            sendEditChat(tempPacketIDSelect,mComposeMessage.getText().toString().trim());
+            return;
+        }
         String msg = mComposeMessage.getText().toString();
         //new SendMessageAsyncTask().execute(msg);
         sendMessageAsync(msg);
