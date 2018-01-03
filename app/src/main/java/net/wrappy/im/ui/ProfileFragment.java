@@ -184,7 +184,10 @@ public class ProfileFragment extends Fragment {
                     }
                 } else {
                     AppFuncs.alert(getActivity(), getString(R.string.error_get_user_profile), true);
-                    getActivity().finish();
+                    if (!isSelf) {
+                        getActivity().finish();
+                    }
+                    //
                 }
             }
         });
