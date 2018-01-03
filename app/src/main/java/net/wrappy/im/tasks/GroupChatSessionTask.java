@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import net.wrappy.im.R;
 import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.ConversationDetailActivity;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.Constant;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -63,6 +68,24 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         }
     }
 
+    private void updateInfoInGroup() throws RemoteException {
+        if (group != null) {
+            //update list member for group
+            for (WpKMemberDto member : group.getParticipators()) {
+                String address = member.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                Imps.GroupMembers.updateNicknameFromGroup(getActivity().getContentResolver(), address, member.getIdentifier());
+            }
+
+            //update avatar for group
+            if (group.getIcon() != null && !TextUtils.isEmpty(group.getIcon().getReference())) {
+                String avatar = group.getIcon().getReference();
+                String address = group.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER;
+                String avatarHash = DatabaseUtils.generateHashFromAvatar(avatar);
+                DatabaseUtils.insertAvatarHash(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, mLastConnGroup.getProviderId(), mLastConnGroup.getAccountId(), avatar, avatarHash, address);
+            }
+        }
+    }
+
     @Override
     protected String doInBackground(String... params) {
         String subject = group.getName();
@@ -78,11 +101,16 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             IChatSession session = manager.getChatSession(roomAddress);
 
             long mRequestedChatId = -1;
+
             if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
-                if (session != null && needToStartChat) {
-                    mRequestedChatId = session.getId();
-                    publishProgress(mRequestedChatId);
+                if (session != null) {
+                    if (needToStartChat) {
+                        mRequestedChatId = session.getId();
+                        publishProgress(mRequestedChatId);
+                    } else {
+                        updateInfoInGroup();
+                    }
 
                 } else {
                     if (isStable()) {

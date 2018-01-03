@@ -1328,4 +1328,17 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         }
         return email;
     }
+
+    public static void broadcastIdentity(String indentity) {
+        IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
+        if (connection != null) {
+            try {
+                if (connection.getState() == ImConnection.LOGGED_IN) {
+                    connection.broadcastMigrationIdentity(indentity);
+                }
+            } catch (RemoteException ex) {
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
+            }
+        }
+    }
 }

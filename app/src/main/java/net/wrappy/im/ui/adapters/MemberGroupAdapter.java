@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.wrappy.im.R;
-import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.Debug;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         @BindView(R.id.line2)
         TextView line2;
         @BindView(R.id.avatar)
-        CircleImageView avatar;
+        ImageView avatar;
         @BindView(R.id.avatarCrown)
         ImageView avatarCrown;
         @BindView(R.id.delete_member_group)
@@ -80,9 +80,11 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             line1.setText(member.getNickname());
             int padding = 24;
 
-            avatar.setVisibility(View.VISIBLE);
-            LetterAvatar la = new LetterAvatar(mContext, member.getNickname(), padding);
-            avatar.setImageDrawable(la);
+            GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
+            String referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
+            if (!TextUtils.isEmpty(referenceAvatar)) {
+                GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(referenceAvatar));
+            }
 
             String currentUser = Imps.Account.getUserName(mContext.getContentResolver(), mAccountId);
             String memberUsername = member.getUsername().split("@")[0];

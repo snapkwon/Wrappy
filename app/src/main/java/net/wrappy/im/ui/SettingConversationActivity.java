@@ -56,6 +56,7 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.BundleKeyConstant;
 
@@ -173,13 +174,19 @@ public class SettingConversationActivity extends BaseActivity {
                             Gson gson = new Gson();
                             wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
                             edGroupName.setText(wpKChatGroup.getName());
-                            GlideHelper.loadBitmapToImageView(getApplicationContext(),btnGroupPhoto,RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                            updateAvatar();
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                 }
             });
+
+            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
+            String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
+            GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
+            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
             layout_leave_setting.setVisibility(View.GONE);
 
@@ -387,11 +394,26 @@ public class SettingConversationActivity extends BaseActivity {
                 if (result!=null) {
                     AppFuncs.log(result.getResult());
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.alert(getApplicationContext(),"Update Success", false);
+                        updateAvatarAndNotify(true);
+                        AppFuncs.alert(getApplicationContext(), "Update Success", false);
                     }
                 }
             }
         });
+    }
+
+    private void updateAvatar() {
+        updateAvatarAndNotify(false);
+    }
+
+    private void updateAvatarAndNotify(boolean broadcast) {
+        String avatarReference = wpKChatGroup.getIcon().getReference();
+        String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
+        String address = wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER;
+        net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarHash(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, hash, address);
+        if (broadcast) {
+            ImApp.broadcastIdentity(avatarReference + ":" + hash + ":" + address);
+        }
     }
 
     private void clearHistory() {

@@ -23,7 +23,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -45,24 +44,17 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
-import net.wrappy.im.ui.widgets.GroupAvatar;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.DateUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -154,10 +146,8 @@ public class ConversationListItem extends FrameLayout {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {
-
-                    final String reference = Store.getStringData(context, nickname);
-                    if (!TextUtils.isEmpty(reference)) {
-                        GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
+                    if (!TextUtils.isEmpty(referenceAvatar)) {
+                        GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
                     } else {
                         holder.mAvatar.setImageResource(R.drawable.chat_group);
                     }
