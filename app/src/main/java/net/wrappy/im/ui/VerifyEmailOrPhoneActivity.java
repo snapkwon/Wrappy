@@ -26,7 +26,7 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.verify_email_or_phone_activity);
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle("Verify Code");
+        getSupportActionBar().setTitle(getString(R.string.page_verify));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, ForgetPasswordCheckEmailFragment.newInstance()).commit();
@@ -35,7 +35,7 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
+            finish();
         }
         return true;
     }
