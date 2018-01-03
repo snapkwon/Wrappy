@@ -52,7 +52,7 @@ import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.panic.Panic;
 import info.guardianproject.panic.PanicResponder;
 
-public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber  {
+public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber {
 
     private static final String TAG = "RouterActivity";
     private Cursor mProviderCursor;
@@ -70,15 +70,15 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     private ProgressDialog dialog;
 
-    static final String[] PROVIDER_PROJECTION = { Imps.Provider._ID, Imps.Provider.NAME,
-                                                 Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
-                                                 Imps.Provider.ACTIVE_ACCOUNT_ID,
-                                                 Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
-                                                 Imps.Provider.ACTIVE_ACCOUNT_PW,
-                                                 Imps.Provider.ACTIVE_ACCOUNT_LOCKED,
-                                                 Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN,
-                                                 Imps.Provider.ACCOUNT_PRESENCE_STATUS,
-                                                 Imps.Provider.ACCOUNT_CONNECTION_STATUS, };
+    static final String[] PROVIDER_PROJECTION = {Imps.Provider._ID, Imps.Provider.NAME,
+            Imps.Provider.FULLNAME, Imps.Provider.CATEGORY,
+            Imps.Provider.ACTIVE_ACCOUNT_ID,
+            Imps.Provider.ACTIVE_ACCOUNT_USERNAME,
+            Imps.Provider.ACTIVE_ACCOUNT_PW,
+            Imps.Provider.ACTIVE_ACCOUNT_LOCKED,
+            Imps.Provider.ACTIVE_ACCOUNT_KEEP_SIGNED_IN,
+            Imps.Provider.ACCOUNT_PRESENCE_STATUS,
+            Imps.Provider.ACCOUNT_CONNECTION_STATUS,};
 
     static final int PROVIDER_ID_COLUMN = 0;
     static final int PROVIDER_NAME_COLUMN = 1;
@@ -97,12 +97,12 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
 
     private final int REQUEST_LOCK_SCREEN = 9999;
-    private final int REQUEST_HANDLE_LINK = REQUEST_LOCK_SCREEN+1;
+    private final int REQUEST_HANDLE_LINK = REQUEST_LOCK_SCREEN + 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mApp = (ImApp)getApplication();
+        mApp = (ImApp) getApplication();
 
         mHandler = new MyHandler(this);
 
@@ -144,15 +144,14 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         mSignInHelper = new SignInHelper(this, mHandler);
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
         mCacheWord.connectToService();
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
-        if(TextUtils.equals(scheme, "xmpp"))
-        {
+        if (TextUtils.equals(scheme, "xmpp")) {
             intent.setClass(this, AddContactActivity.class);
             startActivity(intent);
             finish();
@@ -167,38 +166,35 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
             Builder builder = uri.buildUpon();
             /**
-            if (pKey != null)
-                builder.appendQueryParameter(ImApp.CACHEWORD_PASSWORD_KEY, pKey);
-            if (!allowCreate)
-                builder = builder.appendQueryParameter(ImApp.NO_CREATE_KEY, "1");
+             if (pKey != null)
+             builder.appendQueryParameter(ImApp.CACHEWORD_PASSWORD_KEY, pKey);
+             if (!allowCreate)
+             builder = builder.appendQueryParameter(ImApp.NO_CREATE_KEY, "1");
              */
             uri = builder.build();
 
             mProviderCursor = managedQuery(uri,
                     PROVIDER_PROJECTION, Imps.Provider.CATEGORY + "=?" /* selection */,
-                    new String[] { ImApp.IMPS_CATEGORY } /* selection args */,
+                    new String[]{ImApp.IMPS_CATEGORY} /* selection args */,
                     Imps.Provider.DEFAULT_SORT_ORDER);
 
-            if (mProviderCursor != null)
-            {
+            if (mProviderCursor != null) {
                 ImPluginHelper.getInstance(this).loadAvailablePlugins();
 
                 mProviderCursor.moveToFirst();
 
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
 
         } catch (Exception e) {
             // Only complain if we thought this password should succeed
 
-                Log.e(ImApp.LOG_TAG, e.getMessage(), e);
+            Log.e(ImApp.LOG_TAG, e.getMessage(), e);
 
-                Toast.makeText(this, getString(R.string.error_welcome_database), Toast.LENGTH_LONG).show();
-                finish();
+            Toast.makeText(this, getString(R.string.error_welcome_database), Toast.LENGTH_LONG).show();
+            finish();
 
 
             // needs to be unlocked
@@ -243,25 +239,23 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         Intent intent = getIntent();
         if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
             String action = intent.getAction();
-                Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
-                imUrlIntent.setAction(action);
-                imUrlIntent.setType(intent.getType());
+            Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
+            imUrlIntent.setAction(action);
+            imUrlIntent.setType(intent.getType());
 
-                if (intent.getData() != null)
-                    imUrlIntent.setData(intent.getData());
+            if (intent.getData() != null)
+                imUrlIntent.setData(intent.getData());
 
-              //  imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (intent.getExtras() != null)
-                    imUrlIntent.putExtras(intent.getExtras());
+            //  imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.getExtras() != null)
+                imUrlIntent.putExtras(intent.getExtras());
 
-                startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
+            startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
 
-           // setIntent(null);
+            // setIntent(null);
             //finish();
 
-        }
-        else if (countAvailable > 0)
-        {
+        } else if (countAvailable > 0) {
             if (mDoSignIn && mProviderCursor.moveToFirst()) {
                 do {
                     if (!mProviderCursor.isNull(ACTIVE_ACCOUNT_ID_COLUMN)) {
@@ -274,9 +268,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
                 } while (mProviderCursor.moveToNext());
             }
             showMain();
-        }
-        else
-        {
+        } else {
             showOnboarding();
         }
 
@@ -292,7 +284,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         if (isAccountEditable && mProviderCursor.isNull(ACTIVE_ACCOUNT_PW_COLUMN)) {
             // no password, edit the account
             //if (Log.isLoggable(TAG, Log.d))
-              //  Log.i(TAG, "no pw for account " + accountId);
+            //  Log.i(TAG, "no pw for account " + accountId);
             Intent intent = getEditAccountIntent();
             startActivity(intent);
             finish();
@@ -356,23 +348,23 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     @Override
     public void onCacheWordUninitialized() {
-        Log.d(ImApp.LOG_TAG,"cache word uninit");
+        Log.d(ImApp.LOG_TAG, "cache word uninit");
 
         initTempPassphrase();
         showOnboarding();
 
     }
 
-    void initTempPassphrase () {
-        
+    void initTempPassphrase() {
+
         //set temporary passphrase        
         try {
             String tempPassphrase = UUID.randomUUID().toString();
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
             mCacheWord.setPassphrase(tempPassphrase.toCharArray());
-                
-           
+
+
         } catch (GeneralSecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -381,7 +373,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     }
 
-    void showMain () {
+    void showMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -389,13 +381,13 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     void openChat(String username) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("username",username);
+        intent.putExtra("username", username);
         startActivity(intent);
         finish();
     }
 
-    void showOnboarding () {
-        
+    void showOnboarding() {
+
         //now show onboarding UI
         Intent intent = new Intent(this, IntroActivity.class);
         Intent returnIntent = getIntent();
@@ -405,7 +397,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         finish();
     }
 
-    
+
     void showLockScreen() {
         Intent intent = new Intent(this, LockScreenActivity.class);
         Intent returnIntent = getIntent();
@@ -441,19 +433,16 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
         } else {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-            if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-            {
+            if (settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS)) {
                 try {
                     mCacheWord.setPassphrase(settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null).toCharArray());
 
                 } catch (GeneralSecurityException e) {
-                    
-                    Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password",e);
+
+                    Log.d(ImApp.LOG_TAG, "couldn't open cacheword with temp password", e);
                     showLockScreen();
                 }
-            }
-            else
-            {
+            } else {
                 showLockScreen();
             }
         }
@@ -504,7 +493,4 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
             return false;
         }
     }
-
-
-
 }

@@ -89,6 +89,7 @@ import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MainMenuFragment;
+import net.wrappy.im.ui.MainPromotionFragment;
 import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.WalletFragment;
 import net.wrappy.im.ui.Welcome_Wallet_Fragment;
@@ -259,21 +260,15 @@ public class MainActivity extends BaseActivity {
     private void initTabLayout() {
 
         // main menu tab
-        TabLayout.Tab tab = mTabLayout.newTab();
-        mTabLayout.addTab(tab);
-        // conversation list tab
-        tab = mTabLayout.newTab();
-        mTabLayout.addTab(tab);
-        //wallet tab
-//        tab = mTabLayout.newTab();
-//        mTabLayout.addTab(tab);
-        //profile tab
-        tab = mTabLayout.newTab();
-        mTabLayout.addTab(tab);
-        createTabIcons(0, R.drawable.ic_menu_normal, "Menu");
-        createTabIcons(1, R.drawable.ic_menu_conversation_normal, "Chat");
-//        createTabIcons(2, R.drawable.ic_menu_wallet_normal, "Wallet");
-        createTabIcons(2, R.drawable.ic_menu_info_normal, "My page");
+        TabLayout.Tab tab;
+        for (int i=0; i < 4; i++) {
+            tab = mTabLayout.newTab();
+            mTabLayout.addTab(tab);
+        }
+        createTabIcons(0, R.drawable.ic_menu_normal, getString(R.string.tab_menu_menu));
+        createTabIcons(1, R.drawable.ic_menu_conversation_normal, getString(R.string.tab_menu_conversation));
+        createTabIcons(2, R.drawable.ic_promotion, getString(R.string.tab_menu_promotion));
+        createTabIcons(3, R.drawable.ic_menu_info_normal, getString(R.string.tab_menu_my_page));
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -291,8 +286,8 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.VISIBLE);
                         mFab.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_active, 0, 0);
-//                    } else if (tab.getPosition() == 2) {
-//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_active, 0, 0);
+                    } else if (tab.getPosition() == 2) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_promotion_h, 0, 0);
                     } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
@@ -313,8 +308,8 @@ public class MainActivity extends BaseActivity {
                         btnHeaderSearch.setVisibility(View.GONE);
                         mFab.setVisibility(View.GONE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_conversation_normal, 0, 0);
-//                    } else if (tab.getPosition() == 2) {
-//                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_wallet_normal, 0, 0);
+                    } else if (tab.getPosition() == 2) {
+                        appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_promotion, 0, 0);
                     } else {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_normal, 0, 0);
                     }
@@ -765,12 +760,8 @@ public class MainActivity extends BaseActivity {
                 return new MainMenuFragment();
             } else if (position == 1) {
                 return new ConversationListFragment();
-//            } else if (position == 2) {
-//                if (!Wallet.isNewWallet(getFilesDir())) {
-//                    return new WalletFragment();
-//                } else {
-//                    return new Welcome_Wallet_Fragment();
-//                }
+            } else if (position == 2) {
+                return new MainPromotionFragment();
             } else {
                 return ProfileFragment.newInstance(0, Store.getStringData(getApplicationContext(), Store.USERNAME), "", "");
             }
@@ -778,7 +769,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override

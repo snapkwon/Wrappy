@@ -218,7 +218,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     private void login(String pass) {
         appFuncs.showProgressWaiting(this);
         String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME), pass);
-        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPI.RestAPIListenner() {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {

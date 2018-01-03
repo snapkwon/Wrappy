@@ -21,8 +21,8 @@
     class="net.wrappy.im.ui.ConversationListItem"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:padding="3dp"
-    android:layout_marginLeft="16dp">
+    android:layout_marginLeft="16dp"
+    android:padding="3dp">
 
 
     <LinearLayout
@@ -30,8 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_marginLeft="72dp"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="0dp">
 
         <RelativeLayout
@@ -52,11 +52,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
                 android:fontFamily="sans-serif-light"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 android:textColor="#bebebe"
-                android:layout_marginRight="16dp"/>
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -71,9 +71,8 @@
                 android:layout_marginRight="28dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:paddingBottom="6dp"
-                android:textSize="13sp"
-                android:textColor="#666666" />
+                android:textColor="#666666"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -94,9 +93,7 @@
                     android:layout_height="24dp"
                     android:padding="3dp"
                     android:scaleType="centerCrop" />
-
             </LinearLayout>
-
 
         </RelativeLayout>
 
@@ -109,10 +106,8 @@
             android:visibility="gone" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#bebebe"
-            android:layout_marginTop="13dp"/>
+            style="@style/divider"
+            android:layout_marginTop="13dp" />
 
     </LinearLayout>
 
@@ -130,9 +125,9 @@
         android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginTop="5dp"
         android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:layout_marginTop="5dp"/>
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/avatarStatus"
