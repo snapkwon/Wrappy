@@ -183,7 +183,6 @@ public class SettingConversationActivity extends BaseActivity {
             GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
             edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
-            layout_leave_setting.setVisibility(View.GONE);
 
             if (mIsOwner) {
                 mAddMemberLayout.setVisibility(View.VISIBLE);
@@ -191,6 +190,8 @@ public class SettingConversationActivity extends BaseActivity {
                 layout_leave_setting.setVisibility(View.VISIBLE);
 
                 mTxtDelete.setText(getResources().getString(R.string.setting_delete_and_leave_group));
+            } else {
+                mTxtDelete.setText(getResources().getString(R.string.setting_leave_group));
             }
 
             memberGroupDisplays = new ArrayList<>();
