@@ -406,7 +406,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 text = message.toString();
             }
             insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
-            insertOrUpdateChat(text);
+            insertOrUpdateChat(text, sendTime);
         }
 
         int newType = mChatSession.sendMessageAsync(msg);
@@ -434,7 +434,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         long sendTime = System.currentTimeMillis();
 
         insertMessageInDb(null, mediaPath, sendTime, msg.getType(), 0, msg.getID(), mimeType);
-        insertOrUpdateChat(mediaPath);
+        insertOrUpdateChat(mediaPath, sendTime);
 
         return msg;
     }
@@ -746,10 +746,14 @@ public class ChatSessionAdapter extends IChatSession.Stub {
      */
 
     private void insertOrUpdateChat(String message) {
+        insertOrUpdateChat(message, System.currentTimeMillis());
+    }
+
+    private void insertOrUpdateChat(String message, long time) {
         if (!ConferenceUtils.isInvisibleMessage(message)) {
             ContentValues values = new ContentValues(2);
 
-            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+            values.put(Imps.Chats.LAST_MESSAGE_DATE, time);
             values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
 
             values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
@@ -1049,10 +1053,16 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
     public int updateMessageInDb(String id, String msg) {
-        return Imps.updateMessageBodyInThreadByPacketId(mContentResolver, mMessageURI, id, msg);
+        return Imps.updateMessageBodyInThreadByPacketId(mContentResolver, getChatUri(), mMessageURI, id, msg);
     }
 
     public int deleteMessageInDb(String id) {
+        long lastMessageDate = Imps.Chats.getLastMessageDate(mContentResolver, getChatUri());
+        long messageDate = Imps.Messages.getDate(mContentResolver, id);
+        //Check is last message , reset history chat list
+        if (messageDate != -1 && messageDate == lastMessageDate) {
+            insertOrUpdateChat("");
+        }
         return mContentResolver.delete(mMessageURI, Imps.Messages.PACKET_ID + "=?",
                 new String[]{id});
     }
@@ -1117,7 +1127,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
 
             if (mediaLink == null) {
-                insertOrUpdateChat(body);
+                insertOrUpdateChat(body, time);
 
                 boolean wasMessageSeen = false;
 
@@ -1196,12 +1206,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
                             Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
 
-                            insertOrUpdateChat(vfsUri.toString());
+                            long startTime = System.currentTimeMillis();
+                            insertOrUpdateChat(vfsUri.toString(), startTime);
 
                             Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                     mIsGroupChat, getId(),
                                     true, nickname,
-                                    vfsUri.toString(), System.currentTimeMillis(), type,
+                                    vfsUri.toString(), startTime, type,
                                     0, msg.getID(), mimeType);
 
                             int percent = (int) (100);
@@ -1592,12 +1603,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
                         int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
 
-                        insertOrUpdateChat(filePath);
+                        long time = System.currentTimeMillis();
+                        insertOrUpdateChat(filePath, time);
 
                         Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                 mIsGroupChat, getId(),
                                 true, from,
-                                filePath, System.currentTimeMillis(), type,
+                                filePath, time, type,
                                 0, offerId, mimeType);
 
                         int percent = (int) (100);

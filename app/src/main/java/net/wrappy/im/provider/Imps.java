@@ -1447,6 +1447,24 @@ public class Imps {
         }
 
         /**
+         * Get date of Message by id.
+         *
+         * @param msgId the message id of the message.
+         * @return the result
+         */
+        public static long getDate(ContentResolver resolver, String msgId) {
+            Cursor c = resolver.query(Messages.CONTENT_URI,
+                    new String[]{DATE}, PACKET_ID + "='" + msgId + "'", null, null);
+            long ret = -1;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getLong(c.getColumnIndexOrThrow(DATE));
+                }
+            }
+            return ret;
+        }
+
+        /**
          * The content:// style URL for this table
          */
         public static final Uri CONTENT_URI = Uri
@@ -2004,6 +2022,28 @@ public class Imps {
 
             values.put(Imps.Chats.GROUP_CHAT, isGroupChat);
             resolver.insert(chatUri, values);
+        }
+
+        /**
+         * Get last date of Message by chat Uri.
+         *
+         * @param chatUri the uri of chat.
+         * @return the result
+         */
+        public static long getLastMessageDate(ContentResolver resolver, Uri chatUri) {
+            long result = -1;
+            Cursor cursor = resolver.query(chatUri, new String[]{LAST_MESSAGE_DATE},
+                    null, null, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        result = cursor.getLong(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return result;
         }
     }
 
@@ -3320,11 +3360,18 @@ public class Imps {
         return result;
     }
 
-    public static int updateMessageBodyInThreadByPacketId(ContentResolver resolver, Uri uri, String msgId, String body) {
+    public static int updateMessageBodyInThreadByPacketId(ContentResolver resolver, Uri chatUri, Uri uri, String msgId, String body) {
         String where = Messages.PACKET_ID + "='" + msgId + "'";
         ContentValues values = new ContentValues(1);
         values.put(Messages.BODY, body);
+        long lastMessageDate = Chats.getLastMessageDate(resolver, chatUri);
+        long messageDate = Messages.getDate(resolver, msgId);
         int result = resolver.update(uri, values, where, null);
+        if (messageDate != -1 && messageDate == lastMessageDate) {
+            ContentValues chatValues = new ContentValues(1);
+            chatValues.put(Imps.Chats.LAST_UNREAD_MESSAGE, body);
+            resolver.update(chatUri, chatValues, null, null);
+        }
         return result;
     }
 
