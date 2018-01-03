@@ -1759,8 +1759,14 @@ public class Imps {
             String result = "";
             Cursor cursor = resolver.query(Avatars.CONTENT_URI, new String[]{Avatars.DATA},
                     selection, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                result = cursor.getString(0);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        result = cursor.getString(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
             }
             return result;
         }
