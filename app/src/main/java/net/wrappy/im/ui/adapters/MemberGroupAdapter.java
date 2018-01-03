@@ -37,8 +37,6 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         this.mMembers = mMembers;
         this.currentUser = currentUser;
         this.mAdminGroup = mAdminGroup;
-
-        Debug.e("currentUser: " + currentUser + ", mAdminGroup: " + mAdminGroup);
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {

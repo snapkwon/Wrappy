@@ -298,9 +298,11 @@ public class SettingConversationActivity extends BaseActivity {
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
             case R.id.layout_leave_setting:
-                if (leaveGroup())
-                    clearHistory();
-                else AppFuncs.alert(this, "Could not leave group", true);
+                if (mContactType == Imps.Contacts.TYPE_GROUP) {
+                    confirmLeaveGroup();
+                } else {
+
+                }
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
@@ -469,6 +471,19 @@ public class SettingConversationActivity extends BaseActivity {
         intent.putExtras(bundle);
         this.setResult(Activity.RESULT_OK, intent);
         this.finish();
+    }
+
+    private void confirmLeaveGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (leaveGroup()) {
+                    
+                } else {
+                    AppFuncs.alert(SettingConversationActivity.this, "Could not leave group", true);
+                }
+            }
+        }, null, false);
     }
 
     private boolean leaveGroup() {
