@@ -16,7 +16,7 @@ public class PromotionActivity extends Activity {
 
     public static void start(Activity activity, Bundle bundle) {
         Intent intent = new Intent(activity, PromotionActivity.class);
-        if (bundle!=null) {
+        if (bundle != null) {
             intent.putExtras(bundle);
         }
         activity.startActivity(intent);
@@ -32,11 +32,5 @@ public class PromotionActivity extends Activity {
     @OnClick(R.id.btnPromotionClose)
     public void onClick(View view) {
         onBackPressed();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }
