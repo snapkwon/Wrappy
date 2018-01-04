@@ -198,6 +198,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
+            mGroupRecycleView.setNestedScrollingEnabled(false);
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup);
             mGroupRecycleView.setAdapter(memberGroupAdapter);

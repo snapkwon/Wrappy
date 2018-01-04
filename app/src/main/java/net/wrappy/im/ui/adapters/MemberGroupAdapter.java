@@ -102,10 +102,10 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                 } else {
                     mDeleteMember.setVisibility(View.VISIBLE);
 
-                    mRemoveMember.setOnClickListener(new View.OnClickListener() {
+                    mDeleteMember.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            confirmRemoveMember(member);
+                            confirmRemoveMember(getAdapterPosition());
                         }
                     });
                 }
@@ -126,11 +126,14 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         return false;
     }
 
-    private void confirmRemoveMember(final MemberGroupDisplay member) {
+    private void confirmRemoveMember(final int position) {
         PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.action_leave), mContext.getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "" + member.getNickname(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "" + position, Toast.LENGTH_SHORT).show();
+                mMembers.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mMembers.size());
             }
         }, null, false);
     }
