@@ -1,23 +1,20 @@
 package net.wrappy.im.TranslateAPI;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
+import android.text.TextUtils;
+
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.BuildConfig;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.BaseObject;
+import net.wrappy.im.model.translate.DetectLanguageResponse;
+import net.wrappy.im.model.translate.TranslateLanguageResponse;
+import net.wrappy.im.util.Debug;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,25 +52,40 @@ public class InAppTranslation {
         //getInstance().translate(text, null, null, view, TargetTextType.Hint);
     }
 
-    public void detectlanguage(final String query, final int position) {
+    public void detectLanguage(final String query, final int position) {
         if (query == null) {
             return;
         }
 
-        GetDetectLanguageAsyncTask task = new GetDetectLanguageAsyncTask() {
-            @Override
-            protected void onPostExecute(String result) {
-                if (result != null) {
-                    ;
-                    m_result = result;
-                    callback.onTaskDetectComplete(result, query, position);
-                }
-            }
-        };
-        task.execute(query);
+        if (!isValidTranslate(query, position))
+            return;
+
+        try {
+            String queryEncoded = URLEncoder.encode(query, "utf-8");
+            RestAPI.apiGETDetectLanguage(m_context, String.format(RestAPI.DETECT_LANGUAGE, BuildConfig.GoogleTranslateApiKey, queryEncoded))
+                    .setCallback(new FutureCallback<Response<BaseObject<DetectLanguageResponse>>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<BaseObject<DetectLanguageResponse>> result) {
+                            if (result != null && result.getResult() != null) {
+                                DetectLanguageResponse response = result.getResult().getData();
+                                if (!response.getDetections().isEmpty() && !response.getDetections().get(0).isEmpty()) {
+                                    DetectLanguageResponse.Detection detection = response.getDetections().get(0).get(0);
+                                    onCallbackDetect(detection.getLanguage(), query, position);
+                                } else onCallbackDetect(query, query, position);
+                            } else onCallbackDetect(query, query, position);
+                        }
+                    });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void translate(String query, String source, String target, final int position) {
+    private void onCallbackDetect(String result, String source, int position) {
+        m_result = result;
+        callback.onTaskDetectComplete(result, source, position);
+    }
+
+    public void translate(final String query, String source, String target, final int position) {
         if (source == null) {
             source = this.source;
         }
@@ -82,386 +94,70 @@ public class InAppTranslation {
             target = this.target;
         }
 
-        GetTranslationAsyncTask task = new GetTranslationAsyncTask() {
-            @Override
-            protected void onPostExecute(String result) {
-                if (result != null) {
-                    Log.d(TAG, "Translated test is " + result);
-                    m_result = result;
-                    callback.onTaskTranslateComplete(result, position);
+        if (!isValidTranslate(query, position))
+            return;
+
+        try {
+            String queryEncoded = URLEncoder.encode(query, "utf-8");
+            String url = TextUtils.isEmpty(source) ? RestAPI.TRANSLATE_LANGUAGE_NO_SOURCE : RestAPI.TRANSLATE_LANGUAGE;
+            url = TextUtils.isEmpty(source) ? String.format(url, BuildConfig.GoogleTranslateApiKey, target, queryEncoded) : String.format(url, BuildConfig.GoogleTranslateApiKey, source, target, queryEncoded);
+            RestAPI.apiGETTranslateLanguage(m_context, url).setCallback(new FutureCallback<Response<BaseObject<TranslateLanguageResponse>>>() {
+                @Override
+                public void onCompleted(Exception e, Response<BaseObject<TranslateLanguageResponse>> result) {
+                    if (result != null && result.getResult() != null) {
+                        TranslateLanguageResponse response = result.getResult().getData();
+                        if (response != null && !response.getTranslations().isEmpty()) {
+                            onCallBackTranslate(response.getTranslations().get(0).getTranslatedText(), position);
+                        } else
+                            onCallBackTranslate(query, position);
+                    } else
+                        onCallBackTranslate(query, position);
                 }
-            }
-        };
-        task.execute(query, source, target);
+            });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void translate(List<String> query, String source, String target, int position) {
-        if (source == null) {
-            source = this.source;
+    private boolean isValidTranslate(String query, int position) {
+        String apiKey = BuildConfig.GoogleTranslateApiKey;
+        if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(query)) {
+            Debug.d("Google Translate Api Key is not set in local.properties or empty translate text");
+            onCallBackTranslate(query, position);
+            return false;
         }
-
-        if (target == null) {
-            target = this.target;
-        }
-
-        GetArrayTranslationAsyncTask task = new GetArrayTranslationAsyncTask() {
-            @Override
-            protected void onPostExecute(List<String> result) {
-                if (result != null) {
-                    listresult = result;
-                    callback.onTaskLListTranslateComplete(result);
-                }
-            }
-        };
-        task.execute(query, source, target);
+        return true;
     }
+
+    private void onCallBackTranslate(String query, int position) {
+        m_result = query;
+        callback.onTaskTranslateComplete(query, position);
+    }
+
+//    public void translate(List<String> query, String source, String target, int position) {
+//        if (source == null) {
+//            source = this.source;
+//        }
+//
+//        if (target == null) {
+//            target = this.target;
+//        }
+//
+//        GetArrayTranslationAsyncTask task = new GetArrayTranslationAsyncTask() {
+//            @Override
+//            protected void onPostExecute(List<String> result) {
+//                if (result != null) {
+//                    listresult = result;
+//                    callback.onTaskLListTranslateComplete(result);
+//                }
+//            }
+//        };
+//        task.execute(query, source, target);
+//    }
 
 
     public interface CompleteTransaction {
-        public void onTaskTranslateComplete(String result, int position);
-
-        public void onTaskDetectComplete(String result, String src, int position);
-
-        public void onTaskLListTranslateComplete(List<String> result);
+        void onTaskTranslateComplete(String result, int position);
+        void onTaskDetectComplete(String result, String src, int position);
     }
-
-    private class GetArrayTranslationAsyncTask extends
-            AsyncTask<Object, Void, List<String>> {
-        final String TAG = "GetArrayTranslationAsyncTask";
-
-        final String urlTemplate = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
-        final String urlTemplateWithoutSource = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
-
-        public GetArrayTranslationAsyncTask() {
-
-        }
-
-	/*
-     * protected void onPreExecute() {
-	 *
-	 * }
-	 */
-
-        protected List<String> doInBackground(Object... params) {
-            List<String> query = (List<String>) params[0];
-            String source = (String) params[1];
-            String target = (String) params[2];
-
-            List<String> translatedText = new ArrayList<>();
-            translatedText.clear();
-            HttpURLConnection urlConnection = null;
-
-            try {
-                for (int i = 0; i < query.size(); i++) {
-                    String urlString = "";
-
-                    if (query.get(i) == null || query.get(i).isEmpty()) {
-                        return query;
-                    }
-
-                    String apiKey = BuildConfig.GoogleTranslateApiKey;
-                    if (apiKey == null || apiKey.isEmpty()) {
-                        return query;
-                    }
-
-                    String queryEncoded = URLEncoder.encode(query.get(i), "utf-8");
-
-                    if (source == null && target != null) {
-                        urlString = String.format(urlTemplateWithoutSource, apiKey, target, queryEncoded);
-                    } else if (source != null && target != null) {
-                        urlString = String.format(urlTemplate, apiKey, source, target, queryEncoded);
-                    } else {
-                        // query.get(i) == ;
-                    }
-                    if (source.equals(target)) {
-                        return query;
-                    }
-
-                    URL url = new URL(urlString);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setReadTimeout(10000);
-                    urlConnection.setConnectTimeout(20000);
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.setInstanceFollowRedirects(true);
-
-                    int resp = urlConnection.getResponseCode();
-
-                    switch (resp) {
-                        case HttpURLConnection.HTTP_OK:
-                            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                            StringBuilder result = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                result.append(line);
-                            }
-                            in.close();
-
-                            JSONTokener json = new JSONTokener(result.toString());
-                            if (json != null) {
-                                JSONObject rootObject = (JSONObject) json.nextValue();
-                                if (rootObject != null) {
-                                    JSONObject dataObject = rootObject.getJSONObject("data");
-                                    if (dataObject != null) {
-                                        JSONArray translations = dataObject.getJSONArray("translations");
-                                        for (int j = 0; j < translations.length(); j++) {
-                                            JSONObject translation = translations.getJSONObject(j);
-                                            translatedText.add(translation.getString("translatedText"));
-                                            break;
-                                        }
-                                    } else {
-                                    }
-                                } else {
-                                }
-                            }
-                            break;
-                        default:
-                            InputStream errorIn = new BufferedInputStream(urlConnection.getErrorStream());
-                            BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorIn));
-
-                            StringBuilder errorResult = new StringBuilder();
-                            String errorLine;
-                            while ((errorLine = errorReader.readLine()) != null) {
-                                errorResult.append(errorLine);
-                            }
-                            errorIn.close();
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-            if (translatedText == null) {
-                return query;
-            } else {
-                return translatedText;
-            }
-
-        }
-    }
-
-
-    private class GetTranslationAsyncTask extends
-            AsyncTask<Object, Void, String> {
-        final String TAG = "GetTranslationAsyncTask";
-
-        final String urlTemplate = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
-        final String urlTemplateWithoutSource = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
-
-        public GetTranslationAsyncTask() {
-
-        }
-
-	/*
-     * protected void onPreExecute() {
-	 *
-	 * }
-	 */
-
-        protected String doInBackground(Object... params) {
-            String query = (String) params[0];
-            String source = (String) params[1];
-            String target = (String) params[2];
-
-            String translatedText = null;
-            HttpURLConnection urlConnection = null;
-
-            try {
-                String urlString;
-
-                if (query == null || query.isEmpty()) {
-                    Log.d(TAG, "query is null or empty");
-                    return query;
-                }
-
-                String apiKey = BuildConfig.GoogleTranslateApiKey;
-                if (apiKey == null || apiKey.isEmpty()) {
-                    Log.d(TAG, "Google Translate Api Key is not set in local.properties");
-                    return query;
-                }
-
-                String queryEncoded = URLEncoder.encode(query, "utf-8");
-
-                if (source == null && target != null) {
-                    urlString = String.format(urlTemplateWithoutSource, apiKey, target, queryEncoded);
-                } else if (source != null && target != null) {
-                    urlString = String.format(urlTemplate, apiKey, source, target, queryEncoded);
-                } else {
-                    Log.d(TAG, "The source and target langauges are both not set.");
-                    return query;
-                }
-
-                URL url = new URL(urlString);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(10000);
-                urlConnection.setConnectTimeout(20000);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setInstanceFollowRedirects(true);
-
-                int resp = urlConnection.getResponseCode();
-
-                switch (resp) {
-                    case HttpURLConnection.HTTP_OK:
-                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                        StringBuilder result = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            result.append(line);
-                        }
-                        in.close();
-
-                        JSONTokener json = new JSONTokener(result.toString());
-                        if (json != null) {
-                            JSONObject rootObject = (JSONObject) json.nextValue();
-                            if (rootObject != null) {
-                                JSONObject dataObject = rootObject.getJSONObject("data");
-                                if (dataObject != null) {
-                                    JSONArray translations = dataObject.getJSONArray("translations");
-                                    for (int i = 0; i < translations.length(); i++) {
-                                        JSONObject translation = translations.getJSONObject(i);
-                                        translatedText = translation.getString("translatedText");
-                                        break;
-                                    }
-                                } else {
-                                    Log.e(TAG, "[Google Translate API] Data is missing in the response" + rootObject.toString());
-                                }
-                            } else {
-                                Log.e(TAG, "[Google Translate API] Root json object is missing in the response");
-                            }
-                        }
-                        break;
-                    default:
-                        InputStream errorIn = new BufferedInputStream(urlConnection.getErrorStream());
-                        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorIn));
-
-                        StringBuilder errorResult = new StringBuilder();
-                        String errorLine;
-                        while ((errorLine = errorReader.readLine()) != null) {
-                            errorResult.append(errorLine);
-                        }
-                        errorIn.close();
-                        String errorResponseString = errorResult.toString();
-
-                        String errorText = String.format("Failed to get data from Google Translate. Status code = %d, Response = %s", resp, errorResponseString);
-                        Log.d(TAG, errorText);
-                        break;
-                }
-            } catch (Exception e) {
-                Log.d(TAG, "Got exception while accessing Google Translation");
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-            if (translatedText == null) {
-                return query;
-            } else {
-                return translatedText;
-            }
-        }
-    }
-
-    private class GetDetectLanguageAsyncTask extends AsyncTask<Object, Void, String> {
-
-        final String urlTemplate = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
-
-        public GetDetectLanguageAsyncTask() {
-
-        }
-
-        @Override
-        protected String doInBackground(Object... params) {
-            String query = (String) params[0];
-            String languagecode = "";
-            HttpURLConnection urlConnection = null;
-            try {
-                String urlString;
-
-                String apiKey = BuildConfig.GoogleTranslateApiKey;
-                if (apiKey == null || apiKey.isEmpty()) {
-                    return query;
-                }
-
-                String queryEncoded = URLEncoder.encode(query, "utf-8");
-
-                urlString = String.format(urlTemplate, apiKey, queryEncoded);
-
-
-                URL url = new URL(urlString);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(10000);
-                urlConnection.setConnectTimeout(20000);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setInstanceFollowRedirects(true);
-
-                int resp = urlConnection.getResponseCode();
-
-                switch (resp) {
-                    case HttpURLConnection.HTTP_OK:
-                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                        StringBuilder result = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            result.append(line);
-                        }
-                        in.close();
-
-                        JSONTokener json = new JSONTokener(result.toString());
-                        if (json != null) {
-                            JSONObject rootObject = (JSONObject) json.nextValue();
-                            if (rootObject != null) {
-                                JSONObject dataObject = rootObject.getJSONObject("data");
-                                if (dataObject != null) {
-                                    JSONArray translations = dataObject.getJSONArray("detections");
-
-                                    JSONArray translation = translations.getJSONArray(0);
-                                    for (int i = 0; i < translation.length(); i++) {
-                                        JSONObject translationd = translation.getJSONObject(i);
-                                        languagecode = translationd.getString("language");
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        InputStream errorIn = new BufferedInputStream(urlConnection.getErrorStream());
-                        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorIn));
-
-                        StringBuilder errorResult = new StringBuilder();
-                        String errorLine;
-                        while ((errorLine = errorReader.readLine()) != null) {
-                            errorResult.append(errorLine);
-                        }
-                        errorIn.close();
-
-                        break;
-                }
-
-            } catch (Exception e) {
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                return languagecode;
-            }
-        }
-    }
-
 }
