@@ -392,6 +392,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 error = getString(R.string.error_invalid_text_length);
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = getString(R.string.error_invalid_characters);
+            } else if (TextUtils.isEmpty(phone)) {
+                error = getString(R.string.error_empty_phone);
             } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = getString(R.string.error_invalid_email);
             } else {
