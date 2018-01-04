@@ -115,15 +115,6 @@
                                     android:background="@null"
                                     android:inputType="textEmailAddress"
                                     android:text="@string/email" />
-
-                                <ImageButton
-                                    android:id="@+id/btnProfileChangeEmail"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:background="@android:color/transparent"
-                                    android:src="@drawable/ic_edit" />
                             </RelativeLayout>
 
 
@@ -159,15 +150,6 @@
                                     android:background="@null"
                                     android:inputType="phone"
                                     android:text="@string/mobile_phone" />
-
-                                <ImageButton
-                                    android:id="@+id/btnProfileChangePhone"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:background="@android:color/transparent"
-                                    android:src="@drawable/ic_edit" />
                             </RelativeLayout>
 
 
@@ -180,12 +162,26 @@
                             android:background="#fff"
                             android:orientation="vertical">
 
-                            <net.wrappy.im.helper.layout.AppTextView
-                                style="@style/AppText03"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:padding="10dp"
-                                android:text="@string/gender" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <net.wrappy.im.helper.layout.AppTextView
+                                    style="@style/AppText03"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:text="@string/gender" />
+
+                                <android.support.v7.widget.AppCompatSpinner
+                                    android:id="@+id/spnProfile"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_alignParentRight="true"/>
+
+                            </RelativeLayout>
+
 
                             <View style="@style/divider" />
 
@@ -201,17 +197,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:inputType="textCapCharacters"
+                                    android:textAllCaps="true"
                                     android:text="@string/gender" />
-
-                                <ImageButton
-                                    android:id="@+id/btnProfileChangeGender"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:background="@android:color/transparent"
-                                    android:src="@drawable/ic_edit" />
                             </RelativeLayout>
 
 
@@ -223,7 +210,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:text="@string/btn_submit"
+                            android:text="@string/btn_update"
                             android:visibility="gone" />
                     </LinearLayout>
                 </LinearLayout>
