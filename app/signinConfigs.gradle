@@ -1,18 +1,18 @@
 android {
-    File signFile = rootProject.file('sign/keystore.properties')
+    File signFile = project.file('sign/keystore.properties')
     if (signFile.exists()) {
         Properties properties = new Properties()
         properties.load(new FileInputStream(signFile))
         signingConfigs {
             release {
-                storeFile rootProject.file(properties['keystore'])
+                storeFile project.file(properties['keystore'])
                 storePassword properties['storePassword']
                 keyAlias properties['keyAlias']
                 keyPassword properties['keyPassword']
             }
 
             debug {
-                storeFile rootProject.file(properties['keystore'])
+                storeFile project.file(properties['keystore'])
                 storePassword properties['storePassword']
                 keyAlias properties['keyAlias']
                 keyPassword properties['keyPassword']
