@@ -1,23 +1,29 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.IntentCompat;
-import android.text.Editable;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,6 +34,7 @@ import com.yalantis.ucrop.UCrop;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
@@ -49,7 +56,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
 
 /**
  * Created by ben on 18/12/2017.
@@ -69,6 +75,7 @@ public class ProfileFragment extends Fragment {
     private ImApp mApp;
     private boolean isSelf;
     boolean isRequestAvatar = true;
+    AppDelegate appDelegate;
 
     MainActivity mainActivity;
 
@@ -92,14 +99,14 @@ public class ProfileFragment extends Fragment {
     ImageButton btnPhotoCameraAvatar;
     @BindView(R.id.btnProfileSubmit)
     Button btnProfileSubmit;
-    @BindView(R.id.btnProfileChangeEmail)
-    ImageButton btnProfileChangeEmail;
-    @BindView(R.id.btnProfileChangePhone)
-    ImageButton btnProfileChangePhone;
-    @BindView(R.id.btnProfileChangeGender)
-    ImageButton btnProfileChangeGender;
     @BindView(R.id.btnProfileCameraHeader)
     ImageButton btnProfileCameraHeader;
+    @BindView(R.id.spnProfile)
+    AppCompatSpinner spnProfile;
+
+    ArrayAdapter adapterGender;
+
+    String email,gender;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -110,6 +117,12 @@ public class ProfileFragment extends Fragment {
         ProfileFragment profileFragment = new ProfileFragment();
         profileFragment.setArguments(bundle);
         return profileFragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        appDelegate = (AppDelegate) activity;
     }
 
     @Nullable
@@ -133,14 +146,7 @@ public class ProfileFragment extends Fragment {
         mNickname = getArguments().getString("nickName");
         reference = getArguments().getString("nickName");
         preferenceView();
-        if (!isSelf) {
-            edGender.setEnabled(false);
-            edEmail.setEnabled(false);
-            edPhone.setEnabled(false);
-            btnProfileChangeEmail.setVisibility(View.GONE);
-            btnProfileChangePhone.setVisibility(View.GONE);
-            btnProfileChangeGender.setVisibility(View.GONE);
-        } else {
+        if (isSelf) {
             mainActivity = (MainActivity) getActivity();
         }
 
@@ -148,10 +154,40 @@ public class ProfileFragment extends Fragment {
     }
 
     private void preferenceView() {
+        edGender.setEnabled(false);
+        edEmail.setEnabled(false);
+        edPhone.setEnabled(false);
+        spnProfile.setVisibility(View.INVISIBLE);
         if (isSelf) {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
+        final String[] arr = {"",""};
+        final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
+        adapterGender = new ArrayAdapter<String>(getActivity(), R.layout.update_profile_textview, arrDetail) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
+                final TextView t = (TextView) v.findViewById(android.R.id.text1);
+                t.setText(arr[position]);
+                return v;
+            }
+        };
+        spnProfile.setAdapter(adapterGender);
+        spnProfile.setSelection(1);
+        spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                edGender.setText(getResources().getStringArray(R.array.profile_gender)[i]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         getDataMember();
     }
 
@@ -193,18 +229,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @OnTextChanged({R.id.edProfileEmail, R.id.edProfilePhone, R.id.edProfileGender})
-    protected void handleTextChange(Editable editable) {
-        String email = edEmail.getText().toString().trim();
-        String phone = edPhone.getText().toString().trim();
-        String gender = edGender.getText().toString().trim();
-        if (!email.equalsIgnoreCase(wpKMemberDto.getEmail()) || !phone.equalsIgnoreCase(wpKMemberDto.getMobile()) || !gender.equalsIgnoreCase(wpKMemberDto.getGender())) {
-            btnProfileSubmit.setVisibility(View.VISIBLE);
-        } else {
-            btnProfileSubmit.setVisibility(View.GONE);
-        }
-    }
-
     private void confirmDeleteAccount(int mAccountId, int mProviderId) {
 
         //need to delete
@@ -218,21 +242,19 @@ public class ProfileFragment extends Fragment {
         System.exit(0);
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.btnProfileChangeEmail, R.id.btnProfileChangePhone, R.id.btnProfileChangeGender, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
             edEmail.clearFocus();
-            edPhone.clearFocus();
             edGender.clearFocus();
+            edEmail.setEnabled(false);
             String email = edEmail.getText().toString().trim();
-            String phone = edPhone.getText().toString().trim();
-            String gender = edGender.getText().toString().trim();
+            String gender = edGender.getText().toString().trim().toUpperCase();
             if (!AppFuncs.isEmailValid(email)) {
                 AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
             wpKMemberDto.setEmail(email);
-            wpKMemberDto.setMobile(phone);
             wpKMemberDto.setGender(gender);
             updateData();
             btnProfileSubmit.setVisibility(View.GONE);
@@ -391,6 +413,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
+                    AppFuncs.log(result.getResult());
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                         if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
@@ -400,6 +423,8 @@ public class ProfileFragment extends Fragment {
                             String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
                             DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
                             ImApp.broadcastIdentity(null);
+                            spnProfile.setVisibility(View.INVISIBLE);
+                            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE,"");
                         }
                     } else {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
@@ -413,5 +438,11 @@ public class ProfileFragment extends Fragment {
         Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, mNickname, reference);
         startActivity(intent);
         getActivity().finish();
+    }
+    public void onDataChange() {
+        edEmail.setEnabled(true);
+        edEmail.setFocusable(true);
+        btnProfileSubmit.setVisibility(View.VISIBLE);
+        spnProfile.setVisibility(View.VISIBLE);
     }
 }

@@ -41,7 +41,6 @@ import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +51,6 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
@@ -62,6 +60,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppEditTextView;
@@ -91,8 +90,6 @@ import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MainMenuFragment;
 import net.wrappy.im.ui.MainPromotionFragment;
 import net.wrappy.im.ui.ProfileFragment;
-import net.wrappy.im.ui.WalletFragment;
-import net.wrappy.im.ui.Welcome_Wallet_Fragment;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -114,6 +111,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import info.guardianproject.iocipher.VirtualFileSystem;
 import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
@@ -122,27 +122,27 @@ import static net.wrappy.im.helper.RestAPI.POST_CREATE_GROUP;
 
 /**
  */
-public class MainActivity extends BaseActivity {
-
-    private ViewPager mViewPager;
-    private TabLayout mTabLayout;
-    private FloatingActionButton mFab;
+public class MainActivity extends BaseActivity implements AppDelegate {
 
     private ImApp mApp;
 
-    public final static int REQUEST_ADD_CONTACT = 9999;
-    public final static int REQUEST_CHOOSE_CONTACT = REQUEST_ADD_CONTACT + 1;
-    public final static int REQUEST_CHANGE_SETTINGS = REQUEST_CHOOSE_CONTACT + 1;
+    public final static int REQUEST_ADD_CONTACT = 300;
+    public final static int REQUEST_CHOOSE_CONTACT = 301;
+    public final static int REQUEST_CHANGE_SETTINGS = 302;
+    public final static int UPDATE_PROFILE_COMPLETE = 303;
 
     public final static String IS_FROM_PATTERN_ACTIVITY = "isFromPatternScreen";
 
-    private Welcome_Wallet_Fragment mwelcome_wallet_fragment;
-    private WalletFragment mwalletFragment;
     Adapter adapter;
     FragmentManager fragmentManager;
-    ImageButton btnHeaderSearch;
-    AppEditTextView edSearchConversation;
-    ImageView imgLogo;
+
+    @BindView(R.id.btnHeaderEdit) ImageButton btnHeaderEdit;
+    @BindView(R.id.btnHeaderSearch) ImageButton btnHeaderSearch;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.viewpager) ViewPager mViewPager;
+    @BindView(R.id.edSearchConversation) AppEditTextView edSearchConversation;
+    @BindView(R.id.imgLogo) ImageView imgLogo;
+    @BindView(R.id.fab) FloatingActionButton mFab;
 
     //Check to load old data from server
     Handler mLoadDataHandler = new Handler();
@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        setContentView(R.layout.awesome_activity_main);
         super.onCreate(savedInstanceState);
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -164,18 +164,41 @@ public class MainActivity extends BaseActivity {
                     WindowManager.LayoutParams.FLAG_SECURE);
 
 
-        setContentView(R.layout.awesome_activity_main);
-
         mApp = (ImApp) getApplication();
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        btnHeaderSearch = (ImageButton) findViewById(R.id.btnHeaderSearch);
         btnHeaderSearch.setVisibility(View.GONE);
-        edSearchConversation = (AppEditTextView) findViewById(R.id.edSearchConversation);
-        imgLogo = (ImageView) findViewById(R.id.imgLogo);
-        btnHeaderSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        initFloatButton();
+        initViewPager();
+        initTabLayout();
+
+        //don't wnat this to happen to often
+        checkForUpdates();
+
+        installRingtones();
+
+        applyStyle();
+        Imps.deleteMessageInDbByTime(getContentResolver());
+
+        showPopUpNotice();
+    }
+
+    @OnEditorAction(R.id.edSearchConversation)
+    public boolean onEditorAction(int actionId) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            try {
+                AppFuncs.dismissKeyboard(MainActivity.this);
+                ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                page.doSearch(edSearchConversation.getText().toString().trim());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    @OnClick({R.id.btnHeaderSearch,R.id.btnHeaderEdit})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnHeaderSearch:
                 edSearchConversation.setText("");
                 if (edSearchConversation.getVisibility() == View.VISIBLE) {
                     AppFuncs.dismissKeyboard(MainActivity.this);
@@ -194,36 +217,18 @@ public class MainActivity extends BaseActivity {
                     edSearchConversation.setFocusableInTouchMode(true);
                     imgLogo.setVisibility(View.GONE);
                 }
-            }
-        });
-        edSearchConversation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    try {
-                        AppFuncs.dismissKeyboard(MainActivity.this);
-                        ConversationListFragment page = (ConversationListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                        page.doSearch(edSearchConversation.getText().toString().trim());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                break;
+            case R.id.btnHeaderEdit:
+                try {
+                    AppFuncs.dismissKeyboard(MainActivity.this);
+                    ProfileFragment page = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                    page.onDataChange();
+                    btnHeaderEdit.setVisibility(View.GONE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-                return false;
-            }
-        });
-        initFloatButton();
-        initViewPager();
-        initTabLayout();
-
-        //don't wnat this to happen to often
-        checkForUpdates();
-
-        installRingtones();
-
-        applyStyle();
-        Imps.deleteMessageInDbByTime(getContentResolver());
-
-        showPopUpNotice();
+                break;
+        }
     }
 
     private void showPopUpNotice() {
@@ -279,6 +284,7 @@ public class MainActivity extends BaseActivity {
                     appTextView.setTextColor(getResources().getColor(R.color.menu_text_active));
                     edSearchConversation.setText("");
                     edSearchConversation.setVisibility(View.GONE);
+                    btnHeaderEdit.setVisibility(View.GONE);
                     imgLogo.setVisibility(View.VISIBLE);
                     if (tab.getPosition() == 0) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_active, 0, 0);
@@ -289,6 +295,7 @@ public class MainActivity extends BaseActivity {
                     } else if (tab.getPosition() == 2) {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_promotion_h, 0, 0);
                     } else {
+                        btnHeaderEdit.setVisibility(View.VISIBLE);
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
@@ -337,7 +344,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initFloatButton() {
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setVisibility(View.GONE);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -573,7 +579,7 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
-                mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
+                //mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
@@ -737,6 +743,13 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(this, LockScreenActivity.class);
         intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
         startActivity(intent);
+    }
+
+    @Override
+    public void onChangeInApp(int id, String data) {
+        if (id == UPDATE_PROFILE_COMPLETE) {
+            btnHeaderEdit.setVisibility(View.VISIBLE);
+        }
     }
 
     public class Adapter extends FragmentPagerAdapter {
