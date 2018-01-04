@@ -2964,14 +2964,19 @@ public class ConversationView {
                     //mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
 
                     ArrayList<BottomSheetCell> bottomSheetCells = new ArrayList<>();
-                    BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
-                    bottomSheetCells.add(sheetCell);
-                    sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
-                    bottomSheetCells.add(sheetCell);
-                    sheetCell = new BottomSheetCell(3,0, mContext.getString(R.string.message_spam));
-                    bottomSheetCells.add(sheetCell);
-                    sheetCell = new BottomSheetCell(4,0, mContext.getString(R.string.menu_violence));
-                    bottomSheetCells.add(sheetCell);
+                    if (viewHolder.getItemViewType() == 1) {
+                        BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
+                        bottomSheetCells.add(sheetCell);
+                        sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
+                        bottomSheetCells.add(sheetCell);
+                    } else {
+                        BottomSheetCell sheetCell = new BottomSheetCell(3,0, mContext.getString(R.string.message_spam));
+                        bottomSheetCells.add(sheetCell);
+                        sheetCell = new BottomSheetCell(4,0, mContext.getString(R.string.menu_violence));
+                        bottomSheetCells.add(sheetCell);
+                    }
+
+
                     PopupUtils.createBottomSheet(mActivity, bottomSheetCells, new BottomSheetListener() {
                         @Override
                         public void onSelectBottomSheetCell(int index) {

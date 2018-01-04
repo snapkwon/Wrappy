@@ -82,12 +82,17 @@ public class RestAPI {
     public static String DELETE_AVATAR = root_url + "member/avatar";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
+    public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
     private static int GET_METHOD = 2;
 
     public static int NUMBER_REQUEST_TOKEN = 3;
+
+    public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
+        return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
+    }
 
     public static String getGroupByXmppId(String xmppId) {
         return String.format(GET_GROUP_BY_XMPP_ID, xmppId);
