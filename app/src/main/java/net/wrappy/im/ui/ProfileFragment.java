@@ -122,7 +122,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        appDelegate = (AppDelegate) activity;
+        if (activity instanceof AppDelegate) {
+            appDelegate = (AppDelegate) activity;
+        }
     }
 
     @Nullable
@@ -424,7 +426,9 @@ public class ProfileFragment extends Fragment {
                             DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
                             ImApp.broadcastIdentity(null);
                             spnProfile.setVisibility(View.INVISIBLE);
-                            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE,"");
+                            if (appDelegate != null) {
+                                appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
+                            }
                         }
                     } else {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
