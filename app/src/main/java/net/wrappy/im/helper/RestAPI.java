@@ -19,6 +19,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.Debug;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -263,6 +264,7 @@ public class RestAPI {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
+                Debug.d(result != null ? result.getResult() : "");
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredtoken(result.getResult())) {
