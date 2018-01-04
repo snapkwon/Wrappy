@@ -83,6 +83,7 @@ public class RestAPI {
     public static String DELETE_AVATAR = root_url + "member/avatar";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
+    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
