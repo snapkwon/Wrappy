@@ -167,7 +167,38 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_leave_setting"
+            android:id="@+id/layout_admin_delete_group"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_delete" />
+
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_admin_delete_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_delete_and_leave_group"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_admin_delete_setting"
+                    android:layout_below="@id/text_admin_delete_setting"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_member_leave_group"
             style="@style/match_width"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
@@ -180,16 +211,16 @@
             <RelativeLayout style="@style/match_width">
 
                 <net.ironrabbit.type.CustomTypefaceTextView
-                    android:id="@+id/text_delete_setting"
+                    android:id="@+id/text_member_leave_group"
                     style="@style/wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/setting_delete_and_leave_group"
+                    android:text="@string/setting_leave_group"
                     android:textSize="16sp" />
 
                 <View
                     style="@style/divider"
-                    android:layout_alignLeft="@id/text_delete_setting"
-                    android:layout_below="@id/text_delete_setting"
+                    android:layout_alignLeft="@id/text_member_leave_group"
+                    android:layout_below="@id/text_member_leave_group"
                     android:layout_marginTop="15dp" />
 
             </RelativeLayout>

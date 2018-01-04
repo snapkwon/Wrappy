@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.RemoteException;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,8 +67,10 @@ public class SettingConversationActivity extends BaseActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
-    @BindView(R.id.layout_leave_setting)
-    LinearLayout layout_leave_setting;
+    @BindView(R.id.layout_admin_delete_group)
+    LinearLayout mAdminDeleteGroup;
+    @BindView(R.id.layout_member_leave_group)
+    LinearLayout mMemberLeaveGroup;
     @BindView(R.id.layout_add_member)
     LinearLayout mAddMemberLayout;
     @BindView(R.id.member_group_recycler_view)
@@ -83,7 +84,7 @@ public class SettingConversationActivity extends BaseActivity {
     ImageButton btnEditGroupName;
     @BindView(R.id.view_divider)
     View mViewDivider;
-    @BindView(R.id.text_delete_setting)
+    @BindView(R.id.text_admin_delete_setting)
     TextView mTxtDelete;
 
     private String mAddress = null;
@@ -112,8 +113,6 @@ public class SettingConversationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
         super.onCreate(savedInstanceState);
-
-        mTxtDelete.setText(getResources().getString(R.string.setting_delete_chat));
 
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
@@ -187,11 +186,10 @@ public class SettingConversationActivity extends BaseActivity {
             if (mIsOwner) {
                 mAddMemberLayout.setVisibility(View.VISIBLE);
                 mViewDivider.setVisibility(View.VISIBLE);
-                layout_leave_setting.setVisibility(View.VISIBLE);
+                mAdminDeleteGroup.setVisibility(View.VISIBLE);
 
-                mTxtDelete.setText(getResources().getString(R.string.setting_delete_and_leave_group));
-            } else {
-                mTxtDelete.setText(getResources().getString(R.string.setting_leave_group));
+                mMemberLeaveGroup.setVisibility(View.GONE);
+
             }
 
             memberGroupDisplays = new ArrayList<>();
@@ -282,7 +280,8 @@ public class SettingConversationActivity extends BaseActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.layout_add_member})
+    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
+            R.id.layout_member_leave_group})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
@@ -292,12 +291,11 @@ public class SettingConversationActivity extends BaseActivity {
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
-            case R.id.layout_leave_setting:
-                if (mContactType == Imps.Contacts.TYPE_GROUP) {
-                    confirmLeaveGroup();
-                } else {
-
-                }
+            case R.id.layout_admin_delete_group:
+                confirmDeleteGroup();
+                break;
+            case R.id.layout_member_leave_group:
+                confirmLeaveGroup();
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
@@ -468,14 +466,35 @@ public class SettingConversationActivity extends BaseActivity {
         this.finish();
     }
 
+    private void confirmDeleteGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_delete_group), getString(R.string.confirm_delete_and_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+                RestAPI.apiDELETE(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        if (result != null) {
+                            AppFuncs.log(result.getResult());
+                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                            }
+                        }
+                    }
+                });
+                leaveGroup();
+            }
+        }, null, false);
+    }
+
     private void confirmLeaveGroup() {
         PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (leaveGroup()) {
-                    
+                    AppFuncs.alert(getApplicationContext(), "Leave group", true);
                 } else {
-                    AppFuncs.alert(SettingConversationActivity.this, "Could not leave group", true);
+                    AppFuncs.alert(getApplicationContext(), "Could not leave group", true);
                 }
             }
         }, null, false);
