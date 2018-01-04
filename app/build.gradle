@@ -23,7 +23,6 @@ android {
         if (getProps("google_translate_apikey") == null) {
             buildConfigField "String", "GoogleTranslateApiKey", "\"google_translate_apikey\""
         } else {
-
             buildConfigField "String", "GoogleTranslateApiKey", getProps("google_translate_apikey")
         }
     }
@@ -38,16 +37,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
-            resValue "string", "google_place_api_key", "[YOUR PROD KEY]"
-            resValue "string", "fabric_api_key", "9ebe0e16d1080723d689921d921604890f1a06c2"
+            resValue "string", "google_place_api_key", (getProps("google_translate_apikey")) ? getProps("google_translate_apikey") : "[YOUR PROD KEY]"
             shrinkResources false
         }
         debug {
             applicationIdSuffix ".debug"
             minifyEnabled false
             signingConfig signingConfigs.debug
-            resValue "string", "google_place_api_key", "[YOUR DEV KEY]"
-            resValue "string", "fabric_api_key", ""
+            resValue "string", "google_place_api_key", (getProps("google_translate_apikey")) ? getProps("google_translate_apikey") : "[YOUR DEV KEY]"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             shrinkResources false
         }

@@ -299,8 +299,10 @@ public class ConversationView {
 
         }
     }
+
     public static String TYPE_SPAM = "SPAM";
     public static String TYPE_VIOLENCE = "OBJECTIONABLE";
+
     public boolean getSearchMode() {
         return isSearchMode;
     }
@@ -1923,7 +1925,7 @@ public class ConversationView {
 
     void sendMessage() {
         if (!TextUtils.isEmpty(tempPacketIDSelect)) {
-            sendEditChat(tempPacketIDSelect,mComposeMessage.getText().toString().trim());
+            sendEditChat(tempPacketIDSelect, mComposeMessage.getText().toString().trim());
             return;
         }
         String msg = mComposeMessage.getText().toString();
@@ -2806,16 +2808,9 @@ public class ConversationView {
                 public void onTaskDetectComplete(String result, String src, int position) {
                     if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
-                    }
-                    else
-                    {
+                    } else {
                         iapptranslater.translate(src, "en", targetlanguage, position);
                     }
-                }
-
-                @Override
-                public void onTaskLListTranslateComplete(List<String> result) {
-
                 }
             });
 
@@ -2835,11 +2830,11 @@ public class ConversationView {
                 @Override
                 public void onClick(View v) {
                     cursor.moveToPosition(viewHolder.getPos());
-                    if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                    if (!bodytranslate.get(viewHolder.getPos()).mIstranslate) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
                         viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.waiting_dialog));
                         viewHolder.btntranslate.setEnabled(false);
-                        iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
+                        iapptranslater.detectLanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
                     } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
                         notifyItemChanged(viewHolder.getPos());
@@ -2976,11 +2971,10 @@ public class ConversationView {
                         bottomSheetCells.add(sheetCell);
                     }
 
-
                     PopupUtils.createBottomSheet(mActivity, bottomSheetCells, new BottomSheetListener() {
                         @Override
                         public void onSelectBottomSheetCell(int index) {
-                            if (index==1) {
+                            if (index == 1) {
                                 if (!tempPacketIDSelect.equalsIgnoreCase("")) {
                                     mComposeMessage.setText(messageView.getLastMessage());
                                     //sendEditChat(tempPacketIDSelect);
@@ -2991,7 +2985,7 @@ public class ConversationView {
                                 }
                             } else if (index == 3) {
                                 mCaptureBitmap = captureView(mLastSelectedView);
-                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext,mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext, mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
                                     @Override
                                     public void onCompleted(Exception e, Response<String> result) {
                                         JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
@@ -3004,7 +2998,7 @@ public class ConversationView {
                                 });
                             } else if (index == 4) {
                                 mCaptureBitmap = captureView(mLastSelectedView);
-                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext,mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext, mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
                                     @Override
                                     public void onCompleted(Exception e, Response<String> result) {
                                         JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
@@ -3050,6 +3044,7 @@ public class ConversationView {
 
 
         }
+
         public void sendReportMessage(String reporter, String member, String messageId,
                                       String reference, String type) {
 
@@ -3074,6 +3069,7 @@ public class ConversationView {
             });
 
         }
+
         /**
          * Capture message text to report spam
          *
@@ -3414,7 +3410,7 @@ public class ConversationView {
 
         // setting up Spinner
         arraySpinner = new String[]{
-                "English", "Japanese", "Vietnamese" , "Chinese" ,"Korean" ,"Thai"
+                "English", "Japanese", "Vietnamese", "Chinese", "Korean", "Thai"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
