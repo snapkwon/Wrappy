@@ -176,10 +176,11 @@ public class ProfileFragment extends Fragment {
             }
         };
         spnProfile.setAdapter(adapterGender);
+        spnProfile.setSelection(1);
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                edGender.setText(arrDetail[i]);
+                edGender.setText(getResources().getStringArray(R.array.profile_gender)[i]);
             }
 
             @Override
@@ -248,7 +249,7 @@ public class ProfileFragment extends Fragment {
             edGender.clearFocus();
             edEmail.setEnabled(false);
             String email = edEmail.getText().toString().trim();
-            String gender = edGender.getText().toString().trim();
+            String gender = edGender.getText().toString().trim().toUpperCase();
             if (!AppFuncs.isEmailValid(email)) {
                 AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
@@ -412,6 +413,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
+                    AppFuncs.log(result.getResult());
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                         if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
