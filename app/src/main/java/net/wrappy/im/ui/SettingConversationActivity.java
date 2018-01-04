@@ -200,7 +200,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             mGroupRecycleView.setNestedScrollingEnabled(false);
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();

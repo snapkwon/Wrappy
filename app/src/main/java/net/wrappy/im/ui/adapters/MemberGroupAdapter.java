@@ -1,6 +1,9 @@
 package net.wrappy.im.ui.adapters;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.SettingConversationActivity;
+import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
@@ -36,12 +40,14 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private Context mContext;
     private String currentUser;
     private String mAdminGroup;
+    private long mLastChatId;
 
-    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup) {
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId) {
         this.mContext = mContext;
         this.mMembers = mMembers;
         this.currentUser = currentUser;
         this.mAdminGroup = mAdminGroup;
+        this.mLastChatId = mLastChatId;
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -105,7 +111,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                     mDeleteMember.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            confirmRemoveMember(getAdapterPosition());
+                            confirmRemoveMember(getAdapterPosition(), member);
                         }
                     });
                 }
@@ -126,15 +132,27 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         return false;
     }
 
-    private void confirmRemoveMember(final int position) {
+    private void confirmRemoveMember(final int position, final MemberGroupDisplay member) {
         PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.action_leave), mContext.getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "" + position, Toast.LENGTH_SHORT).show();
                 mMembers.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mMembers.size());
+                removeMemberInDB(member);
             }
         }, null, false);
+    }
+
+    private void removeMemberInDB(MemberGroupDisplay member) {
+        StringBuilder buf = new StringBuilder();
+
+        buf.append(Imps.GroupMembers.USERNAME);
+        buf.append(" LIKE ");
+        android.database.DatabaseUtils.appendValueToSql(buf, "%" + member.getUsername() + "%");
+
+        Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+        ContentResolver cr = mContext.getContentResolver();
+        cr.delete(memberUri, buf.toString(), null);
     }
 }
