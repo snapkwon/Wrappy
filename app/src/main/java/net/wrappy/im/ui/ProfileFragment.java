@@ -228,22 +228,9 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
-
-        //need to delete
-        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
-
-        ImApp.sImApp.resetDB();
-//        PackageManager packageManager = getActivity().getPackageManager();
-//        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
-        Intent intent = new Intent(getActivity(), LauncherActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-//        ComponentName componentName = intent.getComponent();
-//        Intent mainIntent = new Intent(getActivity(), LauncherActivity.class);
-//        getActivity().startActivity(mainIntent);
+    private void logout() {
+        ImApp.sImApp.logout();
         getActivity().finishAffinity();
-
     }
 
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
@@ -355,7 +342,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     if (index == 1) {
-                        confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
+                        logout();
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
                         AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);

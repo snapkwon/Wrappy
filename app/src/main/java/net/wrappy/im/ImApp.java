@@ -72,6 +72,7 @@ import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.tasks.MigrateAccountTask;
+import net.wrappy.im.ui.LauncherActivity;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
@@ -277,7 +278,16 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     }
 
-    private void logout() {
+    public void logout() {
+        ImApp.deleteAccount(getContentResolver(), mDefaultAccountId, mDefaultProviderId);
+        resetDB();
+        Intent intent = new Intent(this, LauncherActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    private void logoutConnection() {
         try {
             getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId()).logout();
         } catch (Exception e) {
@@ -286,8 +296,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void resetDB() {
+        ImApp.deleteAccount(getContentResolver(), mDefaultAccountId, mDefaultProviderId);
         if (mCacheWord != null) {
-            logout();
+            logoutConnection();
             mDefaultProviderId = -1;
             mDefaultAccountId = -1;
             mDefaultUsername = null;
@@ -318,7 +329,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             //  initDBHelper(mCacheWord.getEncryptionKey(), false);
 
         }
-
     }
 
     public boolean isThemeDark() {
