@@ -186,6 +186,7 @@ public class IntroActivity extends BaseActivity {
             }
         });
 
+        startMessagingButton.bringToFront();
         startMessagingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

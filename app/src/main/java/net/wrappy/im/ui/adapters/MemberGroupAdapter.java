@@ -12,17 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.wrappy.im.R;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.SettingConversationActivity;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
