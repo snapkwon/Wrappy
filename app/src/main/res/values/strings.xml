@@ -538,7 +538,7 @@
     <string name="all">All</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
-    <string name="mobile_phone">Mobile Phone</string>
+    <string name="mobile_phone">Mobile Phone *</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
     <string name="referral_hint">Username or phone number</string>
@@ -576,6 +576,7 @@
     <string name="error_reset_password">Reset password fail</string>
     <string name="error_username_or_password">The username or password is incorrect</string>
     <string name="error_empty_username">username cannot be empty</string>
+    <string name="error_empty_phone">phone cannot be empty</string>
     <string name="warning">Warning</string>
     <string name="error_tranferring_file">Error transferring file:</string>
     <string name="message_download_attachment">Do you want to save this file?</string><!-- this flow should be defined again -->

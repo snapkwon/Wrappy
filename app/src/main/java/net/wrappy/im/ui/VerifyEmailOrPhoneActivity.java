@@ -14,12 +14,15 @@ import net.wrappy.im.helper.AppDelegate;
 
 public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDelegate {
 
-    public static void start(Activity activity, Bundle bundle) {
+    public static int VERIFY_OK = 200;
+    public static int VERIFY_ERROR = 201;
+
+    public static void start(Activity activity, Bundle bundle, int requestCode) {
         Intent intent = new Intent(activity,VerifyEmailOrPhoneActivity.class);
         if (bundle!=null) {
             intent.putExtras(bundle);
         }
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent,requestCode);
     }
 
     @Override
@@ -29,7 +32,9 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
         getSupportActionBar().setTitle(getString(R.string.page_verify));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, ForgetPasswordCheckEmailFragment.newInstance()).commit();
+        if (getIntent().getExtras()!=null) {
+            getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
+        }
     }
 
     @Override
@@ -42,6 +47,15 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
 
     @Override
     public void onChangeInApp(int id, String data) {
+        if (id == VERIFY_OK) {
+            resultOK();
+        }
+    }
 
+    private void resultOK() {
+        Intent returnIntent = getIntent();
+        returnIntent.putExtra("result",true);
+        setResult(RESULT_OK,returnIntent);
+        finish();
     }
 }

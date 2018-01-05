@@ -33,7 +33,7 @@
         app:pinTextBottomPadding="10dp" />
 
     <net.wrappy.im.helper.layout.AppButton
-        android:id="@+id/btnForgetPasswordCheckEmail"
+        android:id="@+id/btnVerifyCheck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_done"
