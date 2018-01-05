@@ -375,6 +375,30 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         mChatSessionManager.closeChatSession(this);
     }
 
+    public void delete() {
+        if (mIsGroupChat) {
+            getGroupManager().deleteChatGroupAsync((ChatGroup) mChatSession.getParticipant());
+        }
+
+        mContentResolver.delete(mMessageURI, null, null);
+        mContentResolver.delete(mChatURI, null, null);
+        mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
+        mChatSessionManager.closeChatSession(this);
+    }
+
+    public void removeAllMembersGroup() {
+        if (mIsGroupChat) {
+            ChatGroup group = (ChatGroup) mChatSession.getParticipant();
+            List<Contact> members = group.getMembers();
+            Debug.e("members: " + members.size());
+            for (Contact member : members) {
+                getGroupManager().removeGroupMemberAsync((ChatGroup) mChatSession.getParticipant(), member);
+            }
+        } else {
+
+        }
+    }
+
     public void leaveIfInactive() {
         //    if (mChatSession.getHistoryMessages().isEmpty()) {
         leave();

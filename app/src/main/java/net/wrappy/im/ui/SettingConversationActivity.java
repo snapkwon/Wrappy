@@ -485,7 +485,7 @@ public class SettingConversationActivity extends BaseActivity {
                         }
                     }
                 });
-                leaveGroup();
+                deleteGroupByAdmin();
             }
         }, null, false);
     }
@@ -526,5 +526,30 @@ public class SettingConversationActivity extends BaseActivity {
         }
         return false;
     }
+
+    private boolean deleteGroupByAdmin() {
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mAddress);
+
+            if (session == null)
+                session = manager.createChatSession(mAddress, true);
+
+            if (session != null) {
+                session.delete();
+
+                //clear the stack and go back to the main activity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            }
+
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error deleting group", e);
+        }
+        return false;
+    }
+
 
 }

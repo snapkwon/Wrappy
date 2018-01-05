@@ -76,6 +76,11 @@ interface IChatSession {
     void leave();
 
     /**
+    * Leaves this ChatSession.
+    */
+    void delete();
+
+    /**
      * Leaves this ChatSession if there isn't any message sent or received in it.
      */
     void leaveIfInactive();
