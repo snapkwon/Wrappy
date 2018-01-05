@@ -73,6 +73,7 @@ import net.wrappy.im.ui.ConferenceActivity;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conference.ConferencePopupActivity;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -1177,7 +1178,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 } catch (Exception e) {
                 }
                 //Check conference trigger
-                checkTriggerConference(messageUri, bareAddress, nickname, body);
+                checkTriggerConference(messageUri, bareAddress, nickname, msg);
 
                 // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
@@ -1287,13 +1288,20 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             });
         }
 
-        private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, String body) {
+        private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, Message message) {
+            String body = message.getBody();
             if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                Intent intent;
-                ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
-                conferenceCall.setGroup(isGroupChatSession());
-                intent = ConferencePopupActivity.newIntent(conferenceCall);
-                mConnection.getContext().startActivity(intent);
+                long startTime = message.getDateTime().getTime();
+                if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME) {
+                    ConferenceMessage conference = new ConferenceMessage(body);
+                    conference.missed();
+                    updateMessageInDb(message.getID(), conference.toString());
+                } else {
+                    ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
+                    conferenceCall.setGroup(isGroupChatSession());
+                    Intent intent = ConferencePopupActivity.newIntent(conferenceCall);
+                    mConnection.getContext().startActivity(intent);
+                }
             }
         }
 

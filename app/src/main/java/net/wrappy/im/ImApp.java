@@ -1294,9 +1294,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
                     selection, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                long contactId = cursor.getLong(0);
-                Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
-                sImApp.getContentResolver().update(uri, values, null, null);
+                if (cursor.moveToFirst()) {
+                    long contactId = cursor.getLong(0);
+                    Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
+                    sImApp.getContentResolver().update(uri, values, null, null);
+                }
+                cursor.close();
             } else {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
