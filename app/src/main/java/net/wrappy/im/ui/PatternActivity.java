@@ -245,6 +245,14 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         });
     }
 
+    private void resetTask() {
+        mExistingAccountTask = null;
+    }
+
+    private void onLoginFailed() {
+        PopupUtils.showCustomDialog(this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
+    }
+
     private void doExistingAccountRegister(String username, String password, String accountName) {
 
         if (mExistingAccountTask == null) {
@@ -254,7 +262,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
 
-    private final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
+    private static final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 
         WeakReference<PatternActivity> weakReference;
 
@@ -322,9 +330,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     getActivity().startActivity(intent);
                     getActivity().finish();
                 } else {
-                    PopupUtils.showCustomDialog(PatternActivity.this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
+                    getActivity().onLoginFailed();
                 }
-                mExistingAccountTask =null;
+                getActivity().resetTask();
             }
         }
     }

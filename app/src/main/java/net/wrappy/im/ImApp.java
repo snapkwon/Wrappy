@@ -18,7 +18,9 @@
 package net.wrappy.im;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.ComponentName;
+import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -48,7 +50,6 @@ import com.crashlytics.android.Crashlytics;
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
-import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
@@ -58,6 +59,7 @@ import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.Broadcaster;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -267,29 +269,50 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
         }
 
-        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
-        WalletDatabaseManager.initializeInstance(walletDBHelper);
+//        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
+//        WalletDatabaseManager.initializeInstance(walletDBHelper);
 
 
         RestAPI.initIon(getApplicationContext());
 
     }
 
+    private void logout() {
+        try {
+            getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId()).logout();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void resetDB() {
         if (mCacheWord != null) {
-
-            ImpsProvider.resetDB();
-            mCacheWord.deinitialize();
-            mCacheWord.connectToService();
-        /*    mDefaultProviderId = -1;
+            logout();
+            mDefaultProviderId = -1;
             mDefaultAccountId = -1;
             mDefaultUsername = null;
             mDefaultOtrFingerprint = null;
-            mDefaultNickname = null;*/
-            walletDBHelper = new WalletDBHelper(this.getApplicationContext());
-            WalletDatabaseManager.initializeInstance(walletDBHelper);
+            mDefaultNickname = null;
+            Store.clear(this);
+            String tempPassphrase = settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null);
             settings.edit().clear().apply();
-            forceStopImService();
+            serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+            mApplicationContext.stopService(serviceIntent);
+
+            settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
+
+            ContentResolver resolver = getContentResolver();
+            ContentProviderClient client = resolver.acquireContentProviderClient("net.wrappy.im.provider.Imps");
+            ImpsProvider provider = (ImpsProvider) client.getLocalContentProvider();
+            provider.reset();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                client.close();
+            } else {
+                client.release();
+            }
+            // Clear all notification
+            NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            nMgr.cancelAll();
 
             //     RemoteImService.
             //  initDBHelper(mCacheWord.getEncryptionKey(), false);
@@ -1343,5 +1366,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
             }
         }
+    }
+
+    public CacheWordHandler getCacheWord() {
+        return mCacheWord;
     }
 }

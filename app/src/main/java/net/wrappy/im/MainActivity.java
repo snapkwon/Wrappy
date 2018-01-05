@@ -1073,21 +1073,24 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     }
 
     private <T> void syncData(Handler handler, T[] data, SyncDataListener<T> syncDataListener, int type) {
-        IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-        SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
-        try {
-            if (handler != null) {
-                handler.removeCallbacks(runable);
-                if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
-                    if (syncDataListener != null) {
-                        syncDataListener.processing(data);
 
+        try {
+            if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
+                if (handler != null) {
+                    handler.removeCallbacks(runable);
+                    if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                        if (syncDataListener != null) {
+                            syncDataListener.processing(data);
+
+                        }
+                    } else {
+                        if (runable == null) {
+                            runable = initRunnable(data, syncDataListener, type);
+                        }
+                        handler.postDelayed(runable, 2000);
                     }
-                } else {
-                    if (runable == null) {
-                        runable = initRunnable(data, syncDataListener, type);
-                    }
-                    handler.postDelayed(runable, 2000);
                 }
             }
         } catch (RemoteException e) {

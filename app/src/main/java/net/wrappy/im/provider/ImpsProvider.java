@@ -302,7 +302,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
          mDbHelperLock.notify();
          }
          }*/
-
         if (tempKey != null) {
             try {
                 initDBHelper(tempKey, false);
@@ -316,7 +315,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordOpened() {
-
 
         try {
             tempKey = mCacheword.getEncryptionKey();
@@ -1328,7 +1326,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public boolean onCreate() {
-
         mCacheword = new CacheWordHandler(getContext(), this);
         mCacheword.connectToService();
 
@@ -1338,8 +1335,25 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     @Override
     public void shutdown() {
         super.shutdown();
+        if (mCacheword != null) {
+            mCacheword.detach();
+            mCacheword.disconnectFromService();
+        }
+    }
 
-        mCacheword.detach();
+    public void reset() {
+        delete(Uri.parse("content://net.wrappy.im.provider.Imps"), null, null);
+        shutdown();
+        resetDB();
+        mLoadedLibs = false;
+        onCreate();
+        //set temporary passphrase
+        try {
+            tempKey = mCacheword.getEncryptionKey();
+            initDBHelper(tempKey, false);
+        } catch (Exception e) {
+            LogCleaner.error(ImApp.LOG_TAG, e.getMessage(), e);
+        }
     }
 
     private void setDatabaseName(boolean isEncrypted) {
@@ -1386,9 +1400,12 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         return mDbHelper;
     }
 
-    public  static void resetDB()
+    public static void resetDB()
     {
-        mDbHelper=null;
+        if (mDbHelper != null) {
+            mDbHelper.close();
+            mDbHelper = null;
+        }
     }
 
     @Override

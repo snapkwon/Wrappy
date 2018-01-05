@@ -61,7 +61,9 @@ public class AppFuncs {
     public void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
         dialog.setMessage(activity.getString(R.string.waiting_dialog));
-        dialog.show();
+        if (!activity.isFinishing()) {
+            dialog.show();
+        }
     }
 
     public void dismissProgressWaiting() {
