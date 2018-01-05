@@ -86,6 +86,7 @@ public class RestAPI {
     public static String DELETE_AVATAR = root_url + "member/avatar";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
+    public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
@@ -96,6 +97,10 @@ public class RestAPI {
     private static int GET_METHOD = 2;
 
     public static int NUMBER_REQUEST_TOKEN = 3;
+
+    public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
+        return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
+    }
 
     public static String getGroupByXmppId(String xmppId) {
         return String.format(GET_GROUP_BY_XMPP_ID, xmppId);

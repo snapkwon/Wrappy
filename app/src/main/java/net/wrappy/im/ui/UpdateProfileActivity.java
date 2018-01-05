@@ -1,5 +1,6 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -81,6 +82,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private final int IMAGE_AVATAR = 101;
     private final int IMAGE_HEADER_UCROP = 102;
     private final int IMAGE_AVATAR_UCROP = 103;
+    private final int VERIFY_CODE = 104;
 
 
     boolean isFlag;
@@ -113,6 +115,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ArrayAdapter<CharSequence> adapterGender;
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
+    WpkToken wpkToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -366,34 +369,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     appFuncs.dismissProgressWaiting();
                     return;
                 }
-                Store.putStringData(getApplicationContext(), Store.USERNAME, user);
-                String url = RestAPI.loginUrl(user, password);
-                AppFuncs.log(url);
-                RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+                Bundle bundle = new Bundle();
+                bundle.putString("phone",phone);
+                VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this,bundle,VERIFY_CODE);
 
-                    @Override
-                    public void OnComplete(int httpCode, String error, String s) {
-                        try {
-                            if (!RestAPI.checkHttpCode(httpCode)) {
-                                String er = WpErrors.getErrorMessage(s);
-                                if (!TextUtils.isEmpty(er)) {
-                                    AppFuncs.alert(getApplicationContext(), er, true);
-                                }
-                                appFuncs.dismissProgressWaiting();
-                                return;
-                            }
-                            AppFuncs.log("login");
-                            JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-                            Gson gson = new Gson();
-                            WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-                            wpkToken.saveToken(getApplicationContext());
-                            doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
-                        } catch (Exception ex) {
-                            appFuncs.dismissProgressWaiting();
-                            ex.printStackTrace();
-                        }
-                    }
-                });
             }
         });
     }
@@ -404,13 +383,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             user = edUsername.getText().toString().trim();
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
-
+            if (phone.startsWith("0")) {
+                phone = phone.substring(1, phone.length()-1);
+            }
             if (TextUtils.isEmpty(user)) {
                 error = getString(R.string.error_empty_username);
             } else if (user.length() < 6) {
                 error = getString(R.string.error_invalid_text_length);
             } else if (AppFuncs.detectSpecialCharacters(user)) {
                 error = getString(R.string.error_invalid_characters);
+            } else if (TextUtils.isEmpty(phone)) {
+                error = getString(R.string.error_empty_phone);
             } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = getString(R.string.error_invalid_email);
             } else {
@@ -506,6 +489,38 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 
         try {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == VERIFY_CODE) {
+                    Store.putStringData(getApplicationContext(), Store.USERNAME, user);
+                    String url = RestAPI.loginUrl(user, password);
+                    AppFuncs.log(url);
+                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+
+                        @Override
+                        public void OnComplete(int httpCode, String error, String s) {
+                            try {
+                                if (!RestAPI.checkHttpCode(httpCode)) {
+                                    String er = WpErrors.getErrorMessage(s);
+                                    if (!TextUtils.isEmpty(er)) {
+                                        AppFuncs.alert(getApplicationContext(), er, true);
+                                    }
+                                    appFuncs.dismissProgressWaiting();
+                                    return;
+                                }
+                                AppFuncs.log("login");
+                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                Gson gson = new Gson();
+                                wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+                                wpkToken.saveToken(getApplicationContext());
+                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
+                            } catch (Exception ex) {
+                                appFuncs.dismissProgressWaiting();
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
             if (data != null) {
                 if (requestCode == IMAGE_HEADER) {
                     isAvatarRequest = false;
