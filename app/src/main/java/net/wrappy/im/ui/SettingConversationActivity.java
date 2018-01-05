@@ -536,6 +536,16 @@ public class SettingConversationActivity extends BaseActivity {
                 session = manager.createChatSession(mAddress, true);
 
             if (session != null) {
+
+                int groupId = wpKChatGroup.getId();
+
+                StringBuffer deleteCode = new StringBuffer();
+                deleteCode.append(":");
+                deleteCode.append("delete_group");
+                deleteCode.append(":");
+                deleteCode.append(groupId);
+                session.sendMessage(deleteCode.toString(), false);
+
                 session.delete();
 
                 //clear the stack and go back to the main activity
@@ -550,6 +560,5 @@ public class SettingConversationActivity extends BaseActivity {
         }
         return false;
     }
-
 
 }

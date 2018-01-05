@@ -17,6 +17,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;

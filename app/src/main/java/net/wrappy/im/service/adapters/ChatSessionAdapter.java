@@ -77,6 +77,7 @@ import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
+import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jxmpp.jid.impl.JidCreate;
@@ -384,19 +385,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         mContentResolver.delete(mChatURI, null, null);
         mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
         mChatSessionManager.closeChatSession(this);
-    }
-
-    public void removeAllMembersGroup() {
-        if (mIsGroupChat) {
-            ChatGroup group = (ChatGroup) mChatSession.getParticipant();
-            List<Contact> members = group.getMembers();
-            Debug.e("members: " + members.size());
-            for (Contact member : members) {
-                getGroupManager().removeGroupMemberAsync((ChatGroup) mChatSession.getParticipant(), member);
-            }
-        } else {
-
-        }
     }
 
     public void leaveIfInactive() {
