@@ -1,4 +1,4 @@
-package net.wrappy.im.ui;
+package net.wrappy.im.ui.promotion;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.wrappy.im.PromotionActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Promotions;
