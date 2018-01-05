@@ -794,9 +794,10 @@ public class MessageListItem extends FrameLayout {
 
         if (address != null && isLeft) {
             mHolder.mAvatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
             if (!TextUtils.isEmpty(reference)) {
                 GlideHelper.loadBitmapToCircleImage(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference));
+            } else {
+                GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
             }
         } else {
             mHolder.mAvatar.setVisibility(View.GONE);

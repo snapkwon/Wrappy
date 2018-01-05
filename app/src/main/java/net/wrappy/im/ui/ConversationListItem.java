@@ -286,23 +286,18 @@ public class ConversationListItem extends FrameLayout {
                 }
             }
 
+            String status = "";
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-
                 if (DateUtils.checkCurrentDay(dateLast)) {
-                    String hm = DateUtils.convertHourMinuteFormat(dateLast);
-                    holder.mStatusText.setText(hm);
+                    status = DateUtils.convertHourMinuteFormat(dateLast);
                 } else if (DateUtils.checkCurrentWeek(dateLast)) {
-                    String today = DateUtils.convertTodayFormat(dateLast);
-                    holder.mStatusText.setText(today);
+                    status = DateUtils.convertTodayFormat(dateLast);
                 } else {
-                    String monthDay = DateUtils.convertMonthDayFormat(dateLast);
-                    holder.mStatusText.setText(monthDay);
+                    status = DateUtils.convertMonthDayFormat(dateLast);
                 }
-            } else {
-                holder.mStatusText.setText("");
             }
-
+            holder.mStatusText.setText(status);
         } else if (holder.mLine2 != null) {
             holder.mLine2.setText(address);
 
