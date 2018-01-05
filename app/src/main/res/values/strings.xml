@@ -543,6 +543,7 @@
     <string name="referral">Referral</string>
     <string name="referral_hint">Username or phone number</string>
     <string name="btn_submit">Submit</string>
+    <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
     <string name="choose_secret_question">Choose your secret question</string>
     <string name="skip">SKIP</string>

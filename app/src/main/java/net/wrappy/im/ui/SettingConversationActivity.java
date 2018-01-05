@@ -167,9 +167,12 @@ public class SettingConversationActivity extends BaseActivity {
                         try {
                             Gson gson = new Gson();
                             wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
+                            memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
                             edGroupName.setText(wpKChatGroup.getName());
-                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
-                            updateAvatar();
+                            if (wpKChatGroup.getIcon() != null) {
+                                GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                                updateAvatar();
+                            }
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

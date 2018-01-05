@@ -748,7 +748,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     private void insertOrUpdateChat(String message) {
         insertOrUpdateChat(message, System.currentTimeMillis());
     }
-
     private void insertOrUpdateChat(String message, long time) {
         if (!ConferenceUtils.isInvisibleMessage(message)) {
             ContentValues values = new ContentValues(2);
@@ -1099,14 +1098,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            String bareAddress = new XmppAddress(nickname).getBareAddress();
+            String bareAddress = mIsGroupChat ? new XmppAddress(nickname).getBareAddress() : bareUsername;
             Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                if (contact != null && !contact.getAddress().getAddress().contains(contact.getName())) {
+                if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    if (contact != null) bareAddress = bareUsername;
                     nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);

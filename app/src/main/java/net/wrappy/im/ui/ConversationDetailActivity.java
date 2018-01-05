@@ -1052,6 +1052,7 @@ public class ConversationDetailActivity extends BaseActivity {
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
 
             if (data == null || data.getCount() == 0) {
+                findViewById(R.id.btnAddFriend).performClick();
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
             } else {
                 if (mChatId == -1 && data.moveToFirst())

@@ -19,6 +19,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.Debug;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,6 +83,7 @@ public class RestAPI {
     public static String DELETE_AVATAR = root_url + "member/avatar";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
+    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -263,6 +265,7 @@ public class RestAPI {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
+                Debug.d(result != null ? result.getResult() : "");
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredtoken(result.getResult())) {

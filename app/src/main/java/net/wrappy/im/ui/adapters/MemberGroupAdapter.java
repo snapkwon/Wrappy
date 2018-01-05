@@ -13,10 +13,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
+
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.util.PopupUtils;
 
@@ -36,6 +40,11 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private String currentUser;
     private String mAdminGroup;
     private long mLastChatId;
+    private WpKChatGroupDto mWpKChatGroupDto;
+
+    public void setmWpKChatGroupDto(WpKChatGroupDto mWpKChatGroupDto) {
+        this.mWpKChatGroupDto = mWpKChatGroupDto;
+    }
 
     public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId) {
         this.mContext = mContext;
@@ -128,15 +137,31 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     }
 
     private void confirmRemoveMember(final int position, final MemberGroupDisplay member) {
-        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.action_leave), mContext.getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+        PopupUtils.showCustomDialog(mContext, mContext.getString(R.string.action_remove_member_group), mContext.getString(R.string.confirm_remove_member_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMembers.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, mMembers.size());
-                removeMemberInDB(member);
+                if (mWpKChatGroupDto != null) {
+                    RestAPI.apiDELETE(mContext, String.format(RestAPI.DELETE_MEMBER_GROUP, mWpKChatGroupDto.getId(),
+                            member.getNickname()), null).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                AppFuncs.log(result.getResult());
+                                AppFuncs.alert(mContext, "Remove " + member.getNickname() + " in this group", false);
+                            }
+                        }
+                    });
+                    removeMemberInArray(position);
+                    removeMemberInDB(member);
+                }
             }
         }, null, false);
+    }
+
+    private void removeMemberInArray(int position) {
+        mMembers.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mMembers.size());
     }
 
     private void removeMemberInDB(MemberGroupDisplay member) {

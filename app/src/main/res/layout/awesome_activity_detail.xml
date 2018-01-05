@@ -158,14 +158,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:background="@drawable/ic_user" />
+                android:background="@drawable/waiting" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/txtStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/message_waiting_for_friend"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <net.ironrabbit.type.CustomTypefaceButton
                 android:id="@+id/btnAddFriend"
@@ -176,6 +176,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/add_contact"
+                android:visibility="gone"
                 android:textColor="@color/Color_White" />
 
         </LinearLayout>
