@@ -535,7 +535,7 @@
     <string name="all">All</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
-    <string name="mobile_phone">Mobile Phone *</string>
+    <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
     <string name="referral_hint">Username or phone number</string>
@@ -545,7 +545,6 @@
     <string name="choose_secret_question">Choose your secret question</string>
     <string name="skip">SKIP</string>
     <string name="complete">COMPLETE</string>
-    <string name="username_title">Username *</string>
     <string name="current_balance">Current Balance</string>
     <string name="add_photo">Add Photo!</string>
     <string name="error_group_name_empty">Group Name is empty</string>

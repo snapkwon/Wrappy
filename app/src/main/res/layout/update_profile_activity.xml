@@ -54,10 +54,11 @@
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtProfileUser"
                             style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/username_title" />
+                            android:text="@string/username" />
 
                         <View
                             style="@style/divider"
@@ -86,6 +87,7 @@
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtProfileMobile"
                             style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

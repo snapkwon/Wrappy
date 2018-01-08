@@ -38,6 +38,7 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
@@ -110,6 +111,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     ImageButton btnCameraAvatar;
     @BindView(R.id.edProfileReferral)
     AppEditTextView edProfileReferral;
+    @BindView(R.id.txtProfileMobile)
+    AppTextView txtProfileMobile;
+    @BindView(R.id.txtProfileUser)
+    AppTextView txtProfileUser;
 
     ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
@@ -148,6 +153,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 R.array.profile_gender, R.layout.update_profile_textview);
         spinnerProfileGender.setAdapter(adapterGender);
         getCountryCodesFromServer();
+        txtProfileMobile.setText(txtProfileMobile.getText().toString().trim() + " *");
+        txtProfileUser.setText(txtProfileUser.getText().toString().trim() + " *");
     }
 
     private void getCountryCodesFromServer() {
