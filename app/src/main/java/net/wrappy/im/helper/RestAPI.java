@@ -91,6 +91,7 @@ public class RestAPI {
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
     public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
+    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;

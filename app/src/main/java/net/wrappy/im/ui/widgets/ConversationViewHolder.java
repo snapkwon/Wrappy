@@ -13,6 +13,7 @@ import net.wrappy.im.R;
 public class ConversationViewHolder extends RecyclerView.ViewHolder
 {
 
+    public View mViewGroup;
     public TextView mLine1;
     public TextView mLine2;
     public TextView mStatusText;
@@ -26,6 +27,8 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
     public ConversationViewHolder(View view)
     {
         super(view);
+
+        mViewGroup = view.findViewById(R.id.convoitemview);
 
         mLine1 = (TextView) view.findViewById(R.id.line1);
         mLine2 = (TextView) view.findViewById(R.id.line2);
