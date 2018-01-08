@@ -87,6 +87,8 @@ public class SettingConversationActivity extends BaseActivity {
     View mViewDivider;
     @BindView(R.id.text_admin_delete_setting)
     TextView mTxtDelete;
+    @BindView(R.id.lnAvatarOfGroup)
+    LinearLayout lnAvatarOfGroup;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -206,6 +208,8 @@ public class SettingConversationActivity extends BaseActivity {
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
+        } else {
+            lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
 
