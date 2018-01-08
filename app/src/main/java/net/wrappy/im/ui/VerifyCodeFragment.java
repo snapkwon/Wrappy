@@ -73,7 +73,7 @@ public class VerifyCodeFragment extends Fragment {
     protected void handleTextChange(Editable editable) {
         String text = editable.toString().trim();
         if (!text.equalsIgnoreCase(phone)) {
-            btnVerifyChangePhone.setImageResource(R.drawable.ic_icon_check);
+            btnVerifyChangePhone.setImageResource(R.drawable.ic_check_active);
             btnVerifyChangePhone.setSelected(true);
         } else {
             btnVerifyChangePhone.setImageResource(R.drawable.page_1);
