@@ -76,7 +76,6 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     ExistingAccountTask mExistingAccountTask;
     String hashResetPassword = "";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -199,16 +198,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     private void resetPassword(final String pass) {
-        String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.apiPOST(getApplicationContext(),url,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+        String url = RestAPI.resetPasswordUrl(hashResetPassword, pass);
+        RestAPI.apiPOST(getApplicationContext(), url, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
+                if (result != null) {
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         login(pass);
                     } else {
-                        Log.i(TAG,WpErrors.getErrorMessage(result.getResult()));
-                        AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password),true);
+                        Log.i(TAG, WpErrors.getErrorMessage(result.getResult()));
+                        AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password), true);
                         finish();
                     }
                 }
@@ -247,7 +246,6 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     private void doExistingAccountRegister(String username, String password, String accountName) {
-
         if (mExistingAccountTask == null) {
             mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
             mExistingAccountTask.execute(username, password, accountName);
@@ -255,11 +253,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
 
-    private final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
+    private static class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
 
-        WeakReference<PatternActivity> weakReference;
+        private WeakReference<PatternActivity> weakReference;
 
-        public ExistingAccountTask(PatternActivity activity) {
+        ExistingAccountTask(PatternActivity activity) {
             this.weakReference = new WeakReference<>(activity);
         }
 
@@ -287,9 +285,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         String jabberId = result.username + '@' + result.domain;
                         keyMan.storeKeyPair(jabberId, keyPair);
                         getActivity().getUserInfo(result.accountId);
-                    }
 
-                    if (account != null) {
                         XmppConnection t = new XmppConnection(getActivity());
                         status = t.check_login(account[1], result.accountId, result.providerId);
                         if (status == 200) {
@@ -301,8 +297,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                             signInHelper.signIn(result.password, result.providerId, result.accountId, true);
 
                         }
-
                     }
+
                 } catch (Exception e) {
                     Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
                     return 404;
@@ -323,9 +319,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     getActivity().startActivity(intent);
                     getActivity().finish();
                 } else {
-                    PopupUtils.showCustomDialog(PatternActivity.this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
+                    PopupUtils.showCustomDialog(getActivity(), "Warning", "The username or password is incorrect", R.string.yes, null, false);
                 }
-                mExistingAccountTask =null;
+                getActivity().mExistingAccountTask = null;
             }
         }
     }
