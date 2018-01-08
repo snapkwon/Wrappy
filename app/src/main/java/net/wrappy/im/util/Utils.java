@@ -13,7 +13,7 @@ public class Utils {
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
-    public static String formatDurationMedia(long duration){
+    public static String formatDurationMedia(long duration) {
         return String.valueOf(Math.round(duration * 2 / 2000.0) + "secs");// round 3/4
     }
 }

@@ -57,10 +57,6 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
         getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordResetEmailFragment.newInstance()).commit();
     }
 
-    private void goToCheckEmailFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordCheckEmailFragment.newInstance()).commit();
-    }
-
 
     @Override
     public void onChangeInApp(int id, String data) {
@@ -82,9 +78,6 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
                     }
                 }
 
-                break;
-            case ACTION_FROM_RESET_EMAIL:
-                goToCheckEmailFragment();
                 break;
             case ACTION_FROM_CHECK_EMAIL:
                 break;

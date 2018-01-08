@@ -222,9 +222,12 @@ public class DatabaseUtils {
         Cursor cursor = resolver.query(updateUri, new String[]{Imps.Avatars._ID},
                 selection, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            long avatarId = cursor.getLong(0);
-            Uri uri = ContentUris.withAppendedId(updateUri, avatarId);
-            resolver.update(uri, values, null, null);
+            if (cursor.moveToFirst()) {
+                long avatarId = cursor.getLong(0);
+                Uri uri = ContentUris.withAppendedId(updateUri, avatarId);
+                resolver.update(uri, values, null, null);
+            }
+            cursor.close();
         } else {
             resolver.insert(updateUri, values);
         }

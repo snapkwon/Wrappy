@@ -1295,9 +1295,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
                     selection, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                long contactId = cursor.getLong(0);
-                Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
-                sImApp.getContentResolver().update(uri, values, null, null);
+                if (cursor.moveToFirst()) {
+                    long contactId = cursor.getLong(0);
+                    Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
+                    sImApp.getContentResolver().update(uri, values, null, null);
+                }
+                cursor.close();
             } else {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
@@ -1328,5 +1331,18 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             email = address.split("@")[0];
         }
         return email;
+    }
+
+    public static void broadcastIdentity(String indentity) {
+        IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
+        if (connection != null) {
+            try {
+                if (connection.getState() == ImConnection.LOGGED_IN) {
+                    connection.broadcastMigrationIdentity(indentity);
+                }
+            } catch (RemoteException ex) {
+                LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
+            }
+        }
     }
 }

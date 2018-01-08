@@ -758,7 +758,7 @@ public class ContactsPickerActivity extends BaseActivity {
             buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append("==").append(Imps.Contacts.SUBSCRIPTION_TYPE_TO);
             buf.append(')');
 
-            if(groupmember!=null)
+            if(groupmember!=null && groupmember.size()>0)
             {
                 buf.append(" AND ");
                 buf.append('(');

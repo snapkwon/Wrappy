@@ -129,7 +129,7 @@ public class Debug {
         }
     }
 
-    private static final String TAG = "Wrappy";
+    private static final String TAG = "Wrappy22";
     public static boolean DEBUGGABLE = BuildConfig.DEBUG;
     public static final String[] FORMAT_STRING = {
             "%d", "%b", "%f", "%l"};

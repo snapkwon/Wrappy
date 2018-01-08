@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <net.wrappy.im.helper.layout.AppTextView
+        android:textSize="16sp"
+        android:textColor="@color/background_dark"
+        font_type="light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/check_email_passcode" />
+
+    <com.alimuzaffar.lib.pin.PinEntryEditText
+        android:id="@+id/txt_pin_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cursorVisible="false"
+        android:digits="1234567890"
+        android:inputType="number"
+        android:maxLength="5"
+        android:textIsSelectable="false"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        app:pinBackgroundDrawable="@drawable/bg_passcode"
+        app:pinLineStroke="2dp"
+        android:padding="20dp"
+        app:pinLineStrokeSelected="4dp"
+        app:pinTextBottomPadding="10dp" />
+
+    <net.wrappy.im.helper.layout.AppButton
+        android:id="@+id/btnVerifyCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_done"
+        android:layout_margin="16dp"
+        style="@style/AppButton_OK"/>
+
+    <net.wrappy.im.helper.layout.AppTextView
+        style="@style/AppText02"
+        font_type="light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/send_again" />
+</LinearLayout>

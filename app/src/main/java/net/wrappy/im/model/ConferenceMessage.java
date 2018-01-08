@@ -93,10 +93,10 @@ public class ConferenceMessage {
 
     public enum ConferenceState {
         OUTGOING("OUTGOING", R.drawable.chat_outcall),
-        INCOMING("INCOMING", R.drawable.chat_outcall),
-        MISSED("MISSED", R.drawable.chat_outcall),
-        DECLINED("DECLINED", R.drawable.chat_outcall),
-        END("END", R.drawable.chat_outcall);
+        INCOMING("INCOMING", R.drawable.chat_incall),
+        MISSED("MISSED", R.drawable.chat_misscall),
+        DECLINED("DECLINED", R.drawable.chat_incall),
+        END("END", R.drawable.chat_incall);
         private String state;
         private int icon;
 
@@ -115,7 +115,7 @@ public class ConferenceMessage {
         }
 
         public String getState() {
-            return state;
+            return state.toLowerCase();
         }
 
         public Drawable getIcon() {

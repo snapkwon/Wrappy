@@ -434,6 +434,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustNothing"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -578,15 +579,17 @@
         <activity android:name=".ui.ChangePasswordAccount" />
         <activity android:name=".ui.TransactionDetailActivity" />
         <activity android:name=".ui.Create_New_Wallet" />
+        <activity android:name=".ui.VerifyEmailOrPhoneActivity" android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
-        <activity android:name=".ui.SettingConversationActivity"></activity>
+        <activity android:name=".ui.SettingConversationActivity" android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.conference.ConferencePopupActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".PromotionActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 
 </manifest>

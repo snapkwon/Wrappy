@@ -467,6 +467,8 @@
     <string name="setting_search">Search</string>
     <string name="setting_clear">Clear history</string>
     <string name="setting_delete_and_leave_group">Delete and leave group</string>
+    <string name="setting_leave_group">Leave group</string>
+    <string name="setting_delete_chat">Delete chat</string>
     <string name="setting_report_spam">Report spam</string>
     <string name="setting_notification">Notifications</string>
     <string name="setting_change_background">Change background</string>
@@ -536,11 +538,12 @@
     <string name="all">All</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
-    <string name="mobile_phone">Mobile Phone</string>
+    <string name="mobile_phone">Mobile Phone *</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
     <string name="referral_hint">Username or phone number</string>
     <string name="btn_submit">Submit</string>
+    <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
     <string name="choose_secret_question">Choose your secret question</string>
     <string name="skip">SKIP</string>
@@ -573,6 +576,7 @@
     <string name="error_reset_password">Reset password fail</string>
     <string name="error_username_or_password">The username or password is incorrect</string>
     <string name="error_empty_username">username cannot be empty</string>
+    <string name="error_empty_phone">phone cannot be empty</string>
     <string name="warning">Warning</string>
     <string name="error_tranferring_file">Error transferring file:</string>
     <string name="message_download_attachment">Do you want to save this file?</string><!-- this flow should be defined again -->
@@ -581,4 +585,19 @@
     <string name="error_invalid_characters">Username contains special characters</string>
     <string name="error_registration">Registration fail. Try Again!</string>
 
+    <string name="you_sent_sticker">You sent a sticker</string>
+    <string name="user_sent_sticker">%1$s sent a sticker</string>
+    <string name="tab_menu_menu">Menu</string>
+    <string name="tab_menu_conversation">Chat</string>
+    <string name="tab_menu_promotion">Promotion</string>
+    <string name="tab_menu_my_page">My page</string>
+    <string name="promotion_invite_friend">Invite friend</string>
+    <string name="promotion_history">History</string>
+    <string name="page_verify">Verify Code</string>
+    <string name="message_edit">Edit Message</string>
+    <string name="message_delete">Delete Message</string>
+    <string name="message_spam">Report Spam</string>
+    <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
+    <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
+    <string name="promotion_invite_friends">Invite friend</string>
 </resources>

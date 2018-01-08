@@ -17,9 +17,13 @@ import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
 import net.wrappy.im.R;
+import net.wrappy.im.model.BaseObject;
 import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
+import net.wrappy.im.model.translate.DetectLanguageResponse;
+import net.wrappy.im.model.translate.TranslateLanguageResponse;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.Debug;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,15 +85,28 @@ public class RestAPI {
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
     public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
     public static String DELETE_AVATAR = root_url + "member/avatar";
-    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
-    public static String GET_GROUPID = root_url + "/chat/group/%s/by-xmpp-group-id";
+    public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
+    public static String CHAT_GROUP = root_url + "chat/group";
+    public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
 
+    public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
+    public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
+    public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
+    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
+    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
     private static int GET_METHOD = 2;
 
     public static int NUMBER_REQUEST_TOKEN = 3;
 
+    public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
+        return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
+    }
+
+    public static String getGroupByXmppId(String xmppId) {
+        return String.format(GET_GROUP_BY_XMPP_ID, xmppId);
+    }
 
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
@@ -143,7 +160,7 @@ public class RestAPI {
     }
 
     public interface RestAPIListenner {
-        public void OnComplete(int httpCode, String error, String s);
+        void OnComplete(int httpCode, String error, String s);
         //public void OnTokenInvalid(String url);
     }
 
@@ -152,11 +169,11 @@ public class RestAPI {
         return jsonObject.get("data");
     }
 
-    public static boolean checkAuthenticationCode(int code) {
-        return ((code == 401)) ? true : false;
+    private static boolean checkAuthenticationCode(int code) {
+        return code == 401;
     }
 
-    public static boolean checkExpiredtoken(String s) {
+    private static boolean checkExpiredToken(String s) {
         JSONObject mainObject = null;
         try {
             mainObject = new JSONObject(s);
@@ -172,7 +189,7 @@ public class RestAPI {
 
 
     public static boolean checkHttpCode(int code) {
-        return ((code == 200) || (code == 201)) ? true : false;
+        return (code == 200) || (code == 201);
     }
 
     public static TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
@@ -197,7 +214,7 @@ public class RestAPI {
         return inst.getSocketFactory();
     }
 
-    public static SSLContext getSSLContextInst() throws NoSuchAlgorithmException, KeyManagementException {
+    private static SSLContext getSSLContextInst() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext inst = SSLContext.getInstance("TLS");
         inst.init(null, trustAllCerts, null);
         return inst;
@@ -236,9 +253,21 @@ public class RestAPI {
         return header;
     }
 
-    public static Builders.Any.B getIon(Context context, String url, String method) {
+    private static Builders.Any.B getIon(Context context, String url, String method) {
         String header = getHeaderHttps(context, url);
+        new TypeToken<String>() {
+        }.getType();
         return Ion.with(context).load(method, url).setTimeout(TIME_OUT).addHeader("Authorization", header);
+    }
+
+    public static Future<Response<BaseObject<DetectLanguageResponse>>> apiGETDetectLanguage(Context context, String url) {
+        return getIon(context, url, "GET").as(new TypeToken<BaseObject<DetectLanguageResponse>>() {
+        }).withResponse();
+    }
+
+    public static Future<Response<BaseObject<TranslateLanguageResponse>>> apiGETTranslateLanguage(Context context, String url) {
+        return getIon(context, url, "GET").as(new TypeToken<BaseObject<TranslateLanguageResponse>>() {
+        }).withResponse();
     }
 
     public static Future<Response<String>> apiGET(Context context, String url) {
@@ -268,7 +297,7 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
-                        if (checkExpiredtoken(result.getResult())) {
+                        if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, jsonObject,null, url, listenner, POST_METHOD);
                         }
 
@@ -288,14 +317,15 @@ public class RestAPI {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
+                Debug.d(result != null ? result.getResult() : "");
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
-                        if (checkExpiredtoken(result.getResult())) {
+                        if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
                         }
 
                     } else {
-                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -312,12 +342,12 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
-                        if (checkExpiredtoken(result.getResult())) {
+                        if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null,jsonObject, url, listenner, DELETE_METHOD);
                         }
 
                     } else {
-                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -332,7 +362,7 @@ public class RestAPI {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
-                    if (checkExpiredtoken(result.getResult())) {
+                    if (checkExpiredToken(result.getResult())) {
                         refreshTokenHttps(context, null,null, url, listenner, GET_METHOD);
                     }
 
@@ -380,7 +410,7 @@ public class RestAPI {
                 .asString().withResponse();
     }
 
-    static int numberRefreshToken = 0;
+    private static int numberRefreshToken = 0;
 
 
     public static void refreshTokenHttps(final Context context,final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
@@ -437,6 +467,4 @@ public class RestAPI {
         }.getType();
         return gson.fromJson(object, type);
     }
-
-
 }

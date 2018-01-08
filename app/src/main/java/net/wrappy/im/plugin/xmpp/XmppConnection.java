@@ -32,6 +32,7 @@ import net.wrappy.im.provider.ImpsErrorInfo;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.adapters.ChatSessionAdapter;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -175,6 +176,7 @@ import javax.net.ssl.SSLContext;
 import de.duenndns.ssl.MemorizingTrustManager;
 import eu.siacs.conversations.Downloader;
 
+import static net.wrappy.im.util.Constant.DEFAULT_CONFERENCE_SERVER;
 import static net.wrappy.im.util.Constant.OMEMO_ENABLED;
 
 public class XmppConnection extends ImConnection {
@@ -244,8 +246,6 @@ public class XmppConnection extends ImConnection {
     private ArrayDeque<org.jivesoftware.smack.packet.Presence> qPresence = new ArrayDeque<org.jivesoftware.smack.packet.Presence>();
     private ArrayDeque<org.jivesoftware.smack.packet.Stanza> qPacket = new ArrayDeque<org.jivesoftware.smack.packet.Stanza>();
     private ArrayDeque<Contact> qNewContact = new ArrayDeque<Contact>();
-
-    private final static String DEFAULT_CONFERENCE_SERVER = "conference.im.proteusiondev.com";
 
     private final static String PRIVACY_LIST_DEFAULT = "defaultprivacylist";
 
@@ -1683,11 +1683,13 @@ public class XmppConnection extends ImConnection {
     }
 
     public void broadcastMigrationIdentity(String newIdentity) {
+        if (!TextUtils.isEmpty(newIdentity)) {
+            notifyVCard(newIdentity);
+        } else {
+            sendVCard(newIdentity);
 
-        sendVCard(newIdentity);
-
-        String migrateMessage = mContext.getString(R.string.migrate_message) + ' ' + newIdentity;
-        mUserPresence = new Presence(Presence.AVAILABLE, migrateMessage, Presence.CLIENT_TYPE_MOBILE);
+        }
+        mUserPresence = new Presence(Presence.AVAILABLE, newIdentity, Presence.CLIENT_TYPE_MOBILE);
         sendPresencePacket();
     }
 
@@ -1704,6 +1706,43 @@ public class XmppConnection extends ImConnection {
         sendVCard(null);
     }
 
+    public void notifyVCard(String jid) {
+        try {
+            VCardManager vCardManager = VCardManager.getInstanceFor(mConnection);
+            VCard vCard = null;
+
+            try {
+                vCard = vCardManager.loadVCard(JidCreate.entityBareFrom(jid));
+            } catch (Exception e) {
+                // debug(TAG,"error loading vcard",e);
+            }
+
+            boolean setAvatar = true;
+
+            if (vCard == null) {
+                vCard = new VCard();
+                vCard.setJabberId(jid);
+                setAvatar = true;
+            } else if (vCard.getAvatarHash() != null) {
+                setAvatar = !DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, jid, vCard.getAvatarHash());
+            }
+
+            vCard.setNickName(ImApp.getNickname(jid));
+
+            if (setAvatar) {
+                String avatar = DatabaseUtils.getAvatarFromAddress(mContext.getContentResolver(), jid);
+                if (!TextUtils.isEmpty(avatar)) {
+                    vCard.setAvatar(avatar, "image/jpeg");
+                }
+            }
+
+            if (mConnection != null && mConnection.isConnected() && mConnection.isAuthenticated()) {
+                vCardManager.saveVCard(vCard);
+            }
+        } catch (Exception e) {
+            debug(TAG, "error saving vcard", e);
+        }
+    }
     public void sendVCard(String migrateJabberId) {
 
         try {
@@ -4189,10 +4228,16 @@ public class XmppConnection extends ImConnection {
                         if (element.getElementName().equals("photo")) {
                             hash = element.getText();
                             if (hash != null) {
-                                boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
-
-                                if (!hasMatches) //we must reload
-                                    qAvatar.put(contact.getAddress().getAddress(), hash);
+                                String statusText = p.getStatusText();
+                                if (!TextUtils.isEmpty(statusText) && statusText.contains(Constant.DEFAULT_CONFERENCE_SERVER)) {
+                                    String[] data = statusText.split(":");
+                                    DatabaseUtils.insertAvatarHash(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, data[0], data[1], data[2]);
+                                } else {
+                                    boolean hasMatches = DatabaseUtils.doesAvatarHashExist(mContext.getContentResolver(), Imps.Avatars.CONTENT_URI, contact.getAddress().getBareAddress(), hash);
+                                    if (!hasMatches) {//we must reload
+                                        qAvatar.put(contact.getAddress().getAddress(), hash);
+                                    }
+                                }
                             }
 
                             break;

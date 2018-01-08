@@ -3,11 +3,13 @@ package net.wrappy.im.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 /**
  * Created by ben on 06/12/2017.
  */
 
-public class WpKChatGroupDto implements Parcelable {
+public class WpKChatGroupDto extends T implements Parcelable {
     Integer id;
     Integer identifier;
     String name;
@@ -15,6 +17,7 @@ public class WpKChatGroupDto implements Parcelable {
     String reference;
     WpKIcon icon;
     String xmppGroup;
+    List<WpKMemberDto> participators;
 
     public WpKChatGroupDto() {}
 
@@ -102,6 +105,10 @@ public class WpKChatGroupDto implements Parcelable {
 
     public void setXmppGroup(String xmppGroup) {
         this.xmppGroup = xmppGroup;
+    }
+
+    public List<WpKMemberDto> getParticipators() {
+        return participators;
     }
 
     @Override

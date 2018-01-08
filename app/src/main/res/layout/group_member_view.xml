@@ -17,7 +17,6 @@
  */
 -->
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
@@ -34,14 +33,30 @@
         android:orientation="vertical"
         android:padding="0dp">
 
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/line1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?contactTextPrimary" />
+        <RelativeLayout
+            android:id="@+id/layout_remove_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/line1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="?contactTextPrimary" />
+
+            <ImageView
+                android:id="@+id/delete_member_group"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/setting_close"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="16dp" />
+
+        </RelativeLayout>
 
         <net.ironrabbit.type.CustomTypefaceTextView
             android:id="@+id/line2"
@@ -65,7 +80,7 @@
     </LinearLayout>
 
 
-    <net.wrappy.im.helper.layout.CircleImageView
+    <ImageView
         android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"

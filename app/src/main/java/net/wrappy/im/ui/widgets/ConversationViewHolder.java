@@ -13,6 +13,7 @@ import net.wrappy.im.R;
 public class ConversationViewHolder extends RecyclerView.ViewHolder
 {
 
+    public View mViewGroup;
     public TextView mLine1;
     public TextView mLine2;
     public TextView mStatusText;
@@ -21,10 +22,13 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
     public View mContainer;
     public ImageView mMediaThumb;
     public ImageView mPinIcon;
+    public ImageView mAvatarStatus;
 
     public ConversationViewHolder(View view)
     {
         super(view);
+
+        mViewGroup = view.findViewById(R.id.convoitemview);
 
         mLine1 = (TextView) view.findViewById(R.id.line1);
         mLine2 = (TextView) view.findViewById(R.id.line2);
@@ -32,13 +36,13 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder
         mAvatar = (ImageView)view.findViewById(R.id.avatar);
         mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
         mStatusText = (TextView)view.findViewById(R.id.statusText);
+        mAvatarStatus = (ImageView)view.findViewById(R.id.avatarStatus);
 
         mContainer = view.findViewById(R.id.message_container);
 
         mMediaThumb = (ImageView)view.findViewById(R.id.media_thumbnail);
 
         mPinIcon = (ImageView)view.findViewById(R.id.pinIcon);
-
     }
 
     public void onItemSelected ()

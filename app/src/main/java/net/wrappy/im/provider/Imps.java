@@ -31,6 +31,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -257,13 +258,14 @@ public class Imps {
                     null /* selection args */, null /* sort order */);
 
             long providerId = 0;
-
-            try {
-                if (cursor.moveToFirst()) {
-                    providerId = cursor.getLong(PROVIDER_COLUMN);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        providerId = cursor.getLong(PROVIDER_COLUMN);
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return providerId;
@@ -273,14 +275,12 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[]{USERNAME}, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
+            if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     ret = cursor.getString(cursor.getColumnIndexOrThrow(USERNAME));
                 }
-            } finally {
                 cursor.close();
-            }
-
+                }
             return ret;
         }
 
@@ -359,12 +359,32 @@ public class Imps {
             if (registration != null && registration.getWpKMemberDto() != null) {
                 ContentValues values = new ContentValues();
 
-                setValue(values, Account.ACCOUNT_EMAIL, registration.getWpKMemberDto().getEmail());
-                setValue(values, Account.ACCOUNT_PHONE, registration.getWpKMemberDto().getMobile());
-                setValue(values, Account.ACCOUNT_NAME, registration.getWpKMemberDto().getIdentifier());
+                WpKMemberDto memberDto = registration.getWpKMemberDto();
+                if (memberDto != null) {
+                    setValue(values, Account.ACCOUNT_EMAIL, memberDto.getEmail());
+                    setValue(values, Account.ACCOUNT_PHONE, memberDto.getMobile());
+                    setValue(values, Account.ACCOUNT_NAME, memberDto.getIdentifier());
 
-                Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-                id = cr.update(accountUri, values, null, null);
+                    Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+                    id = cr.update(accountUri, values, null, null);
+
+                    //Update avatar for user when login
+                    String avatarReference = "";
+                    String bannerReference = "";
+                    if (memberDto.getAvatar() != null) {
+                        avatarReference = memberDto.getAvatar().getReference();
+                    }
+                    if (memberDto.getBanner() != null) {
+                        bannerReference = memberDto.getBanner().getReference();
+                    }
+
+                    if (!TextUtils.isEmpty(avatarReference) || !TextUtils.isEmpty(bannerReference)) {
+                        String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
+                        String address = memberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                        net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                        ImApp.broadcastIdentity(null);
+                    }
+                }
             }
             return id;
         }
@@ -1399,6 +1419,21 @@ public class Imps {
         }
 
         /**
+         * Get nick name by address
+         */
+        public static boolean isDelivered(ContentResolver cr, String nickname, long date) {
+            Cursor c = cr.query(Messages.CONTENT_URI,
+                    new String[]{IS_DELIVERED}, NICKNAME + "='?' AND " + IS_DELIVERED + "=?", new String[]{nickname, String.valueOf(date)}, null);
+            long ret = 0;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getLong(c.getColumnIndexOrThrow(IS_DELIVERED));
+                }
+            }
+            return ret > 0;
+        }
+
+        /**
          * Delete messages of conversation by thread id.
          *
          * @param threadId the thread id of the message.
@@ -1408,6 +1443,24 @@ public class Imps {
             Uri.Builder builder = OTR_MESSAGES_CONTENT_URI_BY_THREAD_ID.buildUpon();
             ContentUris.appendId(builder, threadId);
             return resolver.delete(builder.build(), null, null);
+        }
+
+        /**
+         * Get date of Message by id.
+         *
+         * @param msgId the message id of the message.
+         * @return the result
+         */
+        public static long getDate(ContentResolver resolver, String msgId) {
+            Cursor c = resolver.query(Messages.CONTENT_URI,
+                    new String[]{DATE}, PACKET_ID + "='" + msgId + "'", null, null);
+            long ret = -1;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    ret = c.getLong(c.getColumnIndexOrThrow(DATE));
+                }
+            }
+            return ret;
         }
 
         /**
@@ -1738,8 +1791,14 @@ public class Imps {
             String result = "";
             Cursor cursor = resolver.query(Avatars.CONTENT_URI, new String[]{Avatars.DATA},
                     selection, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                result = cursor.getString(0);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        result = cursor.getString(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
             }
             return result;
         }
@@ -1962,6 +2021,28 @@ public class Imps {
 
             values.put(Imps.Chats.GROUP_CHAT, isGroupChat);
             resolver.insert(chatUri, values);
+        }
+
+        /**
+         * Get last date of Message by chat Uri.
+         *
+         * @param chatUri the uri of chat.
+         * @return the result
+         */
+        public static long getLastMessageDate(ContentResolver resolver, Uri chatUri) {
+            long result = -1;
+            Cursor cursor = resolver.query(chatUri, new String[]{LAST_MESSAGE_DATE},
+                    null, null, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        result = cursor.getLong(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return result;
         }
     }
 
@@ -3275,6 +3356,21 @@ public class Imps {
             result = resolver.update(builder.build(), values, where, args);
         }
         Debug.d("result2 " + result);
+        return result;
+    }
+
+    public static int updateMessageBodyInThreadByPacketId(ContentResolver resolver, Uri chatUri, Uri uri, String msgId, String body) {
+        String where = Messages.PACKET_ID + "='" + msgId + "'";
+        ContentValues values = new ContentValues(1);
+        values.put(Messages.BODY, body);
+        long lastMessageDate = Chats.getLastMessageDate(resolver, chatUri);
+        long messageDate = Messages.getDate(resolver, msgId);
+        int result = resolver.update(uri, values, where, null);
+        if (messageDate != -1 && messageDate == lastMessageDate) {
+            ContentValues chatValues = new ContentValues(1);
+            chatValues.put(Imps.Chats.LAST_UNREAD_MESSAGE, body);
+            resolver.update(chatUri, chatValues, null, null);
+        }
         return result;
     }
 

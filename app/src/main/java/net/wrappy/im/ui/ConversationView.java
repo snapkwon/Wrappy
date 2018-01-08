@@ -45,8 +45,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -111,6 +109,8 @@ import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImErrorInfo;
@@ -150,7 +150,6 @@ import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SystemServices;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -262,7 +261,7 @@ public class ConversationView {
     private Context mContext; // TODO
     private int mPresenceStatus;
     private Date mLastSeen;
-
+    public String tempPacketIDSelect = "";
     private int mViewType;
 
     private boolean istranslate;
@@ -277,8 +276,6 @@ public class ConversationView {
     private static final long SHOW_MEDIA_DELIVERY_INTERVAL = 120 * 1000; // 2 minutes
     private static final long DEFAULT_QUERY_INTERVAL = 2000;
     private static final long FAST_QUERY_INTERVAL = 200;
-
-    public SpamBottomSheet mSpamBottomSheet;
 
     private RequeryCallback mRequeryCallback = null;
 
@@ -303,6 +300,9 @@ public class ConversationView {
 
         }
     }
+
+    public static String TYPE_SPAM = "SPAM";
+    public static String TYPE_VIOLENCE = "OBJECTIONABLE";
 
     public boolean getSearchMode() {
         return isSearchMode;
@@ -539,12 +539,14 @@ public class ConversationView {
 
     public void sendDeleteChat(String msgId) {
         sendMessageAsync(ConferenceConstant.DELETE_CHAT_FREFIX + msgId);
+        tempPacketIDSelect = "";
     }
 
     public void sendEditChat(String msgId, String newMsg) {
         StringBuffer buffer = new StringBuffer(ConferenceConstant.EDIT_CHAT_FREFIX);
         buffer.append(msgId.length()).append(':').append(msgId).append(':').append(newMsg);
         sendMessageAsync(buffer.toString());
+        tempPacketIDSelect = "";
     }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
@@ -1923,7 +1925,10 @@ public class ConversationView {
     }
 
     void sendMessage() {
-
+        if (!TextUtils.isEmpty(tempPacketIDSelect)) {
+            sendEditChat(tempPacketIDSelect, mComposeMessage.getText().toString().trim());
+            return;
+        }
         String msg = mComposeMessage.getText().toString();
         //new SendMessageAsyncTask().execute(msg);
         sendMessageAsync(msg);
@@ -2620,7 +2625,6 @@ public class ConversationView {
 
         private ActionMode mActionMode;
         private View mLastSelectedView;
-        private String tempPacketIDSelect = "";
         private int tempMessageType = 0;
         private String tempNicknameSelect = "";
         private Bitmap mCaptureBitmap;
@@ -2805,16 +2809,9 @@ public class ConversationView {
                 public void onTaskDetectComplete(String result, String src, int position) {
                     if (!result.equals("")) {
                         iapptranslater.translate(src, result, targetlanguage, position);
-                    }
-                    else
-                    {
+                    } else {
                         iapptranslater.translate(src, "en", targetlanguage, position);
                     }
-                }
-
-                @Override
-                public void onTaskLListTranslateComplete(List<String> result) {
-
                 }
             });
 
@@ -2834,11 +2831,11 @@ public class ConversationView {
                 @Override
                 public void onClick(View v) {
                     cursor.moveToPosition(viewHolder.getPos());
-                    if (bodytranslate.get(viewHolder.getPos()).mIstranslate == false) {
+                    if (!bodytranslate.get(viewHolder.getPos()).mIstranslate) {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = true;
                         viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.waiting_dialog));
                         viewHolder.btntranslate.setEnabled(false);
-                        iapptranslater.detectlanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
+                        iapptranslater.detectLanguage(cursor.getString(mBodyColumn), viewHolder.getPos());
                     } else {
                         bodytranslate.get(viewHolder.getPos()).mIstranslate = false;
                         notifyItemChanged(viewHolder.getPos());
@@ -2849,7 +2846,7 @@ public class ConversationView {
 
             viewHolder.setPosition(position);
 
-            MessageListItem messageView = (MessageListItem) viewHolder.itemView;
+            final MessageListItem messageView = (MessageListItem) viewHolder.itemView;
             setLinkifyForMessageView(messageView);
             messageView.applyStyleColors();
 
@@ -2960,7 +2957,62 @@ public class ConversationView {
                     tempMessageType = cursor.getInt(mTypeColumn);
                     tempNicknameSelect = nickname;
                     // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
+                    //mActionMode = ((Activity) mContext).startActionMode(mActionModeCallback);
+
+                    ArrayList<BottomSheetCell> bottomSheetCells = new ArrayList<>();
+                    if (viewHolder.getItemViewType() == 1) {
+                        BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
+                        bottomSheetCells.add(sheetCell);
+                        sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
+                        bottomSheetCells.add(sheetCell);
+                    } else {
+                        BottomSheetCell sheetCell = new BottomSheetCell(3,0, mContext.getString(R.string.message_spam));
+                        bottomSheetCells.add(sheetCell);
+                        sheetCell = new BottomSheetCell(4,0, mContext.getString(R.string.menu_violence));
+                        bottomSheetCells.add(sheetCell);
+                    }
+
+                    PopupUtils.createBottomSheet(mActivity, bottomSheetCells, new BottomSheetListener() {
+                        @Override
+                        public void onSelectBottomSheetCell(int index) {
+                            if (index == 1) {
+                                if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                                    mComposeMessage.setText(messageView.getLastMessage());
+                                    //sendEditChat(tempPacketIDSelect);
+                                }
+                            } else if (index == 2) {
+                                if (!tempPacketIDSelect.equalsIgnoreCase("")) {
+                                    sendDeleteChat(tempPacketIDSelect);
+                                }
+                            } else if (index == 3) {
+                                mCaptureBitmap = captureView(mLastSelectedView);
+                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext, mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Response<String> result) {
+                                        JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                                        String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+                                        String reporter = Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId);
+                                        String member = tempNicknameSelect;
+                                        String messageId = tempPacketIDSelect;
+                                        sendReportMessage(reporter, member, messageId, mReference, TYPE_SPAM);
+                                    }
+                                });
+                            } else if (index == 4) {
+                                mCaptureBitmap = captureView(mLastSelectedView);
+                                RestAPI.uploadFile(mContext, AppFuncs.convertBitmapToFile(mContext, mCaptureBitmap), RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Response<String> result) {
+                                        JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                                        String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
+                                        String reporter = Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId);
+                                        String member = tempNicknameSelect;
+                                        String messageId = tempPacketIDSelect;
+                                        sendReportMessage(reporter, member, messageId, mReference, TYPE_VIOLENCE);
+                                    }
+                                });
+                            }
+                        }
+                    }).show();
 
                     mCaptureBitmap = captureView(mLastSelectedView);
                     AppFuncs.convertBitmapToFile(mActivity, mCaptureBitmap);
@@ -2991,6 +3043,31 @@ public class ConversationView {
                     messageView.bindPresenceMessage(viewHolder, nickname, messageType, date, isGroupChat(), false);
             }
 
+
+        }
+
+        public void sendReportMessage(String reporter, String member, String messageId,
+                                      String reference, String type) {
+
+            JsonObject reporterObject = new JsonObject();
+            reporterObject.addProperty("identifier", reporter);
+
+            JsonObject memberObject = new JsonObject();
+            memberObject.addProperty("identifier", member);
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add("reporter", reporterObject);
+            jsonObject.add("member", memberObject);
+            jsonObject.addProperty("messageId", messageId);
+            jsonObject.addProperty("screenShot", reference);
+            jsonObject.addProperty("type", type);
+
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    Debug.e(s);
+                }
+            });
 
         }
 
@@ -3058,8 +3135,8 @@ public class ConversationView {
                         ImApp mApp = (ImApp) mActivity.getApplication();
                         long mAccountId = mApp.getDefaultAccountId();
 
-                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
-                        mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
+//                        mSpamBottomSheet = SpamBottomSheet.getInstance(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId), tempNicknameSelect, tempPacketIDSelect);
+//                        mSpamBottomSheet.show(mActivity.getSupportFragmentManager(), "Dialog");
 
                         mode.finish();
                         return true;
@@ -3245,6 +3322,8 @@ public class ConversationView {
 
         stickerCode.append(":");
 
+        stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
+
         sendMessageAsync(stickerCode.toString());
     }
 
@@ -3332,7 +3411,7 @@ public class ConversationView {
 
         // setting up Spinner
         arraySpinner = new String[]{
-                "English", "Japanese", "Vietnamese" , "Chinese" ,"Korean" ,"Thai"
+                "English", "Japanese", "Vietnamese", "Chinese", "Korean", "Thai"
         };
         Spinner spinner = (Spinner) view.findViewById(R.id.spinner_settings_language);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
@@ -3425,102 +3504,5 @@ public class ConversationView {
         intent.putExtra("isGroupChat", mContactType);
         intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivity(intent);
-    }
-
-    public static class SpamBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {
-        @BindView(R.id.layout_message_spam)
-        LinearLayout mSpamLayout;
-        @BindView(R.id.layout_message_violence)
-        LinearLayout mViolenceLayout;
-        @BindView(R.id.layout_message_cancel)
-        LinearLayout mCancelLayout;
-
-        public static String TYPE_SPAM = "SPAM";
-        public static String TYPE_VIOLENCE = "OBJECTIONABLE";
-
-        public static SpamBottomSheet getInstance(String reporter, String member, String messageId) {
-            SpamBottomSheet spamBottomSheet = new SpamBottomSheet();
-
-            Bundle args = new Bundle();
-            args.putString("reporter", reporter);
-            args.putString("member", member);
-            args.putString("messageId", messageId);
-
-            spamBottomSheet.setArguments(args);
-
-            return spamBottomSheet;
-        }
-
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.report_spam_bottom_sheet, container, false);
-
-            ButterKnife.bind(this, view);
-
-            mSpamLayout.setOnClickListener(this);
-            mViolenceLayout.setOnClickListener(this);
-            mCancelLayout.setOnClickListener(this);
-
-            return view;
-        }
-
-        @Override
-        public void onClick(final View view) {
-            switch (view.getId()) {
-                case R.id.layout_message_spam:
-                case R.id.layout_message_violence:
-
-                    File mFileCapture = AppFuncs.getFileFromBitmap(getContext());
-                    RestAPI.uploadFile(getContext(), mFileCapture, RestAPI.PHOTO_BRAND).setCallback(new FutureCallback<Response<String>>() {
-                        @Override
-                        public void onCompleted(Exception e, Response<String> result) {
-                            JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
-                            String mReference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
-
-                            if (getArguments() != null) {
-
-                                String reporter = getArguments().getString("reporter");
-                                String member = getArguments().getString("member");
-                                String messageId = getArguments().getString("messageId");
-
-                                sendReportMessage(reporter, member, messageId, mReference, view.getId() == R.id.layout_message_spam ? TYPE_SPAM : TYPE_VIOLENCE);
-                            }
-                        }
-                    });
-                    dismiss();
-                    break;
-                case R.id.layout_message_cancel:
-                    dismiss();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void sendReportMessage(String reporter, String member, String messageId,
-                                      String reference, String type) {
-
-            JsonObject reporterObject = new JsonObject();
-            reporterObject.addProperty("identifier", reporter);
-
-            JsonObject memberObject = new JsonObject();
-            memberObject.addProperty("identifier", member);
-
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.add("reporter", reporterObject);
-            jsonObject.add("member", memberObject);
-            jsonObject.addProperty("messageId", messageId);
-            jsonObject.addProperty("screenShot", reference);
-            jsonObject.addProperty("type", type);
-
-            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
-                    Debug.e(s);
-                }
-            });
-
-        }
     }
 }

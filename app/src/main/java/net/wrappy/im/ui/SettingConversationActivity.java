@@ -6,33 +6,44 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
+import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
+import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.CircleImageView;
+import net.wrappy.im.model.BottomSheetCell;
+import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -40,13 +51,15 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
-import net.wrappy.im.ui.background.BackgroundGridAdapter;
+import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.BundleKeyConstant;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
@@ -57,14 +70,25 @@ public class SettingConversationActivity extends BaseActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
-    @BindView(R.id.layout_leave_setting)
-    LinearLayout layout_leave_setting;
+    @BindView(R.id.layout_admin_delete_group)
+    LinearLayout mAdminDeleteGroup;
+    @BindView(R.id.layout_member_leave_group)
+    LinearLayout mMemberLeaveGroup;
     @BindView(R.id.layout_add_member)
     LinearLayout mAddMemberLayout;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
+    @BindView(R.id.edGroupName)
+    AppEditTextView edGroupName;
+    @BindView(R.id.btnGroupPhoto)
+    CircleImageView btnGroupPhoto;
+    @BindView(R.id.lnChangeGroupNameController) LinearLayout lnChangeGroupNameController;
+    @BindView(R.id.btnEditGroupName)
+    ImageButton btnEditGroupName;
     @BindView(R.id.view_divider)
     View mViewDivider;
+    @BindView(R.id.text_admin_delete_setting)
+    TextView mTxtDelete;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -77,12 +101,14 @@ public class SettingConversationActivity extends BaseActivity {
     private IChatSession mSession;
     private Contact mGroupOwner;
     private boolean mIsOwner = false;
+    WpKChatGroupDto wpKChatGroup;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
     private Thread mThreadUpdate;
+    private String mAdminGroup;
 
     private final static int REQUEST_PICK_CONTACT = 100;
 
@@ -100,7 +126,6 @@ public class SettingConversationActivity extends BaseActivity {
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
-        getSupportActionBar().setTitle("Change Security Question");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         if (intent != null) {
@@ -114,7 +139,7 @@ public class SettingConversationActivity extends BaseActivity {
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
-
+        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
         if (cursor == null)
             return; //not going to work
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
@@ -128,9 +153,10 @@ public class SettingConversationActivity extends BaseActivity {
 
             if (mSession != null) {
                 mGroupOwner = mSession.getGroupChatOwner();
-                if (mGroupOwner != null)
+                if (mGroupOwner != null) {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
-                net.wrappy.im.util.Debug.e("mIsOwner: " + mIsOwner);
+                    mAdminGroup = mGroupOwner.getName();
+                }
             }
         } catch (RemoteException e) {
         }
@@ -139,18 +165,53 @@ public class SettingConversationActivity extends BaseActivity {
 
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
+            String groupXmppId = mAddress;
+            if (mAddress.contains("@")) {
+                groupXmppId = mAddress.split("@")[0];
+            }
+            RestAPI.apiGET(getApplicationContext(),RestAPI.getGroupByXmppId(groupXmppId)).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    if (result!=null) {
+                        AppFuncs.log(result.getResult());
+                        try {
+                            Gson gson = new Gson();
+                            wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
+                            memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                            edGroupName.setText(wpKChatGroup.getName());
+                            if (wpKChatGroup.getIcon() != null) {
+                                GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                                updateAvatar();
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
+            String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
+            GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
+            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
-            layout_leave_setting.setVisibility(View.GONE);
 
             if (mIsOwner) {
                 mAddMemberLayout.setVisibility(View.VISIBLE);
                 mViewDivider.setVisibility(View.VISIBLE);
+                mAdminDeleteGroup.setVisibility(View.VISIBLE);
+
+                mMemberLeaveGroup.setVisibility(View.GONE);
+
             }
 
             memberGroupDisplays = new ArrayList<>();
 
+            String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
+
+            mGroupRecycleView.setNestedScrollingEnabled(false);
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
@@ -232,7 +293,8 @@ public class SettingConversationActivity extends BaseActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting, R.id.layout_add_member})
+    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
+            R.id.layout_member_leave_group})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
@@ -242,13 +304,57 @@ public class SettingConversationActivity extends BaseActivity {
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
-            case R.id.layout_leave_setting:
-                if (leaveGroup())
-                    clearHistory();
-                else AppFuncs.alert(this, "Could not leave group", true);
+            case R.id.layout_admin_delete_group:
+                confirmDeleteGroup();
+                break;
+            case R.id.layout_member_leave_group:
+                confirmLeaveGroup();
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
+                break;
+            case R.id.btnGroupPhoto:
+                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+                sheetCells.add(sheetCell);
+                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
+                sheetCells.add(sheetCell);
+                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                    @Override
+                    public void onSelectBottomSheetCell(int index) {
+                        if (index == 1) {
+                            AppFuncs.openCamera(SettingConversationActivity.this,100);
+                        } else {
+                            AppFuncs.openGallery(SettingConversationActivity.this, 100);
+                        }
+                    }
+                }).show();
+                break;
+            case R.id.btnEditGroupName:
+                edGroupName.setEnabled(true);
+                edGroupName.setFocusable(true);
+                lnChangeGroupNameController.setVisibility(View.VISIBLE);
+                btnEditGroupName.setVisibility(View.GONE);
+                break;
+            case R.id.btnGroupNameCheck:
+                String name = edGroupName.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    return;
+                }
+                edGroupName.setText(name);
+                wpKChatGroup.setName(name);
+                updateData();
+                edGroupName.setFocusable(false);
+                edGroupName.setEnabled(false);
+                lnChangeGroupNameController.setVisibility(View.GONE);
+                btnEditGroupName.setVisibility(View.VISIBLE);
+                break;
+            case R.id.btnGroupNameClose:
+                edGroupName.setText(wpKChatGroup.getName());
+                edGroupName.setFocusable(false);
+                edGroupName.setEnabled(false);
+                lnChangeGroupNameController.setVisibility(View.GONE);
+                btnEditGroupName.setVisibility(View.VISIBLE);
                 break;
             case R.id.layout_add_member:
                 Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
@@ -266,18 +372,18 @@ public class SettingConversationActivity extends BaseActivity {
         }
     }
 
-    private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
+   private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         String chatServer = ""; //use the default
         String nickname = imApp.getDefaultUsername().split("@")[0];
         new GroupChatSessionTask(this, group, invitees, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
     }
 
-    @SuppressLint("RestrictedApi")
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_PICK_CONTACT) {
+ if (requestCode == REQUEST_PICK_CONTACT) {
                 WpKChatGroupDto group = data.getParcelableExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME);
                 ArrayList<String> users = data.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
 
@@ -295,8 +401,60 @@ public class SettingConversationActivity extends BaseActivity {
                 }
 
             }
+           else if (requestCode == 100) {
+                AppFuncs.cropImage(this,data,true);
+            } else if (requestCode == UCrop.REQUEST_CROP) {
+                Uri uri = UCrop.getOutput(data);
+                btnGroupPhoto.setImageURI(uri);
+                RestAPI.uploadFile(getApplicationContext(),new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        try {
+                            AppFuncs.log(result.getResult());
+                            final String reference = RestAPI.getPhotoReference(result.getResult());
+                            WpKIcon wpKIcon = new WpKIcon();
+                            wpKIcon.setReference(reference);
+                            wpKChatGroup.setIcon(wpKIcon);
+                            updateData();
+                        }catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+
+            }
         }
 
+    }
+
+    private void updateData() {
+        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+        RestAPI.apiPUT(getApplicationContext(),RestAPI.CHAT_GROUP,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    AppFuncs.log(result.getResult());
+                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        updateAvatarAndNotify(true);
+                        AppFuncs.alert(getApplicationContext(), "Update Success", false);
+                    }
+                }
+            }
+        });
+    }
+
+    private void updateAvatar() {
+        updateAvatarAndNotify(false);
+    }
+
+    private void updateAvatarAndNotify(boolean broadcast) {
+        String avatarReference = wpKChatGroup.getIcon().getReference();
+        String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
+        String address = wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER;
+        net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarHash(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, hash, address);
+        if (broadcast) {
+            ImApp.broadcastIdentity(avatarReference + ":" + hash + ":" + address);
+        }
     }
 
     private void clearHistory() {
@@ -350,6 +508,40 @@ public class SettingConversationActivity extends BaseActivity {
         this.finish();
     }
 
+    private void confirmDeleteGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_delete_group), getString(R.string.confirm_delete_and_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+                RestAPI.apiDELETE(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        if (result != null) {
+                            AppFuncs.log(result.getResult());
+                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                            }
+                        }
+                    }
+                });
+                deleteGroupByAdmin();
+            }
+        }, null, false);
+    }
+
+    private void confirmLeaveGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (leaveGroup()) {
+                    AppFuncs.alert(getApplicationContext(), "Leave group", true);
+                } else {
+                    AppFuncs.alert(getApplicationContext(), "Could not leave group", true);
+                }
+            }
+        }, null, false);
+    }
+
     private boolean leaveGroup() {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
@@ -374,68 +566,38 @@ public class SettingConversationActivity extends BaseActivity {
         return false;
     }
 
-    /**
-     * Showing bottom sheet to change background
-     */
-    public static class BackgroundBottomSheetFragment extends BottomSheetDialogFragment {
-        @BindView(R.id.backgroundGridView)
-        GridView mGridView;
+    private boolean deleteGroupByAdmin() {
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mAddress);
 
-        public int[] mThumbIds = {
-                R.drawable.chat_bg_thumb_1,
-                R.drawable.chat_bg_thumb_2,
-                R.drawable.chat_bg_thumb_3,
-                R.drawable.chat_bg_thumb_4,
-                R.drawable.chat_bg_thumb_5,
-                R.drawable.chat_bg_thumb_6,
-                R.drawable.chat_bg_thumb_7,
-                R.drawable.chat_bg_thumb_8
-        };
+            if (session == null)
+                session = manager.createChatSession(mAddress, true);
 
-        public String[] mImagePath = {
-                "backgrounds/page_1/chat_bg_1.png",
-                "backgrounds/page_1/chat_bg_2.png",
-                "backgrounds/page_1/chat_bg_3.png",
-                "backgrounds/page_1/chat_bg_4.png",
-                "backgrounds/page_1/chat_bg_5.png",
-                "backgrounds/page_1/chat_bg_6.png",
-                "backgrounds/page_1/chat_bg_7.png",
-                "backgrounds/page_1/chat_bg_8.png",
-        };
+            if (session != null) {
 
-        public static final BackgroundBottomSheetFragment getInstance() {
+                int groupId = wpKChatGroup.getId();
 
-            BackgroundBottomSheetFragment backgroundFragment = new BackgroundBottomSheetFragment();
+                StringBuffer deleteCode = new StringBuffer();
+                deleteCode.append(":");
+                deleteCode.append("delete_group");
+                deleteCode.append(":");
+                deleteCode.append(groupId);
+                session.sendMessage(deleteCode.toString(), false);
 
-            return backgroundFragment;
+                session.delete();
+
+                //clear the stack and go back to the main activity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            }
+
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error deleting group", e);
         }
-
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.background_grid, container, false);
-
-            ButterKnife.bind(this, view);
-
-            mGridView.setAdapter(new BackgroundGridAdapter(getContext(), mThumbIds));
-
-            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", ConversationDetailActivity.TYPE_REQUEST_CHANGE_BACKGROUND);
-                    bundle.putString("imagePath", mImagePath[i]);
-
-                    Intent intent = new Intent();
-                    intent.putExtras(bundle);
-
-                    getActivity().setResult(Activity.RESULT_OK, intent);
-                    getActivity().finish();
-                }
-            });
-
-            return view;
-        }
+        return false;
     }
+
 }

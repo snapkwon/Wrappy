@@ -23,7 +23,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -46,14 +45,14 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
-import net.wrappy.im.ui.widgets.GroupAvatar;
-import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.DateUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -111,7 +110,7 @@ public class ConversationListItem extends FrameLayout {
      * }
      */
 
-    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar) {
+    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar, IChatSessionManager manager) {
 
         //applyStyleColors(holder);
         if (nickname == null) {
@@ -149,28 +148,42 @@ public class ConversationListItem extends FrameLayout {
 
                 holder.mAvatar.setVisibility(View.VISIBLE);
                 try {
-
-                    final String reference = Store.getStringData(context, nickname);
-                    if (!TextUtils.isEmpty(reference)) {
-                        GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(reference));
+                    if (!TextUtils.isEmpty(referenceAvatar)) {
+                        GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
                     } else {
-                        String groupId = address.split("@")[0];
-                        Drawable avatar = new GroupAvatar(groupId);
-                        holder.mAvatar.setImageDrawable(avatar);
+                        holder.mAvatar.setImageResource(R.drawable.chat_group);
                     }
 
                     //
                 } catch (Exception ignored) {
-                    if (AVATAR_DEFAULT_GROUP == null)
-                        AVATAR_DEFAULT_GROUP = new RoundedAvatarDrawable(BitmapFactory.decodeResource(getResources(),
-                                R.drawable.group_chat));
-                    holder.mAvatar.setImageDrawable(AVATAR_DEFAULT_GROUP);
+                    holder.mAvatar.setImageResource(R.drawable.chat_group);
                 }
-            }
-            else {
+            } else {
                 GlideHelper.loadAvatarFromNickname(getContext(), holder.mAvatar, nickname);
                 if (!TextUtils.isEmpty(referenceAvatar)) {
                     GlideHelper.loadBitmapToCircleImage(getContext(), holder.mAvatar, RestAPI.getAvatarUrl(referenceAvatar));
+                }
+            }
+        }
+
+        if (holder.mAvatarStatus != null) {
+            if (Imps.Contacts.TYPE_GROUP != contactType) {
+                holder.mAvatarStatus.setVisibility(VISIBLE);
+
+                switch (presence) {
+                    case Imps.Presence.AVAILABLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_active);
+                        break;
+                    case Imps.Presence.AWAY:
+                    case Imps.Presence.IDLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_aw);
+                        break;
+                    case Imps.Presence.OFFLINE:
+                    case Imps.Presence.INVISIBLE:
+                        holder.mAvatarStatus.setImageResource(R.drawable.status_disable);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -196,7 +209,7 @@ public class ConversationListItem extends FrameLayout {
 //                            }
 
 //                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
-                                holder.mLine2.setText(R.string.incoming_attachment);
+                            holder.mLine2.setText(R.string.incoming_attachment);
 //                            holder.mLine2.setVisibility(View.GONE);
 
                         }
@@ -223,6 +236,7 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 } else if ((!TextUtils.isEmpty(message)) && message.startsWith(":")) {
+                    Debug.e("message: " + message);
 //                    String[] cmds = message.split(":");
 
                     try {
@@ -240,6 +254,29 @@ public class ConversationListItem extends FrameLayout {
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                             holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
+                        } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
+                                message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
+                                message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
+
+                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
+                            String senderSticker = message.split(":")[2];
+
+                            if (senderSticker.startsWith(account)) {
+                                holder.mLine2.setText(getResources().getString(R.string.you_sent_sticker));
+                            } else {
+                                holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
+                            }
+                        } else if (message.startsWith(":delete_group")) {
+
+                            IChatSession session = manager.getChatSession(address);
+
+                            if (session == null)
+                                session = manager.createChatSession(address, true);
+
+                            if (session != null) {
+                                session.delete();
+                            }
+                            
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);
@@ -263,14 +300,18 @@ public class ConversationListItem extends FrameLayout {
                 }
             }
 
+            String status = "";
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-                holder.mStatusText.setText(sPrettyTime.format(dateLast));
-
-            } else {
-                holder.mStatusText.setText("");
+                if (DateUtils.checkCurrentDay(dateLast)) {
+                    status = DateUtils.convertHourMinuteFormat(dateLast);
+                } else if (DateUtils.checkCurrentWeek(dateLast)) {
+                    status = DateUtils.convertTodayFormat(dateLast);
+                } else {
+                    status = DateUtils.convertMonthDayFormat(dateLast);
+                }
             }
-
+            holder.mStatusText.setText(status);
         } else if (holder.mLine2 != null) {
             holder.mLine2.setText(address);
 
@@ -412,6 +453,11 @@ public class ConversationListItem extends FrameLayout {
                     .into(aHolder.mMediaThumb);
         }
 
+    }
+
+    private void deleteGroup(ContentResolver resolver, long groupId) {
+        Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+        resolver.delete(uri, null, null);
     }
 
     private String getGroupCount(ContentResolver resolver, long groupId) {

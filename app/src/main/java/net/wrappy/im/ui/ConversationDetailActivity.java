@@ -273,7 +273,7 @@ public class ConversationDetailActivity extends BaseActivity {
         if(!address.isEmpty()) {
             String[] separated = address.split("@");
 
-            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUPID, separated[0]), new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
@@ -1091,6 +1091,7 @@ public class ConversationDetailActivity extends BaseActivity {
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
 
             if (data == null || data.getCount() == 0) {
+                findViewById(R.id.btnAddFriend).performClick();
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
             } else {
                 if (mChatId == -1 && data.moveToFirst())

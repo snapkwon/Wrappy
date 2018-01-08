@@ -73,10 +73,12 @@ import net.wrappy.im.ui.ConferenceActivity;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conference.ConferencePopupActivity;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
+import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jxmpp.jid.impl.JidCreate;
@@ -375,6 +377,17 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         mChatSessionManager.closeChatSession(this);
     }
 
+    public void delete() {
+        if (mIsGroupChat) {
+            getGroupManager().deleteChatGroupAsync((ChatGroup) mChatSession.getParticipant());
+        }
+
+        mContentResolver.delete(mMessageURI, null, null);
+        mContentResolver.delete(mChatURI, null, null);
+        mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
+        mChatSessionManager.closeChatSession(this);
+    }
+
     public void leaveIfInactive() {
         //    if (mChatSession.getHistoryMessages().isEmpty()) {
         leave();
@@ -406,7 +419,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 text = message.toString();
             }
             insertMessageInDb(null, text, sendTime, msg.getType(), 0, msg.getID(), null);
-            insertOrUpdateChat(text);
+            insertOrUpdateChat(text, sendTime);
         }
 
         int newType = mChatSession.sendMessageAsync(msg);
@@ -434,7 +447,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         long sendTime = System.currentTimeMillis();
 
         insertMessageInDb(null, mediaPath, sendTime, msg.getType(), 0, msg.getID(), mimeType);
-        insertOrUpdateChat(mediaPath);
+        insertOrUpdateChat(mediaPath, sendTime);
 
         return msg;
     }
@@ -746,10 +759,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
      */
 
     private void insertOrUpdateChat(String message) {
+        insertOrUpdateChat(message, System.currentTimeMillis());
+    }
+    private void insertOrUpdateChat(String message, long time) {
         if (!ConferenceUtils.isInvisibleMessage(message)) {
             ContentValues values = new ContentValues(2);
 
-            values.put(Imps.Chats.LAST_MESSAGE_DATE, System.currentTimeMillis());
+            values.put(Imps.Chats.LAST_MESSAGE_DATE, time);
             values.put(Imps.Chats.LAST_UNREAD_MESSAGE, message);
 
             values.put(Imps.Chats.GROUP_CHAT, mIsGroupChat);
@@ -1049,10 +1065,16 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
     public int updateMessageInDb(String id, String msg) {
-        return Imps.updateMessageBodyInDbByPacketId(mContentResolver, id, msg);
+        return Imps.updateMessageBodyInThreadByPacketId(mContentResolver, getChatUri(), mMessageURI, id, msg);
     }
 
     public int deleteMessageInDb(String id) {
+        long lastMessageDate = Imps.Chats.getLastMessageDate(mContentResolver, getChatUri());
+        long messageDate = Imps.Messages.getDate(mContentResolver, id);
+        //Check is last message , reset history chat list
+        if (messageDate != -1 && messageDate == lastMessageDate) {
+            insertOrUpdateChat("");
+        }
         return mContentResolver.delete(mMessageURI, Imps.Messages.PACKET_ID + "=?",
                 new String[]{id});
     }
@@ -1089,14 +1111,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
-            String bareAddress = new XmppAddress(nickname).getBareAddress();
+            String bareAddress = mIsGroupChat ? new XmppAddress(nickname).getBareAddress() : bareUsername;
             Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
-                if (contact != null && !contact.getAddress().getAddress().contains(contact.getName())) {
+                if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    if (contact != null) bareAddress = bareUsername;
                     nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                     if (TextUtils.isEmpty(nickname)) {
                         nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
@@ -1117,7 +1138,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String mediaLink = checkForLinkedMedia(username, body, allowWebDownloads);
 
             if (mediaLink == null) {
-                insertOrUpdateChat(body);
+                insertOrUpdateChat(body, time);
 
                 boolean wasMessageSeen = false;
 
@@ -1157,7 +1178,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 } catch (Exception e) {
                 }
                 //Check conference trigger
-                checkTriggerConference(messageUri, bareAddress, nickname, body);
+                checkTriggerConference(messageUri, bareAddress, nickname, msg);
 
                 // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
@@ -1196,12 +1217,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
                             Uri vfsUri = SecureMediaStore.vfsUri(fileDownload.getAbsolutePath());
 
-                            insertOrUpdateChat(vfsUri.toString());
+                            long startTime = System.currentTimeMillis();
+                            insertOrUpdateChat(vfsUri.toString(), startTime);
 
                             Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                     mIsGroupChat, getId(),
                                     true, nickname,
-                                    vfsUri.toString(), System.currentTimeMillis(), type,
+                                    vfsUri.toString(), startTime, type,
                                     0, msg.getID(), mimeType);
 
                             int percent = (int) (100);
@@ -1266,13 +1288,20 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             });
         }
 
-        private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, String body) {
+        private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, Message message) {
+            String body = message.getBody();
             if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                Intent intent;
-                ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
-                conferenceCall.setGroup(isGroupChatSession());
-                intent = ConferencePopupActivity.newIntent(conferenceCall);
-                mConnection.getContext().startActivity(intent);
+                long startTime = message.getDateTime().getTime();
+                if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME) {
+                    ConferenceMessage conference = new ConferenceMessage(body);
+                    conference.missed();
+                    updateMessageInDb(message.getID(), conference.toString());
+                } else {
+                    ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
+                    conferenceCall.setGroup(isGroupChatSession());
+                    Intent intent = ConferencePopupActivity.newIntent(conferenceCall);
+                    mConnection.getContext().startActivity(intent);
+                }
             }
         }
 
@@ -1592,12 +1621,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
                         int type = isVerified ? Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED : Imps.MessageType.INCOMING_ENCRYPTED;
 
-                        insertOrUpdateChat(filePath);
+                        long time = System.currentTimeMillis();
+                        insertOrUpdateChat(filePath, time);
 
                         Uri messageUri = Imps.insertMessageInDb(service.getContentResolver(),
                                 mIsGroupChat, getId(),
                                 true, from,
-                                filePath, System.currentTimeMillis(), type,
+                                filePath, time, type,
                                 0, offerId, mimeType);
 
                         int percent = (int) (100);
