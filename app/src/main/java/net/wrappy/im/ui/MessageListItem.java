@@ -261,34 +261,39 @@ public class MessageListItem extends FrameLayout {
                 bindLocation(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
+                Debug.e("lastMessage: " + lastMessage);
 
                 if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
                     String groupName = lastMessage.split(":")[2];
                     Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
                     ((ConversationDetailActivity) context).finish();
-                }
+                } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+                    String member = lastMessage.split(":")[2];
+                    Debug.e("lastMessage: " + Arrays.toString(lastMessage.split(":")));
+                    Debug.e("member: " + lastMessage.split(":")[2]);
+                    mHolder.mTextViewForMessages.setText(new SpannableString(member + " is removed by admin"));
+                } else {
 
-                String[] cmds = lastMessage.split(":");
+                    String[] cmds = lastMessage.split(":");
 
-                Debug.e("cmds: " + Arrays.toString(cmds));
+                    String mimeTypeSticker = "image/png";
+                    try {
+                        String[] stickerParts = cmds[1].split("-");
+                        String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
 
-                String mimeTypeSticker = "image/png";
-                try {
-                    String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
+                        //make sure sticker exists
+                        AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+                        afd.getLength();
+                        afd.close();
 
-                    //make sure sticker exists
-                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                    afd.getLength();
-                    afd.close();
+                        //now setup the new URI for loading local sticker asset
+                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 
-                    //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                    //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
-                } catch (Exception e) {
-                    cmdSuccess = false;
+                        //now load the thumbnail
+                        cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
+                    } catch (Exception e) {
+                        cmdSuccess = false;
+                    }
                 }
             }
             if (!cmdSuccess) {
