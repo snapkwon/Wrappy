@@ -266,7 +266,7 @@ public class ConversationListItem extends FrameLayout {
                             } else {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
-                        } else if (message.startsWith(":delete_group")) {
+                        } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
 
                             IChatSession session = manager.getChatSession(address);
 
@@ -276,7 +276,7 @@ public class ConversationListItem extends FrameLayout {
                             if (session != null) {
                                 session.delete();
                             }
-                            
+
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);

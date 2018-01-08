@@ -69,6 +69,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -78,6 +79,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.net.URLConnection;
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -259,7 +261,16 @@ public class MessageListItem extends FrameLayout {
                 bindLocation(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
+
+                if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
+                    String groupName = lastMessage.split(":")[2];
+                    Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
+                    ((ConversationDetailActivity) context).finish();
+                }
+
                 String[] cmds = lastMessage.split(":");
+
+                Debug.e("cmds: " + Arrays.toString(cmds));
 
                 String mimeTypeSticker = "image/png";
                 try {

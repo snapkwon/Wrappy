@@ -48,6 +48,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
@@ -537,13 +538,12 @@ public class SettingConversationActivity extends BaseActivity {
 
             if (session != null) {
 
-                int groupId = wpKChatGroup.getId();
+                String groupName = wpKChatGroup.getName();
 
                 StringBuffer deleteCode = new StringBuffer();
+                deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
                 deleteCode.append(":");
-                deleteCode.append("delete_group");
-                deleteCode.append(":");
-                deleteCode.append(groupId);
+                deleteCode.append(groupName);
                 session.sendMessage(deleteCode.toString(), false);
 
                 session.delete();
