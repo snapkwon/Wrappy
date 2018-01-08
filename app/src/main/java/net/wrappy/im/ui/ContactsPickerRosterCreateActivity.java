@@ -163,7 +163,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
             SelectedContact contact = new SelectedContact(id,
                     userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
-                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER),cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
             mSelection.put(id, contact);
             createTagView(index, contact);
             mAdapter.notifyDataSetChanged();

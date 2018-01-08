@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -80,6 +81,8 @@ public class RestAPI {
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
     public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
     public static String DELETE_AVATAR = root_url + "member/avatar";
+    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+    public static String GET_GROUPID = root_url + "/chat/group/%s/by-xmpp-group-id";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -242,6 +245,10 @@ public class RestAPI {
         return getIon(context, url, "GET").asString().withResponse();
     }
 
+    public static Future<Response<String>> apiPOSTArray(Context context, String url, JsonArray jsonObject) {
+        return getIon(context, url, "POST").setJsonArrayBody((jsonObject == null) ? new JsonArray() : jsonObject).asString().withResponse();
+    }
+
     public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "POST").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
@@ -254,6 +261,29 @@ public class RestAPI {
         return getIon(context, url, "DELETE").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
+
+    public static void PostDataWrappyArray(final Context context, final JsonArray jsonObject, final String url, final RestAPIListenner listenner) {
+        apiPOSTArray(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                try {
+                    if ((checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredtoken(result.getResult())) {
+                            refreshTokenHttps(context, jsonObject,null, url, listenner, POST_METHOD);
+                        }
+
+                    } else {
+                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    listenner.OnComplete(0, null, null);
+                }
+
+            }
+        });
+    }
+
     public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
@@ -261,7 +291,7 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredtoken(result.getResult())) {
-                            refreshTokenHttps(context, jsonObject, url, listenner, POST_METHOD);
+                            refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
                         }
 
                     } else {
@@ -283,7 +313,7 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredtoken(result.getResult())) {
-                            refreshTokenHttps(context, jsonObject, url, listenner, DELETE_METHOD);
+                            refreshTokenHttps(context, null,jsonObject, url, listenner, DELETE_METHOD);
                         }
 
                     } else {
@@ -303,7 +333,7 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
                     if (checkExpiredtoken(result.getResult())) {
-                        refreshTokenHttps(context, null, url, listenner, GET_METHOD);
+                        refreshTokenHttps(context, null,null, url, listenner, GET_METHOD);
                     }
 
                 } else {
@@ -352,7 +382,8 @@ public class RestAPI {
 
     static int numberRefreshToken = 0;
 
-    public static void refreshTokenHttps(final Context context, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
+
+    public static void refreshTokenHttps(final Context context,final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
         Ion.with(context).load("POST", refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -371,7 +402,7 @@ public class RestAPI {
 
                         } else {
                             numberRefreshToken++;
-                            refreshTokenHttps(context, json, url, listenner, method);
+                            refreshTokenHttps(context,(jsonarray == null)?null:jsonarray, (json == null)?null:json, url, listenner, method);
                         }
                         return;
                     }
@@ -380,7 +411,13 @@ public class RestAPI {
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(context);
                     if (method == POST_METHOD) {
-                        PostDataWrappy(context, json, url, listenner);
+                        if(json!=null) {
+                            PostDataWrappy(context, json, url, listenner);
+                        }
+                        else
+                        {
+                            PostDataWrappyArray(context, jsonarray, url, listenner);
+                        }
                     } else if (method == DELETE_METHOD) {
                         DeleteDataWrappy(context, json, url, listenner);
                     } else if (method == GET_METHOD) {

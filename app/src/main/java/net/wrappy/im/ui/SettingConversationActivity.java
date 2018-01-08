@@ -1,5 +1,6 @@
 package net.wrappy.im.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -29,12 +30,15 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.background.BackgroundGridAdapter;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -82,12 +86,17 @@ public class SettingConversationActivity extends BaseActivity {
 
     private final static int REQUEST_PICK_CONTACT = 100;
 
+    public final static int PICKER_ADD_MEMBER = 1;
+
+    private WpKChatGroupDto groupid;
+    ImApp imApp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
         super.onCreate(savedInstanceState);
 
-
+        imApp = (ImApp) getApplication();
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
@@ -101,6 +110,7 @@ public class SettingConversationActivity extends BaseActivity {
             mAccountId = getIntent().getLongExtra("account", -1);
             mLastChatId = getIntent().getLongExtra("chatId", -1);
             mContactType = getIntent().getIntExtra("isGroupChat", -1);
+            groupid = getIntent().getParcelableExtra("groupid");
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
@@ -244,12 +254,49 @@ public class SettingConversationActivity extends BaseActivity {
                 Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
                 ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
                 for (MemberGroupDisplay member : memberGroupDisplays) {
-                    usernames.add(member.getUsername());
+                    usernames.add(member.getNickname());
                 }
-                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, usernames);
+                intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
+                intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, groupid);
+                intent.putExtra("type", PICKER_ADD_MEMBER);
+                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS ,true );
+
                 startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
         }
+    }
+
+    private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
+        String chatServer = ""; //use the default
+        String nickname = imApp.getDefaultUsername().split("@")[0];
+        new GroupChatSessionTask(this, group, invitees, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_PICK_CONTACT) {
+                WpKChatGroupDto group = data.getParcelableExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME);
+                ArrayList<String> users = data.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
+
+                if (users != null) {
+                    //start group and do invite hereartGrou
+                    try {
+                        IImConnection conn = imApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
+                        if (conn.getState() == ImConnection.LOGGED_IN) {
+                            startGroupChat(group, users, conn);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+
+            }
+        }
+
     }
 
     private void clearHistory() {

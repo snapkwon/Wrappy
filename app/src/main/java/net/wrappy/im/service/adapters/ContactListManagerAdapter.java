@@ -234,6 +234,7 @@ public class ContactListManagerAdapter extends
         if (!TextUtils.isEmpty(email)) {
             values.put(Imps.Contacts.CONTACT_EMAIL, email);
         }
+
         int updated = mResolver.update(mContactUrl, values, selection, selectionArgs);
         if (updated != 1) {
             return ImErrorInfo.ILLEGAL_CONTACT_ADDRESS;

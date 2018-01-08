@@ -70,6 +70,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.gson.Gson;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
@@ -79,6 +80,8 @@ import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -110,11 +113,16 @@ import butterknife.OnClick;
 import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
 
+import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
+
 //import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity {
 
     private AddContactAsyncTask task;
+
+    private  WpKChatGroupDto chatGroupDto ;
+    private static String address = "";
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -123,6 +131,22 @@ public class ConversationDetailActivity extends BaseActivity {
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
         return intent;
     }
+
+    public static Intent getStartIntent(Context context, long chatId, String nickname, String reference, String maddress) {
+        Intent intent = getStartIntent(context, chatId);
+        intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
+        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
+        intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
+        address = maddress;
+        return intent;
+    }
+
+    public  WpKChatGroupDto getGroupDto()
+    {
+        return chatGroupDto;
+    }
+
+
 
     public static Intent getStartIntent(Context context, long chatId) {
         Intent intent = getStartIntent(context);
@@ -246,6 +270,19 @@ public class ConversationDetailActivity extends BaseActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
 
+        if(!address.isEmpty()) {
+            String[] separated = address.split("@");
+
+            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUPID, separated[0]), new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
+                    }
+                }
+            });
+        }
+
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -271,6 +308,8 @@ public class ConversationDetailActivity extends BaseActivity {
     public void updateLastSeen(Date lastSeen) {
         mHandler.sendEmptyMessage(1);
     }
+
+
 
     public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
