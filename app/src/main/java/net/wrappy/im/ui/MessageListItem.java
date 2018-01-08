@@ -260,40 +260,31 @@ public class MessageListItem extends FrameLayout {
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
                 cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
+                deleteAndLeaveGroup();
+            } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+                bindRemoveMemberGroup(lastMessage);
+                cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-                Debug.e("lastMessage: " + lastMessage);
+                String[] cmds = lastMessage.split(":");
 
-                if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
-                    String groupName = lastMessage.split(":")[2];
-                    Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
-                    ((ConversationDetailActivity) context).finish();
-                } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
-                    String member = lastMessage.split(":")[2];
-                    Debug.e("lastMessage: " + Arrays.toString(lastMessage.split(":")));
-                    Debug.e("member: " + lastMessage.split(":")[2]);
-                    mHolder.mTextViewForMessages.setText(new SpannableString(member + " is removed by admin"));
-                } else {
+                String mimeTypeSticker = "image/png";
+                try {
+                    String[] stickerParts = cmds[1].split("-");
+                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
 
-                    String[] cmds = lastMessage.split(":");
+                    //make sure sticker exists
+                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+                    afd.getLength();
+                    afd.close();
 
-                    String mimeTypeSticker = "image/png";
-                    try {
-                        String[] stickerParts = cmds[1].split("-");
-                        String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
+                    //now setup the new URI for loading local sticker asset
+                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
 
-                        //make sure sticker exists
-                        AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                        afd.getLength();
-                        afd.close();
-
-                        //now setup the new URI for loading local sticker asset
-                        Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                        //now load the thumbnail
-                        cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
-                    } catch (Exception e) {
-                        cmdSuccess = false;
-                    }
+                    //now load the thumbnail
+                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
+                } catch (Exception e) {
+                    cmdSuccess = false;
                 }
             }
             if (!cmdSuccess) {
@@ -345,6 +336,19 @@ public class MessageListItem extends FrameLayout {
         if (linkify)
             LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
+    }
+
+    private void deleteAndLeaveGroup() {
+        String groupName = lastMessage.split(":")[2];
+        Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
+        ((ConversationDetailActivity) context).finish();
+    }
+
+    private void bindRemoveMemberGroup(String lastMessage) {
+        if (mHolder != null) {
+            String member = lastMessage.split(":")[2];
+            mHolder.mTextViewForMessages.setText(new SpannableString(member + " is removed by admin"));
+        }
     }
 
     private void bindBackground(String lastMessage) {
@@ -744,6 +748,9 @@ public class MessageListItem extends FrameLayout {
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
+                cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+                bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");
