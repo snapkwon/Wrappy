@@ -13,12 +13,14 @@ public class ConferenceConstant {
     public static final int NUM_OF_FIELDS = 4;
 
     public static final String SEND_LOCATION_FREFIX = ":wrappylocation:";// lat:lng
-    public static final String DELETE_CHAT_FREFIX = ":wrappydelete:";// chat ID
-    public static final String EDIT_CHAT_FREFIX = ":wrappyedit:";//id length:text length:chat ID, new text
+    public static final String DELETE_CHAT_FREFIX = ":wrappy-delete:";// chat ID
+    public static final String EDIT_CHAT_FREFIX = ":wrappy-edit:";//id length:text length:chat ID, new text
 
     public static final String SEND_BACKGROUND_CHAT_PREFIX = ":wrappychangebackground:"; // image uri
 
     public static final String SEND_STICKER_BUNNY = ":bunny";
     public static final String SEND_STICKER_EMOJI = ":emoji";
     public static final String SEND_STICKER_ARTBOARD = ":sticker";
+
+    public static final String DELETE_GROUP_BY_ADMIN = ":delete-group";
 }

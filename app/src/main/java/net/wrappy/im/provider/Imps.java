@@ -258,13 +258,14 @@ public class Imps {
                     null /* selection args */, null /* sort order */);
 
             long providerId = 0;
-
-            try {
-                if (cursor.moveToFirst()) {
-                    providerId = cursor.getLong(PROVIDER_COLUMN);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        providerId = cursor.getLong(PROVIDER_COLUMN);
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
 
             return providerId;
@@ -274,14 +275,12 @@ public class Imps {
             Cursor cursor = cr.query(CONTENT_URI, new String[]{USERNAME}, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
             String ret = null;
-            try {
+            if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     ret = cursor.getString(cursor.getColumnIndexOrThrow(USERNAME));
                 }
-            } finally {
                 cursor.close();
-            }
-
+                }
             return ret;
         }
 

@@ -46,11 +46,13 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.DateUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -108,7 +110,7 @@ public class ConversationListItem extends FrameLayout {
      * }
      */
 
-    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar) {
+    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar, IChatSessionManager manager) {
 
         //applyStyleColors(holder);
         if (nickname == null) {
@@ -234,6 +236,7 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 } else if ((!TextUtils.isEmpty(message)) && message.startsWith(":")) {
+                    Debug.e("message: " + message);
 //                    String[] cmds = message.split(":");
 
                     try {
@@ -263,6 +266,17 @@ public class ConversationListItem extends FrameLayout {
                             } else {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
+                        } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
+
+                            IChatSession session = manager.getChatSession(address);
+
+                            if (session == null)
+                                session = manager.createChatSession(address, true);
+
+                            if (session != null) {
+                                session.delete();
+                            }
+
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);
@@ -286,23 +300,18 @@ public class ConversationListItem extends FrameLayout {
                 }
             }
 
+            String status = "";
             if (messageDate != -1) {
                 Date dateLast = new Date(messageDate);
-
                 if (DateUtils.checkCurrentDay(dateLast)) {
-                    String hm = DateUtils.convertHourMinuteFormat(dateLast);
-                    holder.mStatusText.setText(hm);
+                    status = DateUtils.convertHourMinuteFormat(dateLast);
                 } else if (DateUtils.checkCurrentWeek(dateLast)) {
-                    String today = DateUtils.convertTodayFormat(dateLast);
-                    holder.mStatusText.setText(today);
+                    status = DateUtils.convertTodayFormat(dateLast);
                 } else {
-                    String monthDay = DateUtils.convertMonthDayFormat(dateLast);
-                    holder.mStatusText.setText(monthDay);
+                    status = DateUtils.convertMonthDayFormat(dateLast);
                 }
-            } else {
-                holder.mStatusText.setText("");
             }
-
+            holder.mStatusText.setText(status);
         } else if (holder.mLine2 != null) {
             holder.mLine2.setText(address);
 
@@ -444,6 +453,11 @@ public class ConversationListItem extends FrameLayout {
                     .into(aHolder.mMediaThumb);
         }
 
+    }
+
+    private void deleteGroup(ContentResolver resolver, long groupId) {
+        Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, groupId);
+        resolver.delete(uri, null, null);
     }
 
     private String getGroupCount(ContentResolver resolver, long groupId) {
