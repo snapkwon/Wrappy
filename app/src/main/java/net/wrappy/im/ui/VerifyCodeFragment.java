@@ -61,8 +61,8 @@ public class VerifyCodeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.verify_code_fragment,null);
-        ButterKnife.bind(this,mainView);
+        mainView = inflater.inflate(R.layout.verify_code_fragment, null);
+        ButterKnife.bind(this, mainView);
         phone = getArguments().getString("phone");
         edVerifyPhone.setText(phone);
         btnVerifyChangePhone.setSelected(false);
@@ -81,7 +81,7 @@ public class VerifyCodeFragment extends Fragment {
         }
     }
 
-    @OnClick({R.id.btnVerifyCheck,R.id.btnVerifyChangePhone,R.id.btnSendCodeAgain})
+    @OnClick({R.id.btnVerifyCheck, R.id.btnVerifyChangePhone, R.id.btnSendCodeAgain})
     public void onClick(View v) {
         if (v.getId() == R.id.btnVerifyCheck) {
             String pin = txtPin.getText().toString().trim();
@@ -89,17 +89,17 @@ public class VerifyCodeFragment extends Fragment {
                 return;
             }
 
-            RestAPI.apiPOST(getActivity(),RestAPI.getVerifyCodeUrl(phone,pin),new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+            RestAPI.apiPOST(getActivity(), RestAPI.getVerifyCodeUrl(phone, pin), new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
-                    if (result!=null) {
+                    if (result != null) {
                         if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                            appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK,"");
+                            appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
                             return;
                         }
                     }
-                    AppFuncs.alert(getActivity(),getString(R.string.verify_fail),false);
-                    appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_ERROR,"");
+                    AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
+                    appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_ERROR, "");
                 }
             });
         } else if (v.getId() == R.id.btnVerifyChangePhone) {
@@ -113,7 +113,7 @@ public class VerifyCodeFragment extends Fragment {
                     edVerifyPhone.setFocusableInTouchMode(true);
                     edVerifyPhone.requestFocus();
                 }
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
@@ -126,15 +126,15 @@ public class VerifyCodeFragment extends Fragment {
     private void sendCodeAgain() {
         edVerifyPhone.setFocusable(false);
         phone = edVerifyPhone.getText().toString().trim();
-        String url  = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(),Store.USERNAME),phone);
+        String url = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(), Store.USERNAME), phone);
         AppFuncs.log(url);
-        RestAPI.apiPOST(getActivity(),url,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.apiPOST(getActivity(), url, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                    AppFuncs.alert(getActivity(),getString(R.string.verify_send_sms_success),false);
+                if (result != null) if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                    AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_success), false);
                 } else {
-                    AppFuncs.alert(getActivity(),getString(R.string.verify_send_sms_fail),false);
+                    AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_fail), false);
                 }
             }
         });

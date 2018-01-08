@@ -21,11 +21,11 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     public static int VERIFY_ERROR = 201;
 
     public static void start(Activity activity, Bundle bundle, int requestCode) {
-        Intent intent = new Intent(activity,VerifyEmailOrPhoneActivity.class);
-        if (bundle!=null) {
+        Intent intent = new Intent(activity, VerifyEmailOrPhoneActivity.class);
+        if (bundle != null) {
             intent.putExtras(bundle);
         }
-        activity.startActivityForResult(intent,requestCode);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -34,14 +34,8 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_verification);
-        ((TextView)getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title)).setText(getString(R.string.page_verify));
-        ((ImageButton)getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarBack)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-        ((ImageButton)getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarHelp)).setOnClickListener(new View.OnClickListener() {
+        ((TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title)).setText(getString(R.string.page_verify));
+        ((ImageButton) getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarHelp)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -50,7 +44,7 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
 
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        if (getIntent().getExtras()!=null) {
+        if (getIntent().getExtras() != null) {
             getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
         }
     }
@@ -65,8 +59,8 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
 
     private void resultOK() {
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("result",true);
-        setResult(RESULT_OK,returnIntent);
+        returnIntent.putExtra("result", true);
+        setResult(RESULT_OK, returnIntent);
         finish();
     }
 

@@ -383,9 +383,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
                 Bundle bundle = new Bundle();
-                bundle.putString("phone",phone);
+                bundle.putString("phone", phone);
                 Store.putStringData(getApplicationContext(), Store.USERNAME, user);
-                VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this,bundle,VERIFY_CODE);
+                VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
 
             }
         });
