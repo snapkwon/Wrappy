@@ -110,7 +110,7 @@ public class ConversationListItem extends FrameLayout {
      * }
      */
 
-    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar) {
+    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar, IChatSessionManager manager) {
 
         //applyStyleColors(holder);
         if (nickname == null) {
@@ -267,8 +267,16 @@ public class ConversationListItem extends FrameLayout {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
                         } else if (message.startsWith(":delete_group")) {
-                            String groupId = message.split(":")[2];
-                            Debug.e("groupId: " + groupId);
+
+                            IChatSession session = manager.getChatSession(address);
+
+                            if (session == null)
+                                session = manager.createChatSession(address, true);
+
+                            if (session != null) {
+                                session.delete();
+                            }
+                            
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);
