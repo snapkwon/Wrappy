@@ -50,7 +50,7 @@ public class   WpErrors {
                     error = "Access is denied";
                     break;
                 case OP_INTERNAL_SERVER_ERROR:
-                    error = "Username already exists";
+                    error = "Server is error";
                     break;
                 case OP_K_MEMBER_ALREADY_EXISTS:
                     error = "Memeber already exists";

@@ -6,12 +6,48 @@
     android:orientation="vertical">
 
     <net.wrappy.im.helper.layout.AppTextView
-        android:textSize="16sp"
-        android:textColor="@color/background_dark"
+        style="@style/AppText_Default_Light"
         font_type="light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="@string/vertify_title_noti" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal">
+
+        <net.wrappy.im.helper.layout.AppEditTextView
+            android:id="@+id/edVerifyPhone"
+            style="@style/AppText_Default_Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:textColor="#007aff"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/btnVerifyChangePhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:paddingLeft="5dp"
+            android:src="@drawable/page_1" />
+    </LinearLayout>
+
+
+    <net.wrappy.im.helper.layout.AppTextView
+        style="@style/AppText_Default_Light"
+        font_type="light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="@string/check_email_passcode" />
 
@@ -19,32 +55,34 @@
         android:id="@+id/txt_pin_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:cursorVisible="false"
         android:digits="1234567890"
         android:inputType="number"
         android:maxLength="5"
+        android:padding="20dp"
         android:textIsSelectable="false"
         android:textSize="20sp"
-        android:layout_marginTop="20dp"
         app:pinBackgroundDrawable="@drawable/bg_passcode"
         app:pinLineStroke="2dp"
-        android:padding="20dp"
         app:pinLineStrokeSelected="4dp"
         app:pinTextBottomPadding="10dp" />
 
     <net.wrappy.im.helper.layout.AppButton
         android:id="@+id/btnVerifyCheck"
+        style="@style/AppButton_OK"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_done"
         android:layout_margin="16dp"
-        style="@style/AppButton_OK"/>
+        android:text="@string/action_done" />
 
     <net.wrappy.im.helper.layout.AppTextView
-        style="@style/AppText02"
+        android:id="@+id/btnSendCodeAgain"
         font_type="light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/send_again" />
+        android:text="@string/send_again"
+        android:textColor="#444344"
+        android:textSize="14sp" />
 </LinearLayout>
