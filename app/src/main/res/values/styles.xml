@@ -217,6 +217,11 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="AppText_Default_Light">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/txt_light</item>
+    </style>
+
     <style name="AppText02_Menu">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">16sp</item>

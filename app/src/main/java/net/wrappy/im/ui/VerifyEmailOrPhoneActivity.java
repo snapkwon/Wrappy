@@ -3,7 +3,10 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
@@ -29,21 +32,29 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.verify_email_or_phone_activity);
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle(getString(R.string.page_verify));
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_verification);
+        ((TextView)getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title)).setText(getString(R.string.page_verify));
+        ((ImageButton)getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarBack)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        ((ImageButton)getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarHelp)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         if (getIntent().getExtras()!=null) {
             getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
-    }
 
     @Override
     public void onChangeInApp(int id, String data) {
@@ -57,5 +68,10 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
         returnIntent.putExtra("result",true);
         setResult(RESULT_OK,returnIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 }

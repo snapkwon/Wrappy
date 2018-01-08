@@ -87,7 +87,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
 
     boolean isFlag;
-    String user, email, phone, gender, password;
+    String user, email, phone, gender, password, invitePhone;
     Registration registrationData;
     AppFuncs appFuncs;
 
@@ -105,6 +105,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     EditText edPhone;
     @BindView(R.id.spinnerProfileGender)
     AppCompatSpinner spinnerProfileGender;
+    @BindView(R.id.spnProfileCountryCodesReference)
+    AppCompatSpinner spnProfileCountryCodesReference;
     @BindView(R.id.btnProfileCameraHeader)
     ImageButton btnCameraHeader;
     @BindView(R.id.btnPhotoCameraAvatar)
@@ -183,6 +185,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                             }
                         };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
+                        spnProfileCountryCodesReference.setAdapter(countryAdapter);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -352,7 +355,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             Banner banner = new Banner(bannerReference);
             wpKMemberDto.setBanner(banner);
         }
-
+        if (!TextUtils.isEmpty(invitePhone)) {
+            registrationData.setInviterMobile(invitePhone);
+        }
         registrationData.setWpKMemberDto(wpKMemberDto);
 
         Gson gson = new Gson();
@@ -366,6 +371,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             public void OnComplete(int httpCode, String error, String s) {
                 if (!RestAPI.checkHttpCode(httpCode)) {
                     if (s != null) {
+                        AppFuncs.log("UpdateProfileActivity: " + s);
                         String er = WpErrors.getErrorMessage(s);
                         if (!TextUtils.isEmpty(er)) {
                             AppFuncs.alert(getApplicationContext(), er, true);
@@ -378,6 +384,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("phone",phone);
+                Store.putStringData(getApplicationContext(), Store.USERNAME, user);
                 VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this,bundle,VERIFY_CODE);
 
             }
@@ -390,8 +397,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             user = edUsername.getText().toString().trim();
             email = edEmail.getText().toString().trim();
             phone = edPhone.getText().toString().trim();
-            if (phone.startsWith("0")) {
-                phone = phone.substring(1, phone.length()-1);
+            invitePhone = edProfileReferral.getText().toString().trim();
+            if (!TextUtils.isEmpty(phone) && phone.startsWith("0")) {
+                phone = phone.substring(1, phone.length());
+            }
+            if (!TextUtils.isEmpty(invitePhone) && invitePhone.startsWith("0")) {
+                invitePhone = invitePhone.substring(1, invitePhone.length());
             }
             if (TextUtils.isEmpty(user)) {
                 error = getString(R.string.error_empty_username);
@@ -416,6 +427,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
                     phone = countryName + phone;
                 }
+            }
+            if (!TextUtils.isEmpty(invitePhone)) {
+                if (wpkCountry != null) {
+                    String countryName = wpkCountry.get(spnProfileCountryCodesReference.getSelectedItemPosition()).getPrefix();
+                    invitePhone = countryName + invitePhone;
+                }
+            } else {
+                invitePhone = null;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -498,7 +517,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         try {
             if (resultCode == Activity.RESULT_OK) {
                 if (requestCode == VERIFY_CODE) {
-                    Store.putStringData(getApplicationContext(), Store.USERNAME, user);
+
                     String url = RestAPI.loginUrl(user, password);
                     AppFuncs.log(url);
                     RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {

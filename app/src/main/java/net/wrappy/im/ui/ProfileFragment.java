@@ -245,19 +245,21 @@ public class ProfileFragment extends Fragment {
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-            edEmail.clearFocus();
-            edGender.clearFocus();
-            edEmail.setEnabled(false);
+
             String email = edEmail.getText().toString().trim();
             String gender = edGender.getText().toString().trim().toUpperCase();
-            if (!AppFuncs.isEmailValid(email)) {
+            if (!TextUtils.isEmpty(email)) if (!AppFuncs.isEmailValid(email)) {
                 AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
+            edEmail.clearFocus();
+            edGender.clearFocus();
+            edEmail.setEnabled(false);
             wpKMemberDto.setEmail(email);
             wpKMemberDto.setGender(gender);
             updateData();
             btnProfileSubmit.setVisibility(View.GONE);
+            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE,"");
         } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
@@ -424,7 +426,6 @@ public class ProfileFragment extends Fragment {
                             DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
                             ImApp.broadcastIdentity(null);
                             spnProfile.setVisibility(View.INVISIBLE);
-                            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE,"");
                         }
                     } else {
                         AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);

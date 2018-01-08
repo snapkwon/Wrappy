@@ -517,8 +517,9 @@
     <string name="new_list">New list</string>
     <string name="key_manager">Key Manager</string>
     <string name="add_another_account">Add Another Account</string>
-    <string name="check_email_passcode">Please check email or your message \n fill your Passcode</string>
-    <string name="send_again">Send again</string>
+    <string name="check_email_passcode">Please check your messages\nand enter the passcode</string>
+    <string name="vertify_title_noti">We have sent a message to</string>
+    <string name="send_again">Resend passcode</string>
     <string name="answer_secret_question">Answer secret question</string>
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
@@ -538,7 +539,7 @@
     <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
-    <string name="referral_hint">Username or phone number</string>
+    <string name="referral_hint">Phone Number</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
@@ -589,11 +590,14 @@
     <string name="tab_menu_my_page">My page</string>
     <string name="promotion_invite_friend">Invite friend</string>
     <string name="promotion_history">History</string>
-    <string name="page_verify">Verify Code</string>
+    <string name="page_verify">Account Verification</string>
     <string name="message_edit">Edit Message</string>
     <string name="message_delete">Delete Message</string>
     <string name="message_spam">Report Spam</string>
     <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
     <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
     <string name="promotion_invite_friends">Invite friend</string>
+    <string name="verify_send_sms_fail">Send sms fail</string>
+    <string name="verify_send_sms_success">Send sms success</string>
+    <string name="verify_fail">Verify fail</string>
 </resources>

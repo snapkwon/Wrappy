@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 
 public class Registration {
+    private String inviterMobile;
     private WpKAuthDto wpKAuthDto;
     private WpKMemberDto wpKMemberDto;
     ArrayList<SecurityQuestions> securityQuestions;
@@ -41,5 +42,13 @@ public class Registration {
 
     public void setSecurityQuestions(ArrayList<SecurityQuestions> securityQuestions) {
         this.securityQuestions = securityQuestions;
+    }
+
+    public String getInviterMobile() {
+        return inviterMobile;
+    }
+
+    public void setInviterMobile(String inviterMobile) {
+        this.inviterMobile = inviterMobile;
     }
 }
