@@ -1629,7 +1629,7 @@ public class ConversationView {
         mSendButton.setEnabled(enabled);
         if (enabled) {
             // This can steal focus from the fragment that's i n front of the user
-            //mComposeMessage.requestFocus();
+            mComposeMessage.requestFocus();
         } else {
             mHistory.setAdapter(null);
         }
