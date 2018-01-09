@@ -1,9 +1,11 @@
-package net.wrappy.im;
+package net.wrappy.im.ui.promotion;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import net.wrappy.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,6 +33,20 @@ public class PromotionActivity extends Activity {
 
     @OnClick(R.id.btnPromotionClose)
     public void onClick(View view) {
-        onBackPressed();
+        finish();
+    }
+
+    @OnClick(R.id.lnInviteFriend)
+    public void inviteFriendToGetPromotion() {
+        shareText();
+    }
+
+    public void shareText() {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        String shareBodyText = "Your sharing message goes here";
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject/Title");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+        startActivity(Intent.createChooser(intent, "Choose sharing method"));
     }
 }

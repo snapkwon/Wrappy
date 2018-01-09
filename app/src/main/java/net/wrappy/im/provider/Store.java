@@ -21,7 +21,7 @@ public class Store {
 
     public static String getStringData(Context context, String key) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(key,"");
+        return preferences.getString(key, "");
     }
 
     public static void putIntData(Context context, String key, int data) {
@@ -33,7 +33,12 @@ public class Store {
 
     public static int getIntData(Context context, String key) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt(key,0);
+        return preferences.getInt(key, 0);
+    }
+
+    public static void clear(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().clear().apply();
     }
 
 }

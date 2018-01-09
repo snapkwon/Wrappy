@@ -1,17 +1,14 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -231,17 +228,9 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
-
-        //need to delete
-        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
-
-        PackageManager packageManager = getActivity().getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
-        ComponentName componentName = intent.getComponent();
-        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
-        getActivity().startActivity(mainIntent);
-        System.exit(0);
+    private void logout() {
+        ImApp.sImApp.logout();
+        getActivity().finishAffinity();
     }
 
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
@@ -355,7 +344,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     if (index == 1) {
-                        confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
+                        logout();
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
                         AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
