@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000">
@@ -9,17 +8,20 @@
         android:id="@+id/btnPromotionClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_close_white_24dp"
+        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
         android:padding="16dp"
-        android:layout_alignParentRight="true"/>
+        android:src="@drawable/ic_close_white_24dp" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:adjustViewBounds="true"
-        android:src="@drawable/img_coin"
-        android:layout_alignParentBottom="true"/>
+        android:src="@drawable/img_coin" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,51 +31,54 @@
         <net.wrappy.im.helper.layout.AppTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textColor="#fff"
             android:gravity="center"
             android:text="@string/invite_friend_earn"
             android:textAllCaps="true"
-            />
+            android:textColor="#fff"
+            android:textSize="24sp" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_pts"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
+            android:src="@drawable/ic_pts" />
 
         <net.wrappy.im.helper.layout.AppTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:text="@string/promotion_description"
             android:textColor="#fff"
-            android:textSize="18sp"
-            android:text="@string/promotion_description"/>
+            android:textSize="18sp" />
 
         <LinearLayout
+            android:id="@+id/lnInviteFriend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
             android:background="@color/zom_primary"
-            android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:layout_marginTop="20dp">
+            android:paddingTop="10dp">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_invite_big"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_invite_big" />
+
             <net.wrappy.im.helper.layout.AppTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
                 android:text="@string/promotion_invite_friends"
                 android:textColor="#fff"
-                android:padding="5dp"
-                android:textSize="20sp"
-                android:layout_gravity="center_vertical"/>
+                android:textSize="20sp" />
         </LinearLayout>
 
     </LinearLayout>

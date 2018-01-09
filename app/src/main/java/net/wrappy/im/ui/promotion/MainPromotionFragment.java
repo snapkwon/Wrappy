@@ -1,4 +1,4 @@
-package net.wrappy.im.ui;
+package net.wrappy.im.ui.promotion;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,12 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
-
-import net.wrappy.im.PromotionActivity;
 import net.wrappy.im.R;
-import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Promotions;
 import net.wrappy.im.ui.adapters.PromotionAdapter;
@@ -60,17 +55,6 @@ public class MainPromotionFragment extends Fragment {
     @OnClick(R.id.btnPromotionInvite)
     public void onClick(View v) {
         PromotionActivity.start(getActivity(),null);
-    }
-
-    private void getHistoryPromotion() {
-        RestAPI.apiGET(getActivity(),RestAPI.GET_PROMOTION_HISTORY).setCallback(new FutureCallback<Response<String>>() {
-            @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-
-                }
-            }
-        });
     }
 
 }

@@ -1,14 +1,11 @@
 package net.wrappy.im.ui;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.IntentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,31 +52,9 @@ public class MainMenuFragment extends Fragment {
         return mainView;
     }
 
-    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
-
-        //need to delete
-        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
-
-        // ((ImApp) getActivity().getApplication()).resetDB();
-
-        PackageManager packageManager = getActivity().getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
-        ComponentName componentName = intent.getComponent();
-        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
-        getActivity().startActivity(mainIntent);
-        System.exit(0);
-
-       /* Intent i =  getActivity().getBaseContext().getPackageManager().getLaunchIntentForPackage(  getActivity().getBaseContext().getPackageName() );
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);*/
-
-
-        // Intent intent = new Intent(AccountSettingsActivity.this, IntroActivity.class);
-        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //startActivity(intent);
-
-        //  finish();
+    private void logout() {
+        ImApp.sImApp.logout();
+        getActivity().finishAffinity();
     }
 
     @OnClick({R.id.lnMainMenuNewGroup, R.id.lnMainMenuContact, R.id.lnMainMenuNewList, R.id.lnMainMenuSettings, R.id.lnMainMenuAboutUs, R.id.lnMainMenuFAQ, R.id.lnMainMenuLogout})
@@ -119,7 +94,7 @@ public class MainMenuFragment extends Fragment {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
-                            confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
+                            logout();
                             AppFuncs.alert(getActivity(), getString(R.string.logout_device), true);
                         } else if (index == 2) {
                             AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
