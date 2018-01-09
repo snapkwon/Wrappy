@@ -191,7 +191,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getDataMember() {
-        RestAPI.apiGET(getActivity(), RestAPI.getMemberByIdUrl(jid)).setCallback(new FutureCallback<Response<String>>() {
+        String url = RestAPI.getMemberByIdUrl(jid);
+        RestAPI.apiGET(getActivity(), url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
