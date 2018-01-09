@@ -108,7 +108,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                     if (needToStartChat) {
                         mRequestedChatId = session.getId();
                         publishProgress(mRequestedChatId);
-                    } else {
+                    } else if (isStable()) {
                         updateInfoInGroup();
                     }
 
