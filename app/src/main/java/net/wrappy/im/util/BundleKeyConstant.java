@@ -18,6 +18,8 @@ public class BundleKeyConstant {
     public final static String EXTRA_SHOW_GROUPS = "show_groups";
     public final static String EXTRA_RESULT_USERNAMES = "results";
     public final static String EXTRA_RESULT_GROUP_NAME = "groupname";
+    public final static String EXTRA_GROUP_ID = "groupid";
+    public final static String EXTRA_LIST_MEMBER = "listmember";
 
     public static String NICK_NAME_KEY = "nickname";
     public static String KEY_MESSAGE = "message";
@@ -33,4 +35,5 @@ public class BundleKeyConstant {
     //Chat keys
     public static String MESSAGE_URI_KEY = "message_uri";
     public static String CHAT_URI_KEY = "chat_uri";
+
 }

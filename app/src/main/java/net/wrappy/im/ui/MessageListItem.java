@@ -260,14 +260,12 @@ public class MessageListItem extends FrameLayout {
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
                 cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
+                deleteAndLeaveGroup();
+            } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+                bindRemoveMemberGroup(lastMessage);
+                cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-
-                if (lastMessage.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
-                    String groupName = lastMessage.split(":")[2];
-                    Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
-                    ((ConversationDetailActivity) context).finish();
-                }
-
                 String[] cmds = lastMessage.split(":");
 
                 String mimeTypeSticker = "image/png";
@@ -338,6 +336,19 @@ public class MessageListItem extends FrameLayout {
         if (linkify)
             LinkifyHelper.addLinks(mHolder.mTextViewForMessages, new URLSpanConverter());
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
+    }
+
+    private void deleteAndLeaveGroup() {
+        String groupName = lastMessage.split(":")[2];
+        Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
+        ((ConversationDetailActivity) context).finish();
+    }
+
+    private void bindRemoveMemberGroup(String lastMessage) {
+        if (mHolder != null) {
+            String member = lastMessage.split(":")[2];
+            mHolder.mTextViewForMessages.setText(new SpannableString(member + " is removed by admin"));
+        }
     }
 
     private void bindBackground(String lastMessage) {
@@ -737,6 +748,9 @@ public class MessageListItem extends FrameLayout {
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                 bindLocation(lastMessage);
+                cmdSuccess = true;
+            } else if (lastMessage.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+                bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
                 String[] cmds = lastMessage.split(":");

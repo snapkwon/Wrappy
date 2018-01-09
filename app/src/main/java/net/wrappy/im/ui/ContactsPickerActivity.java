@@ -46,6 +46,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
@@ -55,14 +56,22 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.AddContactAsyncTask;
+import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Constant;
+
+import org.bouncycastle.asn1.cms.PasswordRecipientInfo;
+import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,10 +107,13 @@ public class ContactsPickerActivity extends BaseActivity {
     private MenuItem mMenuStartGroupChat, mMenuContactsList, mMenuContactsAdd;
     private boolean isClickedMenu;
     ProgressDialog dialog;
-
     // The loader's unique id. Loader ids are specific to the Activity or
     // Fragment in which they reside.
     public static final int LOADER_ID = 1;
+
+    int type ;
+    WpKChatGroupDto groupDto;
+    ArrayList<String> groupmember;
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
@@ -111,6 +123,7 @@ public class ContactsPickerActivity extends BaseActivity {
     public LongSparseArray<SelectedContact> getSelection() {
         return mSelection;
     }
+
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -122,8 +135,16 @@ public class ContactsPickerActivity extends BaseActivity {
 
         setContentView(R.layout.contacts_picker_activity);
 
-        if (getIntent().getData() != null)
+        if (getIntent().getData() != null) {
             mUri = getIntent().getData();
+        }
+        groupmember = new ArrayList<>();
+
+        type = getIntent().getIntExtra("type",-1);
+        if(type == SettingConversationActivity.PICKER_ADD_MEMBER) {
+            groupDto = getIntent().getParcelableExtra(BundleKeyConstant.EXTRA_GROUP_ID);
+            groupmember = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_LIST_MEMBER);
+        }
 
         mLayoutContactSelect = findViewById(R.id.layoutContactSelect);
         mLayoutGroupSelect = findViewById(R.id.layoutGroupSelect);
@@ -446,6 +467,7 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isClickedMenu) {
@@ -457,7 +479,42 @@ public class ContactsPickerActivity extends BaseActivity {
                     if (getFragmentManager().getBackStackEntryCount() > 0)
                         multiFinish();
                     else
-                        getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                    {
+                        if(type == 1) {
+                            ArrayList<String> users = new ArrayList();
+                            for (int i = 0; i < mSelection.size(); i++) {
+                                SelectedContact contact = mSelection.valueAt(i);
+                                users.add(contact.nickname);
+                            }
+                            Gson gson = new Gson();
+                            String jsonObject = gson.toJson(users);
+                            JsonParser parser = new JsonParser();
+                            JsonArray json = (JsonArray) parser.parse(jsonObject);
+
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPI.RestAPIListenner() {
+                                @Override
+                                public void OnComplete(int httpCode, String error, String s) {
+                                    if (RestAPI.checkHttpCode(httpCode)) {
+                                        ArrayList<String> users = new ArrayList<>();
+                                        for (int i = 0; i < mSelection.size(); i++) {
+                                            SelectedContact contact = mSelection.valueAt(i);
+                                            users.add(contact.username);
+                                        }
+                                        Intent data = new Intent();
+                                        data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
+                                        data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+
+                                        setResult(RESULT_OK, data);
+                                        finish();
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                        }
+                    }
+                      //  getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                     return true;
                 case R.id.action_contacts_list:
                     ContactsPickerRosterActivity.start(this);
@@ -583,7 +640,7 @@ public class ContactsPickerActivity extends BaseActivity {
             SelectedContact contact = new SelectedContact(id,
                     userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
-                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
+                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER),cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
             mSelection.put(id, contact);
             createTagView(index, contact);
             mAdapter.notifyDataSetChanged();
@@ -613,11 +670,18 @@ public class ContactsPickerActivity extends BaseActivity {
     public class ContactAdapter extends ResourceCursorAdapter {
 
         private Context mContext;
+        private ArrayList<String> groupmember;
 
         public ContactAdapter(Context context, int view) {
             super(context, view, null, 0);
             mContext = context;
         }
+
+        public void updateGroupmember(ArrayList<String> groupmember)
+        {
+            this.groupmember = groupmember;
+        }
+
 
         @Override
         public boolean hasStableIds() {
@@ -694,6 +758,29 @@ public class ContactsPickerActivity extends BaseActivity {
             buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append("==").append(Imps.Contacts.SUBSCRIPTION_TYPE_TO);
             buf.append(')');
 
+            if(groupmember!=null && groupmember.size()>0)
+            {
+                buf.append(" AND ");
+                buf.append('(');
+
+                   // buf.append(" OR ")
+                buf.append(Imps.Contacts.NICKNAME);
+                buf.append(" NOT IN (");
+                for(int i=0 ; i < groupmember.size() ; i++)
+                {
+                    DatabaseUtils.appendValueToSql(buf,  groupmember.get(i) );
+
+                    if(i != groupmember.size()-1) {
+                        buf.append(" , ");
+                    }
+                    else
+                    {
+                        buf.append(')');
+                    }
+                }
+                buf.append(')');
+            }
+
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
                     buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
             //    loader.setUpdateThrottle(50L);
@@ -702,9 +789,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-            mAdapter.swapCursor(newCursor);
-
-
+                mAdapter.swapCursor(newCursor);
         }
 
         @Override

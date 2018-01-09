@@ -98,6 +98,7 @@ import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
 import net.wrappy.im.ImApp;
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.TranslateAPI.InAppTranslation;
@@ -3504,6 +3505,7 @@ public class ConversationView {
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
+        intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }
 }
