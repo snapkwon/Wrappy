@@ -51,6 +51,8 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
+import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
@@ -211,7 +213,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             mGroupRecycleView.setNestedScrollingEnabled(false);
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
@@ -576,13 +578,12 @@ public class SettingConversationActivity extends BaseActivity {
 
             if (session != null) {
 
-                int groupId = wpKChatGroup.getId();
+                String groupName = wpKChatGroup.getName();
 
                 StringBuffer deleteCode = new StringBuffer();
+                deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
                 deleteCode.append(":");
-                deleteCode.append("delete_group");
-                deleteCode.append(":");
-                deleteCode.append(groupId);
+                deleteCode.append(groupName);
                 session.sendMessage(deleteCode.toString(), false);
 
                 session.delete();

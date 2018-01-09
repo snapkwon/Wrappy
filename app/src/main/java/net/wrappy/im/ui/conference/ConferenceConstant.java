@@ -21,4 +21,7 @@ public class ConferenceConstant {
     public static final String SEND_STICKER_BUNNY = ":bunny";
     public static final String SEND_STICKER_EMOJI = ":emoji";
     public static final String SEND_STICKER_ARTBOARD = ":sticker";
+
+    public static final String DELETE_GROUP_BY_ADMIN = ":delete-group";
+    public static final String REMOVE_MEMBER_GROUP_BY_ADMIN = ":remove-member:"; // member nickname
 }

@@ -266,7 +266,7 @@ public class ConversationListItem extends FrameLayout {
                             } else {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
-                        } else if (message.startsWith(":delete_group")) {
+                        } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
 
                             IChatSession session = manager.getChatSession(address);
 
@@ -276,7 +276,29 @@ public class ConversationListItem extends FrameLayout {
                             if (session != null) {
                                 session.delete();
                             }
-                            
+
+                        } else if (message.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+
+                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
+                            String member = message.split(":")[2];
+
+                            Debug.e("account: " + account + ", member: " + member);
+
+                            if (member.startsWith(account)) {
+
+                                Debug.e("account: " + account + ", member: " + member);
+
+                                IChatSession session = manager.getChatSession(address);
+
+                                if (session == null)
+                                    session = manager.createChatSession(address, true);
+
+                                if (session != null) {
+                                    session.leave();
+                                }
+                            } else {
+                                holder.mLine2.setText(member + " is removed by admin");
+                            }
                         } else {
                             holder.mLine2.setText(resultMessage);
                             holder.mLine2.setLines(1);
