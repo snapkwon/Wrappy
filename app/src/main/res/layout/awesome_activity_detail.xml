@@ -336,6 +336,39 @@
                             android:background="@android:color/transparent"
                             android:scaleType="centerInside"
                             android:src="@drawable/ic_add_circle_outline_black_36dp" />
+                        <ImageButton
+                        android:id="@+id/btnCaption"
+                        android:layout_width="28dip"
+                        android:layout_height="28dip"
+                        android:layout_margin="6dp"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_add_circle_outline_black_36dp" />
+                        <ImageButton
+                            android:id="@+id/btnImage"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_add_circle_outline_black_36dp" />
+                        <ImageButton
+                            android:id="@+id/btnLocation"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_add_circle_outline_black_36dp" />
+                        <ImageButton
+                            android:id="@+id/btnVoice"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_add_circle_outline_black_36dp" />
+
 
                         <net.ironrabbit.type.CustomTypefaceEditText
                             android:id="@+id/composeMessage"

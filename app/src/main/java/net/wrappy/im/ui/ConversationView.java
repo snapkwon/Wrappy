@@ -227,6 +227,10 @@ public class ConversationView {
     private ImageButton mSendButton, mMicButton;
     private TextView mButtonTalk;
     private ImageButton mButtonAttach;
+    private ImageButton mButtonCaption;
+    private ImageButton mButtonImage;
+    private ImageButton mButtonLocation;
+    private ImageButton mButtonView;
     private View mViewAttach;
 
     private ImageView mButtonDeleteVoice;
