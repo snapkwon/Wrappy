@@ -228,7 +228,7 @@ public class ContactListManagerAdapter extends
         }
         // update locally
         String selection = Imps.Contacts.USERNAME + "=?";
-        String[] selectionArgs = { address };
+        String[] selectionArgs = {address};
         ContentValues values = new ContentValues(1);
         values.put(Imps.Contacts.NICKNAME, name);
         if (!TextUtils.isEmpty(email)) {
@@ -1171,13 +1171,15 @@ public class ContactListManagerAdapter extends
                 selection, selectionArgs, null); // no sort order
         long listId = 0;
         Uri uri = null;
-        try {
-            if (cursor.moveToFirst()) {
-                listId = cursor.getLong(0);
-                uri = ContentUris.withAppendedId(Imps.ContactList.CONTENT_URI, listId);
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    listId = cursor.getLong(0);
+                    uri = ContentUris.withAppendedId(Imps.ContactList.CONTENT_URI, listId);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
         if (uri == null) {
             ContentValues contactListValues = new ContentValues(3);
@@ -1186,6 +1188,7 @@ public class ContactListManagerAdapter extends
             contactListValues.put(Imps.ContactList.ACCOUNT, mConn.getAccountId());
 
             uri = mResolver.insert(Imps.ContactList.CONTENT_URI, contactListValues);
+            if (uri == null) return;
             listId = ContentUris.parseId(uri);
         }
 
@@ -1197,19 +1200,20 @@ public class ContactListManagerAdapter extends
                 Imps.Contacts.CONTACTLIST + "=?", new String[]{"" + listId}, null);
         Set<String> existingUsernames = new HashSet<String>();
 
-
-        while (contactCursor.moveToNext()) {
-            String address = contactCursor.getString(0);
-            existingUsernames.add(address);
-            Contact contact = list.getContact(address);
-            if (contact != null) {
-                contact.setName(contactCursor.getString(1));
-                contact.setType(contactCursor.getInt(2));
+        if (contactCursor != null) {
+            while (contactCursor.moveToNext()) {
+                String address = contactCursor.getString(0);
+                existingUsernames.add(address);
+                Contact contact = list.getContact(address);
+                if (contact != null) {
+                    contact.setName(contactCursor.getString(1));
+                    contact.setType(contactCursor.getInt(2));
+                }
             }
+
+            contactCursor.close();
+
         }
-
-        contactCursor.close();
-
         Collection<Contact> contacts = list.getContacts();
         if (contacts == null || contacts.size() == 0) {
             return;

@@ -302,7 +302,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
          mDbHelperLock.notify();
          }
          }*/
-
         if (tempKey != null) {
             try {
                 initDBHelper(tempKey, false);
@@ -316,7 +315,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordOpened() {
-
 
         try {
             tempKey = mCacheword.getEncryptionKey();
@@ -400,6 +398,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         public void onCreate(SQLiteDatabase db) {
 
             log("DatabaseHelper.onCreate");
+
+            db.rawExecSQL("PRAGMA cipher_migrate;");
 
             db.execSQL("CREATE TABLE " + TABLE_PROVIDERS + " (" + "_id INTEGER PRIMARY KEY,"
                     + "name TEXT," + // eg AIM
@@ -1328,7 +1328,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public boolean onCreate() {
-
         mCacheword = new CacheWordHandler(getContext(), this);
         mCacheword.connectToService();
 
@@ -1338,8 +1337,9 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     @Override
     public void shutdown() {
         super.shutdown();
-
-        mCacheword.detach();
+        if (mCacheword != null) {
+            mCacheword.detach();
+        }
     }
 
     private void setDatabaseName(boolean isEncrypted) {
@@ -1384,11 +1384,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private DatabaseHelper getDBHelper() {
 
         return mDbHelper;
-    }
-
-    public  static void resetDB()
-    {
-        mDbHelper=null;
     }
 
     @Override
