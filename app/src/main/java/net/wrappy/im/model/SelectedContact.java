@@ -10,14 +10,16 @@ import android.os.Parcelable;
 public class SelectedContact implements Parcelable {
     public long id;
     public String username;
+    public String nickname;
     public Integer account;
     public Integer provider;
 
-    public SelectedContact(long id, String username, int account, int provider) {
+    public SelectedContact(long id, String username, int account, int provider,String nickname) {
         this.id = id;
         this.username = username;
         this.account = account;
         this.provider = provider;
+        this.nickname = nickname;
     }
 
     protected SelectedContact(Parcel in) {
@@ -53,6 +55,14 @@ public class SelectedContact implements Parcelable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getNickName() {
+        return nickname;
+    }
+
+    public void setNickname(long id) {
+        this.nickname = nickname;
     }
 
     public String getUsername() {

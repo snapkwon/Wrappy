@@ -31,8 +31,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -58,6 +61,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +74,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.gson.Gson;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
@@ -79,6 +84,8 @@ import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKChatGroupDto;
+import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -110,11 +117,16 @@ import butterknife.OnClick;
 import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
 
+import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
+
 //import com.bumptech.glide.Glide;
 
 public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage {
 
     private AddContactAsyncTask task;
+
+    private  WpKChatGroupDto chatGroupDto ;
+    private static String address = "";
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -123,6 +135,22 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
         return intent;
     }
+
+    public static Intent getStartIntent(Context context, long chatId, String nickname, String reference, String maddress) {
+        Intent intent = getStartIntent(context, chatId);
+        intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
+        intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
+        intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
+        address = maddress;
+        return intent;
+    }
+
+    public  WpKChatGroupDto getGroupDto()
+    {
+        return chatGroupDto;
+    }
+
+
 
     public static Intent getStartIntent(Context context, long chatId) {
         Intent intent = getStartIntent(context);
@@ -153,7 +181,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private ImApp mApp;
 
     //private AppBarLayout appBarLayout;
-    private View mRootLayout;
     private Toolbar mToolbar;
 
     FrameLayout popupWindow;
@@ -221,7 +248,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setContentView(R.layout.awesome_activity_detail);
         super.onCreate(savedInstanceState);
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+       // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         mApp = (ImApp) getApplication();
 
@@ -230,7 +257,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mHandler.setOnHandleMessage(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        mRootLayout = findViewById(R.id.main_content);
+
 
         popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
 
@@ -254,9 +281,22 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         collapseToolbar();
 
-        getWindow().setSoftInputMode(
+       /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );
+        );*/
+
+        if(!address.isEmpty()) {
+            String[] separated = address.split("@");
+
+            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPI.RestAPIListenner() {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
+                    }
+                }
+            });
+        }
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -283,6 +323,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     public void updateLastSeen(Date lastSeen) {
         mHandler.sendEmptyMessage(1);
     }
+
+
 
     public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
@@ -349,8 +391,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
 
         if (themeColorBg != -1) {
-            if (mRootLayout != null)
-                mRootLayout.setBackgroundColor(themeColorBg);
+                getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
 
             View viewInput = findViewById(R.id.inputLayout);
             viewInput.setBackgroundColor(themeColorBg);
@@ -886,7 +927,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     .into(new SimpleTarget<GlideDrawable>() {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            mRootLayout.setBackground(resource.getCurrent());
+                        //  mRootLayout.setBackground(resource.getCurrent());
+                            getWindow().setBackgroundDrawable(resource.getCurrent());
                         }
                     });
         }

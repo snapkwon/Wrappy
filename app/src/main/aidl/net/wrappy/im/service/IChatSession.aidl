@@ -76,7 +76,7 @@ interface IChatSession {
     void leave();
 
     /**
-    * Leaves this ChatSession.
+    * Delete this ChatSession.
     */
     void delete();
 

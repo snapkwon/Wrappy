@@ -773,6 +773,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             //email
             buf.append("email TEXT");
 
+
             buf.append(");");
 
             db.execSQL(buf.toString());

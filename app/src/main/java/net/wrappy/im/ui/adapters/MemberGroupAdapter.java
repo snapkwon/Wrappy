@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,6 +24,9 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.ui.conference.ConferenceConstant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
@@ -42,17 +46,23 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private String mAdminGroup;
     private long mLastChatId;
     private WpKChatGroupDto mWpKChatGroupDto;
+    private IChatSession session;
 
     public void setmWpKChatGroupDto(WpKChatGroupDto mWpKChatGroupDto) {
         this.mWpKChatGroupDto = mWpKChatGroupDto;
     }
 
-    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId) {
+    public void setSession(IChatSession session) {
+        this.session = session;
+    }
+
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId, IChatSession session) {
         this.mContext = mContext;
         this.mMembers = mMembers;
         this.currentUser = currentUser;
         this.mAdminGroup = mAdminGroup;
         this.mLastChatId = mLastChatId;
+        this.session = session;
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -171,5 +181,14 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
         ContentResolver cr = mContext.getContentResolver();
         cr.delete(memberUri, buf.toString(), null);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN);
+        sb.append(member.getNickname());
+        try {
+            session.sendMessage(sb.toString(), false);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

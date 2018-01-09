@@ -412,7 +412,7 @@ public class ConversationListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Context context = v.getContext();
-                        context.startActivity(ConversationDetailActivity.getStartIntent(v.getContext(), chatId, nickname, reference));
+                        context.startActivity(ConversationDetailActivity.getStartIntent(v.getContext(), chatId, nickname, reference , address));
                     }
                 });
 

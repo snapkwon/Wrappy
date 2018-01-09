@@ -603,4 +603,5 @@
     <string name="verify_send_sms_fail">Send sms fail</string>
     <string name="verify_send_sms_success">Send sms success</string>
     <string name="verify_fail">Verify fail</string>
+    <string name="from">from</string>
 </resources>

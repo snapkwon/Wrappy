@@ -65,7 +65,6 @@ public class ContactListItem extends FrameLayout {
             Imps.Contacts.AVATAR_HASH,
             Imps.Contacts.AVATAR_DATA,
             Imps.Contacts.CONTACT_EMAIL
-
     };
 
 
@@ -90,6 +89,7 @@ public class ContactListItem extends FrameLayout {
     private String address;
     private String email;
     private String nickname;
+
 
     private ContactViewHolder mHolder;
 
