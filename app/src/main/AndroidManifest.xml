@@ -464,7 +464,7 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
         </activity>
 

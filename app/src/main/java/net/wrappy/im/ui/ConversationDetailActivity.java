@@ -31,8 +31,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -58,6 +61,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -177,7 +181,6 @@ public class ConversationDetailActivity extends BaseActivity {
     private ImApp mApp;
 
     //private AppBarLayout appBarLayout;
-    private View mRootLayout;
     private Toolbar mToolbar;
 
     FrameLayout popupWindow;
@@ -234,7 +237,7 @@ public class ConversationDetailActivity extends BaseActivity {
         setContentView(R.layout.awesome_activity_detail);
         super.onCreate(savedInstanceState);
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+       // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         mApp = (ImApp) getApplication();
 
@@ -242,7 +245,7 @@ public class ConversationDetailActivity extends BaseActivity {
         mHandler = new MyHandler(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        mRootLayout = findViewById(R.id.main_content);
+
 
         popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
 
@@ -266,9 +269,9 @@ public class ConversationDetailActivity extends BaseActivity {
 
         collapseToolbar();
 
-        getWindow().setSoftInputMode(
+       /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );
+        );*/
 
         if(!address.isEmpty()) {
             String[] separated = address.split("@");
@@ -376,8 +379,7 @@ public class ConversationDetailActivity extends BaseActivity {
         }
 
         if (themeColorBg != -1) {
-            if (mRootLayout != null)
-                mRootLayout.setBackgroundColor(themeColorBg);
+                getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
 
             View viewInput = findViewById(R.id.inputLayout);
             viewInput.setBackgroundColor(themeColorBg);
@@ -913,7 +915,8 @@ public class ConversationDetailActivity extends BaseActivity {
                     .into(new SimpleTarget<GlideDrawable>() {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            mRootLayout.setBackground(resource.getCurrent());
+                        //  mRootLayout.setBackground(resource.getCurrent());
+                            getWindow().setBackgroundDrawable(resource.getCurrent());
                         }
                     });
         }

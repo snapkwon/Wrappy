@@ -3503,6 +3503,6 @@ public class ConversationView {
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
         intent.putExtra("groupid", mActivity.getGroupDto());
-        mActivity.startActivity(intent);
+        mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }
 }
