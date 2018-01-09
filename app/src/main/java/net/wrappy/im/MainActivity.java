@@ -88,9 +88,9 @@ import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MainMenuFragment;
-import net.wrappy.im.ui.MainPromotionFragment;
 import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
+import net.wrappy.im.ui.promotion.MainPromotionFragment;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
@@ -371,14 +371,6 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         startActivityForResult(i, MainActivity.REQUEST_ADD_CONTACT);
     }
 
-    public int getDefaultAcountid() {
-        return (int) mApp.getDefaultAccountId();
-    }
-
-    public int getDefaultProviderid() {
-        return (int) mApp.getDefaultProviderId();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -407,6 +399,21 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 
         handleIntent();
         checkConnection();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mLoadDataHandler != null) {
+            mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
+            mLoadDataHandler = null;
+            syncGroupChatRunnable = null;
+        }
+        if (mLoadContactHandler != null) {
+            mLoadContactHandler.removeCallbacks(syncContactRunnable);
+            mLoadContactHandler = null;
+            syncContactRunnable = null;
+        }
+        super.onDestroy();
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -1073,21 +1080,24 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     }
 
     private <T> void syncData(Handler handler, T[] data, SyncDataListener<T> syncDataListener, int type) {
-        IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-        SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
-        try {
-            if (handler != null) {
-                handler.removeCallbacks(runable);
-                if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
-                    if (syncDataListener != null) {
-                        syncDataListener.processing(data);
 
+        try {
+            if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
+                if (handler != null) {
+                    handler.removeCallbacks(runable);
+                    if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                        if (syncDataListener != null) {
+                            syncDataListener.processing(data);
+
+                        }
+                    } else {
+                        if (runable == null) {
+                            runable = initRunnable(data, syncDataListener, type);
+                        }
+                        handler.postDelayed(runable, 2000);
                     }
-                } else {
-                    if (runable == null) {
-                        runable = initRunnable(data, syncDataListener, type);
-                    }
-                    handler.postDelayed(runable, 2000);
                 }
             }
         } catch (RemoteException e) {

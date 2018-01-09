@@ -54,9 +54,9 @@ import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
-import net.wrappy.im.util.BundleKeyConstant;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,6 +91,10 @@ public class SettingConversationActivity extends BaseActivity {
     View mViewDivider;
     @BindView(R.id.text_admin_delete_setting)
     TextView mTxtDelete;
+    @BindView(R.id.lnAvatarOfGroup)
+    LinearLayout lnAvatarOfGroup;
+    @BindView(R.id.imgGroupPhoto)
+    CircleImageView imgGroupPhoto;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -158,9 +162,19 @@ public class SettingConversationActivity extends BaseActivity {
                 if (mGroupOwner != null) {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
                     mAdminGroup = mGroupOwner.getName();
+                    if (!mIsOwner) {
+                        btnEditGroupName.setVisibility(View.GONE);
+                        imgGroupPhoto.setVisibility(View.GONE);
+                        btnGroupPhoto.setEnabled(false);
+                    }
+                } else {
+                    btnEditGroupName.setVisibility(View.GONE);
+                    imgGroupPhoto.setVisibility(View.GONE);
+                    btnGroupPhoto.setEnabled(false);
                 }
             }
         } catch (RemoteException e) {
+            AppFuncs.log(e.getLocalizedMessage());
         }
 
         switch_notification.setChecked(!isMuted());
@@ -202,9 +216,7 @@ public class SettingConversationActivity extends BaseActivity {
                 mAddMemberLayout.setVisibility(View.VISIBLE);
                 mViewDivider.setVisibility(View.VISIBLE);
                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
-
                 mMemberLeaveGroup.setVisibility(View.GONE);
-
             }
 
             memberGroupDisplays = new ArrayList<>();
@@ -217,6 +229,8 @@ public class SettingConversationActivity extends BaseActivity {
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
+        } else {
+            lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
 
@@ -246,7 +260,7 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(c.getString(colNickname));
+                        member.setNickname(ImApp.getNickname(new XmppAddress(c.getString(colUsername)).getBareAddress()));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));

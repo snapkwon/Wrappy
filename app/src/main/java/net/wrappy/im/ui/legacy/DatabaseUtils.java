@@ -221,7 +221,7 @@ public class DatabaseUtils {
         String selection = Imps.Avatars.CONTACT + "='" + contact + "'";
         Cursor cursor = resolver.query(updateUri, new String[]{Imps.Avatars._ID},
                 selection, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             if (cursor.moveToFirst()) {
                 long avatarId = cursor.getLong(0);
                 Uri uri = ContentUris.withAppendedId(updateUri, avatarId);

@@ -1098,7 +1098,7 @@ public class ConversationView {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
-                            sendMessage();
+                            sendMessageAsync();
                             return true;
 
                         case KeyEvent.KEYCODE_ENTER:
@@ -1127,7 +1127,7 @@ public class ConversationView {
                 if (imm != null && imm.isActive(v)) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
-                sendMessage();
+                sendMessageAsync();
                 return true;
             }
         });
@@ -1150,22 +1150,7 @@ public class ConversationView {
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                if (mComposeMessage.getVisibility() == View.VISIBLE) {
-                    checkBeforeSubmit();
-                } else {
-                    mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-
-                    if (mLastSessionStatus == SessionStatus.ENCRYPTED)
-                        mSendButton.setImageResource(R.drawable.ic_send_secure);
-
-                    mSendButton.setVisibility(View.GONE);
-                    mButtonTalk.setVisibility(View.GONE);
-                    mComposeMessage.setVisibility(View.VISIBLE);
-                    mMicButton.setVisibility(View.VISIBLE);
-
-
-                }
+                sendMessageAsync();
             }
         });
 
@@ -1180,6 +1165,24 @@ public class ConversationView {
         mHistory.setAdapter(mMessageAdapter);
     }
 
+    private void sendMessageAsync() {
+        if (mComposeMessage.getVisibility() == View.VISIBLE) {
+            checkBeforeSubmit();
+        } else {
+            mSendButton.setImageResource(R.drawable.ic_send_holo_light);
+
+            if (mLastSessionStatus == SessionStatus.ENCRYPTED)
+                mSendButton.setImageResource(R.drawable.ic_send_secure);
+
+            mSendButton.setVisibility(View.GONE);
+            mButtonTalk.setVisibility(View.GONE);
+            mComposeMessage.setVisibility(View.VISIBLE);
+            mMicButton.setVisibility(View.VISIBLE);
+
+
+        }
+    }
+
     private void checkBeforeSubmit() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("message", mComposeMessage.getText().toString());
@@ -1187,7 +1190,7 @@ public class ConversationView {
         RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                Debug.e(s);
+                AppFuncs.log(s);
                 try {
                     JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
 

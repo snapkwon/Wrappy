@@ -4633,7 +4633,9 @@ public class XmppConnection extends ImConnection {
         if (OMEMO_ENABLED) {
             try {
                 if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
-                    getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                    if (getOmemo().getFingerprints(bareJid, false).size() == 0) {
+                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
+                    }
                     getOmemo().getManager().buildSessionsWith(bareJid);
                 }
             } catch (Exception e) {

@@ -88,12 +88,14 @@ public class RestAPI {
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
     public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
+    public static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
     public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
     public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
     public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
     private static int GET_METHOD = 2;
@@ -102,6 +104,10 @@ public class RestAPI {
 
     public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
         return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
+    }
+
+    public static String getVerifyCodeUrlResend(String user, String phone) {
+        return String.format(POST_VERIFY_RESEND_CODE,user,phone);
     }
 
     public static String getGroupByXmppId(String xmppId) {

@@ -1,17 +1,14 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -106,7 +103,7 @@ public class ProfileFragment extends Fragment {
 
     ArrayAdapter adapterGender;
 
-    String email,gender;
+    String email, gender;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -164,7 +161,7 @@ public class ProfileFragment extends Fragment {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
-        final String[] arr = {"",""};
+        final String[] arr = {"", ""};
         final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
         adapterGender = new ArrayAdapter<String>(getActivity(), R.layout.update_profile_textview, arrDetail) {
             @NonNull
@@ -231,35 +228,29 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void confirmDeleteAccount(int mAccountId, int mProviderId) {
-
-        //need to delete
-        ImApp.deleteAccount(getActivity().getContentResolver(), mAccountId, mProviderId);
-
-        PackageManager packageManager = getActivity().getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(getActivity().getPackageName());
-        ComponentName componentName = intent.getComponent();
-        Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
-        getActivity().startActivity(mainIntent);
-        System.exit(0);
+    private void logout() {
+        ImApp.sImApp.logout();
+        getActivity().finishAffinity();
     }
 
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-            edEmail.clearFocus();
-            edGender.clearFocus();
-            edEmail.setEnabled(false);
+
             String email = edEmail.getText().toString().trim();
             String gender = edGender.getText().toString().trim().toUpperCase();
-            if (!AppFuncs.isEmailValid(email)) {
+            if (!TextUtils.isEmpty(email)) if (!AppFuncs.isEmailValid(email)) {
                 AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
+            edEmail.clearFocus();
+            edGender.clearFocus();
+            edEmail.setEnabled(false);
             wpKMemberDto.setEmail(email);
             wpKMemberDto.setGender(gender);
             updateData();
             btnProfileSubmit.setVisibility(View.GONE);
+            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
         } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
@@ -353,7 +344,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSelectBottomSheetCell(int index) {
                     if (index == 1) {
-                        confirmDeleteAccount(mainActivity.getDefaultAcountid(), mainActivity.getDefaultProviderid());
+                        logout();
                         //AppFuncs.alert(getActivity(), "Logout this device", true);
                     } else if (index == 2) {
                         AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
@@ -443,6 +434,7 @@ public class ProfileFragment extends Fragment {
         startActivity(intent);
         getActivity().finish();
     }
+
     public void onDataChange() {
         edEmail.setEnabled(true);
         edEmail.setFocusable(true);

@@ -108,7 +108,6 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
         public void bind(final MemberGroupDisplay member) {
             line1.setText(member.getNickname());
-            int padding = 24;
 
             GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
             String referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
@@ -140,11 +139,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     }
 
     private boolean isAdminGroup(MemberGroupDisplay member) {
-        if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
-                member.getAffiliation().contentEquals("admin"))) {
-            return true;
-        }
-        return false;
+        return member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
+                member.getAffiliation().contentEquals("admin"));
     }
 
     private void confirmRemoveMember(final int position, final MemberGroupDisplay member) {

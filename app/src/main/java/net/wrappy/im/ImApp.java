@@ -18,6 +18,7 @@
 package net.wrappy.im;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -48,7 +49,6 @@ import com.crashlytics.android.Crashlytics;
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
-import net.wrappy.im.GethService.db.WalletDatabaseManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Contact;
@@ -58,6 +58,7 @@ import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.Broadcaster;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -70,6 +71,7 @@ import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.tasks.MigrateAccountTask;
+import net.wrappy.im.ui.LauncherActivity;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
@@ -267,35 +269,54 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
         }
 
-        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
-        WalletDatabaseManager.initializeInstance(walletDBHelper);
+//        walletDBHelper = new WalletDBHelper(this.getApplicationContext());
+//        WalletDatabaseManager.initializeInstance(walletDBHelper);
 
 
         RestAPI.initIon(getApplicationContext());
 
     }
 
+    public void logout() {
+        resetDB();
+        Intent intent = new Intent(this, LauncherActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    private void logoutConnection() {
+        try {
+            IImConnection connection = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            connection.logout();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void resetDB() {
         if (mCacheWord != null) {
-
-            ImpsProvider.resetDB();
-            mCacheWord.deinitialize();
-            mCacheWord.connectToService();
-        /*    mDefaultProviderId = -1;
+            logoutConnection();
+            mDefaultProviderId = -1;
             mDefaultAccountId = -1;
             mDefaultUsername = null;
             mDefaultOtrFingerprint = null;
-            mDefaultNickname = null;*/
-            walletDBHelper = new WalletDBHelper(this.getApplicationContext());
-            WalletDatabaseManager.initializeInstance(walletDBHelper);
+            mDefaultNickname = null;
+            String tempPassphrase = settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null);
+            Store.clear(this);
             settings.edit().clear().apply();
-            forceStopImService();
+            serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
+            mApplicationContext.stopService(serviceIntent);
 
-            //     RemoteImService.
-            //  initDBHelper(mCacheWord.getEncryptionKey(), false);
+            settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
 
+            Imps.reset(getContentResolver());
+            // Clear all notification
+            NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nMgr != null) {
+                nMgr.cancelAll();
+            }
         }
-
     }
 
     public boolean isThemeDark() {
@@ -1294,7 +1315,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
             Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
                     selection, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
@@ -1344,5 +1365,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 LogCleaner.error(ImApp.LOG_TAG, "approve sub error", ex);
             }
         }
+    }
+
+    public CacheWordHandler getCacheWord() {
+        return mCacheWord;
     }
 }

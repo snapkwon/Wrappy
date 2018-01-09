@@ -3392,4 +3392,15 @@ public class Imps {
     }
 
 
+    public static void reset(ContentResolver resolver) {
+        resolver.delete(Account.CONTENT_URI, null, null);
+        resolver.delete(Contacts.CONTENT_URI, null, null);
+        resolver.delete(Messages.CONTENT_URI, null, null);
+        resolver.delete(Messages.OTR_MESSAGES_CONTENT_URI, null, null);
+        resolver.delete(GroupMembers.CONTENT_URI, null, null);
+        resolver.delete(Chats.CONTENT_URI, null, null);
+        resolver.delete(Provider.CONTENT_URI, null, null);
+        resolver.delete(Avatars.CONTENT_URI, null, null);
+        resolver.delete(ContactList.CONTENT_URI, null, null);
+    }
 }

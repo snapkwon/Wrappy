@@ -164,6 +164,7 @@ public class SecureMediaStore {
         // there is only one VFS, so if its already mounted, nothing to do
         VirtualFileSystem vfs = VirtualFileSystem.get();
 
+        boolean canCreateNewContainer = true;
         if (vfs.isMounted()) {
             Log.w(TAG, "VFS " + vfs.getContainerPath() + " is already mounted, so unmount()");
             try
@@ -172,6 +173,7 @@ public class SecureMediaStore {
             }
             catch (Exception e)
             {
+                canCreateNewContainer = false;
                 Log.w(TAG, "VFS " + vfs.getContainerPath() + " issues with unmounting: " + e.getMessage());
             }
         }
@@ -180,7 +182,7 @@ public class SecureMediaStore {
 
         dbFilePath = getInternalDbFilePath(context);
 
-        if (!new java.io.File(dbFilePath).exists()) {
+        if (!new java.io.File(dbFilePath).exists() && canCreateNewContainer) {
             vfs.createNewContainer(dbFilePath, key);
         }
 
