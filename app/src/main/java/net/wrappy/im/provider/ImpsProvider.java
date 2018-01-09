@@ -399,6 +399,8 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             log("DatabaseHelper.onCreate");
 
+            db.rawExecSQL("PRAGMA cipher_migrate;");
+
             db.execSQL("CREATE TABLE " + TABLE_PROVIDERS + " (" + "_id INTEGER PRIMARY KEY,"
                     + "name TEXT," + // eg AIM
                     "fullname TEXT," + // eg AOL Instance Messenger
@@ -1337,22 +1339,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         super.shutdown();
         if (mCacheword != null) {
             mCacheword.detach();
-            mCacheword.disconnectFromService();
-        }
-    }
-
-    public void reset() {
-        delete(Uri.parse("content://net.wrappy.im.provider.Imps"), null, null);
-        shutdown();
-        resetDB();
-        mLoadedLibs = false;
-        onCreate();
-        //set temporary passphrase
-        try {
-            tempKey = mCacheword.getEncryptionKey();
-            initDBHelper(tempKey, false);
-        } catch (Exception e) {
-            LogCleaner.error(ImApp.LOG_TAG, e.getMessage(), e);
         }
     }
 
@@ -1398,14 +1384,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     private DatabaseHelper getDBHelper() {
 
         return mDbHelper;
-    }
-
-    public static void resetDB()
-    {
-        if (mDbHelper != null) {
-            mDbHelper.close();
-            mDbHelper = null;
-        }
     }
 
     @Override

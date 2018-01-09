@@ -401,6 +401,21 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         checkConnection();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mLoadDataHandler != null) {
+            mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
+            mLoadDataHandler = null;
+            syncGroupChatRunnable = null;
+        }
+        if (mLoadContactHandler != null) {
+            mLoadContactHandler.removeCallbacks(syncContactRunnable);
+            mLoadContactHandler = null;
+            syncContactRunnable = null;
+        }
+        super.onDestroy();
+    }
+
     private void addWalletTab(Fragment fragment) {
         adapter.addFragment(fragment, "Wallet", R.drawable.ic_wallet);
         adapter.notifyDataSetChanged();

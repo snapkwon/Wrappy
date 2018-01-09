@@ -20,7 +20,6 @@ package net.wrappy.im;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ComponentName;
-import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -279,7 +278,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void logout() {
-        ImApp.deleteAccount(getContentResolver(), mDefaultAccountId, mDefaultProviderId);
         resetDB();
         Intent intent = new Intent(this, LauncherActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -289,14 +287,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     private void logoutConnection() {
         try {
-            getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId()).logout();
+            IImConnection connection = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            connection.logout();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void resetDB() {
-        ImApp.deleteAccount(getContentResolver(), mDefaultAccountId, mDefaultProviderId);
         if (mCacheWord != null) {
             logoutConnection();
             mDefaultProviderId = -1;
@@ -304,30 +302,20 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             mDefaultUsername = null;
             mDefaultOtrFingerprint = null;
             mDefaultNickname = null;
-            Store.clear(this);
             String tempPassphrase = settings.getString(ImApp.PREFERENCE_KEY_TEMP_PASS, null);
+            Store.clear(this);
             settings.edit().clear().apply();
             serviceIntent.putExtra(ImServiceConstants.EXTRA_CHECK_AUTO_LOGIN, true);
             mApplicationContext.stopService(serviceIntent);
 
             settings.edit().putString(ImApp.PREFERENCE_KEY_TEMP_PASS, tempPassphrase).apply();
 
-            ContentResolver resolver = getContentResolver();
-            ContentProviderClient client = resolver.acquireContentProviderClient("net.wrappy.im.provider.Imps");
-            ImpsProvider provider = (ImpsProvider) client.getLocalContentProvider();
-            provider.reset();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                client.close();
-            } else {
-                client.release();
-            }
+            Imps.reset(getContentResolver());
             // Clear all notification
             NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            nMgr.cancelAll();
-
-            //     RemoteImService.
-            //  initDBHelper(mCacheWord.getEncryptionKey(), false);
-
+            if (nMgr != null) {
+                nMgr.cancelAll();
+            }
         }
     }
 
@@ -1326,7 +1314,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
             Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
                     selection, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
