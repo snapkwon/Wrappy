@@ -236,7 +236,6 @@ public class ConversationListItem extends FrameLayout {
                     }
 
                 } else if ((!TextUtils.isEmpty(message)) && message.startsWith(":")) {
-                    Debug.e("message: " + message);
 //                    String[] cmds = message.split(":");
 
                     try {

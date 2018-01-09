@@ -249,7 +249,7 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(c.getString(colNickname));
+                        member.setNickname(ImApp.getNickname(new XmppAddress(c.getString(colUsername)).getBareAddress()));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));

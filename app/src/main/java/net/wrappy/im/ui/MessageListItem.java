@@ -270,8 +270,6 @@ public class MessageListItem extends FrameLayout {
 
                 String[] cmds = lastMessage.split(":");
 
-                Debug.e("cmds: " + Arrays.toString(cmds));
-
                 String mimeTypeSticker = "image/png";
                 try {
                     String[] stickerParts = cmds[1].split("-");
