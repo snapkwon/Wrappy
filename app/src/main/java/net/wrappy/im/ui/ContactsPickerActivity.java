@@ -56,22 +56,14 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.tasks.AddContactAsyncTask;
-import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
-import net.wrappy.im.util.Constant;
-
-import org.bouncycastle.asn1.cms.PasswordRecipientInfo;
-import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;

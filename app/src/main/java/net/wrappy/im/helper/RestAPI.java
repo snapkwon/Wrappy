@@ -139,7 +139,7 @@ public class RestAPI {
     }
 
     public static String getMemberByIdUrl(String jid) {
-        return String.format(GET_MEMBER_BY_JID, jid);
+        return String.format(GET_MEMBER_BY_JID, jid.toLowerCase());
     }
 
     public static String getPhotoReference(String s) {
