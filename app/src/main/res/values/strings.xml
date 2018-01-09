@@ -467,9 +467,12 @@
     <string name="setting_search">Search</string>
     <string name="setting_clear">Clear history</string>
     <string name="setting_delete_and_leave_group">Delete and leave group</string>
+    <string name="setting_leave_group">Leave group</string>
+    <string name="setting_delete_chat">Delete chat</string>
     <string name="setting_report_spam">Report spam</string>
     <string name="setting_notification">Notifications</string>
     <string name="setting_change_background">Change background</string>
+    <string name="setting_add_member">Add member</string>
     <string name="incoming_attachment">1 attachment</string>
 
     <string name="title_wallet">Wallet</string>
@@ -517,8 +520,9 @@
     <string name="new_list">New list</string>
     <string name="key_manager">Key Manager</string>
     <string name="add_another_account">Add Another Account</string>
-    <string name="check_email_passcode">Please check email or your message \n fill your Passcode</string>
-    <string name="send_again">Send again</string>
+    <string name="check_email_passcode">Please check your messages\nand enter the passcode</string>
+    <string name="vertify_title_noti">We have sent a message to</string>
+    <string name="send_again">Resend passcode</string>
     <string name="answer_secret_question">Answer secret question</string>
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
@@ -535,17 +539,16 @@
     <string name="all">All</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
-    <string name="mobile_phone">Mobile Phone *</string>
+    <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
-    <string name="referral_hint">Username or phone number</string>
+    <string name="referral_hint">Phone Number</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
     <string name="choose_secret_question">Choose your secret question</string>
     <string name="skip">SKIP</string>
     <string name="complete">COMPLETE</string>
-    <string name="username_title">Username *</string>
     <string name="current_balance">Current Balance</string>
     <string name="add_photo">Add Photo!</string>
     <string name="error_group_name_empty">Group Name is empty</string>
@@ -590,11 +593,14 @@
     <string name="tab_menu_my_page">My page</string>
     <string name="promotion_invite_friend">Invite friend</string>
     <string name="promotion_history">History</string>
-    <string name="page_verify">Verify Code</string>
+    <string name="page_verify">Account Verification</string>
     <string name="message_edit">Edit Message</string>
     <string name="message_delete">Delete Message</string>
     <string name="message_spam">Report Spam</string>
     <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
     <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
     <string name="promotion_invite_friends">Invite friend</string>
+    <string name="verify_send_sms_fail">Send sms fail</string>
+    <string name="verify_send_sms_success">Send sms success</string>
+    <string name="verify_fail">Verify fail</string>
 </resources>

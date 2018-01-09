@@ -112,7 +112,7 @@ import info.guardianproject.iocipher.FileInputStream;
 
 //import com.bumptech.glide.Glide;
 
-public class ConversationDetailActivity extends BaseActivity {
+public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage {
 
     private AddContactAsyncTask task;
 
@@ -160,46 +160,57 @@ public class ConversationDetailActivity extends BaseActivity {
 
     private PrettyTime mPrettyTime;
 
-    private Handler mHandler;
+    private MyHandler mHandler;
 
-    private class MyHandler extends Handler {
+    @Override
+    public void onHandle() {
+        handleMessage();
+    }
+
+    private static class MyHandler extends Handler {
         private WeakReference<Activity> weakReference;
+        private OnHandleMessage onHandleMessage;
 
         MyHandler(Activity activity) {
             weakReference = new WeakReference<>(activity);
         }
 
+        void setOnHandleMessage(OnHandleMessage onHandleMessage) {
+            this.onHandleMessage = onHandleMessage;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             if (weakReference != null && weakReference.get() != null) {
-                if (msg.what == 1) {
-                    if (mConvoView.getLastSeen() != null) {
-                        getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
-                    } else {
-                        if (mConvoView.getRemotePresence() == Presence.AWAY)
-                            getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-                        else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-                            getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
-                        else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
-                            getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
-
-                    }
+                if (msg.what == 1 && onHandleMessage != null) {
+                    onHandleMessage.onHandle();
                 }
             }
+        }
+    }
+
+    private void handleMessage() {
+        if (mConvoView.getLastSeen() != null) {
+            getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
+        } else {
+            if (mConvoView.getRemotePresence() == Presence.AWAY)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_away));
+            else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
+            else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
+                getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
+
         }
     }
 
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
-            //check if the broadcast is our desired one
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-//here define your method to be executed when screen is going to sleep
+            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
                 mConvoView.setSelected(false);
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-//here define your method to be executed when screen is going to sleep
+            } else if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
                 mConvoView.setSelected(true);
-            } else if (intent.getAction().equals(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+            } else if (ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX.equals(intent.getAction())) {
                 loadBitmapPreferences();
             }
         }
@@ -216,6 +227,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         mConvoView = new ConversationView(this);
         mHandler = new MyHandler(this);
+        mHandler.setOnHandleMessage(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
         mRootLayout = findViewById(R.id.main_content);
@@ -983,7 +995,6 @@ public class ConversationDetailActivity extends BaseActivity {
 
             mIsAudioRecording = false;
         }
-
     }
 
     @Override
@@ -1081,6 +1092,7 @@ public class ConversationDetailActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mConvoView.stopListening();
         if (task != null)
             task.setCallback(null);
     }

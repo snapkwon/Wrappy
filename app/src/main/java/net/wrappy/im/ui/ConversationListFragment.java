@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -44,6 +45,9 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IChatSessionManager;
+import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.conversation.CustomBottomSheetDialogFragment;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -69,6 +73,11 @@ public class ConversationListFragment extends Fragment {
     private Button mUpgradeAction;
 
     private boolean mFilterArchive = false;
+
+    private ImApp mApp;
+    private IImConnection mConnection;
+    private IChatSessionManager mManager;
+    private IChatSession mSession;
 
     @Nullable
     @Override
@@ -98,6 +107,14 @@ public class ConversationListFragment extends Fragment {
                 ((MainActivity) getActivity()).inviteContact();
             }
         });
+
+        try {
+            mApp = (ImApp) getActivity().getApplication();
+            mConnection = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            mManager = mConnection.getChatSessionManager();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         setupRecyclerView(mRecView);
 
@@ -130,7 +147,7 @@ public class ConversationListFragment extends Fragment {
         mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
         Cursor cursor = null;
-        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor);
+        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor, mManager);
 
         // init swipe to dismiss logic
 
@@ -322,13 +339,15 @@ public class ConversationListFragment extends Fragment {
         private int mBackground;
         private Context mContext;
         private CustomBottomSheetDialogFragment mBottomSheet = null;
+        private IChatSessionManager manager;
 
 
-        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
+        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor, IChatSessionManager manager) {
             super(context, cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
+            this.manager = manager;
 
             setHasStableIds(true);
         }
@@ -387,7 +406,7 @@ public class ConversationListFragment extends Fragment {
 
                 ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference, manager);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -416,7 +435,7 @@ public class ConversationListFragment extends Fragment {
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference, manager);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override

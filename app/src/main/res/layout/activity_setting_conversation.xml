@@ -1,299 +1,383 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent"
-    android:orientation="vertical"
-    tools:context="net.wrappy.im.ui.SettingConversationActivity">
+    style="@style/match_parent">
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        tools:context="net.wrappy.im.ui.SettingConversationActivity">
 
         <LinearLayout
+            android:id="@+id/lnAvatarOfGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true"
-            android:weightSum="1">
-
-            <RelativeLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/rounded_shape">
-
-                <net.wrappy.im.helper.layout.CircleImageView
-                    android:id="@+id/imgGroupPhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_camera_profile" />
-
-                <net.wrappy.im.helper.layout.CircleImageView
-                    android:id="@+id/btnGroupPhoto"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent" />
-            </RelativeLayout>
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <LinearLayout
-                android:id="@+id/lnShowGroupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:weightSum="1">
 
-                <net.wrappy.im.helper.layout.AppEditTextView
-                    android:id="@+id/edGroupName"
-                    style="@style/app_edittext_default"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:enabled="false"
-                    android:layout_gravity="center_vertical"
-                    android:imeOptions="actionDone"
-                    android:inputType="text" />
-                <ImageButton
-                    android:id="@+id/btnEditGroupName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_edit"
-                    android:paddingLeft="16dp"
-                    android:background="@android:color/transparent"/>
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/rounded_shape">
+
+                    <net.wrappy.im.helper.layout.CircleImageView
+                        android:id="@+id/imgGroupPhoto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_camera_profile" />
+
+                    <net.wrappy.im.helper.layout.CircleImageView
+                        android:id="@+id/btnGroupPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent" />
+                </RelativeLayout>
+
                 <LinearLayout
-                    android:id="@+id/lnChangeGroupNameController"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/lnShowGroupName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:visibility="gone">
-                    <ImageButton
-                        android:id="@+id/btnGroupNameCheck"
+                    android:padding="10dp">
+
+                    <net.wrappy.im.helper.layout.AppEditTextView
+                        android:id="@+id/edGroupName"
+                        style="@style/app_edittext_default"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_icon_check"
-                        android:paddingLeft="10dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@android:color/transparent"/>
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:enabled="false"
+                        android:imeOptions="actionDone"
+                        android:inputType="text" />
+
                     <ImageButton
-                        android:id="@+id/btnGroupNameClose"
+                        android:id="@+id/btnEditGroupName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_icon_close"
-                        android:paddingLeft="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:paddingLeft="16dp"
+                        android:src="@drawable/ic_edit" />
+
+                    <LinearLayout
+                        android:id="@+id/lnChangeGroupNameController"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageButton
+                            android:id="@+id/btnGroupNameCheck"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/transparent"
+                            android:paddingLeft="10dp"
+                            android:src="@drawable/ic_icon_check" />
+
+                        <ImageButton
+                            android:id="@+id/btnGroupNameClose"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/transparent"
+                            android:paddingLeft="10dp"
+                            android:src="@drawable/ic_icon_close" />
+                    </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
+
+            <View
+                style="@style/divider"
+                android:layout_marginTop="16dp" />
 
         </LinearLayout>
 
-        <View style="@style/divider" android:layout_marginTop="16dp" />
 
-    </LinearLayout>
-
-
-
-
-    <LinearLayout
-        android:id="@+id/layout_search_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:clickable="true"
-        android:orientation="horizontal">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_search" />
-
-        <RelativeLayout style="@style/match_width">
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/text_search_setting"
-                style="@style/wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/setting_search"
-                android:textSize="16sp" />
-
-            <View
-                style="@style/divider"
-                android:layout_alignLeft="@id/text_search_setting"
-                android:layout_below="@id/text_search_setting"
-                android:layout_marginTop="15dp" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_clean_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_clearn" />
-
-        <RelativeLayout style="@style/match_width">
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/text_clean_setting"
-                style="@style/wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/clean_history"
-                android:textSize="16sp" />
-
-            <View
-                style="@style/divider"
-                android:layout_alignLeft="@id/text_clean_setting"
-                android:layout_below="@id/text_clean_setting"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/darker_gray" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_leave_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_delete" />
-
-        <RelativeLayout style="@style/match_width">
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/text_delete_setting"
-                style="@style/wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/setting_delete_and_leave_group"
-                android:textSize="16sp" />
-
-            <View
-                style="@style/divider"
-                android:layout_alignLeft="@id/text_delete_setting"
-                android:layout_below="@id/text_delete_setting"
-                android:layout_marginTop="15dp" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_report_spam_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_alert" />
-
-        <RelativeLayout style="@style/match_width">
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/text_report_spam_setting"
-                style="@style/wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/setting_report_spam"
-                android:textSize="16sp" />
-
-            <View
-                style="@style/divider"
-                android:layout_alignLeft="@id/text_report_spam_setting"
-                android:layout_below="@id/text_report_spam_setting"
-                android:layout_marginTop="15dp" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_notification_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_sound" />
-
-        <RelativeLayout style="@style/wrap_content">
-
-            <net.ironrabbit.type.CustomTypefaceTextView
-                android:id="@+id/text_notification_setting"
-                style="@style/wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/setting_notification"
-                android:textSize="16sp" />
-
-            <Switch
-                android:id="@+id/switch_notification"
-                style="@style/wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp" />
-
-            <View
-                style="@style/divider"
-                android:layout_alignLeft="@id/text_notification_setting"
-                android:layout_below="@id/text_notification_setting"
-                android:layout_marginTop="15dp" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_change_background_setting"
-        style="@style/match_width"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            style="@style/wrap_content"
-            android:src="@drawable/setting_color" />
-
-        <net.ironrabbit.type.CustomTypefaceTextView
-            style="@style/wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/setting_change_background"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_member_groups"
-        style="@style/match_width"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:visibility="gone">
-
-        <net.ironrabbit.type.CustomTypefaceTextView
+        <LinearLayout
+            android:id="@+id/layout_search_setting"
             style="@style/match_width"
-            android:text="@string/title_member_group_setting"
-            android:textAllCaps="true"
-            android:paddingLeft="10dp"
-            android:background="@color/background_gainsboro"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:orientation="horizontal">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/member_group_recycler_view"
-            style="@style/match_width">
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_search" />
 
-        </android.support.v7.widget.RecyclerView>
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_search_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_search"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_search_setting"
+                    android:layout_below="@id/text_search_setting"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_clean_setting"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_clearn" />
+
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_clean_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/clean_history"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_clean_setting"
+                    android:layout_below="@id/text_clean_setting"
+                    android:layout_marginTop="15dp"
+                    android:background="@android:color/darker_gray" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_admin_delete_group"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_delete" />
+
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_admin_delete_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_delete_and_leave_group"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_admin_delete_setting"
+                    android:layout_below="@id/text_admin_delete_setting"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_member_leave_group"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_delete" />
+
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_member_leave_group"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_leave_group"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_member_leave_group"
+                    android:layout_below="@id/text_member_leave_group"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_report_spam_setting"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_alert" />
+
+            <RelativeLayout style="@style/match_width">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_report_spam_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_report_spam"
+                    android:textSize="16sp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_report_spam_setting"
+                    android:layout_below="@id/text_report_spam_setting"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_notification_setting"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_sound" />
+
+            <RelativeLayout style="@style/wrap_content">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_notification_setting"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_notification"
+                    android:textSize="16sp" />
+
+                <Switch
+                    android:id="@+id/switch_notification"
+                    style="@style/wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp" />
+
+                <View
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_notification_setting"
+                    android:layout_below="@id/text_notification_setting"
+                    android:layout_marginTop="15dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_change_background_setting"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_color" />
+
+            <RelativeLayout style="@style/wrap_content">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_change_background"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_change_background"
+                    android:textSize="16sp" />
+
+                <View
+                    android:id="@+id/view_divider"
+                    style="@style/divider"
+                    android:layout_alignLeft="@id/text_change_background"
+                    android:layout_below="@id/text_change_background"
+                    android:layout_marginTop="15dp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_add_member"
+            style="@style/match_width"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                style="@style/wrap_content"
+                android:src="@drawable/setting_add" />
+
+
+            <RelativeLayout style="@style/wrap_content">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:id="@+id/text_add_member"
+                    style="@style/wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/setting_add_member"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_member_groups"
+            style="@style/match_width"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                style="@style/match_width"
+                android:background="@color/background_gainsboro"
+                android:paddingLeft="10dp"
+                android:text="@string/title_member_group_setting"
+                android:textAllCaps="true" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/member_group_recycler_view"
+                style="@style/match_width">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

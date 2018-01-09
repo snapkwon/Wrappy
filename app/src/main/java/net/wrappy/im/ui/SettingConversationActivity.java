@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -47,7 +48,9 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
+import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 
@@ -65,8 +68,12 @@ public class SettingConversationActivity extends BaseActivity {
     Switch switch_notification;
     @BindView(R.id.layout_member_groups)
     LinearLayout mMemberGroupsLayout;
-    @BindView(R.id.layout_leave_setting)
-    LinearLayout layout_leave_setting;
+    @BindView(R.id.layout_admin_delete_group)
+    LinearLayout mAdminDeleteGroup;
+    @BindView(R.id.layout_member_leave_group)
+    LinearLayout mMemberLeaveGroup;
+    @BindView(R.id.layout_add_member)
+    LinearLayout mAddMemberLayout;
     @BindView(R.id.member_group_recycler_view)
     RecyclerView mGroupRecycleView;
     @BindView(R.id.edGroupName)
@@ -76,6 +83,14 @@ public class SettingConversationActivity extends BaseActivity {
     @BindView(R.id.lnChangeGroupNameController) LinearLayout lnChangeGroupNameController;
     @BindView(R.id.btnEditGroupName)
     ImageButton btnEditGroupName;
+    @BindView(R.id.view_divider)
+    View mViewDivider;
+    @BindView(R.id.text_admin_delete_setting)
+    TextView mTxtDelete;
+    @BindView(R.id.lnAvatarOfGroup)
+    LinearLayout lnAvatarOfGroup;
+    @BindView(R.id.imgGroupPhoto)
+    CircleImageView imgGroupPhoto;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -95,12 +110,14 @@ public class SettingConversationActivity extends BaseActivity {
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
     private Thread mThreadUpdate;
+    private String mAdminGroup;
+
+    private final static int REQUEST_PICK_CONTACT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
         super.onCreate(savedInstanceState);
-
 
         // back button at action bar
         getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
@@ -126,17 +143,27 @@ public class SettingConversationActivity extends BaseActivity {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
             mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
 
+
             mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+
             if (mSession != null) {
                 mGroupOwner = mSession.getGroupChatOwner();
                 if (mGroupOwner != null) {
                     mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                    mAdminGroup = mGroupOwner.getName();
+                    if (!mIsOwner) {
+                        btnEditGroupName.setVisibility(View.GONE);
+                        imgGroupPhoto.setVisibility(View.GONE);
+                        btnGroupPhoto.setEnabled(false);
+                    }
+                } else {
+                    btnEditGroupName.setVisibility(View.GONE);
+                    imgGroupPhoto.setVisibility(View.GONE);
+                    btnGroupPhoto.setEnabled(false);
                 }
-
-
-
             }
         } catch (RemoteException e) {
+            AppFuncs.log(e.getLocalizedMessage());
         }
 
         switch_notification.setChecked(!isMuted());
@@ -155,9 +182,12 @@ public class SettingConversationActivity extends BaseActivity {
                         try {
                             Gson gson = new Gson();
                             wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
+                            memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
                             edGroupName.setText(wpKChatGroup.getName());
-                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
-                            updateAvatar();
+                            if (wpKChatGroup.getIcon() != null) {
+                                GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                                updateAvatar();
+                            }
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -170,15 +200,26 @@ public class SettingConversationActivity extends BaseActivity {
             GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
             edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
-            layout_leave_setting.setVisibility(View.GONE);
+
+            if (mIsOwner) {
+                mAddMemberLayout.setVisibility(View.VISIBLE);
+                mViewDivider.setVisibility(View.VISIBLE);
+                mAdminDeleteGroup.setVisibility(View.VISIBLE);
+                mMemberLeaveGroup.setVisibility(View.GONE);
+            }
 
             memberGroupDisplays = new ArrayList<>();
 
+            String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
+
+            mGroupRecycleView.setNestedScrollingEnabled(false);
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays);
+            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
             updateMembers();
+        } else {
+            lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
 
@@ -212,6 +253,15 @@ public class SettingConversationActivity extends BaseActivity {
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
+
+                        if (member.getAffiliation() != null) {
+                            if (member.getAffiliation().contentEquals("owner") ||
+                                    member.getAffiliation().contentEquals("admin")) {
+                                    if (member.getUsername().equals(mLocalAddress)) {
+                                        mIsOwner = true;
+                                    }
+                            }
+                        }
 
                         members.add(member);
                     }
@@ -248,7 +298,8 @@ public class SettingConversationActivity extends BaseActivity {
         setMuted(!isChecked);
     }
 
-    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_leave_setting})
+    @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
+            R.id.layout_member_leave_group})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
@@ -258,10 +309,11 @@ public class SettingConversationActivity extends BaseActivity {
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
                 mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
                 break;
-            case R.id.layout_leave_setting:
-                if (leaveGroup())
-                    clearHistory();
-                else AppFuncs.alert(this, "Could not leave group", true);
+            case R.id.layout_admin_delete_group:
+                confirmDeleteGroup();
+                break;
+            case R.id.layout_member_leave_group:
+                confirmLeaveGroup();
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
@@ -308,6 +360,15 @@ public class SettingConversationActivity extends BaseActivity {
                 edGroupName.setEnabled(false);
                 lnChangeGroupNameController.setVisibility(View.GONE);
                 btnEditGroupName.setVisibility(View.VISIBLE);
+                break;
+            case R.id.layout_add_member:
+                Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
+                ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
+                for (MemberGroupDisplay member : memberGroupDisplays) {
+                    usernames.add(member.getUsername());
+                }
+                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, usernames);
+                startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
         }
     }
@@ -423,6 +484,40 @@ public class SettingConversationActivity extends BaseActivity {
         this.finish();
     }
 
+    private void confirmDeleteGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_delete_group), getString(R.string.confirm_delete_and_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+                RestAPI.apiDELETE(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        if (result != null) {
+                            AppFuncs.log(result.getResult());
+                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                            }
+                        }
+                    }
+                });
+                deleteGroupByAdmin();
+            }
+        }, null, false);
+    }
+
+    private void confirmLeaveGroup() {
+        PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (leaveGroup()) {
+                    AppFuncs.alert(getApplicationContext(), "Leave group", true);
+                } else {
+                    AppFuncs.alert(getApplicationContext(), "Could not leave group", true);
+                }
+            }
+        }, null, false);
+    }
+
     private boolean leaveGroup() {
         try {
             IChatSessionManager manager = mConn.getChatSessionManager();
@@ -443,6 +538,39 @@ public class SettingConversationActivity extends BaseActivity {
 
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error leaving group", e);
+        }
+        return false;
+    }
+
+    private boolean deleteGroupByAdmin() {
+        try {
+            IChatSessionManager manager = mConn.getChatSessionManager();
+            IChatSession session = manager.getChatSession(mAddress);
+
+            if (session == null)
+                session = manager.createChatSession(mAddress, true);
+
+            if (session != null) {
+
+                String groupName = wpKChatGroup.getName();
+
+                StringBuffer deleteCode = new StringBuffer();
+                deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
+                deleteCode.append(":");
+                deleteCode.append(groupName);
+                session.sendMessage(deleteCode.toString(), false);
+
+                session.delete();
+
+                //clear the stack and go back to the main activity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            }
+
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "error deleting group", e);
         }
         return false;
     }

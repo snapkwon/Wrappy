@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
 
     ArrayAdapter adapterGender;
 
-    String email,gender;
+    String email, gender;
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -164,7 +164,7 @@ public class ProfileFragment extends Fragment {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
-        final String[] arr = {"",""};
+        final String[] arr = {"", ""};
         final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
         adapterGender = new ArrayAdapter<String>(getActivity(), R.layout.update_profile_textview, arrDetail) {
             @NonNull
@@ -247,19 +247,21 @@ public class ProfileFragment extends Fragment {
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-            edEmail.clearFocus();
-            edGender.clearFocus();
-            edEmail.setEnabled(false);
+
             String email = edEmail.getText().toString().trim();
             String gender = edGender.getText().toString().trim().toUpperCase();
-            if (!AppFuncs.isEmailValid(email)) {
+            if (!TextUtils.isEmpty(email)) if (!AppFuncs.isEmailValid(email)) {
                 AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
                 return;
             }
+            edEmail.clearFocus();
+            edGender.clearFocus();
+            edEmail.setEnabled(false);
             wpKMemberDto.setEmail(email);
             wpKMemberDto.setGender(gender);
             updateData();
             btnProfileSubmit.setVisibility(View.GONE);
+            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
         } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
@@ -443,6 +445,7 @@ public class ProfileFragment extends Fragment {
         startActivity(intent);
         getActivity().finish();
     }
+
     public void onDataChange() {
         edEmail.setEnabled(true);
         edEmail.setFocusable(true);
