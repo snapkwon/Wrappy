@@ -150,6 +150,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         } else if (type_request == REQUEST_CODE_LOGIN) {
             login(password);
         }
+        mPatternView.clearPattern();
     }
 
     private void getUserInfo(final long accountId) {
