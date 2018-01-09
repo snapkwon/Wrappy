@@ -90,6 +90,8 @@ public class RestAPI {
     public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
     public static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
+    public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
+    public static String GET_PROMOTION_BALANCE = root_url + "member/promotion/invitation/bonus_balance";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";

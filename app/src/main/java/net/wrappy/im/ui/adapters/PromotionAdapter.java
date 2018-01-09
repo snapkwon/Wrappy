@@ -39,7 +39,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txtPromotionName.setText(list.get(position).getName());
         holder.txtPromotionTime.setText(list.get(position).getTime());
-        holder.txtPromotionCoin.setText(String.valueOf(list.get(position).getNumber()));
+        holder.txtPromotionCoin.setText(String.valueOf(list.get(position).getNumber()) + " PTS");
     }
 
     @Override
