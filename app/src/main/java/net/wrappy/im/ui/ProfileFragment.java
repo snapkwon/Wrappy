@@ -195,7 +195,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null) {
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                    if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
                         Gson gson = new Gson();
                         try {
                             AppFuncs.log("load: " + result.getResult());

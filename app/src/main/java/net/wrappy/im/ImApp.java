@@ -1261,7 +1261,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                                 @Override
                                 public void onCompleted(Exception e, Response<String> result) {
                                     if (result != null) {
-                                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
                                             ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
                                             try {
                                                 IContactListManager manager = null;
