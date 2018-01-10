@@ -46,6 +46,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     @BindView(R.id.txtSecurityForgetQuestion02) AppTextView txtSecurityForgetQuestion02;
     @BindView(R.id.edSecurityForgetQuestion01) AppEditTextView edSecurityForgetQuestion01;
     @BindView(R.id.edSecurityForgetQuestion02) AppEditTextView edSecurityForgetQuestion02;
+    @BindView(R.id.txtSecurityQuestionTitle) AppTextView txtSecurityQuestionTitle;
 
     AppDelegate appDelegate;
     ArrayList<WpKMemberSecurityQuestionDto> stringQuestions = new ArrayList<>();
@@ -76,6 +77,9 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
         type = getArguments().getInt(TYPE,0);
+        if (type==1) {
+            txtSecurityQuestionTitle.setText(getString(R.string.security_change_old_question));
+        }
         getListQuestion();
         return mainView;
     }

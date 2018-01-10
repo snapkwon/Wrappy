@@ -31,11 +31,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -59,9 +57,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,7 +81,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.model.WpKChatGroupDto;
-import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -116,8 +111,6 @@ import java.util.UUID;
 import butterknife.OnClick;
 import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
-
-import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
 //import com.bumptech.glide.Glide;
 
@@ -188,6 +181,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private PrettyTime mPrettyTime;
 
     private MyHandler mHandler;
+
+    private TextView txtStatus;
 
     @Override
     public void onHandle() {
@@ -265,7 +260,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         popupWindow.setBackgroundColor(0xfff);
 
-
+        txtStatus = (TextView) findViewById(R.id.txtStatus);
         FrameLayout main = (FrameLayout) findViewById(R.id.container);
         main.addView(popupWindow, new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
 
@@ -328,6 +323,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
+        txtStatus.setText(String.format(getString(R.string.message_waiting_for_friend),mConvoView.getTitle()));
         mApp = ((ImApp) getApplicationContext());
         Drawable avatar = null;
         try {

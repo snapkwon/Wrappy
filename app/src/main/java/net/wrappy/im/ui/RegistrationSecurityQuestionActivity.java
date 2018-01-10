@@ -30,7 +30,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
         getSupportActionBar().setTitle(R.string.registration);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion,SecurityQuestionCreateFragment.newsIntance()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion,SecurityQuestionCreateFragment.newsIntance(0)).commit();
     }
 
     @Override

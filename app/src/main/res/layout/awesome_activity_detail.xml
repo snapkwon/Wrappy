@@ -163,7 +163,7 @@
                     android:layout_margin="20dp"
                     android:background="@drawable/waiting" />
 
-                <net.ironrabbit.type.CustomTypefaceTextView
+                <net.wrappy.im.helper.layout.AppTextView
                     android:id="@+id/txtStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

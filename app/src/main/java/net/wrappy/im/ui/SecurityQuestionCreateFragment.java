@@ -47,12 +47,17 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
     @BindView(R.id.btnQuestionComplete) AppButton btnQuestionComplete;
     @BindView(R.id.securityQuestionLayout) LinearLayout securityQuestionLayout;
+    @BindView(R.id.txtSecurityTitle) AppTextView txtSecurityTitle;
 
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
     ArrayList<EditText> appEditTextViewsAnswers = new ArrayList<>();
 
-    public static SecurityQuestionCreateFragment newsIntance() {
-        return new SecurityQuestionCreateFragment();
+    public static SecurityQuestionCreateFragment newsIntance(int type) {
+        SecurityQuestionCreateFragment fragment = new SecurityQuestionCreateFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type",type);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -66,6 +71,10 @@ public class SecurityQuestionCreateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.security_question_create_fragment,null);
         ButterKnife.bind(this,mainView);
+        int type = getArguments().getInt("type",0);
+        if (type==1) {
+            txtSecurityTitle.setText(getString(R.string.choose_new_secret_question));
+        }
         getListQuestion();
         return mainView;
     }

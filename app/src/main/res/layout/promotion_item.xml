@@ -14,10 +14,11 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/IconCoin"
+            android:paddingRight="56dp"
             android:orientation="vertical">
 
             <net.wrappy.im.helper.layout.AppTextView
@@ -25,6 +26,8 @@
                 style="@style/AppText02"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:textSize="14sp"
+                android:textColor="#666666"
                 android:text="Title 01" />
 
             <net.wrappy.im.helper.layout.AppTextView
@@ -32,7 +35,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="time"
-                android:textSize="16sp" />
+                android:maxLines="2"
+                android:textColor="#9b9b9b"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -49,13 +54,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="+100"
-                app:font_type="bold" />
+                app:font_type="bold"
+                android:paddingRight="16dp"
+                android:textColor="#2f3234"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:id="@+id/imNext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
+                android:visibility="gone"
                 android:src="@drawable/ic_arrow" />
         </LinearLayout>
 
