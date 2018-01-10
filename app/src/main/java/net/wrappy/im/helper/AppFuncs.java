@@ -341,7 +341,7 @@ public class AppFuncs {
     }
 
     public static String convertTimestamp(long timestamp) {
-        String pattern = "EEEEE MMMMM dd, yyyy";
+        String pattern = "MMM dd, yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(timestamp);
         return date;

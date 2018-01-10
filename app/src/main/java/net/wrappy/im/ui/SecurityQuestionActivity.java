@@ -15,6 +15,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.util.PopupUtils;
 
 /**
  * Created by ben on 18/12/2017.
@@ -28,7 +29,7 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.security_question_activity);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle("Change Security Question");
+        getSupportActionBar().setTitle(getString(R.string.security_question_change));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         changeFragment(ForgetPasswordQuestionFragment.newInstance(1));
     }
@@ -56,7 +57,7 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
     public void onChangeInApp(int id, String data) {
         switch (id) {
             case ACTION_FROM_QUESTION:
-                changeFragment(SecurityQuestionCreateFragment.newsIntance());
+                changeFragment(SecurityQuestionCreateFragment.newsIntance(1));
                 break;
             case ACTION_FROM_CREATE_NEW:
 
@@ -69,7 +70,7 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
                         public void onCompleted(Exception e, Response<String> result) {
                             if (result!=null) {
                                 if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                    AppFuncs.alert(getApplicationContext(),"Success",true);
+                                    PopupUtils.showStatusViewDialog(SecurityQuestionActivity.this,true);
                                     finish();
                                 } else {
                                     AppFuncs.alert(getApplicationContext(), "Fail", true);

@@ -27,7 +27,9 @@ import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Promotions;
 import net.wrappy.im.ui.adapters.PromotionAdapter;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,7 +89,7 @@ public class MainPromotionFragment extends Fragment {
                             list.add(promotions);
                             ArrayList<PromotionLevel> levels = history.getLevels();
                             for (PromotionLevel level : levels) {
-                                promotions = new Promotions(level.getTitle(), AppFuncs.convertTimestamp(level.getTimestamp())+ " " + getString(R.string.from) + " " + level.getIdentifier(), level.getBonus());
+                                promotions = new Promotions(level.getTitle(), AppFuncs.convertTimestamp(level.getTimestamp())+ " " + getString(R.string.from) + " <b>" + level.getIdentifier()+"</b> " + getString(R.string.level) + " (" + level.getLevel() + ")", level.getBonus());
                                 list.add(promotions);
                             }
                             promotionAdapter.notifyDataSetChanged();
@@ -126,8 +128,8 @@ public class MainPromotionFragment extends Fragment {
                 try {
                     if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
                         JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
-                        String balance = jsonObject.get("balance").toString();
-                        txtBalance.setText(balance);
+                        long balance = jsonObject.get("balance").getAsLong();
+                        txtBalance.setText(NumberFormat.getNumberInstance(Locale.US).format(balance)+".00");
                     }
                 }catch (Exception ex) {
                     ex.printStackTrace();
