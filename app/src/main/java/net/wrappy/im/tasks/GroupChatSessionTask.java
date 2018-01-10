@@ -7,6 +7,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import net.wrappy.im.R;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
@@ -102,7 +103,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
             long mRequestedChatId = -1;
 
-            if (session == null) {
+            if (session == null && mLastConnGroup.getState() == ImConnection.LOGGED_IN) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
                 if (session != null) {
                     if (needToStartChat) {

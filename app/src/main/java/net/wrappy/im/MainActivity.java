@@ -987,6 +987,8 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private void checkToLoadDataServer() {
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false)) {
+            Imps.Chats.reset(getContentResolver());
+            Imps.Contacts.reset(getContentResolver());
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
