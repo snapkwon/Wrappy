@@ -608,4 +608,6 @@
     <string name="security_question_change">Change Security Question</string>
     <string name="security_change_old_question">Answer your old secret question</string>
     <string name="level">level</string>
+    <string name="success">Success!</string>
+    <string name="secu_success_description">Your secret question change successful</string>
 </resources>

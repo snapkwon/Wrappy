@@ -9,7 +9,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,8 @@ import java.util.ArrayList;
  */
 
 public class PopupUtils {
+    private static AlertDialog dialog;
+
     public static void getSelectionDialog(Context context, String title, ArrayAdapter<String> languagesAdapter, DialogInterface.OnClickListener listener) {
         getSelectionDialog(context, title, -1, languagesAdapter, listener);
     }
@@ -77,12 +78,18 @@ public class PopupUtils {
     }
 
     public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isCancelable) {
+        dismissDialog();
         View dialogView = getView(context, R.layout.custom_alert_dialog);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
 
-        Dialog dialog = builder.show();
+        dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
         handleTexts(dialogView, title, message);
+    }
+
+    private static void dismissDialog(){
+        if(dialog != null && dialog.isShowing())
+            dialog.dismiss();
     }
 
     private static void handleTexts(View dialogView, String title, String message) {
@@ -189,24 +196,6 @@ public class PopupUtils {
         if (!TextUtils.isEmpty(message)) {
             tvMessage.setText(message);
         } else group.removeView(tvMessage);
-    }
-
-    public static void showStatusViewDialog(Context context, boolean isSuccess) {
-        View dialogView = getView(context, R.layout.custom_alert_dialog);
-        AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
-        LinearLayout group = (LinearLayout) dialogView.findViewById(R.id.lnContent);
-        group.removeAllViews();
-        ImageView view = new ImageView(context);
-        if (isSuccess) {
-            view.setImageResource(R.drawable.waiting_success);
-        } else {
-            view.setImageResource(R.drawable.waiting);
-        }
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        view.setLayoutParams(params);
-        group.addView(view);
-        builder.show();
     }
 
     private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView) {

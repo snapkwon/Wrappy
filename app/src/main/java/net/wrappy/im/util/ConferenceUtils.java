@@ -55,7 +55,9 @@ public final class ConferenceUtils {
     }
 
     public static boolean isInvisibleMessage(String message) {
-        return !TextUtils.isEmpty(message) && (message.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX) || message.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || message.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX));
+        return !TextUtils.isEmpty(message) && (message.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)
+                || message.startsWith(ConferenceConstant.DELETE_CHAT_FREFIX) || message.startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)
+                || message.startsWith(ConferenceConstant.ERROR_ENCRYPTION_FROM_IOS));
     }
 
     public static void saveBitmapPreferences(String imagePath, String mNickname, Context context) {

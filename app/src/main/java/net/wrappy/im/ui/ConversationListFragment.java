@@ -110,7 +110,7 @@ public class ConversationListFragment extends Fragment {
 
         try {
             mApp = (ImApp) getActivity().getApplication();
-            mConnection = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            mConnection = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             mManager = mConnection.getChatSessionManager();
         } catch (RemoteException e) {
             e.printStackTrace();
