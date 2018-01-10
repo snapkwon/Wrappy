@@ -211,6 +211,6 @@ public class Debug {
         } catch (Exception e) {
         }
 
-        return sms + " " + className + ":" + lineNumber;
+        return sms + "\n" + className + ":" + lineNumber;
     }
 }

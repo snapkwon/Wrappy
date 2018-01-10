@@ -31,6 +31,8 @@ import java.util.ArrayList;
  */
 
 public class PopupUtils {
+    private static AlertDialog dialog;
+
     public static void getSelectionDialog(Context context, String title, ArrayAdapter<String> languagesAdapter, DialogInterface.OnClickListener listener) {
         getSelectionDialog(context, title, -1, languagesAdapter, listener);
     }
@@ -76,12 +78,18 @@ public class PopupUtils {
     }
 
     public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isCancelable) {
+        dismissDialog();
         View dialogView = getView(context, R.layout.custom_alert_dialog);
         AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
 
-        Dialog dialog = builder.show();
+        dialog = builder.show();
         handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
         handleTexts(dialogView, title, message);
+    }
+
+    private static void dismissDialog(){
+        if(dialog != null && dialog.isShowing())
+            dialog.dismiss();
     }
 
     private static void handleTexts(View dialogView, String title, String message) {

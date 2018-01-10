@@ -78,7 +78,6 @@ import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
 
-import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jxmpp.jid.impl.JidCreate;
@@ -761,6 +760,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     private void insertOrUpdateChat(String message) {
         insertOrUpdateChat(message, System.currentTimeMillis());
     }
+
     private void insertOrUpdateChat(String message, long time) {
         if (!ConferenceUtils.isInvisibleMessage(message)) {
             ContentValues values = new ContentValues(2);
@@ -1100,6 +1100,9 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 ConferenceUtils.saveBitmapPreferences(imageName, msg.getFrom().getUser(), mConnection.getContext());
                 Intent i = new Intent(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
                 mConnection.getContext().sendBroadcast(i);
+            } else if (msg.getBody().startsWith(ConferenceConstant.ERROR_ENCRYPTION_FROM_IOS)) {
+                Debug.d(ConferenceConstant.ERROR_ENCRYPTION_FROM_IOS);
+                return false;
             } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
                 ConferenceMessage conferenceMessage = new ConferenceMessage(body);
                 if (conferenceMessage.isMissedOrDeclined()) {
