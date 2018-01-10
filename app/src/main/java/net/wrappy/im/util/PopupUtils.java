@@ -9,7 +9,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,24 +188,6 @@ public class PopupUtils {
         if (!TextUtils.isEmpty(message)) {
             tvMessage.setText(message);
         } else group.removeView(tvMessage);
-    }
-
-    public static void showStatusViewDialog(Context context, boolean isSuccess) {
-        View dialogView = getView(context, R.layout.custom_alert_dialog);
-        AlertDialog.Builder builder = getBuilderDialog(context, dialogView);
-        LinearLayout group = (LinearLayout) dialogView.findViewById(R.id.lnContent);
-        group.removeAllViews();
-        ImageView view = new ImageView(context);
-        if (isSuccess) {
-            view.setImageResource(R.drawable.waiting_success);
-        } else {
-            view.setImageResource(R.drawable.waiting);
-        }
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        view.setLayoutParams(params);
-        group.addView(view);
-        builder.show();
     }
 
     private static AlertDialog.Builder getBuilderDialog(Context context, View dialogView) {
