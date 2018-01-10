@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -121,6 +122,8 @@ public class SecurityQuestionCreateFragment extends Fragment {
                         questionSpinner.setAdapter(questionsAdapter);
                         questionSpinner.setSelection(i);
                         EditText editTextView = (EditText) questionLayoutView.findViewById(R.id.edQuestionAnswer);
+                        editTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                        editTextView.setSingleLine();
                         appEditTextViewsAnswers.add(editTextView);
                     }
                     btnQuestionComplete.setEnabled(true);

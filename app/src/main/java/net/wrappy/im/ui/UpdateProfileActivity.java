@@ -98,7 +98,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.imgProfileHeader)
     ImageView imgHeader;
     @BindView(R.id.edProfileUsername)
-    EditText edUsername;
+    AppEditTextView edUsername;
     @BindView(R.id.edProfileEmail)
     EditText edEmail;
     @BindView(R.id.edProfilePhone)

@@ -40,6 +40,7 @@
         android:hint="@string/hint_answer"
         android:imeOptions="actionDone"
         android:padding="10dp"
+        android:lines="1"
         android:textColorHint="#bebebe"
         android:textSize="14sp" />
 
