@@ -41,7 +41,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
         holder.txtPromotionName.setText(list.get(position).getName());
         String description = list.get(position).getTime();
         holder.txtPromotionTime.setText(Html.fromHtml(description));
-        holder.txtPromotionCoin.setText(String.valueOf(list.get(position).getNumber()) + " PTS");
+        holder.txtPromotionCoin.setText("+ " + String.valueOf(list.get(position).getNumber()) + " PTS");
     }
 
     @Override

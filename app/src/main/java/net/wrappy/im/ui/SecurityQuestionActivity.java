@@ -2,9 +2,14 @@ package net.wrappy.im.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,6 +27,8 @@ import net.wrappy.im.util.PopupUtils;
  */
 
 public class SecurityQuestionActivity extends BaseActivity implements AppDelegate {
+
+    boolean isFinish = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,8 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
         return true;
     }
 
+    Handler handler = new Handler();
+
     @Override
     public void onChangeInApp(int id, String data) {
         switch (id) {
@@ -70,10 +79,22 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
                         public void onCompleted(Exception e, Response<String> result) {
                             if (result!=null) {
                                 if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                    PopupUtils.showStatusViewDialog(SecurityQuestionActivity.this,true);
-                                    finish();
+                                    isFinish = true;
+                                    ImageView view = new ImageView(SecurityQuestionActivity.this);
+                                    view.setImageResource(R.drawable.waiting_success);
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    params.gravity = Gravity.CENTER;
+                                    view.setLayoutParams(params);
+                                    PopupUtils.showCustomViewDialog(SecurityQuestionActivity.this,view,getString(R.string.success), getString(R.string.secu_success_description),-1,-1,null,null);
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            finish();
+                                        }
+                                    },2000);
                                 } else {
                                     AppFuncs.alert(getApplicationContext(), "Fail", true);
+                                    finish();
                                 }
                             }
                         }
