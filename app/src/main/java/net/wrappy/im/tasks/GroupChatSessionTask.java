@@ -7,7 +7,6 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import net.wrappy.im.R;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
@@ -32,6 +31,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     private ArrayList<String> invitees;
     private WpKChatGroupDto group;
     boolean needToStartChat = true;
+    OnTaskFinish callback;
 
     public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         super();
@@ -47,6 +47,10 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         mLastConnGroup = conn;
         this.group = group;
         needToStartChat = false;
+    }
+
+    public void setCallback(OnTaskFinish callback) {
+        this.callback = callback;
     }
 
     private boolean isStable() {
@@ -103,7 +107,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
             long mRequestedChatId = -1;
 
-            if (session == null && mLastConnGroup.getState() == ImConnection.LOGGED_IN) {
+            if (session == null && !isCancelled()) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
                 if (session != null) {
                     if (needToStartChat) {
@@ -125,7 +129,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                 publishProgress(mRequestedChatId);
             }
 //
-            if (invitees != null && invitees.size() > 0) {
+            if (invitees != null && invitees.size() > 0 && !isCancelled()) {
                 //wait a second for the server to sort itself out
                 try {
                     Thread.sleep(100);
@@ -156,12 +160,20 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                 dialog.dismiss();
             }
         }
+
+        if (callback != null) {
+            callback.onFinished();
+        }
     }
 
     private void showChat(long chatId) {
         if (isStable()) {
             getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId));
         }
+    }
+
+    public interface OnTaskFinish {
+        void onFinished();
     }
 
 }
