@@ -37,6 +37,7 @@ import com.google.gson.reflect.TypeToken;
 import net.ironrabbit.type.CustomTypefaceEditText;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKMemberDto;
@@ -94,6 +95,7 @@ public class AddContactNewActivity extends BaseActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
 //                    inviteBuddies();
                     searchUsername(search_username.getText().toString());
+                    AppFuncs.dismissKeyboard(AddContactNewActivity.this);
                 }
                 return false;
             }

@@ -66,6 +66,7 @@ public class ProfileFragment extends Fragment {
     AppFuncs appFuncs;
     String jid = "";
     WpKMemberDto wpKMemberDto;
+    WpKMemberDto wpKMemberDtoTemp;
     private long mContactId = -1;
     private String mNickname = null;
     private String reference = "";
@@ -201,6 +202,7 @@ public class ProfileFragment extends Fragment {
                         try {
                             AppFuncs.log("load: " + result.getResult());
                             wpKMemberDto = gson.fromJson(result.getResult(), WpKMemberDto.getType());
+                            wpKMemberDtoTemp = gson.fromJson(result.getResult(), WpKMemberDto.getType());
                             txtUsername.setText(wpKMemberDto.getIdentifier());
                             edEmail.setText(wpKMemberDto.getEmail());
                             edPhone.setText(wpKMemberDto.getMobile());
@@ -261,19 +263,15 @@ public class ProfileFragment extends Fragment {
 
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 isRequestAvatar = true;
-                if (wpKMemberDto != null) if (wpKMemberDto.getAvatar() != null) {
-                    if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                        sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
-                        sheetCells.add(sheetCell);
-                    }
+                if (wpKMemberDtoTemp != null && wpKMemberDtoTemp.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
+                    sheetCells.add(sheetCell);
                 }
             } else {
                 isRequestAvatar = false;
-                if (wpKMemberDto != null) if (wpKMemberDto.getBanner() != null) {
-                    if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                        sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
-                        sheetCells.add(sheetCell);
-                    }
+                if (wpKMemberDtoTemp != null && wpKMemberDtoTemp.getBanner() != null && !TextUtils.isEmpty(wpKMemberDtoTemp.getBanner().getReference())) {
+                    sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
+                    sheetCells.add(sheetCell);
                 }
             }
 
@@ -290,13 +288,14 @@ public class ProfileFragment extends Fragment {
                         case 3:
                             if (isRequestAvatar) {
                                 imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                                if (wpKMemberDto.getAvatar() != null) {
-                                    if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
+                                if (wpKMemberDtoTemp.getAvatar() != null) {
+                                    if (!TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
                                         RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
                                             @Override
                                             public void onCompleted(Exception e, Response<String> result) {
                                                 if (result != null) {
                                                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                                        wpKMemberDtoTemp.setAvatar(null);
                                                         wpKMemberDto.setAvatar(null);
                                                         AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
                                                     }
@@ -309,12 +308,13 @@ public class ProfileFragment extends Fragment {
                                 imgProfileHeader.setImageResource(android.R.color.transparent);
                                 if (wpKMemberDto.getBanner() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                                        RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_AVATAR, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+                                        RestAPI.apiDELETE(getActivity(), RestAPI.DELETE_BANNER, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
                                             @Override
                                             public void onCompleted(Exception e, Response<String> result) {
                                                 if (result != null) {
                                                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                                                         wpKMemberDto.setBanner(null);
+                                                        wpKMemberDtoTemp.setBanner(null);
                                                         AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
                                                     }
                                                 }
@@ -375,21 +375,21 @@ public class ProfileFragment extends Fragment {
                             String reference = RestAPI.getPhotoReference(result.getResult());
                             if (!TextUtils.isEmpty(reference)) {
                                 if (isRequestAvatar) {
-                                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
+                                    //GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
                                     Avatar avatar = new Avatar(reference);
                                     wpKMemberDto.setAvatar(avatar);
                                 } else {
-                                    GlideHelper.loadBitmap(getActivity(), imgProfileHeader, resultUri.toString(), false);
+                                    //GlideHelper.loadBitmap(getActivity(), imgProfileHeader, resultUri.toString(), false);
                                     Banner banner = new Banner(reference);
                                     wpKMemberDto.setBanner(banner);
                                 }
                                 updateData();
                             } else {
-                                AppFuncs.alert(getActivity(), "Upload fail", false);
+                                AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
                             }
 
                         } catch (Exception ex) {
-                            AppFuncs.alert(getActivity(), "Upload fail", false);
+                            AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
                             ex.printStackTrace();
                         }
                     }
@@ -406,25 +406,44 @@ public class ProfileFragment extends Fragment {
         RestAPI.apiPUT(getActivity(), RestAPI.GET_MEMBER_INFO, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result != null) {
-                    AppFuncs.log(result.getResult());
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
-                        if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
-                            String avatarReference = wpKMemberDto.getAvatar().getReference();
-                            String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
-                            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-                            String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
-                            DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
-                            ImApp.broadcastIdentity(null);
-                            spnProfile.setVisibility(View.INVISIBLE);
-                            if (appDelegate != null) {
-                                appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
+                try {
+                    if (result != null) {
+                        AppFuncs.log(result.getResult());
+                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                            AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
+                            if (wpKMemberDto != null) {
+                                String avatarReference = wpKMemberDto.getAvatar() != null ? wpKMemberDto.getAvatar().getReference() : "";
+                                String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
+                                String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+                                String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                                DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                                ImApp.broadcastIdentity(null);
+                                spnProfile.setVisibility(View.INVISIBLE);
+                                if (appDelegate != null) {
+                                    appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
+                                }
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (wpKMemberDto.getAvatar() != null) {
+                                            GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), true);
+                                        }
+                                        if (wpKMemberDto.getBanner() != null) {
+                                            GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                                        }
+                                    }
+                                });
+                                wpKMemberDtoTemp = wpKMemberDto;
+                            } else {
+                                AppFuncs.alert(getActivity(),getString(R.string.network_error),false);
                             }
+                        } else {
+                            AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
                         }
-                    } else {
-                        AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
                     }
+                } catch (Exception ex) {
+                    AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
+                    ex.printStackTrace();
                 }
             }
         });
