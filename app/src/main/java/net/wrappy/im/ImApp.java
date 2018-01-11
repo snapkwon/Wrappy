@@ -74,6 +74,7 @@ import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.service.NetworkConnectivityReceiver;
 import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.StatusBarNotifier;
+import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.LauncherActivity;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
@@ -292,6 +293,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     private void logoutConnection() {
         try {
             IImConnection connection = getConnection(sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId());
+            ((ChatSessionManagerAdapter) connection.getChatSessionManager()).closeAllChatSessions();
             connection.logout();
         } catch (Exception e) {
             e.printStackTrace();
