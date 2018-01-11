@@ -69,7 +69,6 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -79,7 +78,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.net.URLConnection;
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -818,7 +816,7 @@ public class MessageListItem extends FrameLayout {
         if (address != null && isLeft) {
             mHolder.mAvatar.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(reference)) {
-                GlideHelper.loadBitmapToCircleImage(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference));
+                GlideHelper.loadBitmapToCircleImageDefault(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference), nickname);
             } else {
                 GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
             }
