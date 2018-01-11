@@ -123,7 +123,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
     WpkToken wpkToken;
-
+    String locale = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -157,6 +157,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         getCountryCodesFromServer();
         txtProfileMobile.setText(txtProfileMobile.getText().toString().trim() + " *");
         txtProfileUser.setText(txtProfileUser.getText().toString().trim() + " *");
+        locale = getResources().getConfiguration().locale.getCountry();
     }
 
     private void getCountryCodesFromServer() {
@@ -170,7 +171,11 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
                         List<String> strings = new ArrayList<>();
+                        int j = 0;
                         for (int i = 0; i < wpkCountry.size(); i++) {
+                            if (wpkCountry.get(i).getCode().toUpperCase().equalsIgnoreCase(locale.toUpperCase())) {
+                                j = i;
+                            }
                             strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
                         countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings) {
@@ -186,6 +191,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                         spnProfileCountryCodesReference.setAdapter(countryAdapter);
+                        spnProfileCountryCodes.setSelection(j);
+                        spnProfileCountryCodesReference.setSelection(j);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
