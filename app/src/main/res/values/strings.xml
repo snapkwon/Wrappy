@@ -565,7 +565,7 @@
     <string name="error_when_refresh_token">can not refresh access token : please retry!</string>
     <string name="registration">Registration</string>
     <string name="update_profile_success">Update Success</string>
-    <string name="update_profile_fail">Update Fail</string>
+    <string name="update_profile_fail">Update fail</string>
     <string name="error_upload_image">Upload fail</string>
     <string name="logout_all_devices">Logout all devices</string>
     <string name="logout_device">Logout this device</string>
@@ -610,4 +610,6 @@
     <string name="level">level</string>
     <string name="success">Success!</string>
     <string name="secu_success_description">Your secret question change successful</string>
+    <string name="fail">FAIL</string>
+    <string name="upload_fail">Upload fail</string>
 </resources>

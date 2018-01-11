@@ -37,6 +37,7 @@ public class VerifyCodeFragment extends Fragment {
     View mainView;
 
     AppDelegate appDelegate;
+    AppFuncs appFuncs;
     String phone = "";
 
     @BindView(R.id.txt_pin_entry)
@@ -63,6 +64,7 @@ public class VerifyCodeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.verify_code_fragment, null);
         ButterKnife.bind(this, mainView);
+        appFuncs = AppFuncs.getInstance();
         phone = getArguments().getString("phone");
         edVerifyPhone.setText(phone);
         btnVerifyChangePhone.setSelected(false);
@@ -88,18 +90,21 @@ public class VerifyCodeFragment extends Fragment {
             if (TextUtils.isEmpty(pin)) {
                 return;
             }
-
+            appFuncs.showProgressWaiting(getActivity());
             RestAPI.apiPOST(getActivity(), RestAPI.getVerifyCodeUrl(phone, pin), new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
+                    appFuncs.dismissProgressWaiting();
                     if (result != null) {
                         if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                             appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
                             return;
+                        } else {
+                            txtPin.setText("");
+                            AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
                         }
                     }
-                    AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
-                    appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_ERROR, "");
+                    //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_ERROR, "");
                 }
             });
         } else if (v.getId() == R.id.btnVerifyChangePhone) {
