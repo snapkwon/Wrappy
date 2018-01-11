@@ -216,8 +216,8 @@ public class ConferencePopupActivity extends Activity {
     }
 
     private IChatSession createChatSession() {
-        IImConnection mConn = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
         try {
+            IImConnection mConn = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
             if (mConn != null) {
                 IChatSessionManager sessionMgr = mConn.getChatSessionManager();
                 if (sessionMgr != null) {

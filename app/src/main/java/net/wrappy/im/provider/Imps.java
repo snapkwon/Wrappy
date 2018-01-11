@@ -280,7 +280,7 @@ public class Imps {
                     ret = cursor.getString(cursor.getColumnIndexOrThrow(USERNAME));
                 }
                 cursor.close();
-                }
+            }
             return ret;
         }
 
@@ -857,6 +857,13 @@ public class Imps {
             }
 
             return ret;
+        }
+
+        /*
+        * Reset contact db
+        * */
+        public static void reset(ContentResolver resolver) {
+            resolver.delete(CONTENT_URI, null, null);
         }
     }
 
@@ -2043,6 +2050,10 @@ public class Imps {
                 }
             }
             return result;
+        }
+
+        public static void reset(ContentResolver resolver) {
+            resolver.delete(CONTENT_URI, null, null);
         }
     }
 

@@ -58,6 +58,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             style="@style/AppButton_Cancel"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView

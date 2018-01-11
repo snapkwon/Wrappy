@@ -36,7 +36,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -60,9 +59,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,7 +87,6 @@ import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.model.WpKChatGroupDto;
-import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -132,7 +128,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-    private  WpKChatGroupDto chatGroupDto ;
+    private WpKChatGroupDto chatGroupDto;
     private static String address = "";
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
@@ -152,11 +148,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-    public  WpKChatGroupDto getGroupDto()
-    {
+    public WpKChatGroupDto getGroupDto() {
         return chatGroupDto;
     }
-
 
 
     public static Intent getStartIntent(Context context, long chatId) {
@@ -195,6 +189,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private PrettyTime mPrettyTime;
 
     private MyHandler mHandler;
+
+    private TextView txtStatus;
 
     @Override
     public void onHandle() {
@@ -291,7 +287,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setContentView(R.layout.awesome_activity_detail);
         super.onCreate(savedInstanceState);
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-       // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         mApp = (ImApp) getApplication();
 
@@ -308,7 +304,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         popupWindow.setBackgroundColor(0xfff);
 
-
+        txtStatus = (TextView) findViewById(R.id.txtStatus);
         FrameLayout main = (FrameLayout) findViewById(R.id.container);
         main.addView(popupWindow, new FrameLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP));
 
@@ -330,7 +326,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
 
-        if(!address.isEmpty()) {
+        if (!address.isEmpty()) {
             String[] separated = address.split("@");
 
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPI.RestAPIListenner() {
@@ -376,9 +372,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
 
-
     public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
+        txtStatus.setText(String.format(getString(R.string.message_waiting_for_friend), mConvoView.getTitle()));
         mApp = ((ImApp) getApplicationContext());
         Drawable avatar = null;
         try {
@@ -442,7 +438,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
 
         if (themeColorBg != -1) {
-                getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
+            getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
 
             View viewInput = findViewById(R.id.inputLayout);
             viewInput.setBackgroundColor(themeColorBg);
@@ -495,6 +491,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         });
     }
+
 
     public void startChat() {
         if (loaderCallbacks != null) {
@@ -617,6 +614,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -978,7 +976,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     .into(new SimpleTarget<GlideDrawable>() {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        //  mRootLayout.setBackground(resource.getCurrent());
+                            //  mRootLayout.setBackground(resource.getCurrent());
                             getWindow().setBackgroundDrawable(resource.getCurrent());
                         }
                     });
@@ -1188,5 +1186,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mConvoView.stopListening();
         if (task != null)
             task.setCallback(null);
+
+        if (MessageListItem.mAudioPlayer != null) {
+            MessageListItem.mAudioPlayer.stop();
+            MessageListItem.mAudioPlayer = null;
+        }
     }
 }

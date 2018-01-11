@@ -976,7 +976,7 @@ public class ContactListManagerAdapter extends
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
                     if (result != null) {
-                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
                             try {
                                 ContentValues values = new ContentValues(6);
                                 values.put(Imps.Contacts.USERNAME, username);

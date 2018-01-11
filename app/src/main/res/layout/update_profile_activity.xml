@@ -73,6 +73,7 @@
                             android:background="@null"
                             android:hint="@string/username"
                             android:imeOptions="actionNext"
+                            android:inputType="textNoSuggestions"
                             android:textColorHint="#bebebe"
                             android:textSize="14sp" />
 
@@ -223,8 +224,8 @@
                                 android:layout_marginLeft="5dp"
                                 android:background="@null"
                                 android:hint="@string/referral_hint"
-                                android:imeOptions="actionNext"
-                                android:inputType="text"
+                                android:imeOptions="actionDone"
+                                android:inputType="phone"
                                 android:textColorHint="#bebebe"
                                 android:textSize="14sp" />
                         </LinearLayout>

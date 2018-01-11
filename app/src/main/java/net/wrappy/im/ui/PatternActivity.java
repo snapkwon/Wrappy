@@ -150,6 +150,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         } else if (type_request == REQUEST_CODE_LOGIN) {
             login(password);
         }
+        mPatternView.clearPattern();
     }
 
     private void getUserInfo(final long accountId) {
@@ -250,7 +251,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     private void onLoginFailed() {
-        PopupUtils.showCustomDialog(this, "Warning", "The username or password is incorrect", R.string.yes, null, false);
+        PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
     }
 
     private void doExistingAccountRegister(String username, String password, String accountName) {

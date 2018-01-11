@@ -35,6 +35,7 @@ import net.wrappy.im.util.SecureMediaStore;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -337,5 +338,12 @@ public class AppFuncs {
 
     public static float getPixelsInCM(float cm, boolean isX) {
         return (cm / 2.54f) * (isX ? displayMetrics.xdpi : displayMetrics.ydpi);
+    }
+
+    public static String convertTimestamp(long timestamp) {
+        String pattern = "MMM dd, yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(timestamp);
+        return date;
     }
 }

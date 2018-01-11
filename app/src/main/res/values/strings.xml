@@ -422,16 +422,16 @@
     <string name="Page9Title">Ecology</string>
     <string name="Page10Title">Borderless</string>
     <string name="Page11Title">Revolution</string>
-    <string name="Page1Message">Connect the world. This is the next-generation of SNS Platform.</string>
-    <string name="Page2Message">Wrappy is free forever voice calls , video calls, TV conferences ...</string>
+    <string name="Page1Message">Flattening the World. This is the next-generation SNS platform.</string>
+    <string name="Page2Message">Wrappy is free to use: Includes voice calls, video calls, TV conferences....</string>
     <string name="Page3Message">Wrappy allows you to access your messages from multiple devices.</string>
-    <string name="Page4Message">Your messages are 100% encrypted and can be self-destructed.</string>
-    <string name="Page5Message">You can easily send/receive currencies to/from friends.</string>
-    <string name="Page6Message">There’s no limit for your storage of media data and chat records.</string>
+    <string name="Page4Message">Either every screen needs a full stop at the end of the sentence or none of them do.</string>
+    <string name="Page5Message">You can easily send and receive currencies from friends and family.</string>
+    <string name="Page6Message">Unlimited storage for your media data and chat records!</string>
     <string name="Page7Message">You can send and receive messages instantly.</string>
-    <string name="Page8Message">You can delete your history at all time.</string>
-    <string name="Page9Message">A simple currency system.</string>
-    <string name="Page10Message">Currencies that can be used anywhere, from any country.</string>
+    <string name="Page8Message">You can delete your history at all times.</string>
+    <string name="Page9Message">A simple cryptocurrency ecosystem.</string>
+    <string name="Page10Message">Currencies can be used anywhere, from any country.</string>
     <string name="Page11Message">A pioneer in an innovative &amp; constantly evolving era.</string>
     <string name="StartMessaging">Start Messaging</string>
 
@@ -472,7 +472,7 @@
     <string name="setting_report_spam">Report spam</string>
     <string name="setting_notification">Notifications</string>
     <string name="setting_change_background">Change background</string>
-    <string name="setting_add_member">Add member</string>
+    <string name="setting_add_member">Add friend</string>
     <string name="incoming_attachment">1 attachment</string>
 
     <string name="title_wallet">Wallet</string>
@@ -523,7 +523,7 @@
     <string name="check_email_passcode">Please check your messages\nand enter the passcode</string>
     <string name="vertify_title_noti">We have sent a message to</string>
     <string name="send_again">Resend passcode</string>
-    <string name="answer_secret_question">Answer secret question</string>
+    <string name="answer_secret_question">Answer your secret question</string>
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
     <string name="input_your_email">Input your email</string>
@@ -547,6 +547,7 @@
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
     <string name="choose_secret_question">Choose your secret question</string>
+    <string name="choose_new_secret_question">Choose your new secret question</string>
     <string name="skip">SKIP</string>
     <string name="complete">COMPLETE</string>
     <string name="current_balance">Current Balance</string>
@@ -564,7 +565,7 @@
     <string name="error_when_refresh_token">can not refresh access token : please retry!</string>
     <string name="registration">Registration</string>
     <string name="update_profile_success">Update Success</string>
-    <string name="update_profile_fail">Update Fail</string>
+    <string name="update_profile_fail">Update fail</string>
     <string name="error_upload_image">Upload fail</string>
     <string name="logout_all_devices">Logout all devices</string>
     <string name="logout_device">Logout this device</string>
@@ -603,4 +604,13 @@
     <string name="verify_send_sms_fail">Send sms fail</string>
     <string name="verify_send_sms_success">Send sms success</string>
     <string name="verify_fail">Verify fail</string>
+    <string name="from">from</string>
+    <string name="security_question_change">Change Security Question</string>
+    <string name="security_change_old_question">Answer your old secret question</string>
+    <string name="level">level</string>
+    <string name="success">Success!</string>
+    <string name="secu_success_description">Your secret question change successful</string>
+    <string name="fail">FAIL</string>
+    <string name="upload_fail">Upload fail</string>
+    <string name="cancel_and_home">Process is cancel and go home.</string>
 </resources>

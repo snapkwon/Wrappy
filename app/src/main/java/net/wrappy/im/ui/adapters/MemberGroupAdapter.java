@@ -155,11 +155,11 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                             if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
                                 AppFuncs.log(result.getResult());
                                 AppFuncs.alert(mContext, "Remove " + member.getNickname() + " in this group", false);
+                                removeMemberInArray(position);
+                                removeMemberInDB(member);
                             }
                         }
                     });
-                    removeMemberInArray(position);
-                    removeMemberInDB(member);
                 }
             }
         }, null, false);

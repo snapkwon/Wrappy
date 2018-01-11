@@ -98,7 +98,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.imgProfileHeader)
     ImageView imgHeader;
     @BindView(R.id.edProfileUsername)
-    EditText edUsername;
+    AppEditTextView edUsername;
     @BindView(R.id.edProfileEmail)
     EditText edEmail;
     @BindView(R.id.edProfilePhone)
@@ -123,7 +123,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     String avatarReference, bannerReference;
     List<WpkCountry> wpkCountry;
     WpkToken wpkToken;
-
+    String locale = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -157,6 +157,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         getCountryCodesFromServer();
         txtProfileMobile.setText(txtProfileMobile.getText().toString().trim() + " *");
         txtProfileUser.setText(txtProfileUser.getText().toString().trim() + " *");
+        locale = getResources().getConfiguration().locale.getCountry();
     }
 
     private void getCountryCodesFromServer() {
@@ -170,7 +171,11 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         wpkCountry = new Gson().fromJson(s, listType);
                         wpkCountry.get(0).getCode();
                         List<String> strings = new ArrayList<>();
+                        int j = 0;
                         for (int i = 0; i < wpkCountry.size(); i++) {
+                            if (wpkCountry.get(i).getCode().toUpperCase().equalsIgnoreCase(locale.toUpperCase())) {
+                                j = i;
+                            }
                             strings.add(wpkCountry.get(i).getL10N().get(WpkCountry.country_en_US) + " " + wpkCountry.get(i).getPrefix());
                         }
                         countryAdapter = new ArrayAdapter<String>(UpdateProfileActivity.this, R.layout.update_profile_textview, strings) {
@@ -186,6 +191,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                         };
                         spnProfileCountryCodes.setAdapter(countryAdapter);
                         spnProfileCountryCodesReference.setAdapter(countryAdapter);
+                        spnProfileCountryCodes.setSelection(j);
+                        spnProfileCountryCodesReference.setSelection(j);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -365,28 +372,31 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         AppFuncs.log(dataJson.toString());
 //        VerifyEmailOrPhoneActivity.start(this,null);
 //        appFuncs.dismissProgressWaiting();
-        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER_DEV, new RestAPI.RestAPIListenner() {
-
+        RestAPI.apiPOST(getApplicationContext(),RestAPI.POST_REGISTER,dataJson).setCallback(new FutureCallback<Response<String>>() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
-                if (!RestAPI.checkHttpCode(httpCode)) {
-                    if (s != null) {
-                        AppFuncs.log("UpdateProfileActivity: " + s);
-                        String er = WpErrors.getErrorMessage(s);
-                        if (!TextUtils.isEmpty(er)) {
-                            AppFuncs.alert(getApplicationContext(), er, true);
-                        } else {
-                            AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
+            public void onCompleted(Exception e, Response<String> result) {
+                if (result!=null) {
+                    if (!RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        if (result.getResult() != null) {
+                            AppFuncs.log("UpdateProfileActivity: " + result.getResult());
+                            String er = WpErrors.getErrorMessage(result.getResult());
+                            if (!TextUtils.isEmpty(er)) {
+                                AppFuncs.alert(getApplicationContext(), er, true);
+                            } else {
+                                AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
+                            }
                         }
+                        appFuncs.dismissProgressWaiting();
+                        return;
                     }
+                    Bundle bundle = new Bundle();
+                    bundle.putString("phone", phone);
+                    Store.putStringData(getApplicationContext(), Store.USERNAME, user);
+                    VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
+                } else {
+                    AppFuncs.alert(getApplicationContext(),e.getLocalizedMessage(),true);
                     appFuncs.dismissProgressWaiting();
-                    return;
                 }
-                Bundle bundle = new Bundle();
-                bundle.putString("phone", phone);
-                Store.putStringData(getApplicationContext(), Store.USERNAME, user);
-                VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
-
             }
         });
     }

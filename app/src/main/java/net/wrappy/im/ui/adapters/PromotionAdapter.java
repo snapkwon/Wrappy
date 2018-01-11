@@ -2,6 +2,7 @@ package net.wrappy.im.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +39,9 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txtPromotionName.setText(list.get(position).getName());
-        holder.txtPromotionTime.setText(list.get(position).getTime());
-        holder.txtPromotionCoin.setText(String.valueOf(list.get(position).getNumber()));
+        String description = list.get(position).getTime();
+        holder.txtPromotionTime.setText(Html.fromHtml(description));
+        holder.txtPromotionCoin.setText("+ " + String.valueOf(list.get(position).getNumber()) + " PTS");
     }
 
     @Override

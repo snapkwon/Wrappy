@@ -109,6 +109,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -150,6 +151,8 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     SyncDataRunnable<WpKChatGroupDto> syncGroupChatRunnable;
     SyncDataRunnable<WpKChatRoster> syncContactRunnable;
     private ChatSessionInitTask task;
+    private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
+    private GroupChatSessionTask groupSessionTask;
 
 
     @Override
@@ -987,6 +990,9 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private void checkToLoadDataServer() {
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra(IS_FROM_PATTERN_ACTIVITY, false)) {
+            sessionTasks.clear();
+            Imps.Chats.reset(getContentResolver());
+            Imps.Contacts.reset(getContentResolver());
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
@@ -1023,9 +1029,10 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         public void processing(WpKChatGroupDto[] data) {
             for (WpKChatGroupDto groupDto : data) {
                 if (!TextUtils.isEmpty(groupDto.getXmppGroup())) {
-                    rejoinGroupChat(groupDto);
+                    sessionTasks.push(groupDto);
                 }
             }
+            rejoinGroupChat();
         }
     };
 
@@ -1067,15 +1074,24 @@ public class MainActivity extends BaseActivity implements AppDelegate {
    * Auto join group chat
    *
    */
-    private void rejoinGroupChat(WpKChatGroupDto group) {
-        try {
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-            if (conn.getState() == ImConnection.LOGGED_IN) {
-                String nickname = mApp.getDefaultNickname();
-                new GroupChatSessionTask(this, group, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+    private void rejoinGroupChat() {
+        if (!sessionTasks.isEmpty()) {
+            try {
+                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                if (conn.getState() == ImConnection.LOGGED_IN) {
+                    String nickname = mApp.getDefaultNickname();
+                    groupSessionTask = new GroupChatSessionTask(this, sessionTasks.pop(), conn);
+                    groupSessionTask.setCallback(new GroupChatSessionTask.OnTaskFinish() {
+                        @Override
+                        public void onFinished() {
+                            rejoinGroupChat();
+                        }
+                    });
+                    groupSessionTask.executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 

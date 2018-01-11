@@ -1,12 +1,10 @@
 package net.wrappy.im.ui;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -47,11 +45,9 @@ import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
-import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -84,7 +80,8 @@ public class SettingConversationActivity extends BaseActivity {
     AppEditTextView edGroupName;
     @BindView(R.id.btnGroupPhoto)
     CircleImageView btnGroupPhoto;
-    @BindView(R.id.lnChangeGroupNameController) LinearLayout lnChangeGroupNameController;
+    @BindView(R.id.lnChangeGroupNameController)
+    LinearLayout lnChangeGroupNameController;
     @BindView(R.id.btnEditGroupName)
     ImageButton btnEditGroupName;
     @BindView(R.id.view_divider)
@@ -145,7 +142,7 @@ public class SettingConversationActivity extends BaseActivity {
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
-        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
+//        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
         if (cursor == null)
             return; //not going to work
         Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
@@ -185,14 +182,15 @@ public class SettingConversationActivity extends BaseActivity {
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
             }
-            RestAPI.apiGET(getApplicationContext(),RestAPI.getGroupByXmppId(groupXmppId)).setCallback(new FutureCallback<Response<String>>() {
+            RestAPI.apiGET(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId)).setCallback(new FutureCallback<Response<String>>() {
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
-                    if (result!=null) {
+                    if (result != null) {
                         AppFuncs.log(result.getResult());
                         try {
                             Gson gson = new Gson();
-                            wpKChatGroup = gson.fromJson(result.getResult(),new TypeToken<WpKChatGroupDto>(){}.getType());
+                            wpKChatGroup = gson.fromJson(result.getResult(), new TypeToken<WpKChatGroupDto>() {
+                            }.getType());
                             memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
                             edGroupName.setText(wpKChatGroup.getName());
                             if (wpKChatGroup.getIcon() != null) {
@@ -268,9 +266,9 @@ public class SettingConversationActivity extends BaseActivity {
                         if (member.getAffiliation() != null) {
                             if (member.getAffiliation().contentEquals("owner") ||
                                     member.getAffiliation().contentEquals("admin")) {
-                                    if (member.getUsername().equals(mLocalAddress)) {
-                                        mIsOwner = true;
-                                    }
+                                if (member.getUsername().equals(mLocalAddress)) {
+                                    mIsOwner = true;
+                                }
                             }
                         }
 
@@ -339,7 +337,7 @@ public class SettingConversationActivity extends BaseActivity {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
-                            AppFuncs.openCamera(SettingConversationActivity.this,100);
+                            AppFuncs.openCamera(SettingConversationActivity.this, 100);
                         } else {
                             AppFuncs.openGallery(SettingConversationActivity.this, 100);
                         }
@@ -381,14 +379,14 @@ public class SettingConversationActivity extends BaseActivity {
                 intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
                 intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, groupid);
                 intent.putExtra("type", PICKER_ADD_MEMBER);
-                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS ,true );
+                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, true);
 
                 startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
         }
     }
 
-   private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
+    private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         String chatServer = ""; //use the default
         String nickname = imApp.getDefaultUsername().split("@")[0];
         new GroupChatSessionTask(this, group, invitees, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
@@ -399,7 +397,7 @@ public class SettingConversationActivity extends BaseActivity {
     protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
- if (requestCode == REQUEST_PICK_CONTACT) {
+            if (requestCode == REQUEST_PICK_CONTACT) {
                 WpKChatGroupDto group = data.getParcelableExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME);
                 ArrayList<String> users = data.getStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES);
 
@@ -416,13 +414,12 @@ public class SettingConversationActivity extends BaseActivity {
 
                 }
 
-            }
-           else if (requestCode == 100) {
-                AppFuncs.cropImage(this,data,true);
+            } else if (requestCode == 100) {
+                AppFuncs.cropImage(this, data, true);
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(data);
                 btnGroupPhoto.setImageURI(uri);
-                RestAPI.uploadFile(getApplicationContext(),new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                     @Override
                     public void onCompleted(Exception e, Response<String> result) {
                         try {
@@ -432,7 +429,7 @@ public class SettingConversationActivity extends BaseActivity {
                             wpKIcon.setReference(reference);
                             wpKChatGroup.setIcon(wpKIcon);
                             updateData();
-                        }catch (Exception ex) {
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -445,10 +442,10 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-        RestAPI.apiPUT(getApplicationContext(),RestAPI.CHAT_GROUP,jsonObject).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.apiPUT(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
+                if (result != null) {
                     AppFuncs.log(result.getResult());
                     if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                         updateAvatarAndNotify(true);
@@ -536,11 +533,12 @@ public class SettingConversationActivity extends BaseActivity {
                             AppFuncs.log(result.getResult());
                             if (RestAPI.checkHttpCode(result.getHeaders().code())) {
                                 AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                                deleteGroupByAdmin();
                             }
                         }
                     }
                 });
-                deleteGroupByAdmin();
+
             }
         }, null, false);
     }
@@ -549,66 +547,58 @@ public class SettingConversationActivity extends BaseActivity {
         PopupUtils.showCustomDialog(this, getString(R.string.action_leave), getString(R.string.confirm_leave_group), R.string.yes, R.string.no, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (leaveGroup()) {
-                    AppFuncs.alert(getApplicationContext(), "Leave group", true);
-                } else {
-                    AppFuncs.alert(getApplicationContext(), "Could not leave group", true);
-                }
+                leaveGroup();
             }
         }, null, false);
     }
 
-    private boolean leaveGroup() {
+    private void leaveGroup() {
+        if (wpKChatGroup != null) {
+            RestAPI.apiDELETE(this, String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
+                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), null).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
+                        leaveXmppGroup();
+                    }
+                }
+            });
+        }
+    }
+
+    private boolean leaveXmppGroup() {
         try {
-            IChatSessionManager manager = mConn.getChatSessionManager();
-            IChatSession session = manager.getChatSession(mAddress);
-
-            if (session == null)
-                session = manager.createChatSession(mAddress, true);
-
-            if (session != null) {
-                session.leave();
-
-                //clear the stack and go back to the main activity
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            }
-
-        } catch (Exception e) {
-            Log.e(ImApp.LOG_TAG, "error leaving group", e);
+            getSession().leave();
+            //clear the stack and go back to the main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return true;
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
         return false;
     }
 
     private boolean deleteGroupByAdmin() {
         try {
-            IChatSessionManager manager = mConn.getChatSessionManager();
-            IChatSession session = manager.getChatSession(mAddress);
 
-            if (session == null)
-                session = manager.createChatSession(mAddress, true);
+            String groupName = wpKChatGroup.getName();
 
-            if (session != null) {
+            StringBuffer deleteCode = new StringBuffer();
+            deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
+            deleteCode.append(":");
+            deleteCode.append(groupName);
+            getSession().sendMessage(deleteCode.toString(), false);
 
-                String groupName = wpKChatGroup.getName();
+            getSession().delete();
 
-                StringBuffer deleteCode = new StringBuffer();
-                deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
-                deleteCode.append(":");
-                deleteCode.append(groupName);
-                session.sendMessage(deleteCode.toString(), false);
-
-                session.delete();
-
-                //clear the stack and go back to the main activity
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            }
-
+            //clear the stack and go back to the main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return true;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error deleting group", e);
         }

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -47,12 +48,17 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
     @BindView(R.id.btnQuestionComplete) AppButton btnQuestionComplete;
     @BindView(R.id.securityQuestionLayout) LinearLayout securityQuestionLayout;
+    @BindView(R.id.txtSecurityTitle) AppTextView txtSecurityTitle;
 
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
     ArrayList<EditText> appEditTextViewsAnswers = new ArrayList<>();
 
-    public static SecurityQuestionCreateFragment newsIntance() {
-        return new SecurityQuestionCreateFragment();
+    public static SecurityQuestionCreateFragment newsIntance(int type) {
+        SecurityQuestionCreateFragment fragment = new SecurityQuestionCreateFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type",type);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -66,6 +72,10 @@ public class SecurityQuestionCreateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.security_question_create_fragment,null);
         ButterKnife.bind(this,mainView);
+        int type = getArguments().getInt("type",0);
+        if (type==1) {
+            txtSecurityTitle.setText(getString(R.string.choose_new_secret_question));
+        }
         getListQuestion();
         return mainView;
     }
@@ -112,6 +122,8 @@ public class SecurityQuestionCreateFragment extends Fragment {
                         questionSpinner.setAdapter(questionsAdapter);
                         questionSpinner.setSelection(i);
                         EditText editTextView = (EditText) questionLayoutView.findViewById(R.id.edQuestionAnswer);
+                        editTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                        editTextView.setSingleLine();
                         appEditTextViewsAnswers.add(editTextView);
                     }
                     btnQuestionComplete.setEnabled(true);
