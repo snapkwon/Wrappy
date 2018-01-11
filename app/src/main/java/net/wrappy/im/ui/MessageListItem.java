@@ -69,7 +69,6 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -79,7 +78,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.net.URLConnection;
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -444,7 +442,7 @@ public class MessageListItem extends FrameLayout {
 
     }
 
-    private void showAudioPlayer(String mimeType, Uri mediaUri, int id, MessageViewHolder holder) throws Exception {
+    private void showAudioPlayer(String mimeType, Uri mediaUri, int id, final MessageViewHolder holder) throws Exception {
         /* Guess the MIME type in case we received a file that we can display or play*/
         if (TextUtils.isEmpty(mimeType) || mimeType.startsWith("application")) {
             String guessed = URLConnection.guessContentTypeFromName(mediaUri.toString());
@@ -459,6 +457,12 @@ public class MessageListItem extends FrameLayout {
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
         mHolder.mTextViewForMessages.setText("");
         mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView, mHolder.mTextViewForMessages);
+        mAudioPlayer.setOnFinishPlaying(new AudioPlayer.OnFinishPlaying() {
+            @Override
+            public void onFinishPlaying() {
+                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+            }
+        });
         holder.mContainer.setBackgroundResource(android.R.color.transparent);
     }
 
