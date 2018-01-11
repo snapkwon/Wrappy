@@ -281,11 +281,7 @@ public class ConversationListItem extends FrameLayout {
                             String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
                             String member = message.split(":")[2];
 
-                            Debug.e("account: " + account + ", member: " + member);
-
                             if (member.startsWith(account)) {
-
-                                Debug.e("account: " + account + ", member: " + member);
 
                                 IChatSession session = manager.getChatSession(address);
 

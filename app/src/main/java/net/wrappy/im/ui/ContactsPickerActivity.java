@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +46,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -64,6 +71,8 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +83,9 @@ import java.util.ArrayList;
 public class ContactsPickerActivity extends BaseActivity {
 
     private int REQUEST_CODE_ADD_CONTACT = 9999;
+
+    private static final int WIDTH_SWIPE = 250;
+    private static final int TITLE_SWIPE = 18;
 
     private ContactAdapter mAdapter;
 
@@ -95,7 +107,7 @@ public class ContactsPickerActivity extends BaseActivity {
     FlowLayout mSelectedContacts;
     View mLayoutContactSelect;
     View mLayoutGroupSelect;
-    ListView mListView = null;
+    SwipeMenuListView mListView = null;
     private MenuItem mMenuStartGroupChat, mMenuContactsList, mMenuContactsAdd;
     private boolean isClickedMenu;
     ProgressDialog dialog;
@@ -103,7 +115,7 @@ public class ContactsPickerActivity extends BaseActivity {
     // Fragment in which they reside.
     public static final int LOADER_ID = 1;
 
-    int type ;
+    int type;
     WpKChatGroupDto groupDto;
     ArrayList<String> groupmember;
 
@@ -132,8 +144,8 @@ public class ContactsPickerActivity extends BaseActivity {
         }
         groupmember = new ArrayList<>();
 
-        type = getIntent().getIntExtra("type",-1);
-        if(type == SettingConversationActivity.PICKER_ADD_MEMBER) {
+        type = getIntent().getIntExtra("type", -1);
+        if (type == SettingConversationActivity.PICKER_ADD_MEMBER) {
             groupDto = getIntent().getParcelableExtra(BundleKeyConstant.EXTRA_GROUP_ID);
             groupmember = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_LIST_MEMBER);
         }
@@ -189,7 +201,7 @@ public class ContactsPickerActivity extends BaseActivity {
             });
         }
 
-        mListView = (ListView) findViewById(R.id.contactsList);
+        mListView = (SwipeMenuListView) findViewById(R.id.contactsList);
         setGroupMode(isGroupOnlyMode);
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -470,9 +482,8 @@ public class ContactsPickerActivity extends BaseActivity {
                 case R.id.action_start_chat:
                     if (getFragmentManager().getBackStackEntryCount() > 0)
                         multiFinish();
-                    else
-                    {
-                        if(type == 1) {
+                    else {
+                        if (type == 1) {
                             ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
@@ -501,12 +512,11 @@ public class ContactsPickerActivity extends BaseActivity {
                                     }
                                 }
                             });
-                        }
-                        else {
+                        } else {
                             getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                         }
                     }
-                      //  getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
+                    //  getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                     return true;
                 case R.id.action_contacts_list:
                     ContactsPickerRosterActivity.start(this);
@@ -554,6 +564,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
             mAdapter = new ContactAdapter(ContactsPickerActivity.this, R.layout.contact_view);
             mListView.setAdapter(mAdapter);
+            setSwipeMenuCreator();
 
             mLoaderCallbacks = new MyLoaderCallbacks();
             getSupportLoaderManager().initLoader(LOADER_ID, null, mLoaderCallbacks);
@@ -572,6 +583,48 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
         }
+    }
+
+    private void setSwipeMenuCreator() {
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+            @Override
+            public void create(SwipeMenu menu) {
+                SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
+                        0x00)));
+                deleteItem.setWidth(WIDTH_SWIPE);
+                deleteItem.setTitle("Delete");
+                deleteItem.setTitleSize(TITLE_SWIPE);
+                deleteItem.setTitleColor(Color.WHITE);
+                menu.addMenuItem(deleteItem);
+            }
+        };
+        mListView.setMenuCreator(creator);
+        setSwipeMenuItemListener();
+    }
+
+    private void setSwipeMenuItemListener() {
+        mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                switch (index) {
+                    case 0:
+                        Cursor cursor = (Cursor) mAdapter.getItem(position);
+                        String account = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME).split("@")[0];
+                        RestAPI.apiDELETE(ContactsPickerActivity.this, String.format(RestAPI.DELETE_CONTACT, account), null).setCallback(new FutureCallback<Response<String>>() {
+                            @Override
+                            public void onCompleted(Exception e, Response<String> result) {
+                                if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
+                                    AppFuncs.log(result.getResult());
+                                    Debug.e("result: " + result);
+                                }
+                            }
+                        });
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     private Cursor mCursor;
@@ -632,7 +685,7 @@ public class ContactsPickerActivity extends BaseActivity {
             SelectedContact contact = new SelectedContact(id,
                     userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
-                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER),cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
+                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER), cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
             mSelection.put(id, contact);
             createTagView(index, contact);
             mAdapter.notifyDataSetChanged();
@@ -669,8 +722,7 @@ public class ContactsPickerActivity extends BaseActivity {
             mContext = context;
         }
 
-        public void updateGroupmember(ArrayList<String> groupmember)
-        {
+        public void updateGroupmember(ArrayList<String> groupmember) {
             this.groupmember = groupmember;
         }
 
@@ -750,23 +802,19 @@ public class ContactsPickerActivity extends BaseActivity {
             buf.append(Imps.Contacts.SUBSCRIPTION_TYPE).append("==").append(Imps.Contacts.SUBSCRIPTION_TYPE_TO);
             buf.append(')');
 
-            if(groupmember!=null && groupmember.size()>0)
-            {
+            if (groupmember != null && groupmember.size() > 0) {
                 buf.append(" AND ");
                 buf.append('(');
 
-                   // buf.append(" OR ")
+                // buf.append(" OR ")
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" NOT IN (");
-                for(int i=0 ; i < groupmember.size() ; i++)
-                {
-                    DatabaseUtils.appendValueToSql(buf,  groupmember.get(i) );
+                for (int i = 0; i < groupmember.size(); i++) {
+                    DatabaseUtils.appendValueToSql(buf, groupmember.get(i));
 
-                    if(i != groupmember.size()-1) {
+                    if (i != groupmember.size() - 1) {
                         buf.append(" , ");
-                    }
-                    else
-                    {
+                    } else {
                         buf.append(')');
                     }
                 }
@@ -781,7 +829,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-                mAdapter.swapCursor(newCursor);
+            mAdapter.swapCursor(newCursor);
         }
 
         @Override

@@ -56,6 +56,7 @@ public class RestAPI {
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
+    public static String DELETE_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
     public static String POST_REFRESH_TOKEN = root_url + "oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
