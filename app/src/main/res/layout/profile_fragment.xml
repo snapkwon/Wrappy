@@ -114,6 +114,7 @@
                                     android:layout_height="wrap_content"
                                     android:background="@null"
                                     android:inputType="phone"
+                                    android:imeOptions="actionDone"
                                     android:hint="@string/mobile_phone" />
                             </RelativeLayout>
 
