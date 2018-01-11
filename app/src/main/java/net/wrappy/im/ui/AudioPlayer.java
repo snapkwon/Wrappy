@@ -51,7 +51,10 @@ public class AudioPlayer {
         mMimeType = mimeType;
         mVisualizerView = visualizerView;
         mInfoView = infoView;
+    }
 
+    public String getFileName() {
+        return mFileName;
     }
 
     public int getDuration() {
@@ -117,6 +120,9 @@ public class AudioPlayer {
     }
 
     private void killPlayer() {
+        if (onFinishPlaying != null) {
+            onFinishPlaying.onFinishPlaying();
+        }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

@@ -69,6 +69,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -181,8 +182,6 @@ public class MessageListItem extends FrameLayout {
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
                                     boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference, String textsearch) {
 
-        if (mAudioPlayer != null)
-            mAudioPlayer.stop();
 
         mHolder = holder;
         applyStyleColors();
@@ -413,8 +412,6 @@ public class MessageListItem extends FrameLayout {
             }
         }
 
-        holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
-
         holder.mTextViewForMessages.setText(lastMessage);
         holder.mTextViewForMessages.setVisibility(View.GONE);
 
@@ -456,13 +453,7 @@ public class MessageListItem extends FrameLayout {
 
         holder.setOnClickListenerMediaThumbnail(mimeType, mediaUri, false);
         mHolder.mTextViewForMessages.setText("");
-        mAudioPlayer = new AudioPlayer(getContext(), mediaUri.getPath(), mimeType, mHolder.mVisualizerView, mHolder.mTextViewForMessages);
-        mAudioPlayer.setOnFinishPlaying(new AudioPlayer.OnFinishPlaying() {
-            @Override
-            public void onFinishPlaying() {
-                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
-            }
-        });
+
         holder.mContainer.setBackgroundResource(android.R.color.transparent);
     }
 
@@ -484,7 +475,36 @@ public class MessageListItem extends FrameLayout {
         return path;
     }
 
-    private AudioPlayer mAudioPlayer;
+    public static AudioPlayer mAudioPlayer;
+
+    public void onClickAudioIcon(String mimeType, final String mediaUri) throws Exception {
+        Debug.d(mediaUri);
+
+        if (mAudioPlayer == null || !mediaUri.equals(mAudioPlayer.getFileName())) {
+            if (mAudioPlayer != null)
+                mAudioPlayer.stop();
+
+            mAudioPlayer = new AudioPlayer(getContext(), mediaUri, mimeType, mHolder.mVisualizerView, mHolder.mTextViewForMessages);
+            mAudioPlayer.setOnFinishPlaying(new AudioPlayer.OnFinishPlaying() {
+                @Override
+                public void onFinishPlaying() {
+                    if (mHolder.mAudioButton != null)
+                        mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+                }
+            });
+        }
+
+        if (mAudioPlayer.getDuration() != -1)
+            mHolder.mTextViewForMessages.setText(Utils.formatDurationMedia(mAudioPlayer.getDuration()));
+
+        if (mAudioPlayer.isPlaying()) {
+            mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
+            mAudioPlayer.pause();
+        } else {
+            mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
+            mAudioPlayer.play();
+        }
+    }
 
     public void onClickMediaIcon(String mimeType, final Uri mediaUri, boolean isIncoming) {
 
@@ -497,20 +517,6 @@ public class MessageListItem extends FrameLayout {
             intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
 
             context.startActivity(intent);
-
-        } else if (mimeType.startsWith("audio")) {
-
-            if (mAudioPlayer.getDuration() != -1)
-                mHolder.mTextViewForMessages.setText(Utils.formatDurationMedia(mAudioPlayer.getDuration()));
-
-            if (mAudioPlayer.isPlaying()) {
-                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
-                mAudioPlayer.pause();
-            } else {
-                mHolder.mAudioButton.setImageResource(R.drawable.media_audio_pause);
-                mAudioPlayer.play();
-            }
-
 
         } else {
             if (isIncoming)
@@ -676,12 +682,8 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
-
     public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
                                     DeliveryState delivery, EncryptionState encryption, String textsearch) {
-
-        if (mAudioPlayer != null)
-            mAudioPlayer.stop();
 
         mHolder = holder;
         applyStyleColors();
