@@ -187,8 +187,10 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         sb.append(member.getNickname());
         try {
             session.sendMessage(sb.toString(), false);
+            session.removeMemberGroup(member.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
 }
