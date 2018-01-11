@@ -612,4 +612,5 @@
     <string name="secu_success_description">Your secret question change successful</string>
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
+    <string name="cancel_and_home">Process is cancel and go home.</string>
 </resources>
