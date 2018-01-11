@@ -202,6 +202,7 @@ public class ConversationView {
     ImageButton btnsearchbottom;
 
     LinearLayout inputlayout;
+
     //static final int MIME_TYPE_COLUMN = 9;
 
     static final String[] INVITATION_PROJECT = {Imps.Invitation._ID, Imps.Invitation.PROVIDER,
@@ -224,13 +225,13 @@ public class ConversationView {
     // private TextView mTitle;
     /*package*/ RecyclerView mHistory;
     EditText mComposeMessage;
-    private ImageButton mSendButton, mMicButton;
+    private ImageButton mOnOffMenu,mSendButton, mMicStiker;
     private TextView mButtonTalk;
     private ImageButton mButtonAttach;
     private ImageButton mButtonCaption;
     private ImageButton mButtonImage;
     private ImageButton mButtonLocation;
-    private ImageButton mButtonView;
+    private ImageButton mButtonVoice;
     private View mViewAttach;
 
     private ImageView mButtonDeleteVoice;
@@ -312,6 +313,30 @@ public class ConversationView {
         return isSearchMode;
     }
 
+    public void onOffMenuChat(boolean status) {
+        if(status == true) {
+            mButtonAttach.setVisibility(View.GONE);
+            mButtonCaption.setVisibility(View.GONE);
+            mButtonImage.setVisibility(View.GONE);
+            mButtonLocation.setVisibility(View.GONE);
+            mButtonVoice.setVisibility(View.GONE);
+            mMicStiker.setVisibility(View.GONE);
+            mSendButton.setVisibility(View.VISIBLE);
+            mOnOffMenu.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mButtonAttach.setVisibility(View.VISIBLE);
+            mButtonCaption.setVisibility(View.VISIBLE);
+            mButtonImage.setVisibility(View.VISIBLE);
+            mButtonLocation.setVisibility(View.VISIBLE);
+            mButtonVoice.setVisibility(View.VISIBLE);
+            mMicStiker.setVisibility(View.VISIBLE);
+            mSendButton.setVisibility(View.GONE);
+            mOnOffMenu.setVisibility(View.GONE);
+        }
+    }
+
     public void activeSearchmode() {
         isSearchMode = true;
         inputlayout.setVisibility(View.GONE);
@@ -320,24 +345,26 @@ public class ConversationView {
     }
 
     public void focusSearchmode() {
-        searchView.setIconifiedByDefault(true);
-        searchView.setFocusable(true);
-        searchView.setIconified(false);
-        searchView.requestFocusFromTouch();
-        searchView.requestFocus();
-        searchView.onActionViewExpanded();
-        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                searchView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
-            }
-        });
+        if(isSearchMode) {
+            searchView.setIconifiedByDefault(true);
+            searchView.setFocusable(true);
+            searchView.setIconified(false);
+            searchView.requestFocusFromTouch();
+            searchView.requestFocus();
+            searchView.onActionViewExpanded();
+            searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    searchView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     public void unActiveSearchmode() {
@@ -819,7 +846,6 @@ public class ConversationView {
 
         initViews();
 
-
     }
 
     void registerForConnEvents() {
@@ -878,7 +904,9 @@ public class ConversationView {
 
             @Override
             public boolean onQueryTextChange(String query) {
-
+                if(query.isEmpty()) {
+                    mMessageAdapter.searchText(query);
+                }
                 return true;
 
             }
@@ -886,7 +914,8 @@ public class ConversationView {
         });
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);
-        mMicButton = (ImageButton) mActivity.findViewById(R.id.btnMic);
+        mOnOffMenu = (ImageButton) mActivity.findViewById(R.id.btnOnOff);
+        mMicStiker = (ImageButton) mActivity.findViewById(R.id.btnStiker);
         mButtonTalk = (TextView) mActivity.findViewById(R.id.buttonHoldToTalk);
 
         mButtonDeleteVoice = (ImageView) mActivity.findViewById(R.id.btnDeleteVoice);
@@ -905,23 +934,88 @@ public class ConversationView {
             }
         });
 
+        mOnOffMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOffMenuChat(false);
+            }
+        });
+
         mButtonAttach = (ImageButton) mActivity.findViewById(R.id.btnAttach);
+        mButtonCaption = (ImageButton) mActivity.findViewById(R.id.btnCaption);
+        mButtonImage = (ImageButton) mActivity.findViewById(R.id.btnImage);
+        mButtonLocation = (ImageButton) mActivity.findViewById(R.id.btnLocation);
+        mButtonVoice = (ImageButton) mActivity.findViewById(R.id.btnVoice);
+
         mViewAttach = mActivity.findViewById(R.id.attachPanel);
 
         mButtonAttach.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                toggleAttachMenu();
+                mActivity.startFilePicker();
             }
 
         });
 
-        mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
+        mButtonCaption.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startPhotoTaker();
+            }
+
+        });
+
+        mButtonImage.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 mActivity.startImagePicker();
+            }
+
+        });
+
+        mButtonLocation.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startLocationMessage();
+            }
+
+        });
+
+        mButtonVoice.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (mButtonVoice.getVisibility() == View.VISIBLE) {
+                    mComposeMessage.setVisibility(View.GONE);
+                    mButtonVoice.setVisibility(View.GONE);
+
+                    // Check if no view has focus:
+                    View view = mActivity.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                    mSendButton.setImageResource(R.drawable.ic_send);
+                    mSendButton.setVisibility(View.VISIBLE);
+                    mButtonTalk.setVisibility(View.VISIBLE);
+
+                }
+            }
+
+        });
+
+
+
+    /*    mActivity.findViewById(R.id.btnAttachPicture).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.startFilePicker();
             }
 
         });
@@ -940,7 +1034,7 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
-                mActivity.startFilePicker();
+                mActivity.startImagePicker();
             }
 
         });
@@ -949,7 +1043,7 @@ public class ConversationView {
 
             @Override
             public void onClick(View v) {
-                toggleAttachMenu();
+                //toggleAttachMenu();
                 showStickers();
             }
 
@@ -961,14 +1055,15 @@ public class ConversationView {
             public void onClick(View v) {
                 mActivity.startLocationMessage();
             }
-        });
+        });*/
 
-        mMicButton.setOnClickListener(new View.OnClickListener() {
+        mMicStiker.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                showStickers();
                 //this is the tap to change to hold to talk mode
-                if (mMicButton.getVisibility() == View.VISIBLE) {
+               /* if (mMicButton.getVisibility() == View.VISIBLE) {
                     mComposeMessage.setVisibility(View.GONE);
                     mMicButton.setVisibility(View.GONE);
 
@@ -983,7 +1078,7 @@ public class ConversationView {
                     mSendButton.setVisibility(View.VISIBLE);
                     mButtonTalk.setVisibility(View.VISIBLE);
 
-                }
+                }*/
             }
 
         });
@@ -1005,7 +1100,7 @@ public class ConversationView {
             }
         });
 
-        mMicButton.setOnTouchListener(new View.OnTouchListener() {
+        mButtonVoice.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return gestureDetector.onTouchEvent(motionEvent);
@@ -1082,7 +1177,7 @@ public class ConversationView {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 sendTypingStatus(true);
-
+                onOffMenuChat(true);
                 return false;
             }
         });
@@ -1176,12 +1271,12 @@ public class ConversationView {
             mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
             if (mLastSessionStatus == SessionStatus.ENCRYPTED)
-                mSendButton.setImageResource(R.drawable.ic_send_secure);
+                mSendButton.setImageResource(R.drawable.ic_send);
 
             mSendButton.setVisibility(View.GONE);
             mButtonTalk.setVisibility(View.GONE);
             mComposeMessage.setVisibility(View.VISIBLE);
-            mMicButton.setVisibility(View.VISIBLE);
+          //  mButtonVoice.setVisibility(View.VISIBLE);
 
 
         }
@@ -1224,7 +1319,6 @@ public class ConversationView {
             } catch (Exception ie) {
                 Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
             }
-
             mLastIsTyping = isTyping;
         }
 
@@ -1371,10 +1465,10 @@ public class ConversationView {
 
         updateWarningView();
 
-        mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
-        mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
+      //  mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
+     //   mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
         //mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
-        mMicButton.setEnabled(true);
+       // mButtonVoice.setEnabled(true);
 
     }
 
@@ -2133,7 +2227,7 @@ public class ConversationView {
 
                 if (mSendButton.getVisibility() == View.GONE) {
                     mComposeMessage.setHint(R.string.compose_hint_secure);
-                    mSendButton.setImageResource(R.drawable.ic_send_secure);
+                    mSendButton.setImageResource(R.drawable.ic_send);
                 }
 
                 if (otrChatSession != null) {
@@ -2225,16 +2319,16 @@ public class ConversationView {
     private void toggleInputMode() {
         if (mButtonTalk.getVisibility() == View.GONE) {
             if (mComposeMessage.getText().length() > 0 && mSendButton.getVisibility() == View.GONE) {
-                mMicButton.setVisibility(View.GONE);
+                mButtonVoice.setVisibility(View.GONE);
                 mSendButton.setVisibility(View.VISIBLE);
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
 
                 if (mLastSessionStatus == SessionStatus.ENCRYPTED)
-                    mSendButton.setImageResource(R.drawable.ic_send_secure);
+                    mSendButton.setImageResource(R.drawable.ic_send);
 
 
             } else if (mComposeMessage.getText().length() == 0) {
-                mMicButton.setVisibility(View.VISIBLE);
+                mButtonVoice.setVisibility(View.VISIBLE);
                 mSendButton.setVisibility(View.GONE);
 
             }
@@ -2641,21 +2735,21 @@ public class ConversationView {
             Cursor c = getCursor();
             textsearch = text;
             searchCol.clear();
+            if(c!=null) {
+                if (c.moveToFirst()) {
+                    do {
+                        if (c.getString(mBodyColumn).contains(text)) {
+                            searchCol.add(c.getPosition());
+                        }
+                    } while (c.moveToNext());
+                }
 
-            if (c.moveToFirst()) {
-                do {
-                    if (c.getString(mBodyColumn).contains(text)) {
-                        searchCol.add(c.getPosition());
-                    }
-                } while (c.moveToNext());
+
+                notifyDataSetChanged();
+
+                if (searchCol.size() > 0)
+                    mCallback.search(searchCol.get(searchpos));
             }
-
-
-            notifyDataSetChanged();
-
-            if (searchCol.size() > 0)
-                mCallback.search(searchCol.get(searchpos));
-
         }
 
         public void searchUp() {

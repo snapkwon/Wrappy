@@ -33,6 +33,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -65,7 +66,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -80,8 +83,10 @@ import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -92,6 +97,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -118,6 +124,7 @@ import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
 
 import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
+import static net.wrappy.im.helper.RestAPI.getAvatarUrl;
 
 //import com.bumptech.glide.Glide;
 
@@ -243,6 +250,42 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     };
 
+    public void updateStatusAvatar(String references)
+    {
+        if(references != null && !references.isEmpty() ) {
+            BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
+            if (true)
+                request.transform(new CircleTransform(ConversationDetailActivity.this));
+            request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    Drawable d = new BitmapDrawable(getResources(), resource);
+                    getSupportActionBar().setIcon(d);
+                }
+
+                @Override
+                public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                    super.onLoadFailed(e, errorDrawable);
+                    AppFuncs.log(e.getLocalizedMessage());
+                }
+            });
+        }
+        else
+        {
+            //    int padding = 24;
+            //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
+           // if(isgroup) {
+                getSupportActionBar().setIcon(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
+          /*  }
+            else
+            {
+                int padding = 24;
+                LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, "test", padding);
+                getSupportActionBar().setIcon(lavatar.getCurrent());
+            }*/
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.awesome_activity_detail);
@@ -274,6 +317,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+       // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
+
         applyStyleForToolbar();
 
         Intent intent = getIntent();
@@ -297,6 +342,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 }
             });
         }
+        else
+        {
+
+        }
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -318,6 +367,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         // set background for this screen
         loadBitmapPreferences();
+
+        updateStatusAvatar(getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY));
     }
 
     public void updateLastSeen(Date lastSeen) {
