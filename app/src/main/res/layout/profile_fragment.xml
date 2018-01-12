@@ -350,6 +350,32 @@
                         android:background="#565656" />
 
                     <LinearLayout
+                        android:id="@+id/lnProfileInvite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_add_member" />
+
+                        <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText02"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="@string/invite_friends_text" />
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="48dp"
+                        android:layout_marginTop="10dp"/>
+
+                    <LinearLayout
                         android:id="@+id/lnProfileLogout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

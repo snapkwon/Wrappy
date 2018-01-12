@@ -175,12 +175,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                LauncherActivity.start(PatternActivity.this);
-                this.finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        LauncherActivity.start(PatternActivity.this);
     }
 
     private void showQuestionScreen(String pass) {
