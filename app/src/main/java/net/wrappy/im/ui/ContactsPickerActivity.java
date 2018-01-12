@@ -63,12 +63,14 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
@@ -610,13 +612,22 @@ public class ContactsPickerActivity extends BaseActivity {
                 switch (index) {
                     case 0:
                         Cursor cursor = (Cursor) mAdapter.getItem(position);
-                        String account = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME).split("@")[0];
+
+                        long providerId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
+                        long accountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
+                        String account = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+                        final String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+
+                        ImApp app = (ImApp) getApplication();
+                        final IImConnection conn = app.getConnection(providerId, accountId);
+
                         RestAPI.apiDELETE(ContactsPickerActivity.this, String.format(RestAPI.DELETE_CONTACT, account), null).setCallback(new FutureCallback<Response<String>>() {
                             @Override
                             public void onCompleted(Exception e, Response<String> result) {
                                 if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
                                     AppFuncs.log(result.getResult());
                                     Debug.e("result: " + result);
+                                    ImApp.removeContact(getContentResolver(), address, conn);
                                 }
                             }
                         });
