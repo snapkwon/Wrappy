@@ -124,6 +124,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     List<WpkCountry> wpkCountry;
     WpkToken wpkToken;
     String locale = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -370,12 +371,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         Gson gson = new Gson();
         JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
-//        VerifyEmailOrPhoneActivity.start(this,null);
-//        appFuncs.dismissProgressWaiting();
-        RestAPI.apiPOST(getApplicationContext(),RestAPI.POST_REGISTER,dataJson).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.apiPOST(getApplicationContext(), RestAPI.POST_REGISTER, dataJson).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
+                if (result != null) {
                     if (!RestAPI.checkHttpCode(result.getHeaders().code())) {
                         if (result.getResult() != null) {
                             AppFuncs.log("UpdateProfileActivity: " + result.getResult());
@@ -394,7 +393,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     Store.putStringData(getApplicationContext(), Store.USERNAME, user);
                     VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
                 } else {
-                    AppFuncs.alert(getApplicationContext(),e.getLocalizedMessage(),true);
+                    AppFuncs.alert(getApplicationContext(), e.getLocalizedMessage(), true);
                     appFuncs.dismissProgressWaiting();
                 }
             }
@@ -587,9 +586,18 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            LauncherActivity.start(UpdateProfileActivity.this);
-            finish();
+            onBackPressed();
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.cancel_and_home), R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LauncherActivity.start(UpdateProfileActivity.this);
+            }
+        }, null);
     }
 }

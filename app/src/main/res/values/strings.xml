@@ -613,4 +613,6 @@
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
     <string name="cancel_and_home">Process is cancel and go home.</string>
+    <string name="invite_friends_text">Invite Friend</string>
+    <string name="share_app_text">Let me recommend you this application</string>
 </resources>
