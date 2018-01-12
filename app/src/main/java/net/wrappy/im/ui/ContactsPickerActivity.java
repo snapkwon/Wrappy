@@ -774,7 +774,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.MODE_AND_ALPHA_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.USERNAME);
             //    loader.setUpdateThrottle(50L);
             return loader;
         }
