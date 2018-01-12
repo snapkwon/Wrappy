@@ -35,13 +35,26 @@ public class AudioPlayer {
     private boolean mPrepared = false;
     private boolean mPlayOnPrepare = false;
 
+    private OnFinishPlaying onFinishPlaying;
+
+    public interface OnFinishPlaying {
+        void onFinishPlaying();
+    }
+
+    public void setOnFinishPlaying(OnFinishPlaying onFinishPlaying) {
+        this.onFinishPlaying = onFinishPlaying;
+    }
+
     public AudioPlayer(Context context, String fileName, String mimeType, VisualizerView visualizerView, TextView infoView) throws Exception {
         mContext = context.getApplicationContext();
         mFileName = fileName;
         mMimeType = mimeType;
         mVisualizerView = visualizerView;
         mInfoView = infoView;
+    }
 
+    public String getFileName() {
+        return mFileName;
     }
 
     public int getDuration() {
@@ -66,27 +79,21 @@ public class AudioPlayer {
             mediaPlayer.start();
         } else {
             mPlayOnPrepare = true;
-            new AsyncTask<String, Void, Boolean>() {
+            new InitAudioTask().execute(this);
+        }
+    }
 
-                @Override
-                protected Boolean doInBackground(String... params) {
+    private static class InitAudioTask extends AsyncTask<AudioPlayer, Void, Boolean> {
 
-                    try {
-                        initPlayer();
-                        return true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void onPostExecute(Boolean playerInit) {
-
-
-                }
-
-            }.execute();
+        @Override
+        protected Boolean doInBackground(AudioPlayer... audioPlayers) {
+            try {
+                audioPlayers[0].initPlayer();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -113,6 +120,9 @@ public class AudioPlayer {
     }
 
     private void killPlayer() {
+        if (onFinishPlaying != null) {
+            onFinishPlaying.onFinishPlaying();
+        }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -176,17 +186,16 @@ public class AudioPlayer {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 //killPlayer();
-
                 if (mVisualizer != null)
                     mVisualizer.setEnabled(false);
 
-
+                if (onFinishPlaying != null) {
+                    onFinishPlaying.onFinishPlaying();
+                }
             }
         });
 
-
         mediaPlayer.prepareAsync();
-
     }
 
 

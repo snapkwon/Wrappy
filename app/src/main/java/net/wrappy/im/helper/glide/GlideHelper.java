@@ -3,6 +3,7 @@ package net.wrappy.im.helper.glide;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -28,13 +29,21 @@ public class GlideHelper {
         loadBitmap(context, imageView, url, true);
     }
 
+    public static void loadBitmapToCircleImageDefault(Context context, final ImageView imageView, String url, String nickname) {
+        loadBitmap(context, imageView, url, true, nickname);
+    }
+
     public static void loadBitmap(Context context, final ImageView imageView, String url, boolean transform) {
+        loadBitmap(context, imageView, url, transform, null);
+    }
+
+    public static void loadBitmap(final Context context, final ImageView imageView, String url, boolean transform, final String nickname) {
         BitmapTypeRequest<String> request = Glide.with(context).load(url).asBitmap();
         if (transform) request.transform(new CircleTransform(context));
         request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                if (imageView != null)
+                if (imageView != null && resource != null)
                     imageView.setImageBitmap(resource);
             }
 
@@ -42,6 +51,9 @@ public class GlideHelper {
             public void onLoadFailed(Exception e, Drawable errorDrawable) {
                 super.onLoadFailed(e, errorDrawable);
                 AppFuncs.log(e.getLocalizedMessage());
+                if (!TextUtils.isEmpty(nickname)) {
+                    loadAvatarFromNickname(context, imageView, nickname);
+                }
             }
         });
     }

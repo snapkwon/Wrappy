@@ -98,7 +98,6 @@ import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
 import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.TranslateAPI.InAppTranslation;
@@ -2869,9 +2868,9 @@ public class ConversationView {
                     mContext.startActivity(intent);
                 }
             });
-            String mimeType = cursor.getString(mMimeTypeColumn);
+            final String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
-            String body = cursor.getString(mBodyColumn);
+            final String body = cursor.getString(mBodyColumn);
             if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
                     || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
 
@@ -2964,9 +2963,12 @@ public class ConversationView {
 
                     ArrayList<BottomSheetCell> bottomSheetCells = new ArrayList<>();
                     if (viewHolder.getItemViewType() == 1) {
-                        BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
-                        bottomSheetCells.add(sheetCell);
-                        sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
+
+                        if ((!TextUtils.isEmpty(body)) && !(body.charAt(0) == '/' || body.charAt(0) == ':' || body.startsWith("vfs"))) {
+                            BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
+                            bottomSheetCells.add(sheetCell);
+                        }
+                        BottomSheetCell sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
                         bottomSheetCells.add(sheetCell);
                     } else {
                         BottomSheetCell sheetCell = new BottomSheetCell(3,0, mContext.getString(R.string.message_spam));

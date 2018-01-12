@@ -5,10 +5,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.wrappy.im.R;
 import net.wrappy.im.ui.MediaViewHolder;
 import net.wrappy.im.ui.MessageListItem;
-
-import net.wrappy.im.R;
 
 /**
  * Created by n8fr8 on 12/11/15.
@@ -55,7 +54,11 @@ public class MessageViewHolder extends MediaViewHolder {
             mAudioContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MessageListItem) itemView).onClickMediaIcon(mimeType, mediaUri, isIncoming);
+                    try {
+                        ((MessageListItem) itemView).onClickAudioIcon(mimeType, mediaUri.getPath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
