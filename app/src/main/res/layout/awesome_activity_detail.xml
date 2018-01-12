@@ -203,57 +203,6 @@
                     android:scrollbars="none"
                     android:visibility="invisible">
 
-                    <LinearLayout
-                        style="@style/wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:orientation="horizontal">
-
-                        <net.wrappy.im.ui.CircleColorImageView
-                            android:id="@+id/btnAttachPicture"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_margin="3dp"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_insert_photo_white_36dp"
-                            app:circleColor="@android:color/holo_green_light" />
-
-                        <net.wrappy.im.ui.CircleColorImageView
-                            android:id="@+id/btnTakePicture"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_margin="3dp"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_photo_camera_white_36dp"
-                            app:circleColor="@android:color/holo_blue_light" />
-
-                        <net.wrappy.im.ui.CircleColorImageView
-                            android:id="@+id/btnAttachSticker"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_margin="3dp"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_insert_emoticon_white_36dp"
-                            app:circleColor="@android:color/holo_orange_light" />
-
-                        <net.wrappy.im.ui.CircleColorImageView
-                            android:id="@+id/btnAttachFile"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_margin="3dp"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_insert_drive_file_white_36dp"
-                            app:circleColor="@android:color/holo_red_light" />
-
-                        <net.wrappy.im.ui.CircleColorImageView
-                            android:id="@+id/btnAttachLocation"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_margin="3dp"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_location_on_white_36dp"
-                            app:circleColor="@android:color/holo_purple" />
-                    </LinearLayout>
                 </HorizontalScrollView>
 
                 <RelativeLayout
@@ -329,13 +278,57 @@
                         android:padding="3dp">
 
                         <ImageButton
+                            android:id="@+id/btnOnOff"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_onoff_menuchat"
+                            android:visibility="gone"/>
+
+
+                        <ImageButton
                             android:id="@+id/btnAttach"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
                             android:layout_margin="6dp"
                             android:background="@android:color/transparent"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_add_circle_outline_black_36dp" />
+                            android:src="@drawable/ic_attach" />
+                        <ImageButton
+                        android:id="@+id/btnCaption"
+                        android:layout_width="28dip"
+                        android:layout_height="28dip"
+                        android:layout_margin="6dp"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_shot" />
+                        <ImageButton
+                            android:id="@+id/btnImage"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_chat_photo" />
+                        <ImageButton
+                            android:id="@+id/btnLocation"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/posiotion" />
+                        <ImageButton
+                            android:id="@+id/btnVoice"
+                            android:layout_width="28dip"
+                            android:layout_height="28dip"
+                            android:layout_margin="6dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_voice" />
+
 
                         <net.ironrabbit.type.CustomTypefaceEditText
                             android:id="@+id/composeMessage"
@@ -361,13 +354,13 @@
                             android:visibility="gone" />
 
                         <ImageButton
-                            android:id="@+id/btnMic"
+                            android:id="@+id/btnStiker"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
                             android:layout_margin="6dp"
                             android:background="@android:color/transparent"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_mic_black_36dp" />
+                            android:src="@drawable/ic_sticker" />
 
                         <ImageButton
                             android:id="@+id/btnSend"
@@ -379,7 +372,7 @@
                             android:paddingLeft="3sp"
                             android:paddingRight="3sp"
                             android:paddingTop="1sp"
-                            android:src="@drawable/ic_send_holo_light"
+                            android:src="@drawable/ic_send"
                             android:visibility="gone" />
 
                     </LinearLayout>
