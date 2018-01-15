@@ -236,7 +236,7 @@ public class ProfileFragment extends Fragment {
         getActivity().finishAffinity();
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileLogout})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
 
@@ -353,6 +353,8 @@ public class ProfileFragment extends Fragment {
                 }
             });
             bottomSheetDialog.show();
+        } else if (view.getId() == R.id.lnProfileInvite) {
+            AppFuncs.shareApp(getActivity());
         }
     }
 

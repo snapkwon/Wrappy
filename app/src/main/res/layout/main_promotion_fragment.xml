@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     app:font_type="bold"
-                    android:text="6.355.124"
+                    android:text="0.00"
                     android:textSize="30sp" />
                 <ImageView
                     android:layout_width="wrap_content"
