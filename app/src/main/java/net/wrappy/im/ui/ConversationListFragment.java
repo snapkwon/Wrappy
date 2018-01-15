@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -44,6 +43,7 @@ import android.widget.TextView;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -54,7 +54,7 @@ import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.Constant;
 
-public class ConversationListFragment extends Fragment {
+public class ConversationListFragment extends BaseFragmentV4 {
 
     private ConversationListRecyclerViewAdapter mAdapter = null;
     private Uri mUri;
@@ -330,6 +330,11 @@ public class ConversationListFragment extends Fragment {
         if (context != null) {
             context.getContentResolver().update(chatUri, values, Imps.Chats.CONTACT_ID + "=" + itemId, null);
         }
+    }
+
+    @Override
+    public void reloadFragment() {
+
     }
 
     public static class ConversationListRecyclerViewAdapter

@@ -60,6 +60,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -302,6 +303,9 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
+                    if (tab.getPosition()==2) {
+                        adapter.notifyDataSetChanged();
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -800,7 +804,13 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             return "";
         }
 
-
+        @Override
+        public int getItemPosition(Object object) {
+            if (object instanceof BaseFragmentV4) {
+                ((BaseFragmentV4) object).reloadFragment();
+            }
+            return super.getItemPosition(object);
+        }
     }
 
 

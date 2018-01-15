@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
@@ -167,40 +166,35 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
     int time = 0;
     private void postDataForForgetPassword(JsonObject json) {
-        RestAPI.apiPOST(getActivity(),RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(),Store.USERNAME)),json)
-                .setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        if (!result.getResult().isEmpty())
-                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    if (!TextUtils.isEmpty(s))
+                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
+                } else {
+                    if (time > 2) {
+                        AppFuncs.alert(getActivity(), "Answer wrong! Try Email", true);
+                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
                     } else {
-                        if (time > 2) {
-                            AppFuncs.alert(getActivity(), "Answer wrong! Try Email", true);
-                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
-                        } else {
-                            AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
-                        }
-                        time++;
-
+                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
                     }
+                    time++;
+
                 }
             }
         });
     }
 
     private void postDataForChangeSecurityQuestions(JsonObject json) {
-        RestAPI.apiPOST(getActivity(),RestAPI.POST_CHANGE_QUESTION_CHECK,json).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        if (!result.getResult().isEmpty())
-                            appDelegate.onChangeInApp(ACTION_FROM_QUESTION,result.getResult());
-                    } else {
-                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
-                    }
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    if (!TextUtils.isEmpty(s))
+                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
+                } else {
+                    AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
                 }
             }
         });
