@@ -58,6 +58,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.thefinestartist.utils.content.Res;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -624,9 +625,9 @@ public class ContactsPickerActivity extends BaseActivity {
                         RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPI.RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
-                                if (s != null) {
+                                if (RestAPI.checkHttpCode(httpCode)) {
+                                    AppFuncs.log(s);
                                     ImApp.removeContact(getContentResolver(), address, conn);
-
                                 }
                             }
                         });
