@@ -47,7 +47,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class RestAPI {
 
-    private static int TIME_OUT = 12000;
+    private static int TIME_OUT = 120000;
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
