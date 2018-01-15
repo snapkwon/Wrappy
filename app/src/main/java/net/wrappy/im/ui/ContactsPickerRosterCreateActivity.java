@@ -21,8 +21,6 @@ import android.widget.ListView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -107,22 +105,19 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     }
 
     void getTypeRoster() {
-        RestAPI.apiGET(getApplicationContext(),RestAPI.GET_TYPE_ROSTER).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-                    try {
-                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                            String s = result.getResult();
-                            JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
-                            for (JsonElement element: jsonArray) {
-                                arrType.add(element.getAsString());
-                            }
-                            arrAdapterType.notifyDataSetChanged();
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
+                        for (JsonElement element: jsonArray) {
+                            arrType.add(element.getAsString());
                         }
-                    }catch (Exception ex) {
-                        ex.printStackTrace();
+                        arrAdapterType.notifyDataSetChanged();
                     }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });

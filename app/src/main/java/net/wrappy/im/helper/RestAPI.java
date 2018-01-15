@@ -47,7 +47,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class RestAPI {
 
-    private static int TIME_OUT = 120000;
+    private static int TIME_OUT = 12000;
 
     public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
@@ -280,23 +280,23 @@ public class RestAPI {
         }).withResponse();
     }
 
-    public static Future<Response<String>> apiGET(Context context, String url) {
+    private static Future<Response<String>> apiGET(Context context, String url) {
         return getIon(context, url, "GET").asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPOSTArray(Context context, String url, JsonArray jsonObject) {
+    private static Future<Response<String>> apiPOSTArray(Context context, String url, JsonArray jsonObject) {
         return getIon(context, url, "POST").setJsonArrayBody((jsonObject == null) ? new JsonArray() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "POST").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "PUT").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "DELETE").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
@@ -325,6 +325,29 @@ public class RestAPI {
 
     public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                Debug.d(result != null ? result.getResult() : "");
+                try {
+                    if ((checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredToken(result.getResult())) {
+                            refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
+                        }
+
+                    } else {
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    listenner.OnComplete(0, null, null);
+                }
+
+            }
+        });
+    }
+
+    public static void PutDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
+        apiPUT(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 Debug.d(result != null ? result.getResult() : "");
