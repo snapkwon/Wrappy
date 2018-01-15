@@ -305,6 +305,7 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
