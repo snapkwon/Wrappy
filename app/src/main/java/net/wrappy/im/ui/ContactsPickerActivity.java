@@ -621,13 +621,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.apiDELETE(ContactsPickerActivity.this, String.format(RestAPI.DELETE_CONTACT, account), null).setCallback(new FutureCallback<Response<String>>() {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPI.RestAPIListenner() {
                             @Override
-                            public void onCompleted(Exception e, Response<String> result) {
-                                if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                    AppFuncs.log(result.getResult());
-                                    Debug.e("result: " + result);
+                            public void OnComplete(int httpCode, String error, String s) {
+                                if (s != null) {
                                     ImApp.removeContact(getContentResolver(), address, conn);
+
                                 }
                             }
                         });
