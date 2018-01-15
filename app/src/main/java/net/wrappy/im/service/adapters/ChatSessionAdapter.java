@@ -45,6 +45,7 @@ import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.crypto.otr.OtrChatSessionAdapter;
 import net.wrappy.im.crypto.otr.OtrDataHandler;
 import net.wrappy.im.crypto.otr.OtrDebugLogger;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
@@ -385,6 +386,21 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         mContentResolver.delete(mChatURI, null, null);
         mStatusBarNotifier.dismissChatNotification(mConnection.getProviderId(), getAddress());
         mChatSessionManager.closeChatSession(this);
+    }
+
+    @Override
+    public void removeMemberGroup(String username) throws RemoteException {
+        if (mIsGroupChat) {
+            ChatGroup group = (ChatGroup) mChatSession.getParticipant();
+            Contact member = group.getMember(username);
+            if (member != null) {
+                getGroupManager().removeGroupMemberAsync(group, member);
+            } else {
+                AppFuncs.log("Cannot remove this member");
+            }
+        } else {
+            AppFuncs.log("This is not group chat");
+        }
     }
 
     public void leaveIfInactive() {
