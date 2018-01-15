@@ -182,24 +182,21 @@ public class SettingConversationActivity extends BaseActivity {
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
             }
-            RestAPI.apiGET(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId)).setCallback(new FutureCallback<Response<String>>() {
+            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPI.RestAPIListenner() {
                 @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    if (result != null) {
-                        AppFuncs.log(result.getResult());
-                        try {
-                            Gson gson = new Gson();
-                            wpKChatGroup = gson.fromJson(result.getResult(), new TypeToken<WpKChatGroupDto>() {
-                            }.getType());
-                            memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
-                            edGroupName.setText(wpKChatGroup.getName());
-                            if (wpKChatGroup.getIcon() != null) {
-                                GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
-                                updateAvatar();
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                public void OnComplete(int httpCode, String error, String s) {
+                    try {
+                        Gson gson = new Gson();
+                        wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
+                        }.getType());
+                        memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        edGroupName.setText(wpKChatGroup.getName());
+                        if (wpKChatGroup.getIcon() != null) {
+                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                            updateAvatar();
                         }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
             });
@@ -442,12 +439,12 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-        RestAPI.apiPUT(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result != null) {
-                    AppFuncs.log(result.getResult());
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+            public void OnComplete(int httpCode, String error, String s) {
+                if (!TextUtils.isEmpty(s)) {
+                    AppFuncs.log(s);
+                    if (RestAPI.checkHttpCode(httpCode)) {
                         updateAvatarAndNotify(true);
                         AppFuncs.alert(getApplicationContext(), "Update Success", false);
                     }
@@ -526,15 +523,12 @@ public class SettingConversationActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-                RestAPI.apiDELETE(getApplicationContext(), RestAPI.CHAT_GROUP, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+                RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPI.RestAPIListenner() {
                     @Override
-                    public void onCompleted(Exception e, Response<String> result) {
-                        if (result != null) {
-                            AppFuncs.log(result.getResult());
-                            if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
-                                deleteGroupByAdmin();
-                            }
+                    public void OnComplete(int httpCode, String error, String s) {
+                        if (RestAPI.checkHttpCode(httpCode)) {
+                            AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                            deleteGroupByAdmin();
                         }
                     }
                 });
@@ -554,12 +548,12 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void leaveGroup() {
         if (wpKChatGroup != null) {
-            RestAPI.apiDELETE(this, String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
-                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), null).setCallback(new FutureCallback<Response<String>>() {
+            RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
+                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPI.RestAPIListenner() {
                 @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        AppFuncs.log(result.getResult());
+                public void OnComplete(int httpCode, String error, String s) {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        AppFuncs.log(s!=null?s:"");
                         leaveXmppGroup();
                     }
                 }

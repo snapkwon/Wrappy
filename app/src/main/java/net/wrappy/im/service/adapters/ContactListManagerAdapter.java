@@ -972,28 +972,27 @@ public class ContactListManagerAdapter extends
             mResolver.update(uri, values, null, null);
         } else {
             //Do load info from Server and insert into database client
-            RestAPI.apiGET(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser())).setCallback(new FutureCallback<Response<String>>() {
-                @Override
-                public void onCompleted(Exception e, Response<String> result) {
-                    if (result != null) {
-                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
-                            try {
-                                ContentValues values = new ContentValues(6);
-                                values.put(Imps.Contacts.USERNAME, username);
-                                values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_NORMAL);
-                                values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
-                                values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
-                                values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
-                                ImApp.updateContact(values, username, (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+            RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), new RestAPI.RestAPIListenner() {
 
-                                //check broadcast and send notification
-                                broadcast(contact, subscriptionType, subscriptionStatus);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        } else {
-                            ImApp.removeContact(mResolver, username, mConn);
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                        try {
+                            ContentValues values = new ContentValues(6);
+                            values.put(Imps.Contacts.USERNAME, username);
+                            values.put(Imps.Contacts.TYPE, Imps.Contacts.TYPE_NORMAL);
+                            values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
+                            values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
+                            values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
+                            ImApp.updateContact(values, username, (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
+
+                            //check broadcast and send notification
+                            broadcast(contact, subscriptionType, subscriptionStatus);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
+                    } else {
+                        ImApp.removeContact(mResolver, username, mConn);
                     }
                 }
             });
