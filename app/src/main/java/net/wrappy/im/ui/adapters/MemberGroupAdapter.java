@@ -14,8 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
+import com.google.gson.JsonObject;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
@@ -26,7 +25,6 @@ import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
@@ -148,12 +146,11 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             @Override
             public void onClick(View view) {
                 if (mWpKChatGroupDto != null) {
-                    RestAPI.apiDELETE(mContext, String.format(RestAPI.DELETE_MEMBER_GROUP, mWpKChatGroupDto.getId(),
-                            member.getNickname()), null).setCallback(new FutureCallback<Response<String>>() {
+                    RestAPI.DeleteDataWrappy(mContext, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, mWpKChatGroupDto.getId(),
+                            member.getNickname()), new RestAPI.RestAPIListenner() {
                         @Override
-                        public void onCompleted(Exception e, Response<String> result) {
-                            if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
-                                AppFuncs.log(result.getResult());
+                        public void OnComplete(int httpCode, String error, String s) {
+                            if (RestAPI.checkHttpCode(httpCode)) {
                                 AppFuncs.alert(mContext, "Remove " + member.getNickname() + " in this group", false);
                                 removeMemberInArray(position);
                                 removeMemberInDB(member);
@@ -187,8 +184,10 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         sb.append(member.getNickname());
         try {
             session.sendMessage(sb.toString(), false);
+            session.removeMemberGroup(member.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
 }

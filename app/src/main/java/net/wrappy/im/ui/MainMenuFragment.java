@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.BottomSheetCell;
@@ -32,7 +32,7 @@ import butterknife.OnClick;
  * Created by ben on 19/12/2017.
  */
 
-public class MainMenuFragment extends Fragment {
+public class MainMenuFragment extends BaseFragmentV4 {
 
     View mainView;
     MainActivity mainActivity;
@@ -95,9 +95,10 @@ public class MainMenuFragment extends Fragment {
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
                             logout();
-                            AppFuncs.alert(getActivity(), getString(R.string.logout_device), true);
+                            //AppFuncs.alert(getActivity(), getString(R.string.logout_device), true);
                         } else if (index == 2) {
-                            AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
+                            logout();
+                            //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
                         }
                     }
                 });
@@ -109,4 +110,8 @@ public class MainMenuFragment extends Fragment {
     }
 
 
+    @Override
+    public void reloadFragment() {
+
+    }
 }

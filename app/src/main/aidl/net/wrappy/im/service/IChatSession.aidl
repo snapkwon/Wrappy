@@ -81,6 +81,11 @@ interface IChatSession {
     void delete();
 
     /**
+    * Remove member in group chat.
+    */
+    void removeMemberGroup(String username);
+
+    /**
      * Leaves this ChatSession if there isn't any message sent or received in it.
      */
     void leaveIfInactive();

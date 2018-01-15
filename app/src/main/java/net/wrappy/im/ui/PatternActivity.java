@@ -175,12 +175,16 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                LauncherActivity.start(PatternActivity.this);
-                this.finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        LauncherActivity.start(PatternActivity.this);
     }
 
     private void showQuestionScreen(String pass) {
@@ -200,17 +204,15 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.apiPOST(getApplicationContext(),url,new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-                    if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        login(pass);
-                    } else {
-                        Log.i(TAG,WpErrors.getErrorMessage(result.getResult()));
-                        AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password),true);
-                        finish();
-                    }
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    login(pass);
+                } else {
+                    Log.i(TAG,WpErrors.getErrorMessage(s));
+                    AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password),true);
+                    finish();
                 }
             }
         });
@@ -232,6 +234,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
                         return;
                     }
+                    AppFuncs.log("PatternActivity: " + s);
                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);

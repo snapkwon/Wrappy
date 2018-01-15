@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 
 import com.google.gson.Gson;
@@ -12,6 +13,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.model.SecurityQuestions;
 import net.wrappy.im.model.WpKAuthDto;
+import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +44,19 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==android.R.id.home) {
-            LauncherActivity.start(RegistrationSecurityQuestionActivity.this);
-            finish();
+            onBackPressed();
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.cancel_and_home), R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LauncherActivity.start(RegistrationSecurityQuestionActivity.this);
+            }
+        },null);
     }
 
     @Override

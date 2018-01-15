@@ -859,7 +859,7 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        protected void removeGroupMemberAsync(ChatGroup group, Contact contact) {
+        public void removeGroupMemberAsync(ChatGroup group, Contact contact) {
 
 
             String chatRoomJid = group.getAddress().getAddress();

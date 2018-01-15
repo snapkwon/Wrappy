@@ -61,6 +61,7 @@ public class AppFuncs {
 
     public void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setMessage(activity.getString(R.string.waiting_dialog));
         if (!activity.isFinishing()) {
             dialog.show();
@@ -194,15 +195,15 @@ public class AppFuncs {
 
     public static void cropImage(Activity activity, Intent intent, boolean isAvarta) {
         Uri source = null;
-        if (intent.getData()!=null) {
+        if (intent.getData() != null) {
             source = intent.getData();
         } else {
-            if (intent.getExtras()!=null) {
+            if (intent.getExtras() != null) {
                 Bitmap bitmap = (Bitmap) intent.getExtras().get("data");
-                source = getImageUri(activity,bitmap);
+                source = getImageUri(activity, bitmap);
             }
         }
-        if (source==null) {
+        if (source == null) {
             return;
         }
         Uri destination = Uri.fromFile(new File(activity.getCacheDir(), UUID.randomUUID().toString()));
@@ -345,5 +346,19 @@ public class AppFuncs {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(timestamp);
         return date;
+    }
+
+    public static void shareApp(Activity activity) {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
+            String sAux = activity.getString(R.string.share_app_text)+"\n";
+            sAux = sAux + "https://play.google.com/store/apps/details?id=net.wrappy.im";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            activity.startActivity(Intent.createChooser(i, "choose one"));
+        } catch (Exception e) {
+            //e.toString();
+        }
     }
 }

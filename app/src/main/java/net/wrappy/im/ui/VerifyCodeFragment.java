@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 
 import com.alimuzaffar.lib.pin.PinEntryEditText;
 import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
@@ -91,20 +89,17 @@ public class VerifyCodeFragment extends Fragment {
                 return;
             }
             appFuncs.showProgressWaiting(getActivity());
-            RestAPI.apiPOST(getActivity(), RestAPI.getVerifyCodeUrl(phone, pin), new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+            RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(phone, pin), new RestAPI.RestAPIListenner() {
                 @Override
-                public void onCompleted(Exception e, Response<String> result) {
+                public void OnComplete(int httpCode, String error, String s) {
                     appFuncs.dismissProgressWaiting();
-                    if (result != null) {
-                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                            appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
-                            return;
-                        } else {
-                            txtPin.setText("");
-                            AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
-                        }
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
+                        return;
+                    } else {
+                        txtPin.setText("");
+                        AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
                     }
-                    //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_ERROR, "");
                 }
             });
         } else if (v.getId() == R.id.btnVerifyChangePhone) {
@@ -133,10 +128,10 @@ public class VerifyCodeFragment extends Fragment {
         phone = edVerifyPhone.getText().toString().trim();
         String url = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(), Store.USERNAME), phone);
         AppFuncs.log(url);
-        RestAPI.apiPOST(getActivity(), url, new JsonObject()).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result != null) if (RestAPI.checkHttpCode(result.getHeaders().code())) {
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
                     AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_success), false);
                 } else {
                     AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_fail), false);

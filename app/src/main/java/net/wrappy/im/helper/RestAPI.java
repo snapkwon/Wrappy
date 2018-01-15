@@ -56,6 +56,7 @@ public class RestAPI {
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
+    public static String DELETE_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
     public static String POST_REFRESH_TOKEN = root_url + "oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
@@ -280,23 +281,23 @@ public class RestAPI {
         }).withResponse();
     }
 
-    public static Future<Response<String>> apiGET(Context context, String url) {
+    private static Future<Response<String>> apiGET(Context context, String url) {
         return getIon(context, url, "GET").asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPOSTArray(Context context, String url, JsonArray jsonObject) {
+    private static Future<Response<String>> apiPOSTArray(Context context, String url, JsonArray jsonObject) {
         return getIon(context, url, "POST").setJsonArrayBody((jsonObject == null) ? new JsonArray() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiPOST(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "POST").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiPUT(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "PUT").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
-    public static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
+    private static Future<Response<String>> apiDELETE(Context context, String url, JsonObject jsonObject) {
         return getIon(context, url, "DELETE").setJsonObjectBody((jsonObject == null) ? new JsonObject() : jsonObject).asString().withResponse();
     }
 
@@ -325,6 +326,29 @@ public class RestAPI {
 
     public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
+            @Override
+            public void onCompleted(Exception e, Response<String> result) {
+                Debug.d(result != null ? result.getResult() : "");
+                try {
+                    if ((checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredToken(result.getResult())) {
+                            refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
+                        }
+
+                    } else {
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    listenner.OnComplete(0, null, null);
+                }
+
+            }
+        });
+    }
+
+    public static void PutDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
+        apiPUT(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 Debug.d(result != null ? result.getResult() : "");

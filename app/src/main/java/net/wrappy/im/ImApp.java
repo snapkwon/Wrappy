@@ -46,8 +46,6 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -1259,12 +1257,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                             IContactListManager manager = mConn.getContactListManager();
                             manager.approveSubscription(contact);
                         } else {
-                            RestAPI.apiGET(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser())).setCallback(new FutureCallback<Response<String>>() {
+                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPI.RestAPIListenner() {
                                 @Override
-                                public void onCompleted(Exception e, Response<String> result) {
-                                    if (result != null) {
-                                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
-                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+                                public void OnComplete(int httpCode, String error, String s) {
+                                    if (s != null) {
+                                        if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
                                             try {
                                                 IContactListManager manager = null;
                                                 manager = mConn.getContactListManager();
@@ -1277,6 +1275,24 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                                     }
                                 }
                             });
+//                            RestAPI.apiGET(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser())).setCallback(new FutureCallback<Response<String>>() {
+//                                @Override
+//                                public void onCompleted(Exception e, Response<String> result) {
+//                                    if (result != null) {
+//                                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
+//                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
+//                                            try {
+//                                                IContactListManager manager = null;
+//                                                manager = mConn.getContactListManager();
+//                                                manager.approveSubscription(contact);
+//                                            } catch (RemoteException e1) {
+//                                                e1.printStackTrace();
+//                                            }
+//
+//                                        }
+//                                    }
+//                                }
+//                            });
                         }
 
 

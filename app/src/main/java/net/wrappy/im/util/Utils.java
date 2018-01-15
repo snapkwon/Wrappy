@@ -1,6 +1,10 @@
 package net.wrappy.im.util;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.WindowManager;
 
 /**
  * Created by hp on 12/21/2017.
@@ -15,5 +19,20 @@ public class Utils {
 
     public static String formatDurationMedia(long duration) {
         return String.valueOf(Math.round(duration * 2 / 2000.0) + "secs");// round 3/4
+    }
+
+    public static int getWithScreenDP(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+        int screenWidth = Math.round(displayMetrics.widthPixels / displayMetrics.density);
+
+        return screenWidth;
+    }
+
+    public static int convertSpToPixels(float sp, Context context) {
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
+        return px;
     }
 }

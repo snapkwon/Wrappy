@@ -124,6 +124,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     List<WpkCountry> wpkCountry;
     WpkToken wpkToken;
     String locale = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.update_profile_activity);
@@ -370,33 +371,26 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         Gson gson = new Gson();
         JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
-//        VerifyEmailOrPhoneActivity.start(this,null);
-//        appFuncs.dismissProgressWaiting();
-        RestAPI.apiPOST(getApplicationContext(),RestAPI.POST_REGISTER,dataJson).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
-                if (result!=null) {
-                    if (!RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        if (result.getResult() != null) {
-                            AppFuncs.log("UpdateProfileActivity: " + result.getResult());
-                            String er = WpErrors.getErrorMessage(result.getResult());
-                            if (!TextUtils.isEmpty(er)) {
-                                AppFuncs.alert(getApplicationContext(), er, true);
-                            } else {
-                                AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
-                            }
+            public void OnComplete(int httpCode, String error, String s) {
+                if (!RestAPI.checkHttpCode(httpCode)) {
+                    if (!TextUtils.isEmpty(s)) {
+                        AppFuncs.log("UpdateProfileActivity: " + s);
+                        String er = WpErrors.getErrorMessage(s);
+                        if (!TextUtils.isEmpty(er)) {
+                            AppFuncs.alert(getApplicationContext(), er, true);
+                        } else {
+                            AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
                         }
-                        appFuncs.dismissProgressWaiting();
-                        return;
                     }
-                    Bundle bundle = new Bundle();
-                    bundle.putString("phone", phone);
-                    Store.putStringData(getApplicationContext(), Store.USERNAME, user);
-                    VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
-                } else {
-                    AppFuncs.alert(getApplicationContext(),e.getLocalizedMessage(),true);
                     appFuncs.dismissProgressWaiting();
+                    return;
                 }
+                Bundle bundle = new Bundle();
+                bundle.putString("phone", phone);
+                Store.putStringData(getApplicationContext(), Store.USERNAME, user);
+                VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
             }
         });
     }
@@ -543,7 +537,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                                     appFuncs.dismissProgressWaiting();
                                     return;
                                 }
-                                AppFuncs.log("login");
+                                AppFuncs.log("loginUrl: " + s);
                                 JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                                 Gson gson = new Gson();
                                 wpkToken = gson.fromJson(jsonObject, WpkToken.class);
@@ -587,9 +581,18 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            LauncherActivity.start(UpdateProfileActivity.this);
-            finish();
+            onBackPressed();
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.cancel_and_home), R.string.yes, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LauncherActivity.start(UpdateProfileActivity.this);
+            }
+        }, null);
     }
 }

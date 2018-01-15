@@ -2,7 +2,6 @@ package net.wrappy.im.ui.promotion;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,10 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.R;
+import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppTextView;
@@ -38,8 +36,7 @@ import butterknife.OnClick;
 /**
  * Created by ben on 02/01/2018.
  */
-
-public class MainPromotionFragment extends Fragment {
+public class MainPromotionFragment extends BaseFragmentV4 {
 
     View mainView;
 
@@ -64,10 +61,14 @@ public class MainPromotionFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerPromotion.setLayoutManager(layoutManager);
         recyclerPromotion.setAdapter(promotionAdapter);
+        return mainView;
+    }
+
+    public void reloadData() {
+        list.clear();
         getPromotionBalance();
         getStatusInviteFriend();
         getPromotionHistory();
-        return mainView;
     }
 
     @OnClick(R.id.btnPromotionInvite)
@@ -76,24 +77,22 @@ public class MainPromotionFragment extends Fragment {
     }
 
     private void getPromotionHistory() {
-        RestAPI.apiGET(getActivity(), RestAPI.GET_PROMOTION_HISTORY).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_HISTORY, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
+            public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (result != null) {
-                        if (RestAPI.checkHttpCode(result.getHeaders().code())) {
-                            Gson gson = new Gson();
-                            AwardHistory history = gson.fromJson(result.getResult(), new TypeToken<AwardHistory>() {
-                            }.getType());
-                            Promotions promotions = new Promotions(history.getLevel0().getTitle(), AppFuncs.convertTimestamp(history.getLevel0().getTimestamp()), history.getLevel0().getBonus());
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        Gson gson = new Gson();
+                        AwardHistory history = gson.fromJson(s, new TypeToken<AwardHistory>() {
+                        }.getType());
+                        Promotions promotions = new Promotions(history.getLevel0().getTitle(), AppFuncs.convertTimestamp(history.getLevel0().getTimestamp()), history.getLevel0().getBonus());
+                        list.add(promotions);
+                        ArrayList<PromotionLevel> levels = history.getLevels();
+                        for (PromotionLevel level : levels) {
+                            promotions = new Promotions(level.getTitle(), AppFuncs.convertTimestamp(level.getTimestamp())+ " " + getString(R.string.from) + " <b>" + level.getIdentifier()+"</b> " + getString(R.string.level) + " (" + level.getLevel() + ")", level.getBonus());
                             list.add(promotions);
-                            ArrayList<PromotionLevel> levels = history.getLevels();
-                            for (PromotionLevel level : levels) {
-                                promotions = new Promotions(level.getTitle(), AppFuncs.convertTimestamp(level.getTimestamp())+ " " + getString(R.string.from) + " <b>" + level.getIdentifier()+"</b> " + getString(R.string.level) + " (" + level.getLevel() + ")", level.getBonus());
-                                list.add(promotions);
-                            }
-                            promotionAdapter.notifyDataSetChanged();
                         }
+                        promotionAdapter.notifyDataSetChanged();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -103,13 +102,13 @@ public class MainPromotionFragment extends Fragment {
     }
 
     private void getStatusInviteFriend() {
-        RestAPI.apiGET(getActivity(), RestAPI.GET_PROMOTION_SETTING).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
+            public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
+                    if (RestAPI.checkHttpCode(httpCode)) {
                         Gson gson = new Gson();
-                        PromotionSetting promotionSetting = gson.fromJson(result.getResult(), new TypeToken<PromotionSetting>(){}.getType());
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
                         if (promotionSetting.isEnablePromotion()) {
                             btnPromotionInvite.setVisibility(View.VISIBLE);
                         }
@@ -122,12 +121,12 @@ public class MainPromotionFragment extends Fragment {
     }
 
     private void getPromotionBalance() {
-        RestAPI.apiGET(getActivity(),RestAPI.GET_PROMOTION_BALANCE).setCallback(new FutureCallback<Response<String>>() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_BALANCE, new RestAPI.RestAPIListenner() {
             @Override
-            public void onCompleted(Exception e, Response<String> result) {
+            public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (result != null && RestAPI.checkHttpCode(result.getHeaders().code())) {
-                        JsonObject jsonObject = (new JsonParser()).parse(result.getResult()).getAsJsonObject();
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                         long balance = jsonObject.get("balance").getAsLong();
                         txtBalance.setText(NumberFormat.getNumberInstance(Locale.US).format(balance)+".00");
                     }
@@ -138,4 +137,8 @@ public class MainPromotionFragment extends Fragment {
         });
     }
 
+    @Override
+    public void reloadFragment() {
+        reloadData();
+    }
 }
