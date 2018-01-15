@@ -37,12 +37,15 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -76,6 +79,7 @@ import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
+import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,9 +90,6 @@ import java.util.ArrayList;
 public class ContactsPickerActivity extends BaseActivity {
 
     private int REQUEST_CODE_ADD_CONTACT = 9999;
-
-    private static final int WIDTH_SWIPE = 250;
-    private static final int TITLE_SWIPE = 18;
 
     private ContactAdapter mAdapter;
 
@@ -592,12 +593,18 @@ public class ContactsPickerActivity extends BaseActivity {
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
+
+                int screenWidth = Utils.getWithScreenDP(getApplicationContext());
+                int swipeLayoutWidth = (int) (screenWidth / 1.5);
+
+                int titleSize = Utils.convertSpToPixels(getResources().getDimension(R.dimen.title_size_swipe_menu), getApplicationContext());
+
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
                         0x00)));
-                deleteItem.setWidth(WIDTH_SWIPE);
+                deleteItem.setWidth(swipeLayoutWidth);
                 deleteItem.setTitle("Delete");
-                deleteItem.setTitleSize(TITLE_SWIPE);
+                deleteItem.setTitleSize(titleSize);
                 deleteItem.setTitleColor(Color.WHITE);
                 menu.addMenuItem(deleteItem);
             }
