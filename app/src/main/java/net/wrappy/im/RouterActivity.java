@@ -40,19 +40,18 @@ import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.legacy.ThemeableActivity;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.SecureMediaStore;
 
 import java.security.GeneralSecurityException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-import info.guardianproject.panic.Panic;
-import info.guardianproject.panic.PanicResponder;
 
-public class RouterActivity extends ThemeableActivity implements ICacheWordSubscriber {
+public class RouterActivity extends Activity implements ICacheWordSubscriber {
 
     private static final String TAG = "RouterActivity";
     private Cursor mProviderCursor;
@@ -99,55 +98,30 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
     private final int REQUEST_LOCK_SCREEN = 9999;
     private final int REQUEST_HANDLE_LINK = REQUEST_LOCK_SCREEN + 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.router_activity);
         mApp = (ImApp) getApplication();
 
         mHandler = new MyHandler(this);
 
         Intent intent = getIntent();
 
-        mDoLock = ACTION_LOCK_APP.equals(intent.getAction());
-
-        if (mDoLock) {
-            shutdownAndLock(this);
-
-            return;
-        } else if (Panic.isTriggerIntent(intent)) {
-            if (PanicResponder.receivedTriggerFromConnectedApp(this)) {
-                if (Preferences.uninstallApp()) {
-                    // lock and delete first for rapid response, then uninstall
-                    shutdownAndLock(this);
-                    PanicResponder.deleteAllAppData(this);
-                    Intent uninstall = new Intent(Intent.ACTION_DELETE);
-                    uninstall.setData(Uri.parse("package:" + getPackageName()));
-                    startActivity(uninstall);
-                } else if (Preferences.clearAppData()) {
-                    // lock first for rapid response, then delete
-                    shutdownAndLock(this);
-                    PanicResponder.deleteAllAppData(this);
-                } else if (Preferences.lockApp()) {
-                    shutdownAndLock(this);
-                }
-                // TODO add other responses here, paying attention to if/else order
-            } else if (PanicResponder.shouldUseDefaultResponseToTrigger(this)) {
-                if (Preferences.lockApp()) {
-                    shutdownAndLock(this);
-                }
-            }
-            // this Intent should not trigger any more processing
-            finish();
-            return;
-        }
-
         mSignInHelper = new SignInHelper(this, mHandler);
         mDoSignIn = intent.getBooleanExtra(EXTRA_DO_SIGNIN, true);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber)this);
-        mCacheWord.connectToService();
+        mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber) this);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mCacheWord.connectToService();
+            }
+        }, 2000);
+
 
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
@@ -236,26 +210,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
         int countAvailable = accountsAvailable();
 
-        Intent intent = getIntent();
-        if (intent != null && intent.getAction() != null && !intent.getAction().equals(Intent.ACTION_MAIN)) {
-            String action = intent.getAction();
-            Intent imUrlIntent = new Intent(this, ImUrlActivity.class);
-            imUrlIntent.setAction(action);
-            imUrlIntent.setType(intent.getType());
-
-            if (intent.getData() != null)
-                imUrlIntent.setData(intent.getData());
-
-            //  imUrlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (intent.getExtras() != null)
-                imUrlIntent.putExtras(intent.getExtras());
-
-            startActivityForResult(imUrlIntent, REQUEST_HANDLE_LINK);
-
-            // setIntent(null);
-            //finish();
-
-        } else if (countAvailable > 0) {
+        if (countAvailable > 0) {
             if (mDoSignIn && mProviderCursor.moveToFirst()) {
                 do {
                     if (!mProviderCursor.isNull(ACTIVE_ACCOUNT_ID_COLUMN)) {
@@ -450,26 +405,9 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
     @Override
     public void onCacheWordOpened() {
-       // mCacheWord.setTimeout(0);
-       byte[] encryptionKey = mCacheWord.getEncryptionKey();
-       openEncryptedStores(encryptionKey);
-
+        byte[] encryptionKey = mCacheWord.getEncryptionKey();
+        openEncryptedStores(encryptionKey);
         mApp.maybeInit(this);
-
-        /*
-        if (!mDoLock) {
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    doOnResume();
-                }
-            },1000);
-
-        }*/
-
-
     }
 
     public void shutdownAndLock(Context context) {

@@ -418,19 +418,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 error = getString(R.string.error_empty_phone);
             } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = getString(R.string.error_invalid_email);
-            } else {
+            } else if (TextUtils.isEmpty(email)) {
+                error = getString(R.string.error_empty_email);;
             }
-
-            if (TextUtils.isEmpty(email)) {
-                email = null;
-            }
-            if (TextUtils.isEmpty(phone)) {
-                phone = null;
-            } else {
-                if (wpkCountry != null) {
-                    String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
-                    phone = countryName + phone;
-                }
+            if (wpkCountry != null) {
+                String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
+                phone = countryName + phone;
             }
             if (!TextUtils.isEmpty(invitePhone)) {
                 if (wpkCountry != null) {
