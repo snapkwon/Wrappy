@@ -54,6 +54,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -372,6 +373,8 @@ public class ConversationView {
         mMessageAdapter.searchText("");
         inputlayout.setVisibility(View.VISIBLE);
         searchlayout.setVisibility(View.GONE);
+        btnsearchbottom.setVisibility(View.GONE);
+        btnsearchup.setVisibility(View.GONE);
     }
 
     public boolean isSelected() {
@@ -906,6 +909,7 @@ public class ConversationView {
                 if(query.isEmpty()) {
                     mMessageAdapter.searchText(query);
                 }
+
                 return true;
 
             }
@@ -2193,7 +2197,7 @@ public class ConversationView {
         }
 
         if (this.isGroupChat()) {
-            mComposeMessage.setHint(R.string.this_is_a_group_chat);
+            mComposeMessage.setHint(R.string.compose_hint);
         } else if (mCurrentChatSession != null) {
             IOtrChatSession otrChatSession = null;
 
@@ -2225,7 +2229,7 @@ public class ConversationView {
                 mIsStartingOtr = false; //it's started!
 
                 if (mSendButton.getVisibility() == View.GONE) {
-                    mComposeMessage.setHint(R.string.compose_hint_secure);
+                    mComposeMessage.setHint(R.string.compose_hint);
                     mSendButton.setImageResource(R.drawable.ic_send);
                 }
 
@@ -2733,7 +2737,15 @@ public class ConversationView {
 
             Cursor c = getCursor();
             textsearch = text;
+            searchpos = 0;
             searchCol.clear();
+            if(text.isEmpty())
+            {
+                btnsearchbottom.setVisibility(View.GONE);
+                btnsearchup.setVisibility(View.GONE);
+                notifyDataSetChanged();
+                return;
+            }
             if(c!=null) {
                 if (c.moveToFirst()) {
                     do {
@@ -2746,8 +2758,16 @@ public class ConversationView {
 
                 notifyDataSetChanged();
 
-                if (searchCol.size() > 0)
+                if (searchCol.size() > 0) {
                     mCallback.search(searchCol.get(searchpos));
+                    btnsearchbottom.setVisibility(View.VISIBLE);
+                    btnsearchup.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    btnsearchbottom.setVisibility(View.GONE);
+                    btnsearchup.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -2981,7 +3001,18 @@ public class ConversationView {
                 if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
-                        viewHolder.txttranslate.setText(bodytranslate.get(viewHolder.getPos()).mTexttranslate);
+                        String translate = "" ;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+
+                        {
+                            translate = String.valueOf(Html.fromHtml("<h2>" + bodytranslate.get(viewHolder.getPos()).mTexttranslate +"</h2>", Html.FROM_HTML_MODE_COMPACT));
+                        }
+                        else {
+
+                            translate = String.valueOf(Html.fromHtml("<h2>" +bodytranslate.get(viewHolder.getPos()).mTexttranslate + "</h2>"));
+                        }
+
+                        viewHolder.txttranslate.setText(Html.fromHtml(translate));
                     }
                     viewHolder.btntranslate.setText(mActivity.getResources().getString(R.string.closetranslate));
                 } else {

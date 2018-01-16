@@ -292,41 +292,41 @@
                             android:id="@+id/btnAttach"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
-                            android:layout_margin="6dp"
+                            android:layout_margin="4dp"
                             android:background="@android:color/transparent"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/ic_attach" />
                         <ImageButton
                         android:id="@+id/btnCaption"
                         android:layout_width="28dip"
                         android:layout_height="28dip"
-                        android:layout_margin="6dp"
+                        android:layout_margin="4dp"
                         android:background="@android:color/transparent"
-                        android:scaleType="centerInside"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/ic_shot" />
                         <ImageButton
                             android:id="@+id/btnImage"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
-                            android:layout_margin="6dp"
+                            android:layout_margin="4dp"
                             android:background="@android:color/transparent"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/ic_chat_photo" />
                         <ImageButton
                             android:id="@+id/btnLocation"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
-                            android:layout_margin="6dp"
+                            android:layout_margin="2dp"
                             android:background="@android:color/transparent"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/posiotion" />
                         <ImageButton
                             android:id="@+id/btnVoice"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
-                            android:layout_margin="6dp"
+                            android:layout_margin="4dp"
                             android:background="@android:color/transparent"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/ic_voice" />
 
 
@@ -335,7 +335,7 @@
                             android:layout_width="0dip"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@android:color/transparent"
+                            android:background="@drawable/edittextchat"
                             android:fontFamily="sans-serif-light"
                             android:hint="@string/compose_hint"
                             android:imeOptions="actionSend|flagNoEnterAction"
@@ -357,9 +357,9 @@
                             android:id="@+id/btnStiker"
                             android:layout_width="28dip"
                             android:layout_height="28dip"
-                            android:layout_margin="6dp"
+                            android:layout_margin="4dp"
                             android:background="@android:color/transparent"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/ic_sticker" />
 
                         <ImageButton
