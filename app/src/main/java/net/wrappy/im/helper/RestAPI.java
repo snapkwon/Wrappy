@@ -90,6 +90,7 @@ public class RestAPI {
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
     public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
+    private static String POST_VERIFY_CODE_CHANGE_PHONE = root_url + "member/mobile/update/%s/%s/%s";
     public static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
@@ -106,6 +107,10 @@ public class RestAPI {
     private static int GET_METHOD = 2;
 
     public static int NUMBER_REQUEST_TOKEN = 3;
+
+    public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
+        return String.format(POST_VERIFY_CODE_CHANGE_PHONE,user,oldPhone,newPhone);
+    }
 
     public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
         return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
