@@ -17,12 +17,6 @@
             android:src="@drawable/intro1"
             android:padding="10dp"/>
 
-        <net.wrappy.im.helper.layout.AppTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Page1Message"
-            android:gravity="center_horizontal"/>
-
     </LinearLayout>
 
 </RelativeLayout>
