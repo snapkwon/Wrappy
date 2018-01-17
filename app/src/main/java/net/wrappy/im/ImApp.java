@@ -1358,16 +1358,21 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 bannerReference = wpKMemberDto.getBanner().getReference();
             }
 
-            Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
+            Uri queryUri = builder.build();
+            Cursor cursor = sImApp.getContentResolver().query(queryUri, new String[]{Imps.Contacts._ID},
                     selection, null, null);
+            boolean isUpdated = false;
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
-                    sImApp.getContentResolver().update(uri, values, null, null);
+                    isUpdated = sImApp.getContentResolver().update(uri, values, null, null) > 0;
+                } else {
+                    sImApp.getContentResolver().delete(queryUri, selection, null);
                 }
                 cursor.close();
-            } else {
+            }
+            if (!isUpdated) {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
