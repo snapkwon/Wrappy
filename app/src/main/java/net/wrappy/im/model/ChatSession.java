@@ -153,7 +153,7 @@ public class ChatSession {
 
         if (mParticipant instanceof Contact) {
 
-            if (mJid.hasNoResource())
+            if (mJid.hasNoResource() || !Constant.OMEMO_ENABLED)
                 initJid();
 
             OtrChatManager cm = OtrChatManager.getInstance();

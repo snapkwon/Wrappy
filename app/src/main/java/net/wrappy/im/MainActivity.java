@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -456,6 +457,8 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                 } else if (conn.getState() == ImConnection.LOGGING_OUT) {
                     Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
                     sb.show();
+                } else if (conn.getState() == ImConnection.LOGGED_IN) {
+                    rejoinGroupChat();
                 }
             }
 
@@ -1097,7 +1100,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                             rejoinGroupChat();
                         }
                     });
-                    groupSessionTask.executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+                    groupSessionTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "", nickname);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
