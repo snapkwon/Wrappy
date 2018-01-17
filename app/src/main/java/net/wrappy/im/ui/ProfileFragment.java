@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
@@ -40,6 +41,7 @@ import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
+import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
@@ -355,8 +357,26 @@ public class ProfileFragment extends BaseFragmentV4 {
 //            });
 //            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
-            AppFuncs.shareApp(getActivity());
+            getStatusInviteFriend();
+
         }
+    }
+
+    private void getStatusInviteFriend() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        Gson gson = new Gson();
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
+                        AppFuncs.shareApp(getActivity(),promotionSetting.getContent());
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
