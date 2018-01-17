@@ -37,6 +37,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -782,7 +783,7 @@ public class ContactsPickerActivity extends BaseActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            if (mSearchString != null) {
+            if (!TextUtils.isEmpty(mSearchString)) {
                 buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
