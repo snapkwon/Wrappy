@@ -167,6 +167,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
         activity.startActivity(intent);
     }
 
