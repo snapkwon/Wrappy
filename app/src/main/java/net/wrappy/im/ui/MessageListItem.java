@@ -51,7 +51,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -189,8 +188,9 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
 
-        if (nickname == null)
-            nickname = address;
+        if (nickname == null) {
+            nickname = ImApp.getNickname(address);
+        }
 
         lastMessage = formatMessage(body);
         showAvatar(address, nickname, true, presenceStatus, mReference);
