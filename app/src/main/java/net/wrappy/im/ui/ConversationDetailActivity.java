@@ -838,9 +838,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             String fileName = contentUri.getLastPathSegment();
 
             Uri vfsUri;
-            if (resizeImage)
+            /*if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else if (importContent) {
+            else*/ if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, fileName, info.stream);

@@ -17,21 +17,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.util.SecureMediaStore;
+
+import java.io.IOException;
 
 import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
-
-import net.wrappy.im.R;
-
-import java.io.IOException;
 
 public class ImageViewActivity extends AppCompatActivity {
 
@@ -40,6 +41,7 @@ public class ImageViewActivity extends AppCompatActivity {
 
     private Uri mediaUri;
     private String mimeType;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +58,15 @@ public class ImageViewActivity extends AppCompatActivity {
 
         setTitle("");
 
-       // getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         /**
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
+         getWindow().getDecorView().setSystemUiVisibility(
+         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+         | View.SYSTEM_UI_FLAG_FULLSCREEN
+         | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
     }
 
 
@@ -88,10 +90,10 @@ public class ImageViewActivity extends AppCompatActivity {
                 exportMediaFile();
                 return true;
             /**
-            case R.id.menu_message_delete:
-                deleteMediaFile();
-                return true;
-                */
+             case R.id.menu_message_delete:
+             deleteMediaFile();
+             return true;
+             */
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -111,29 +113,40 @@ public class ImageViewActivity extends AppCompatActivity {
         });
     }
 
-    private void display( String filename ) {
+    private void display(String filename) {
         try {
+            final PZSImageView imageView = (PZSImageView) findViewById(R.id.pzs_image_view);
 
-            PZSImageView imageView = (PZSImageView) findViewById(R.id.pzs_image_view);
-
-            if (mimeType.equals("image/gif")) {
+            if (mimeType.startsWith("image")) {
                 if (SecureMediaStore.isVfsUri(mediaUri)) {
                     try {
-                        Glide.with(this)
-                                .load(new info.guardianproject.iocipher.FileInputStream(new java.io.File(mediaUri.getPath()).getPath()))
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(imageView);
+                        info.guardianproject.iocipher.File fileImage = new info.guardianproject.iocipher.File(mediaUri.getPath());
+                        if (fileImage.exists())
+                            Glide.with(this)
+                                    .load(new info.guardianproject.iocipher.FileInputStream(fileImage))
+                                    .asBitmap()
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(new SimpleTarget<Bitmap>() {
+                                        @Override
+                                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                            imageView.setImageBitmap(resource);
+                                        }
+                                    });
                     } catch (Exception e) {
                         Log.e(ImApp.LOG_TAG, "unable to load thumbnail", e);
                     }
                 } else {
                     Glide.with(this)
                             .load(mediaUri)
-                            .into(imageView);
+                            .asBitmap()
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                    imageView.setImageBitmap(resource);
+                                }
+                            });
                 }
-            }
-            else
-            {
+            } else {
                 imageView.setImageBitmap(fitToScreen(filename));
             }
 
@@ -144,7 +157,7 @@ public class ImageViewActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap fitToScreen( String filename ) throws IOException {
+    private Bitmap fitToScreen(String filename) throws IOException {
         // read in dimensions only
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -156,7 +169,7 @@ public class ImageViewActivity extends AppCompatActivity {
         fis.close();
 
         if ((options.outWidth <= 0) || (options.outHeight <= 0))
-            throw new IOException( "Image dimensions unknown");
+            throw new IOException("Image dimensions unknown");
 
         // calculate down sampling ratio to fit screen
         int imageWidth = options.outWidth;
@@ -185,18 +198,18 @@ public class ImageViewActivity extends AppCompatActivity {
             display.getSize(size);
             return size;
         }
-        return new Point( display.getWidth(), display.getHeight());
+        return new Point(display.getWidth(), display.getHeight());
     }
 
-    public void exportMediaFile ()
-    {
+    public void exportMediaFile() {
         java.io.File exportPath = SecureMediaStore.exportPath(mimeType, mediaUri);
         exportMediaFile(mimeType, mediaUri, exportPath);
 
-    };
+    }
 
-    private void exportMediaFile (String mimeType, Uri mediaUri, java.io.File exportPath)
-    {
+    ;
+
+    private void exportMediaFile(String mimeType, Uri mediaUri, java.io.File exportPath) {
         try {
 
             SecureMediaStore.exportContent(mimeType, mediaUri, exportPath);
@@ -206,13 +219,12 @@ public class ImageViewActivity extends AppCompatActivity {
             shareIntent.setType(mimeType);
             startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
         } catch (IOException e) {
-            Toast.makeText(this, "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+            AppFuncs.alert(this, "Export Failed " + e.getMessage(), true);
             e.printStackTrace();
         }
     }
 
-    private void forwardMediaFile ()
-    {
+    private void forwardMediaFile() {
 
         String resharePath = mediaUri.toString();
         Intent shareIntent = new Intent(this, ImUrlActivity.class);
@@ -222,8 +234,7 @@ public class ImageViewActivity extends AppCompatActivity {
 
     }
 
-    private void resendMediaFile ()
-    {
+    private void resendMediaFile() {
 
         String resharePath = mediaUri.toString();
         Intent shareIntent = new Intent(this, ImUrlActivity.class);
@@ -233,8 +244,7 @@ public class ImageViewActivity extends AppCompatActivity {
 
     }
 
-    private void deleteMediaFile ()
-    {
-        Toast.makeText(this,"Feature not quite ready yet!",Toast.LENGTH_SHORT).show();
+    private void deleteMediaFile() {
+        AppFuncs.alert(this, "Feature not quite ready yet!", false);
     }
 }
