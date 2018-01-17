@@ -37,19 +37,15 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -61,13 +57,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
-import com.thefinestartist.utils.content.Res;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -77,8 +71,6 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
-import net.wrappy.im.util.Debug;
-import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -840,7 +832,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.USERNAME);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.DEFAULT_SORT_NICKNAME_ORDER);
             //    loader.setUpdateThrottle(50L);
             return loader;
         }
