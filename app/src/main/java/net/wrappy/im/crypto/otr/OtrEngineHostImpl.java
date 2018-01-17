@@ -1,26 +1,25 @@
 package net.wrappy.im.crypto.otr;
 
+import android.content.Context;
+
+import net.java.otr4j.OtrEngineHost;
+import net.java.otr4j.OtrKeyManager;
+import net.java.otr4j.OtrPolicy;
+import net.java.otr4j.session.SessionID;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.Message;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.RemoteImService;
 import net.wrappy.im.service.adapters.ChatSessionAdapter;
 import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
 import net.wrappy.im.service.adapters.ImConnectionAdapter;
-import net.wrappy.im.service.RemoteImService;
 
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
-import net.java.otr4j.OtrEngineHost;
-import net.java.otr4j.OtrKeyManager;
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.session.SessionID;
-
-import android.content.Context;
 
 /*
  * OtrEngineHostImpl is the connects this app and the OtrEngine
@@ -190,7 +189,7 @@ public class OtrEngineHostImpl implements OtrEngineHost {
     public void showError(SessionID sessionID, String error) {
         OtrDebugLogger.log(sessionID.toString() + ": ERROR=" + error);
 
-      //  Toast.makeText(mContext, "ERROR: " + error, Toast.LENGTH_SHORT).show();
+      //  AppFuncs.alert(mContext, "ERROR: " + error, false);
 
     }
 

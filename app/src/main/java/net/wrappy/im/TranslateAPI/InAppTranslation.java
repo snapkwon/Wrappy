@@ -68,7 +68,7 @@ public class InAppTranslation {
                         public void onCompleted(Exception e, Response<BaseObject<DetectLanguageResponse>> result) {
                             if (result != null && result.getResult() != null) {
                                 DetectLanguageResponse response = result.getResult().getData();
-                                if (!response.getDetections().isEmpty() && !response.getDetections().get(0).isEmpty()) {
+                                if (response!=null && !response.getDetections().isEmpty() && !response.getDetections().get(0).isEmpty()) {
                                     DetectLanguageResponse.Detection detection = response.getDetections().get(0).get(0);
                                     onCallbackDetect(detection.getLanguage(), query, position);
                                 } else onCallbackDetect(query, query, position);

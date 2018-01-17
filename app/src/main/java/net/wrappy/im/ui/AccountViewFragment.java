@@ -47,6 +47,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
@@ -435,7 +436,7 @@ public class AccountViewFragment extends Fragment {
                         createNewAccount(mUserName, pass, mAccountId, false);
 
                     } else {
-                        Toast.makeText(getActivity(), getString(R.string.error_account_password_mismatch), Toast.LENGTH_SHORT).show();
+                        AppFuncs.alert(getActivity(), getString(R.string.error_account_password_mismatch), false);
                     }
                 } else {
                     if (isSignedIn) {
@@ -547,7 +548,7 @@ public class AccountViewFragment extends Fragment {
                     }
                 } else {
                     //don't need to notify people if there is nothing to show here
-//                    Toast.makeText(this, "OTR is not initialized yet", Toast.LENGTH_SHORT).show();
+//                    AppFuncs.alert(this, "OTR is not initialized yet", false);
                 }
 
             } catch (Exception e) {
@@ -590,11 +591,11 @@ public class AccountViewFragment extends Fragment {
                 } catch (NumberFormatException e) {
                     // TODO move these strings to strings.xml
                     isGood = false;
-                    Toast.makeText(
+                    AppFuncs.alert(
                             getActivity(),
                             "The port value '" + splitColon[1]
                                     + "' after the : could not be parsed as a number!",
-                            Toast.LENGTH_LONG).show();
+                            true);
                 }
             }
         }
@@ -603,16 +604,16 @@ public class AccountViewFragment extends Fragment {
 
 //        if (mDomain == null) {
         //          isGood = false;
-        //Toast.makeText(AccountActivity.this,
+        //AppFuncs.alert(AccountActivity.this,
         //	R.string.account_wizard_no_domain_warning,
-        //	Toast.LENGTH_LONG).show();
+        //	true);
         //    }
         /*//removing requirement of a . in the domain
         else if (mDomain.indexOf(".") == -1) {
             isGood = false;
-            //	Toast.makeText(AccountActivity.this,
+            //	AppFuncs.alert(AccountActivity.this,
             //		R.string.account_wizard_no_root_domain_warning,
-            //	Toast.LENGTH_LONG).show();
+            //	true);
         }*/
 
         return isGood;
@@ -694,9 +695,9 @@ public class AccountViewFragment extends Fragment {
             Log.e(ImApp.LOG_TAG, "signout: caught ", ex);
         } finally {
 
-            //    Toast.makeText(this,
+            //    AppFuncs.alert(this,
             //            getString(R.string.signed_out_prompt, this.mEditUserAccount.getText()),
-            //            Toast.LENGTH_SHORT).show();
+            //            false);
             isSignedIn = false;
 
             mBtnSignIn.setText(getString(R.string.sign_in));
@@ -864,7 +865,7 @@ public class AccountViewFragment extends Fragment {
             }
 
             if (result != null) {
-                Toast.makeText(getActivity(), "error creating account: " + result, Toast.LENGTH_LONG).show();
+                AppFuncs.alert(getActivity(), "error creating account: " + result, true);
                 //AccountActivity.this.setResult(Activity.RESULT_CANCELED);
                 //AccountActivity.this.finish();
             } else {

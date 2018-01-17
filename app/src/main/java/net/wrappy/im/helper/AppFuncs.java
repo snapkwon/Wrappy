@@ -89,6 +89,14 @@ public class AppFuncs {
         return dp;
     }
 
+    public static void alert(Context context, CharSequence s, boolean isLong) {
+        Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+    }
+
+    public static void alert(Context context, int s, boolean isLong) {
+        Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+    }
+
     public static void alert(Context context, String s, boolean isLong) {
         Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
     }
@@ -353,7 +361,7 @@ public class AppFuncs {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
-            String sAux = activity.getString(R.string.share_app_text)+"\n";
+            String sAux = activity.getString(R.string.share_app_text) + "\n";
             sAux = sAux + "https://play.google.com/store/apps/details?id=net.wrappy.im";
             i.putExtra(Intent.EXTRA_TEXT, sAux);
             activity.startActivity(Intent.createChooser(i, "choose one"));

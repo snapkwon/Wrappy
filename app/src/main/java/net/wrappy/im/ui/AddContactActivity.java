@@ -43,11 +43,11 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
@@ -490,7 +490,7 @@ public class AddContactActivity extends BaseActivity {
         Log.i(TAG, "addContactFromUri: " + uri + "  scheme: " + uri.getScheme());
         Map<String, String> parsedUri = XmppUriHelper.parse(uri);
         if (!parsedUri.containsKey(XmppUriHelper.KEY_ADDRESS)) {
-            Toast.makeText(this, "error parsing address: " + uri, Toast.LENGTH_LONG).show();
+            AppFuncs.alert(this, "error parsing address: " + uri, true);
             return;
         }
         String address = parsedUri.get(XmppUriHelper.KEY_ADDRESS);

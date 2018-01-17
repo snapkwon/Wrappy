@@ -54,6 +54,7 @@ import net.wrappy.im.crypto.IOtrKeyManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.crypto.otr.OtrDebugLogger;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ConnectionFactory;
 import net.wrappy.im.model.ConnectionListener;
 import net.wrappy.im.model.ImConnection;
@@ -838,7 +839,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case EVENT_SHOW_TOAST:
-                    Toast.makeText(RemoteImService.this, (CharSequence) msg.obj, Toast.LENGTH_SHORT).show();
+                    AppFuncs.alert(RemoteImService.this, (CharSequence) msg.obj, false);
                     break;
 
                 default:

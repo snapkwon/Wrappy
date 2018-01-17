@@ -139,7 +139,7 @@
                             style="@style/AppText03"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/email" />
+                            android:text="@string/email_tile" />
 
                         <View
                             style="@style/divider"

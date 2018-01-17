@@ -32,22 +32,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import org.apache.commons.io.IOUtils;
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.ui.stickers.Sticker;
 import net.wrappy.im.ui.stickers.StickerGroup;
 import net.wrappy.im.ui.stickers.StickerManager;
 import net.wrappy.im.ui.stickers.StickerPagerAdapter;
 import net.wrappy.im.ui.stickers.StickerSelectListener;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import net.wrappy.im.R;
 
 public class StickerActivity extends BaseActivity {
 
@@ -177,7 +177,7 @@ public class StickerActivity extends BaseActivity {
                 shareIntent.setType(mimeType);
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
             } catch (IOException e) {
-                Toast.makeText(this, "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+                AppFuncs.alert(this, "Export Failed " + e.getMessage(), true);
                 e.printStackTrace();
             }
         }

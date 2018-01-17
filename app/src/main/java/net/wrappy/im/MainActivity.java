@@ -139,13 +139,20 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     Adapter adapter;
     FragmentManager fragmentManager;
 
-    @BindView(R.id.btnHeaderEdit) ImageButton btnHeaderEdit;
-    @BindView(R.id.btnHeaderSearch) ImageButton btnHeaderSearch;
-    @BindView(R.id.tabs) TabLayout mTabLayout;
-    @BindView(R.id.viewpager) ViewPager mViewPager;
-    @BindView(R.id.edSearchConversation) AppEditTextView edSearchConversation;
-    @BindView(R.id.imgLogo) ImageView imgLogo;
-    @BindView(R.id.fab) FloatingActionButton mFab;
+    @BindView(R.id.btnHeaderEdit)
+    ImageButton btnHeaderEdit;
+    @BindView(R.id.btnHeaderSearch)
+    ImageButton btnHeaderSearch;
+    @BindView(R.id.tabs)
+    TabLayout mTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.edSearchConversation)
+    AppEditTextView edSearchConversation;
+    @BindView(R.id.imgLogo)
+    ImageView imgLogo;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
 
     //Check to load old data from server
     Handler mLoadDataHandler = new Handler();
@@ -200,7 +207,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         return false;
     }
 
-    @OnClick({R.id.btnHeaderSearch,R.id.btnHeaderEdit})
+    @OnClick({R.id.btnHeaderSearch, R.id.btnHeaderEdit})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnHeaderSearch:
@@ -271,7 +278,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 
         // main menu tab
         TabLayout.Tab tab;
-        for (int i=0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             tab = mTabLayout.newTab();
             mTabLayout.addTab(tab);
         }
@@ -304,7 +311,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
-                    if (tab.getPosition()==2) {
+                    if (tab.getPosition() == 2) {
                         adapter.notifyDataSetChanged();
                     }
                 } catch (Exception ex) {

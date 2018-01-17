@@ -1,20 +1,5 @@
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.service.IImConnection;
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import net.wrappy.im.model.ImConnection;
-import net.wrappy.im.model.ImErrorInfo;
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.ImServiceConstants;
-import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
-import net.wrappy.im.util.LogCleaner;
-
-import net.wrappy.im.MainActivity;
-
-import java.util.Collection;
-import java.util.HashSet;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -24,7 +9,21 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.MainActivity;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.ImErrorInfo;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.service.ImServiceConstants;
+import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
+import net.wrappy.im.util.LogCleaner;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Handle sign-in process for activities.
@@ -253,7 +252,7 @@ public class SignInHelper {
      */
     private void promptForBackgroundDataSetting(String providerName) {
 
-        Toast.makeText(mContext, mContext.getString(R.string.bg_data_prompt_message, providerName), Toast.LENGTH_LONG).show();
+        AppFuncs.alert(mContext, mContext.getString(R.string.bg_data_prompt_message, providerName), true);
 
 
     }
