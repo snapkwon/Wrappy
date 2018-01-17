@@ -23,6 +23,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
@@ -188,7 +189,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -205,7 +206,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     private void login(String pass) {
         appFuncs.showProgressWaiting(this);
         String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME), pass);
-        RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPIListenner() {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {

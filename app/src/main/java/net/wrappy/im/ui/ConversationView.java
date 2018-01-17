@@ -88,7 +88,6 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -108,6 +107,7 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
@@ -1289,7 +1289,7 @@ public class ConversationView {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("message", mComposeMessage.getText().toString());
 
-        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 AppFuncs.log(s);
@@ -3196,7 +3196,7 @@ public class ConversationView {
             jsonObject.addProperty("screenShot", reference);
             jsonObject.addProperty("type", type);
 
-            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.e(s);

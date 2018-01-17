@@ -39,6 +39,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.service.IImConnection;
@@ -112,7 +113,7 @@ public class AddContactNewActivity extends BaseActivity {
 
     private void searchUsername(String s) {
         if (!TextUtils.isEmpty(s)) {
-            RestAPI.GetDataWrappy(this, String.format(RestAPI.GET_SEARCH_USERNAME, s), new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, String.format(RestAPI.GET_SEARCH_USERNAME, s), new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.d(s);

@@ -63,6 +63,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -357,7 +358,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
-        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 dismissWaitinDialog();
@@ -492,7 +493,7 @@ public class ContactsPickerActivity extends BaseActivity {
                             JsonParser parser = new JsonParser();
                             JsonArray json = (JsonArray) parser.parse(jsonObject);
 
-                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPI.RestAPIListenner() {
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListenner() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
                                     if (RestAPI.checkHttpCode(httpCode)) {
@@ -622,7 +623,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPI.RestAPIListenner() {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
                                 ImApp.removeContact(getContentResolver(), address, conn);
