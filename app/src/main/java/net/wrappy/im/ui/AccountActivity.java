@@ -40,12 +40,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
@@ -414,7 +414,7 @@ public class AccountActivity extends BaseActivity {
         }
         else
         {
-        Toast.makeText(AccountActivity.this, getString(R.string.error_account_password_mismatch), Toast.LENGTH_SHORT).show();
+        AppFuncs.alert(AccountActivity.this, getString(R.string.error_account_password_mismatch), false);
         }
         }
         else
@@ -561,7 +561,7 @@ public class AccountActivity extends BaseActivity {
                     }
                 } else {
                     //don't need to notify people if there is nothing to show here
-//                    Toast.makeText(this, "OTR is not initialized yet", Toast.LENGTH_SHORT).show();
+//                    AppFuncs.alert(this, "OTR is not initialized yet", false);
                 }
 
             } catch (Exception e) {
@@ -700,9 +700,9 @@ public class AccountActivity extends BaseActivity {
             Log.e(ImApp.LOG_TAG, "signout: caught ", ex);
         } finally {
 
-            //    Toast.makeText(this,
+            //    AppFuncs.alert(this,
             //            getString(R.string.signed_out_prompt, this.mEditUserAccount.getText()),
-            //            Toast.LENGTH_SHORT).show();
+            //            false);
             isSignedIn = false;
 
             //mBtnSignIn.setText(getString(R.string.sign_in));
@@ -905,7 +905,7 @@ public class AccountActivity extends BaseActivity {
             }
 
             if (result != null) {
-                Toast.makeText(AccountActivity.this, "error creating account: " + result, Toast.LENGTH_LONG).show();
+                AppFuncs.alert(AccountActivity.this, "error creating account: " + result, true);
                 //AccountActivity.this.setResult(Activity.RESULT_CANCELED);
                 //AccountActivity.this.finish();
             } else {

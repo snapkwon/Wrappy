@@ -20,20 +20,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
-
-import info.guardianproject.cacheword.CacheWordHandler;
-import info.guardianproject.cacheword.ICacheWordSubscriber;
-import info.guardianproject.cacheword.PassphraseSecrets;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 
 import java.util.List;
 import java.util.UUID;
+
+import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.ICacheWordSubscriber;
+import info.guardianproject.cacheword.PassphraseSecrets;
 
 public class LockScreenActivity extends BaseActivity implements ICacheWordSubscriber {
     private static final String TAG = "LockScreenActivity";
@@ -158,14 +158,14 @@ public class LockScreenActivity extends BaseActivity implements ICacheWordSubscr
     }
 
     private void showValidationError() {
-        Toast.makeText(LockScreenActivity.this, mPasswordError, Toast.LENGTH_LONG).show();
+        AppFuncs.alert(LockScreenActivity.this, mPasswordError, true);
         mNewPassphrase.requestFocus();
     }
 
     private void showInequalityError() {
-        Toast.makeText(LockScreenActivity.this,
+        AppFuncs.alert(LockScreenActivity.this,
                 getString(R.string.lock_screen_passphrases_not_matching),
-                Toast.LENGTH_SHORT).show();
+                false);
         clearNewFields();
     }
 

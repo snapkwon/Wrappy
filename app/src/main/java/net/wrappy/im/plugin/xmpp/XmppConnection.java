@@ -851,11 +851,9 @@ public class XmppConnection extends ImConnection {
         }
 
         @Override
-        protected void addGroupMemberAsync(ChatGroup group, Contact contact) {
+        public void addGroupMemberAsync(ChatGroup group, Contact contact) {
 
-            //   inviteUserAsync(group, contact);
-            //we already have invite, so... what is this?
-
+            inviteUserAsync(group, contact);
         }
 
         @Override
@@ -1398,6 +1396,9 @@ public class XmppConnection extends ImConnection {
             initConnectionAndLogin(providerSettings, mUsername);
 
             setState(LOGGED_IN, null);
+            getContactListManager();
+            getChatSessionManager();
+            getChatGroupManager();
             debug(TAG, "logged in");
             return 200;
 
@@ -1541,7 +1542,7 @@ public class XmppConnection extends ImConnection {
 
     private synchronized Omemo initOmemo(XMPPTCPConnection conn) throws Exception {
 
-        if (conn != null && conn.isConnected() && OMEMO_ENABLED) {
+        if (conn != null && conn.isConnected() && conn.isAuthenticated() && (conn.getUser() != null || !TextUtils.isEmpty(mUserJid)) && OMEMO_ENABLED) {
 
             mOmemoInstance = new Omemo(conn, mUserJid);
             mOmemoInstance.getManager().addOmemoMessageListener(new OmemoMessageListener() {
@@ -2398,6 +2399,10 @@ public class XmppConnection extends ImConnection {
             }
         }
 
+        mChatGroupManager = null;
+        mChatManager = null;
+        mOmemoInstance = null;
+        mContactListManager = null;
         //mConnection = null;
         mNeedReconnect = false;
         mRetryLogin = false;
@@ -4632,10 +4637,9 @@ public class XmppConnection extends ImConnection {
     private void buildOmemoSession(BareJid bareJid) {
         if (OMEMO_ENABLED) {
             try {
+                getOmemo().trustOmemoDevice(bareJid, null, true);
                 if (getOmemo().getManager().contactSupportsOmemo(bareJid)) {
-                    if (getOmemo().getFingerprints(bareJid, false).size() == 0) {
-                        getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
-                    }
+                    getOmemo().getManager().requestDeviceListUpdateFor(bareJid);
                     getOmemo().getManager().buildSessionsWith(bareJid);
                 }
             } catch (Exception e) {

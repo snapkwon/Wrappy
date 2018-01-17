@@ -17,12 +17,14 @@
 package net.wrappy.im;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -138,13 +140,20 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     Adapter adapter;
     FragmentManager fragmentManager;
 
-    @BindView(R.id.btnHeaderEdit) ImageButton btnHeaderEdit;
-    @BindView(R.id.btnHeaderSearch) ImageButton btnHeaderSearch;
-    @BindView(R.id.tabs) TabLayout mTabLayout;
-    @BindView(R.id.viewpager) ViewPager mViewPager;
-    @BindView(R.id.edSearchConversation) AppEditTextView edSearchConversation;
-    @BindView(R.id.imgLogo) ImageView imgLogo;
-    @BindView(R.id.fab) FloatingActionButton mFab;
+    @BindView(R.id.btnHeaderEdit)
+    ImageButton btnHeaderEdit;
+    @BindView(R.id.btnHeaderSearch)
+    ImageButton btnHeaderSearch;
+    @BindView(R.id.tabs)
+    TabLayout mTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.edSearchConversation)
+    AppEditTextView edSearchConversation;
+    @BindView(R.id.imgLogo)
+    ImageView imgLogo;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
 
     //Check to load old data from server
     Handler mLoadDataHandler = new Handler();
@@ -155,6 +164,12 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
 
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,7 +214,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         return false;
     }
 
-    @OnClick({R.id.btnHeaderSearch,R.id.btnHeaderEdit})
+    @OnClick({R.id.btnHeaderSearch, R.id.btnHeaderEdit})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnHeaderSearch:
@@ -270,7 +285,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 
         // main menu tab
         TabLayout.Tab tab;
-        for (int i=0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             tab = mTabLayout.newTab();
             mTabLayout.addTab(tab);
         }
@@ -303,7 +318,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         appTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_menu_info_active, 0, 0);
                     }
                     mViewPager.setCurrentItem(tab.getPosition());
-                    if (tab.getPosition()==2) {
+                    if (tab.getPosition() == 2) {
                         adapter.notifyDataSetChanged();
                     }
                 } catch (Exception ex) {
@@ -456,6 +471,8 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                 } else if (conn.getState() == ImConnection.LOGGING_OUT) {
                     Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
                     sb.show();
+                } else if (conn.getState() == ImConnection.LOGGED_IN) {
+                    rejoinGroupChat();
                 }
             }
 
@@ -1097,7 +1114,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                             rejoinGroupChat();
                         }
                     });
-                    groupSessionTask.executeOnExecutor(ImApp.sThreadPoolExecutor, "", nickname);
+                    groupSessionTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "", nickname);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

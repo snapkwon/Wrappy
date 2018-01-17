@@ -29,8 +29,8 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -244,7 +244,7 @@ public class ImUrlActivity extends Activity {
                     Uri data = getIntent().getData();
 
                     if (data.getScheme().equals("immu")) {
-                        Toast.makeText(this, "immu: URI handling not yet implemented!", Toast.LENGTH_LONG).show();
+                        AppFuncs.alert(this, "immu: URI handling not yet implemented!", true);
                     } else if (!isValidToAddress()) {
                         showContactList(accountId);
                     } else {
@@ -578,7 +578,7 @@ public class ImUrlActivity extends Activity {
          }
          }**/
 
-        Toast.makeText(this, R.string.unsupported_incoming_data, Toast.LENGTH_LONG).show();
+        AppFuncs.alert(this, R.string.unsupported_incoming_data, true);
         finish(); // make sure not to show this Activity's blank white screen
     }
 
@@ -682,7 +682,7 @@ public class ImUrlActivity extends Activity {
                     Log.e(TAG, "error sending external file", e);
                 }
 
-                Toast.makeText(this, R.string.unable_to_securely_share_this_file, Toast.LENGTH_LONG).show();
+                AppFuncs.alert(this, R.string.unable_to_securely_share_this_file, true);
 
             }
         } catch (RemoteException e) {
@@ -788,7 +788,7 @@ public class ImUrlActivity extends Activity {
                         handleIntent();
                     }
                 });
-                Toast.makeText(ImUrlActivity.this, R.string.starting_the_chatsecure_service_, Toast.LENGTH_LONG).show();
+                AppFuncs.alert(ImUrlActivity.this, R.string.starting_the_chatsecure_service_, true);
 
             }
         } else {

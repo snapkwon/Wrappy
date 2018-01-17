@@ -17,15 +17,15 @@
 
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import net.wrappy.im.model.ImErrorInfo;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.model.ImErrorInfo;
 
 public class SimpleAlertHandler extends Handler {
 
@@ -88,7 +88,7 @@ public class SimpleAlertHandler extends Handler {
 
         if (!title.equals(message)) //sometimes this reads Attention: Attention!
         {
-            Toast.makeText(mActivity, title + ": " + message, Toast.LENGTH_SHORT).show();
+            AppFuncs.alert(mActivity, title + ": " + message, false);
         }
 
     }

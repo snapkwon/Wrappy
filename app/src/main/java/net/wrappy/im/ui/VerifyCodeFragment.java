@@ -13,13 +13,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.alimuzaffar.lib.pin.PinEntryEditText;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.model.WpErrors;
+import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.ui.onboarding.OnboardingAccount;
+import net.wrappy.im.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +46,8 @@ public class VerifyCodeFragment extends Fragment {
 
     AppDelegate appDelegate;
     AppFuncs appFuncs;
-    String phone = "";
+    String data = "";
+    Registration registration;
 
     @BindView(R.id.txt_pin_entry)
     PinEntryEditText txtPin;
@@ -63,8 +74,12 @@ public class VerifyCodeFragment extends Fragment {
         mainView = inflater.inflate(R.layout.verify_code_fragment, null);
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
-        phone = getArguments().getString("phone");
-        edVerifyPhone.setText(phone);
+        data = getArguments().getString("data","");
+        if (!TextUtils.isEmpty(data)) {
+            Gson gson = new Gson();
+            registration = gson.fromJson(data, Registration.class);
+            edVerifyPhone.setText(registration.getWpKMemberDto().getMobile());
+        }
         btnVerifyChangePhone.setSelected(false);
         return mainView;
     }
@@ -72,7 +87,7 @@ public class VerifyCodeFragment extends Fragment {
     @OnTextChanged(R.id.edVerifyPhone)
     protected void handleTextChange(Editable editable) {
         String text = editable.toString().trim();
-        if (!text.equalsIgnoreCase(phone)) {
+        if (!text.equalsIgnoreCase(registration.getWpKMemberDto().getMobile())) {
             btnVerifyChangePhone.setImageResource(R.drawable.ic_check_active);
             btnVerifyChangePhone.setSelected(true);
         } else {
@@ -89,14 +104,75 @@ public class VerifyCodeFragment extends Fragment {
                 return;
             }
             appFuncs.showProgressWaiting(getActivity());
-            RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(phone, pin), new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(registration.getWpKMemberDto().getMobile(), pin), new RestAPI.RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    appFuncs.dismissProgressWaiting();
+
                     if (RestAPI.checkHttpCode(httpCode)) {
-                        appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
+                        String url = RestAPI.loginUrl(registration.getWpKMemberDto().getIdentifier(), registration.getWpKAuthDto().getSecret());
+                        AppFuncs.log(url);
+                        RestAPI.PostDataWrappy(getActivity(), null, url, new RestAPI.RestAPIListenner() {
+
+                            @Override
+                            public void OnComplete(int httpCode, String error, String s) {
+                                try {
+                                    if (!RestAPI.checkHttpCode(httpCode)) {
+                                        String er = WpErrors.getErrorMessage(s);
+                                        if (!TextUtils.isEmpty(er)) {
+                                            AppFuncs.alert(getActivity(), er, true);
+                                        }
+                                        appFuncs.dismissProgressWaiting();
+                                        return;
+                                    }
+                                    AppFuncs.log("loginUrl: " + s);
+                                    JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                                    Gson gson = new Gson();
+                                    WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+                                    wpkToken.saveToken(getActivity());
+                                    RegistrationAccount account = new RegistrationAccount(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
+                                    account.setNickname(registration.getWpKMemberDto().getIdentifier());
+                                    account.setEmail(registration.getWpKMemberDto().getEmail());
+                                    account.setPhone(registration.getWpKMemberDto().getMobile());
+                                    account.setGender(registration.getWpKMemberDto().getGender());
+                                    (new LoginTask(getActivity(), new LoginTask.EventListenner() {
+                                        @Override
+                                        public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
+                                            appFuncs.dismissProgressWaiting();
+                                            if (!isSuccess) {
+                                                AppFuncs.alert(getActivity(),getString(R.string.network_error),false);
+                                            } else {
+                                                AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
+//                                                String avatar = "";
+//                                                String banner = "";
+//                                                if (registration.getWpKMemberDto().getAvatar()!=null) {
+//                                                    avatar = registration.getWpKMemberDto().getAvatar().getReference();
+//                                                }
+//                                                if (registration.getWpKMemberDto().getBanner()!=null) {
+//                                                    banner = registration.getWpKMemberDto().getBanner().getReference();
+//                                                }
+//                                                String hash = DatabaseUtils.generateHashFromAvatar(avatar);
+//
+//                                                try {
+//                                                    DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, onboardingAccount.providerId, onboardingAccount.accountId, avatar, banner, hash, onboardingAccount.username);
+//                                                } catch (Exception e) {
+//                                                    e.printStackTrace();
+//                                                }
+                                                MainActivity.start(getActivity());
+                                                getActivity().finish();
+                                                //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
+                                            }
+                                        }
+                                    })).execute(account);
+                                } catch (Exception ex) {
+                                    appFuncs.dismissProgressWaiting();
+                                    ex.printStackTrace();
+                                }
+                            }
+                        });
+
                         return;
                     } else {
+                        appFuncs.dismissProgressWaiting();
                         txtPin.setText("");
                         AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
                     }
@@ -125,7 +201,7 @@ public class VerifyCodeFragment extends Fragment {
 
     private void sendCodeAgain() {
         edVerifyPhone.setFocusable(false);
-        phone = edVerifyPhone.getText().toString().trim();
+        String phone = edVerifyPhone.getText().toString().trim();
         String url = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(), Store.USERNAME), phone);
         AppFuncs.log("sendCodeAgain: " + url);
         RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
@@ -143,8 +219,8 @@ public class VerifyCodeFragment extends Fragment {
     private void requestChangePhoneNumber() {
         edVerifyPhone.setFocusable(false);
         String newPhone = edVerifyPhone.getText().toString().trim();
-        String url = RestAPI.getVerifyCodeByNewPhoneNumber(Store.getStringData(getActivity(), Store.USERNAME), phone, newPhone);
-        phone = newPhone;
+        String url = RestAPI.getVerifyCodeByNewPhoneNumber(Store.getStringData(getActivity(), Store.USERNAME), registration.getWpKMemberDto().getMobile(), newPhone);
+        registration.getWpKMemberDto().setMobile(newPhone);
         AppFuncs.log("requestChangePhoneNumber" + url);
         RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
             @Override

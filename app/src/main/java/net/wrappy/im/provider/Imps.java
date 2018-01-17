@@ -354,7 +354,7 @@ public class Imps {
             return ret;
         }
 
-        public static final int updateAccountFromDataServer(ContentResolver cr, Registration registration, long accountId) {
+        public static int updateAccountFromDataServer(ContentResolver cr, Registration registration, long accountId) {
             int id = -1;
             if (registration != null && registration.getWpKMemberDto() != null) {
                 ContentValues values = new ContentValues();
@@ -766,6 +766,8 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "subscriptionType DESC, last_message_date DESC,"
                 + " mode DESC, nickname COLLATE NOCASE ASC";
+
+        public static final String DEFAULT_SORT_NICKNAME_ORDER = "nickname ASC";
         /**
          * The default sort order for this table
          */

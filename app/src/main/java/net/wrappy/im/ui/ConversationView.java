@@ -1164,7 +1164,7 @@ public class ConversationView {
          clipboard.setPrimaryClip(clip); //
          }
 
-         Toast.makeText(mActivity, mContext.getString(R.string.toast_chat_copied_to_clipboard), Toast.LENGTH_SHORT).show();
+         AppFuncs.alert(mActivity, mContext.getString(R.string.toast_chat_copied_to_clipboard), false);
 
          return true;
 
@@ -2124,7 +2124,7 @@ public class ConversationView {
 
 
                 } else {
-                    Toast.makeText(mActivity, "No giphy stickers available for your search", Toast.LENGTH_SHORT).show();
+                    AppFuncs.alert(mActivity, "No giphy stickers available for your search", false);
                 }
 
                 GiphyAPI.get().removeMonitor(mMonitor);
@@ -2288,7 +2288,7 @@ public class ConversationView {
         } catch (ActivityNotFoundException e) {
            // if the user clicked a link, e.g. geo:60.17,24.829, and there is
             //  no app to handle that kind of link, catch the exception
-            Toast.makeText(mActivity, R.string.error_no_app_to_handle_url, Toast.LENGTH_SHORT)
+            AppFuncs.alert(mActivity, R.string.error_no_app_to_handle_url, Toast.LENGTH_SHORT)
                     .show();
             return true;
         }
@@ -2366,7 +2366,7 @@ public class ConversationView {
 
                     String error = msg.getData().getString("err");
 
-                    Toast.makeText(mContext, mActivity.getString(R.string.error_tranferring_file) + error, Toast.LENGTH_LONG).show();
+                    AppFuncs.alert(mContext, mActivity.getString(R.string.error_tranferring_file) + error, true);
                     break;
                 case SHOW_DATA_PROGRESS:
                     break;

@@ -36,10 +36,11 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.ImUrlActivity;
+import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.util.SecureMediaStore;
@@ -50,8 +51,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import net.wrappy.im.R;
 
 public class GalleryListItem extends FrameLayout {
 
@@ -196,7 +195,7 @@ public class GalleryListItem extends FrameLayout {
             }
             else
             {
-                Toast.makeText(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, Toast.LENGTH_LONG).show();
+                AppFuncs.alert(getContext(), R.string.there_is_no_viewer_available_for_this_file_format, true);
             }
         }
     }
@@ -221,7 +220,7 @@ public class GalleryListItem extends FrameLayout {
             shareIntent.setType(mimeType);
             context.startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_media)));
         } catch (IOException e) {
-            Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+            AppFuncs.alert(getContext(), "Export Failed " + e.getMessage(), true);
             e.printStackTrace();
         }
     }
