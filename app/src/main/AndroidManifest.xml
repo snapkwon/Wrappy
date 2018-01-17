@@ -472,6 +472,10 @@
         <activity
             android:name=".ui.promotion.PromotionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".ui.WebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>
