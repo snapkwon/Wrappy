@@ -16,12 +16,6 @@
  */
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.service.IImConnection;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.provider.Imps;
-import net.wrappy.im.util.LogCleaner;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -31,6 +25,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.util.LogCleaner;
 
 public class SignoutActivity extends ThemeableActivity {
 
@@ -102,7 +101,7 @@ public class SignoutActivity extends ThemeableActivity {
         } finally {
             //finish();
 
-         //   Toast.makeText(this, getString(R.string.signed_out_prompt), Toast.LENGTH_LONG).show();
+         //   AppFuncs.alert(this, getString(R.string.signed_out_prompt), true);
         }
     }
 

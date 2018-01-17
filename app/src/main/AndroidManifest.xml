@@ -300,7 +300,8 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name=".ui.widgets.ImageViewActivity" />
+        <activity android:name=".ui.widgets.ImageViewActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.widgets.SecureCameraActivity" />
         <activity
             android:name=".MainActivity"

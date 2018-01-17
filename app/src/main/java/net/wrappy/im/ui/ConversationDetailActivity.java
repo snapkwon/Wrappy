@@ -61,7 +61,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
@@ -93,7 +92,6 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -119,7 +117,6 @@ import butterknife.OnClick;
 import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
 
-import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 import static net.wrappy.im.helper.RestAPI.getAvatarUrl;
 
 //import com.bumptech.glide.Glide;
@@ -811,9 +808,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             GooglePlayServicesUtil
                     .getErrorDialog(e.getConnectionStatusCode(), this, 0);
         } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, R.string.google_play_services_not_available,
-                    Toast.LENGTH_LONG)
-                    .show();
+            AppFuncs.alert(this, R.string.google_play_services_not_available,
+                    true);
         }
     }
 
@@ -870,7 +866,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 }
             }
         } catch (Exception e) {
-            //  Toast.makeText(this, "Error sending file", Toast.LENGTH_LONG).show(); // TODO i18n
+            //  AppFuncs.alert(this, "Error sending file", true); // TODO i18n
             Log.e(ImApp.LOG_TAG, "error sending file", e);
         }
     }

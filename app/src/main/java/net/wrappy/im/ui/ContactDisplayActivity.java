@@ -16,13 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrChatManager;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
@@ -225,7 +225,7 @@ public class ContactDisplayActivity extends BaseActivity {
                 if (session == null) {
                     new ChatSessionInitTask(this, mProviderId, mAccountId, Imps.Contacts.TYPE_NORMAL)
                             .executeOnExecutor(ImApp.sThreadPoolExecutor, new Contact(new XmppAddress(mUsername)));
-                    Toast.makeText(this, getString(R.string.message_waiting_for_friend), Toast.LENGTH_LONG).show();
+                    AppFuncs.alert(this, getString(R.string.message_waiting_for_friend), true);
                 }
             }
         } catch (RemoteException re) {

@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
@@ -25,6 +24,7 @@ import net.wrappy.im.GethService.KeyManager;
 import net.wrappy.im.GethService.Wallet;
 import net.wrappy.im.GethService.WalletInfo;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.util.PopupUtils;
 
@@ -215,7 +215,7 @@ public class WalletQrCodeDetailActivity extends AppCompatActivity implements Vie
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText(getString(R.string.copied_text), hexAddress);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this, R.string.copy_clipboard, Toast.LENGTH_SHORT).show();
+            AppFuncs.alert(this, R.string.copy_clipboard, false);
         }
         if (v.getId() == wallet_qr_btn_backup.getId()) {
             pickFolder();

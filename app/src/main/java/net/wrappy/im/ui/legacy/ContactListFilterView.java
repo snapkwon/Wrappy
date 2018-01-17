@@ -42,10 +42,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IContactListManager;
@@ -295,10 +295,10 @@ public class ContactListFilterView extends LinearLayout {
             IContactListManager listManager = conn.getContactListManager();
             int result = listManager.setContactName(aAddress, aNickname);
             if (result != ImErrorInfo.NO_ERROR) {
-                Toast.makeText(mContext, mContext.getString(R.string.error_prefix) + result, Toast.LENGTH_LONG).show(); // TODO -LS error handling
+                AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + result, true); // TODO -LS error handling
             }
         } catch (Exception e) {
-            Toast.makeText(mContext, mContext.getString(R.string.error_prefix) + e.getMessage(), Toast.LENGTH_LONG).show(); // TODO -LS error handling
+            AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + e.getMessage(), true); // TODO -LS error handling
         }
         mFilterList.invalidate();
         final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);

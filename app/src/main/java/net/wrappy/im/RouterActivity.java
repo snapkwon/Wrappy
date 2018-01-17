@@ -31,8 +31,8 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.AddContactActivity;
 import net.wrappy.im.ui.IntroActivity;
@@ -193,7 +193,7 @@ public class RouterActivity extends ThemeableActivity implements ICacheWordSubsc
 
             Log.e(ImApp.LOG_TAG, e.getMessage(), e);
 
-            Toast.makeText(this, getString(R.string.error_welcome_database), Toast.LENGTH_LONG).show();
+            AppFuncs.alert(this, getString(R.string.error_welcome_database), true);
             finish();
 
 
