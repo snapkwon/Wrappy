@@ -32,6 +32,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -93,7 +98,6 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -119,7 +123,6 @@ import butterknife.OnClick;
 import eu.siacs.conversations.Downloader;
 import info.guardianproject.iocipher.FileInputStream;
 
-import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 import static net.wrappy.im.helper.RestAPI.getAvatarUrl;
 
 //import com.bumptech.glide.Glide;
@@ -246,8 +249,39 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     };
 
-    public void updateStatusAvatar(String references)
+    public Bitmap createImage(int width, int height, int color, String name) {
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        Paint paintCicle = new Paint();
+        Paint paintText = new Paint();
+
+        Rect rect = new Rect(0, 0, width, height);
+        RectF rectF = new RectF(rect);
+        float density = ConversationDetailActivity.this.getResources().getDisplayMetrics().density;
+        float roundPx = 100*density;
+
+        paintCicle.setColor(Color.GRAY);
+        paintCicle.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+
+// Set Border For Circle
+        paintCicle.setStyle(Paint.Style.FILL);
+        paintCicle.setStrokeWidth(1.0f);
+
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paintCicle);
+
+        paintText.setColor(Color.WHITE);
+        paintText.setTextSize(72);
+
+        canvas.drawText(name, 75 - 23, 75 + 25, paintText);
+
+        return output;
+    }
+
+    public void updateStatusAvatar(boolean isgroupchat)
     {
+        String references = getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY);
         if(references != null && !references.isEmpty() ) {
             BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
             if (true)
@@ -268,11 +302,37 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
         else
         {
-            //    int padding = 24;
-            //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
-           // if(isgroup) {
+            if(isgroupchat == true) {
+                //    int padding = 24;
+                //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
+                // if(isgroup) {
                 getSupportActionBar().setIcon(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
-          /*  }
+            }
+            else
+            {
+                try {
+                    String[] nicknames = getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY).split(" ");
+                    String nickname = "";
+                    if(nicknames.length == 0)
+                    {
+                        nickname = "";
+                    }
+                    else if(nicknames.length ==1){
+                         nickname = String.valueOf(nicknames[0].charAt(0));
+                    }
+                    else
+                    {
+                        nickname = nicknames[0].charAt(0) + String.valueOf(nicknames[1].charAt(0));
+                    }
+                    Bitmap b = createImage(150,150 , Color.GREEN ,nickname);
+                    Drawable d = new BitmapDrawable(getResources(), b);
+
+                   getSupportActionBar().setIcon(d);
+                } catch (OutOfMemoryError ome) {
+                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
+                }
+            }
+            /*  }
             else
             {
                 int padding = 24;
@@ -364,7 +424,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         // set background for this screen
         loadBitmapPreferences();
 
-        updateStatusAvatar(getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY));
+        updateStatusAvatar(mConvoView.isGroupChat());
     }
 
     public void updateLastSeen(Date lastSeen) {
