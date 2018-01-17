@@ -71,6 +71,7 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -588,7 +589,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                 int screenWidth = Utils.getWithScreenDP(getApplicationContext());
                 int swipeLayoutWidth = (int) (screenWidth / 1.5);
-                int titleSize = Utils.convertSpToPixels(swipeLayoutWidth / 30, getApplicationContext());
+                int titleSize = Utils.convertSpToPixels(swipeLayoutWidth / 40, getApplicationContext());
 
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
