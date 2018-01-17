@@ -72,6 +72,7 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -589,8 +590,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                 int screenWidth = Utils.getWithScreenDP(getApplicationContext());
                 int swipeLayoutWidth = (int) (screenWidth / 1.5);
-
-                int titleSize = Utils.convertSpToPixels(getResources().getDimension(R.dimen.title_size_swipe_menu), getApplicationContext());
+                int titleSize = Utils.convertSpToPixels(swipeLayoutWidth / 40, getApplicationContext());
 
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
@@ -625,10 +625,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPI.RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
-                                if (RestAPI.checkHttpCode(httpCode)) {
-                                    AppFuncs.log(s);
-                                    ImApp.removeContact(getContentResolver(), address, conn);
-                                }
+                                ImApp.removeContact(getContentResolver(), address, conn);
                             }
                         });
                         break;
