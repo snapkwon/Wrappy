@@ -52,6 +52,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -1256,7 +1257,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                             IContactListManager manager = mConn.getContactListManager();
                             manager.approveSubscription(contact);
                         } else {
-                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPI.RestAPIListenner() {
+                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListenner() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
                                     if (s != null) {

@@ -27,6 +27,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.ContactsLoaderCallbacks;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -105,7 +106,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     }
 
     void getTypeRoster() {
-        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {

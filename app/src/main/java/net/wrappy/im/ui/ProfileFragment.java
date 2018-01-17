@@ -34,6 +34,7 @@ import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
@@ -193,7 +194,7 @@ public class ProfileFragment extends BaseFragmentV4 {
 
     private void getDataMember() {
         String url = RestAPI.getMemberByIdUrl(jid);
-        RestAPI.GetDataWrappy(getActivity(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), url, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -288,7 +289,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgPhotoAvatar.setImageResource(R.drawable.avatar);
                                 if (wpKMemberDtoTemp.getAvatar() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPI.RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListenner() {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
                                                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -304,7 +305,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgProfileHeader.setImageResource(android.R.color.transparent);
                                 if (wpKMemberDto.getBanner() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPI.RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPIListenner() {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
                                                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -400,7 +401,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
         AppFuncs.log("update: " + jsonObject.toString());
-        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {

@@ -12,6 +12,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.provider.Store;
 
@@ -63,7 +64,7 @@ public class ForgetPasswordResetEmailFragment extends Fragment{
             return;
         }
         appFuncs.showProgressWaiting(getActivity());
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.sendEmailAndUsernameToGetPassUrl(Store.getStringData(getActivity(),Store.USERNAME),email), new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.sendEmailAndUsernameToGetPassUrl(Store.getStringData(getActivity(),Store.USERNAME),email), new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 appFuncs.dismissProgressWaiting();

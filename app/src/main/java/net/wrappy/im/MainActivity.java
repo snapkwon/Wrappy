@@ -66,6 +66,7 @@ import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Contact;
@@ -250,7 +251,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     }
 
     private void showPopUpNotice() {
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -1019,7 +1020,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             sessionTasks.clear();
             Imps.Chats.reset(getContentResolver());
             Imps.Contacts.reset(getContentResolver());
-            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
@@ -1030,7 +1031,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                     }
                 }
             });
-            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {

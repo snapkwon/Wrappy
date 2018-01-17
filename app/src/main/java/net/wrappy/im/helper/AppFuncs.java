@@ -375,7 +375,7 @@ public class AppFuncs {
     }
 
     public static void getSyncUserInfo(final long accountId) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
