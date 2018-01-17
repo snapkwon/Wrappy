@@ -6,4 +6,4 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:textSize="14sp"
-    android:textColor="#bebebe"/>
+    android:textColor="@android:color/black"/>
