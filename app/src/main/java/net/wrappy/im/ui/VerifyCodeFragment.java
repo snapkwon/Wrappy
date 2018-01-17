@@ -108,7 +108,7 @@ public class VerifyCodeFragment extends Fragment {
                 if (btn.isSelected()) {
                     btn.setImageResource(R.drawable.page_1);
                     btnVerifyChangePhone.setSelected(false);
-                    sendCodeAgain();
+                    requestChangePhoneNumber();
                 } else {
                     edVerifyPhone.setFocusableInTouchMode(true);
                     edVerifyPhone.requestFocus();
@@ -127,7 +127,25 @@ public class VerifyCodeFragment extends Fragment {
         edVerifyPhone.setFocusable(false);
         phone = edVerifyPhone.getText().toString().trim();
         String url = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(), Store.USERNAME), phone);
-        AppFuncs.log(url);
+        AppFuncs.log("sendCodeAgain: " + url);
+        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                if (RestAPI.checkHttpCode(httpCode)) {
+                    AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_success), false);
+                } else {
+                    AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_fail), false);
+                }
+            }
+        });
+    }
+
+    private void requestChangePhoneNumber() {
+        edVerifyPhone.setFocusable(false);
+        String newPhone = edVerifyPhone.getText().toString().trim();
+        String url = RestAPI.getVerifyCodeByNewPhoneNumber(Store.getStringData(getActivity(), Store.USERNAME), phone, newPhone);
+        phone = newPhone;
+        AppFuncs.log("requestChangePhoneNumber" + url);
         RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
