@@ -8,7 +8,6 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -18,36 +17,22 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
-import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
-import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.ui.legacy.SignInHelper;
-import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PatternLockUtils;
 import net.wrappy.im.util.PopupUtils;
 
-import java.lang.ref.WeakReference;
-import java.security.KeyPair;
 import java.util.List;
 
 import me.tornado.android.patternlock.PatternUtils;
@@ -69,11 +54,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     int type_request;
     AppFuncs appFuncs;
 
-    public static final int STATUS_SUCCESS = 1;
-
-    private SimpleAlertHandler mHandler;
-
-    ExistingAccountTask mExistingAccountTask;
+//    public static final int STATUS_SUCCESS = 1;
+//
+//    private SimpleAlertHandler mHandler;
+//
+//    ExistingAccountTask mExistingAccountTask;
     String hashResetPassword = "";
 
 
@@ -87,7 +72,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         actionbar.setHomeButtonEnabled(true);
         actionbar.setDisplayHomeAsUpEnabled(true);
         appFuncs = AppFuncs.getInstance();
-        mHandler = new SimpleAlertHandler(this);
+        //mHandler = new SimpleAlertHandler(this);
 
         Bundle arg = getIntent().getExtras();
         if (arg != null) {
@@ -152,23 +137,22 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         }
         mPatternView.clearPattern();
     }
-
-    private void getUserInfo(final long accountId) {
-        mExistingAccountTask = null;
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
-            @Override
-            public void OnComplete(int httpCode, String error, String s) {
-                Debug.d(s);
-                try {
-                    Registration registration = new Gson().fromJson(s, new TypeToken<Registration>() {
-                    }.getType());
-                    Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+//
+//    private void getUserInfo(final long accountId) {
+//        mExistingAccountTask = null;
+//        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+//            @Override
+//            public void OnComplete(int httpCode, String error, String s) {
+//                Debug.d(s);
+//                try {
+//                    Registration registration = new Gson().fromJson(s, Registration.class);
+//                    Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//    }
 
 
     @Override
@@ -249,96 +233,106 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         });
     }
 
-    private void resetTask() {
-        mExistingAccountTask = null;
-    }
-
     private void onLoginFailed() {
         PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
     }
 
     private void doExistingAccountRegister(String username, String password, String accountName) {
-        if (mExistingAccountTask == null) {
-            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
-            mExistingAccountTask.execute(username, password, accountName);
-        }
-    }
-
-
-    private static final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
-
-        WeakReference<PatternActivity> weakReference;
-
-        public ExistingAccountTask(PatternActivity activity) {
-            this.weakReference = new WeakReference<>(activity);
-        }
-
-        private PatternActivity getActivity() {
-            return weakReference != null && weakReference.get() != null ? weakReference.get() : null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected Integer doInBackground(String... account) {
-            int status = 404;
-            if (getActivity() != null) {
-                try {
-                    OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
-                    KeyPair keyPair = keyMan.generateLocalKeyPair();
-                    String nickname = new XmppAddress(account[0]).getUser();
-                    RegistrationAccount registrationAccount = new RegistrationAccount(account[0], account[1]);
-                    registrationAccount.setNickname(account[2]);
-                    OnboardingAccount result = OnboardingManager.addExistingAccount(getActivity(), getActivity().mHandler, registrationAccount);
-
-                    if (result != null) {
-                        String jabberId = result.username + '@' + result.domain;
-                        keyMan.storeKeyPair(jabberId, keyPair);
-                        getActivity().getUserInfo(result.accountId);
-                    }
-
-                    if (account != null) {
-                        XmppConnection t = new XmppConnection(getActivity());
-                        status = t.check_login(account[1], result.accountId, result.providerId);
-                        if (status == 200) {
-                            ImApp mApp = (ImApp) getActivity().getApplication();
-                            mApp.setDefaultAccount(result.providerId, result.accountId);
-
-                            SignInHelper signInHelper = new SignInHelper(getActivity(), getActivity().mHandler);
-                            signInHelper.activateAccount(result.providerId, result.accountId);
-                            signInHelper.signIn(result.password, result.providerId, result.accountId, true);
-
-                        }
-
-                    }
-                } catch (Exception e) {
-                    Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-                    return 404;
-                }
-            }
-            return status;
-        }
-
-        @Override
-        protected void onPostExecute(Integer account) {
-            if (getActivity() != null) {
-                // mUsername = account.username + '@' + account.domain;
-                getActivity().appFuncs.dismissProgressWaiting();
-                if (account == 200) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    getActivity().startActivity(intent);
-                    getActivity().finish();
+        RegistrationAccount account = new RegistrationAccount(username,password);
+        account.setNickname(accountName);
+//        if (mExistingAccountTask == null) {
+//            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
+//            mExistingAccountTask.execute(username, password, accountName);
+//        }
+        (new LoginTask(this, new LoginTask.EventListenner() {
+            @Override
+            public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
+                appFuncs.dismissProgressWaiting();
+                if (!isSuccess) {
+                    onLoginFailed();
                 } else {
-                    getActivity().onLoginFailed();
+                    AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
+                    MainActivity.start(PatternActivity.this);
                 }
-                getActivity().resetTask();
             }
-        }
+        })).execute(account);
     }
+//
+//
+//    private static final class ExistingAccountTask extends AsyncTask<String, Void, Integer> {
+//
+//        WeakReference<PatternActivity> weakReference;
+//
+//        public ExistingAccountTask(PatternActivity activity) {
+//            this.weakReference = new WeakReference<>(activity);
+//        }
+//
+//        private PatternActivity getActivity() {
+//            return weakReference != null && weakReference.get() != null ? weakReference.get() : null;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//        }
+//
+//        @Override
+//        protected Integer doInBackground(String... account) {
+//            int status = 404;
+//            if (getActivity() != null) {
+//                try {
+//                    OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
+//                    KeyPair keyPair = keyMan.generateLocalKeyPair();
+//                    String nickname = new XmppAddress(account[0]).getUser();
+//                    RegistrationAccount registrationAccount = new RegistrationAccount(account[0], account[1]);
+//                    registrationAccount.setNickname(account[2]);
+//                    OnboardingAccount result = OnboardingManager.addExistingAccount(getActivity(), getActivity().mHandler, registrationAccount);
+//
+//                    if (result != null) {
+//                        String jabberId = result.username + '@' + result.domain;
+//                        keyMan.storeKeyPair(jabberId, keyPair);
+//                        getActivity().getUserInfo(result.accountId);
+//                    }
+//
+//                    if (account != null) {
+//                        XmppConnection t = new XmppConnection(getActivity());
+//                        status = t.check_login(account[1], result.accountId, result.providerId);
+//                        if (status == 200) {
+//                            ImApp mApp = (ImApp) getActivity().getApplication();
+//                            mApp.setDefaultAccount(result.providerId, result.accountId);
+//
+//                            SignInHelper signInHelper = new SignInHelper(getActivity(), getActivity().mHandler);
+//                            signInHelper.activateAccount(result.providerId, result.accountId);
+//                            signInHelper.signIn(result.password, result.providerId, result.accountId, true);
+//
+//                        }
+//
+//                    }
+//                } catch (Exception e) {
+//                    Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
+//                    return 404;
+//                }
+//            }
+//            return status;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer account) {
+//            if (getActivity() != null) {
+//                // mUsername = account.username + '@' + account.domain;
+//                getActivity().appFuncs.dismissProgressWaiting();
+//                if (account == 200) {
+//                    Intent intent = new Intent(getActivity(), MainActivity.class);
+//                    intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    getActivity().startActivity(intent);
+//                    getActivity().finish();
+//                } else {
+//                    getActivity().onLoginFailed();
+//                }
+//                getActivity().resetTask();
+//            }
+//        }
+//    }
 
    /* @Override
     public void OnComplete(String error, String s) {

@@ -17,9 +17,12 @@
 
 package net.wrappy.im.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 
-public class RegistrationAccount {
+public class RegistrationAccount implements Parcelable {
     private String username;
     private String jid;
     private String nickname;
@@ -38,6 +41,31 @@ public class RegistrationAccount {
         this.jid = address.getUser();
         this.domain = address.getAddress().split("@")[1];
     }
+
+    protected RegistrationAccount(Parcel in) {
+        username = in.readString();
+        jid = in.readString();
+        nickname = in.readString();
+        domain = in.readString();
+        password = in.readString();
+        server = in.readString();
+        port = in.readInt();
+        email = in.readString();
+        phone = in.readString();
+        gender = in.readString();
+    }
+
+    public static final Creator<RegistrationAccount> CREATOR = new Creator<RegistrationAccount>() {
+        @Override
+        public RegistrationAccount createFromParcel(Parcel in) {
+            return new RegistrationAccount(in);
+        }
+
+        @Override
+        public RegistrationAccount[] newArray(int size) {
+            return new RegistrationAccount[size];
+        }
+    };
 
     public String getUsername() {
         return username;
@@ -113,5 +141,24 @@ public class RegistrationAccount {
 
     public String getJid() {
         return jid;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(username);
+        parcel.writeString(jid);
+        parcel.writeString(nickname);
+        parcel.writeString(domain);
+        parcel.writeString(password);
+        parcel.writeString(server);
+        parcel.writeInt(port);
+        parcel.writeString(email);
+        parcel.writeString(phone);
+        parcel.writeString(gender);
     }
 }

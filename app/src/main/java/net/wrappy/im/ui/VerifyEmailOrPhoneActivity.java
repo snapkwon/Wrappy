@@ -60,9 +60,10 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     }
 
     private void resultOK() {
-        Intent returnIntent = getIntent();
-        returnIntent.putExtra("result", true);
-        setResult(RESULT_OK, returnIntent);
+
+//        Intent returnIntent = getIntent();
+//        returnIntent.putExtra("result", true);
+//        setResult(RESULT_OK, returnIntent);
         finish();
     }
 
