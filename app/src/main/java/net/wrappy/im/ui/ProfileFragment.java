@@ -364,7 +364,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     }
 
     private void getStatusInviteFriend() {
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
