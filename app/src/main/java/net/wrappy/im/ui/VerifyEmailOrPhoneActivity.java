@@ -19,9 +19,6 @@ import net.wrappy.im.util.PopupUtils;
 
 public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDelegate {
 
-    public static int VERIFY_OK = 200;
-    public static int VERIFY_ERROR = 201;
-
     public static void start(Activity activity, Bundle bundle, int requestCode) {
         Intent intent = new Intent(activity, VerifyEmailOrPhoneActivity.class);
         if (bundle != null) {
@@ -54,16 +51,7 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
 
     @Override
     public void onChangeInApp(int id, String data) {
-        if (id == VERIFY_OK) {
-            resultOK();
-        }
-    }
 
-    private void resultOK() {
-        Intent returnIntent = getIntent();
-        returnIntent.putExtra("result", true);
-        setResult(RESULT_OK, returnIntent);
-        finish();
     }
 
     @Override

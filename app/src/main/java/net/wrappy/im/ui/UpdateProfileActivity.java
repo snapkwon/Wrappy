@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,16 +23,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
-import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.layout.AppEditTextView;
@@ -52,19 +46,12 @@ import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkCountry;
 import net.wrappy.im.model.WpkToken;
-import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
-import net.wrappy.im.ui.onboarding.OnboardingManager;
-import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -369,7 +356,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         registrationData.setWpKMemberDto(wpKMemberDto);
 
         Gson gson = new Gson();
-        JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
+        final JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
         RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
             @Override
@@ -388,9 +375,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
                 Bundle bundle = new Bundle();
-                bundle.putString("phone", phone);
+                bundle.putString("data", dataJson.toString());
                 Store.putStringData(getApplicationContext(), Store.USERNAME, user);
                 VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
+                finish();
             }
         });
     }
@@ -440,70 +428,71 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    ExistingAccountTask mExistingAccountTask;
+    //ExistingAccountTask mExistingAccountTask;
     SimpleAlertHandler mHandler;
 
-    private void doExistingAccountRegister(String username, String password) {
-        RegistrationAccount account = new RegistrationAccount(username, password);
+    private RegistrationAccount login() {
+        RegistrationAccount account = new RegistrationAccount("", "");
         account.setNickname(edUsername.getText().toString());
         account.setEmail(edEmail.getText().toString());
         account.setPhone(edPhone.getText().toString());
         account.setGender(gender);
+        return account;
+//        if (mExistingAccountTask == null) {
+//            mExistingAccountTask = new ExistingAccountTask();
+//            mExistingAccountTask.execute(account);
+//        }
 
-        if (mExistingAccountTask == null) {
-            mExistingAccountTask = new ExistingAccountTask();
-            mExistingAccountTask.execute(account);
-        }
     }
 
-    private class ExistingAccountTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
-        @Override
-        protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
-            try {
-
-                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(UpdateProfileActivity.this);
-                KeyPair keyPair = keyMan.generateLocalKeyPair();
-
-                RegistrationAccount account = accounts[0];
-                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, account);
-
-                if (result != null) {
-                    String jabberId = result.username + '@' + result.domain;
-                    keyMan.storeKeyPair(jabberId, keyPair);
-                }
-
-                return result;
-            } catch (Exception e) {
-                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(OnboardingAccount account) {
-            // mUsername = account.username + '@' + account.domain;
-            appFuncs.dismissProgressWaiting();
-            ImApp mApp = (ImApp) getApplication();
-            mApp.setDefaultAccount(account.providerId, account.accountId);
-
-            SignInHelper signInHelper = new SignInHelper(UpdateProfileActivity.this, mHandler);
-            signInHelper.activateAccount(account.providerId, account.accountId);
-            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
-
-            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-
-            try {
-                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, hash, account.username);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            mExistingAccountTask = null;
-
-            Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-    }
+//    private class ExistingAccountTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
+//        @Override
+//        protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
+//            try {
+//
+//                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(UpdateProfileActivity.this);
+//                KeyPair keyPair = keyMan.generateLocalKeyPair();
+//
+//                RegistrationAccount account = accounts[0];
+//                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, account);
+//
+//                if (result != null) {
+//                    String jabberId = result.username + '@' + result.domain;
+//                    keyMan.storeKeyPair(jabberId, keyPair);
+//                }
+//
+//                return result;
+//            } catch (Exception e) {
+//                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(OnboardingAccount account) {
+//            // mUsername = account.username + '@' + account.domain;
+//            appFuncs.dismissProgressWaiting();
+//            ImApp mApp = (ImApp) getApplication();
+//            mApp.setDefaultAccount(account.providerId, account.accountId);
+//
+//            SignInHelper signInHelper = new SignInHelper(UpdateProfileActivity.this, mHandler);
+//            signInHelper.activateAccount(account.providerId, account.accountId);
+//            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
+//
+//            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+//
+//            try {
+//                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, hash, account.username);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            mExistingAccountTask = null;
+//
+//            Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
+//            startActivity(intent);
+//        }
+//    }
 
     Uri uriHeader, uriAvatar;
     boolean isAvatarRequest = false;
@@ -513,36 +502,36 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
         try {
             if (resultCode == Activity.RESULT_OK) {
-                if (requestCode == VERIFY_CODE) {
-
-                    String url = RestAPI.loginUrl(user, password);
-                    AppFuncs.log(url);
-                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
-
-                        @Override
-                        public void OnComplete(int httpCode, String error, String s) {
-                            try {
-                                if (!RestAPI.checkHttpCode(httpCode)) {
-                                    String er = WpErrors.getErrorMessage(s);
-                                    if (!TextUtils.isEmpty(er)) {
-                                        AppFuncs.alert(getApplicationContext(), er, true);
-                                    }
-                                    appFuncs.dismissProgressWaiting();
-                                    return;
-                                }
-                                AppFuncs.log("loginUrl: " + s);
-                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-                                Gson gson = new Gson();
-                                wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-                                wpkToken.saveToken(getApplicationContext());
-                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
-                            } catch (Exception ex) {
-                                appFuncs.dismissProgressWaiting();
-                                ex.printStackTrace();
-                            }
-                        }
-                    });
-                }
+//                if (requestCode == VERIFY_CODE) {
+//
+//                    String url = RestAPI.loginUrl(user, password);
+//                    AppFuncs.log(url);
+//                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+//
+//                        @Override
+//                        public void OnComplete(int httpCode, String error, String s) {
+//                            try {
+//                                if (!RestAPI.checkHttpCode(httpCode)) {
+//                                    String er = WpErrors.getErrorMessage(s);
+//                                    if (!TextUtils.isEmpty(er)) {
+//                                        AppFuncs.alert(getApplicationContext(), er, true);
+//                                    }
+//                                    appFuncs.dismissProgressWaiting();
+//                                    return;
+//                                }
+//                                AppFuncs.log("loginUrl: " + s);
+//                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+//                                Gson gson = new Gson();
+//                                wpkToken = gson.fromJson(jsonObject, WpkToken.class);
+//                                wpkToken.saveToken(getApplicationContext());
+//                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
+//                            } catch (Exception ex) {
+//                                appFuncs.dismissProgressWaiting();
+//                                ex.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                }
             }
             if (data != null) {
                 if (requestCode == IMAGE_HEADER) {
