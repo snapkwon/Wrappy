@@ -31,6 +31,7 @@ import com.yalantis.ucrop.UCrop;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -149,7 +150,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     }
 
     private void getCountryCodesFromServer() {
-        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -358,7 +359,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         Gson gson = new Gson();
         final JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
-        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!RestAPI.checkHttpCode(httpCode)) {

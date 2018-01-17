@@ -360,14 +360,12 @@ public class AppFuncs {
         return date;
     }
 
-    public static void shareApp(Activity activity) {
+    public static void shareApp(Activity activity, String content) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
-            String sAux = activity.getString(R.string.share_app_text) + "\n";
-            sAux = sAux + "https://play.google.com/store/apps/details?id=net.wrappy.im";
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            i.putExtra(Intent.EXTRA_TEXT, content);
             activity.startActivity(Intent.createChooser(i, "choose one"));
         } catch (Exception e) {
             //e.toString();
@@ -375,7 +373,7 @@ public class AppFuncs {
     }
 
     public static void getSyncUserInfo(final long accountId) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);

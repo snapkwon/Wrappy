@@ -18,6 +18,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.util.PopupUtils;
 
 /**
@@ -72,7 +73,7 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
                 try {
                     JsonArray jsonArray = AppFuncs.convertToJson(data).getAsJsonArray();
                     jsonObject.add("kMemberSecurityQuestionDtoList", jsonArray);
-                    RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.PUT_CHANGE_SECURITY_QUESTION, new RestAPI.RestAPIListenner() {
+                    RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.PUT_CHANGE_SECURITY_QUESTION, new RestAPIListenner() {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
                             if (RestAPI.checkHttpCode(httpCode)) {

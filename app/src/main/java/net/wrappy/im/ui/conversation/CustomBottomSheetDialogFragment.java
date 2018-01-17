@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import net.ironrabbit.type.CustomTypefaceTextView;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.ConversationListFragment;
 
@@ -92,7 +93,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
                         // pin to top
                         mConversationListFragment.pinConversation(chatId, getContext());
 
-                        RestAPI.PostDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPI.RestAPIListenner() {
+                        RestAPI.PostDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
 
@@ -103,7 +104,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
                         // unpin from top
                         mConversationListFragment.unpinConversation(chatId, getContext());
 
-                        RestAPI.DeleteDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPI.RestAPIListenner() {
+                        RestAPI.DeleteDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
 

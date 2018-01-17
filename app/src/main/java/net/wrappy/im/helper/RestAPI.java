@@ -177,11 +177,6 @@ public class RestAPI {
         return GET_PHOTO + reference;
     }
 
-    public interface RestAPIListenner {
-        void OnComplete(int httpCode, String error, String s);
-        //public void OnTokenInvalid(String url);
-    }
-
 
     public static JsonElement getData(JsonObject jsonObject) {
         return jsonObject.get("data");
@@ -320,7 +315,7 @@ public class RestAPI {
                         }
 
                     } else {
-                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                        listenner.OnComplete((result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

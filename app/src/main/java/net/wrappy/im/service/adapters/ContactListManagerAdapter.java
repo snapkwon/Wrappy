@@ -33,13 +33,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Response;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.Contact;
@@ -972,7 +971,7 @@ public class ContactListManagerAdapter extends
             mResolver.update(uri, values, null, null);
         } else {
             //Do load info from Server and insert into database client
-            RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), new RestAPIListenner() {
 
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
@@ -1329,7 +1328,7 @@ public class ContactListManagerAdapter extends
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subStatus);
 
         final Uri uri = mResolver.insert(mContactUrl, values);
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);

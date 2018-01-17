@@ -23,6 +23,7 @@ import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpErrors;
@@ -104,14 +105,14 @@ public class VerifyCodeFragment extends Fragment {
                 return;
             }
             appFuncs.showProgressWaiting(getActivity());
-            RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(registration.getWpKMemberDto().getMobile(), pin), new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(registration.getWpKMemberDto().getMobile(), pin), new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
 
                     if (RestAPI.checkHttpCode(httpCode)) {
                         String url = RestAPI.loginUrl(registration.getWpKMemberDto().getIdentifier(), registration.getWpKAuthDto().getSecret());
                         AppFuncs.log(url);
-                        RestAPI.PostDataWrappy(getActivity(), null, url, new RestAPI.RestAPIListenner() {
+                        RestAPI.PostDataWrappy(getActivity(), null, url, new RestAPIListenner() {
 
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
@@ -204,7 +205,7 @@ public class VerifyCodeFragment extends Fragment {
         String phone = edVerifyPhone.getText().toString().trim();
         String url = RestAPI.getVerifyCodeUrlResend(Store.getStringData(getActivity(), Store.USERNAME), phone);
         AppFuncs.log("sendCodeAgain: " + url);
-        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -222,7 +223,7 @@ public class VerifyCodeFragment extends Fragment {
         String url = RestAPI.getVerifyCodeByNewPhoneNumber(Store.getStringData(getActivity(), Store.USERNAME), registration.getWpKMemberDto().getMobile(), newPhone);
         registration.getWpKMemberDto().setMobile(newPhone);
         AppFuncs.log("requestChangePhoneNumber" + url);
-        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {

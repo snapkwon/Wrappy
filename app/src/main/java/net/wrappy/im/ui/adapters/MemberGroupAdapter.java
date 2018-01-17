@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -147,7 +148,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             public void onClick(View view) {
                 if (mWpKChatGroupDto != null) {
                     RestAPI.DeleteDataWrappy(mContext, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, mWpKChatGroupDto.getId(),
-                            member.getNickname()), new RestAPI.RestAPIListenner() {
+                            member.getNickname()), new RestAPIListenner() {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
                             if (RestAPI.checkHttpCode(httpCode)) {

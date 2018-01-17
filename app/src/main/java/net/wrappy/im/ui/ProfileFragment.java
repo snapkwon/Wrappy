@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
@@ -34,6 +34,7 @@ import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
@@ -41,6 +42,7 @@ import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
+import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
@@ -193,7 +195,7 @@ public class ProfileFragment extends BaseFragmentV4 {
 
     private void getDataMember() {
         String url = RestAPI.getMemberByIdUrl(jid);
-        RestAPI.GetDataWrappy(getActivity(), url, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), url, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -210,7 +212,8 @@ public class ProfileFragment extends BaseFragmentV4 {
                             GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                         }
                         if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                            GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
+                            GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                            //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                         }
 
                         //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
@@ -288,7 +291,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgPhotoAvatar.setImageResource(R.drawable.avatar);
                                 if (wpKMemberDtoTemp.getAvatar() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPI.RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListenner() {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
                                                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -304,7 +307,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgProfileHeader.setImageResource(android.R.color.transparent);
                                 if (wpKMemberDto.getBanner() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPI.RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPIListenner() {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
                                                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -330,27 +333,51 @@ public class ProfileFragment extends BaseFragmentV4 {
             Intent intent = new Intent(getActivity(), SecurityQuestionActivity.class);
             startActivity(intent);
         } else if (view.getId() == R.id.lnProfileLogout) {
-            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
-            sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
-            sheetCells.add(sheetCell);
-            BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+            PopupUtils.showCustomDialog(getActivity(), getString(R.string.warning), getString(R.string.logout_noti), R.string.ok, R.string.cancel, new View.OnClickListener() {
                 @Override
-                public void onSelectBottomSheetCell(int index) {
-                    if (index == 1) {
-                        logout();
-                        //AppFuncs.alert(getActivity(), "Logout this device", true);
-                    } else if (index == 2) {
-                        logout();
-                        //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
-                    }
+                public void onClick(View view) {
+                    logout();
                 }
-            });
-            bottomSheetDialog.show();
+            },null);
+//            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+//            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
+//            sheetCells.add(sheetCell);
+//            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
+//            sheetCells.add(sheetCell);
+//            BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+//                @Override
+//                public void onSelectBottomSheetCell(int index) {
+//                    if (index == 1) {
+//                        logout();
+//                        //AppFuncs.alert(getActivity(), "Logout this device", true);
+//                    } else if (index == 2) {
+//                        logout();
+//                        //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
+//                    }
+//                }
+//            });
+//            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
-            AppFuncs.shareApp(getActivity());
+            getStatusInviteFriend();
+
         }
+    }
+
+    private void getStatusInviteFriend() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        Gson gson = new Gson();
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
+                        AppFuncs.shareApp(getActivity(),promotionSetting.getContent());
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -400,7 +427,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
         AppFuncs.log("update: " + jsonObject.toString());
-        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {

@@ -32,6 +32,7 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -185,7 +186,7 @@ public class SettingConversationActivity extends BaseActivity {
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
             }
-            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
@@ -442,7 +443,7 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPI.RestAPIListenner() {
+        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
@@ -528,7 +529,7 @@ public class SettingConversationActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-                RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPI.RestAPIListenner() {
+                RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListenner() {
                     @Override
                     public void OnComplete(int httpCode, String error, String s) {
                         if (RestAPI.checkHttpCode(httpCode)) {
@@ -554,7 +555,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void leaveGroup() {
         if (wpKChatGroup != null) {
             RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
-                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPI.RestAPIListenner() {
+                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
