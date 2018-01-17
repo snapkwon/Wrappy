@@ -280,7 +280,7 @@
     <style name="divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
-        <item name="android:background">@color/message_background_dark</item>
+        <item name="android:background">@color/txt_light</item>
     </style>
 
     <style name="dividerMainMenu" parent="divider">
