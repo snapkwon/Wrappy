@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -171,9 +170,8 @@ public class ProfileFragment extends BaseFragmentV4 {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
-                final TextView t = (TextView) v.findViewById(android.R.id.text1);
-                t.setText(arr[position]);
+                final AppTextView v = (AppTextView) vi.inflate(R.layout.update_profile_textview, null);
+                v.setText(arr[position]);
                 return v;
             }
         };
@@ -182,7 +180,8 @@ public class ProfileFragment extends BaseFragmentV4 {
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                edGender.setText(getResources().getStringArray(R.array.profile_gender)[i]);
+                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0,1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toUpperCase();
+                edGender.setText(upperString);
             }
 
             @Override
@@ -207,7 +206,11 @@ public class ProfileFragment extends BaseFragmentV4 {
                         txtUsername.setText(wpKMemberDto.getIdentifier());
                         edEmail.setText(wpKMemberDto.getEmail());
                         edPhone.setText(wpKMemberDto.getMobile());
-                        edGender.setText(wpKMemberDto.getGender());
+                        if (wpKMemberDto.getGender()!=null) {
+                            String upperString = wpKMemberDto.getGender().substring(0,1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
+                            edGender.setText(upperString);
+                        }
+
                         if (wpKMemberDto.getAvatar() != null) {
                             GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                         }

@@ -73,6 +73,7 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
@@ -2226,6 +2227,10 @@ public class XmppConnection extends ImConnection {
     }
 
     private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo) {
+        handleMessage(smackMessage, isOmemo, new Date());
+    }
+
+    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -2263,10 +2268,9 @@ public class XmppConnection extends ImConnection {
             if (body != null && session != null) {
 
                 Message rec = new Message(body);
-
                 rec.setTo(new XmppAddress(smackMessage.getTo().toString()));
                 rec.setFrom(new XmppAddress(smackMessage.getFrom().toString()));
-                rec.setDateTime(new Date());
+                rec.setDateTime(date);
 
                 rec.setID(smackMessage.getStanzaId());
 
@@ -4630,8 +4634,19 @@ public class XmppConnection extends ImConnection {
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
         org.jivesoftware.smack.packet.Message oldMessage = null;
-        while ((oldMessage = muc.nextMessage(2000)) != null)
-            handleMessage(oldMessage, false);
+        while ((oldMessage = muc.nextMessage(2000)) != null) {
+            DelayInformation inf = null;
+            Date date = new Date();
+            try {
+                inf = oldMessage.getExtension("x", "jabber:x:delay");
+                // get offline message timestamp
+                if (inf != null) {
+                    date = inf.getStamp();
+                }
+            } catch (Exception e) {
+            }
+            handleMessage(oldMessage, false, date);
+        }
     }
 
     private void buildOmemoSession(BareJid bareJid) {

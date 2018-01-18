@@ -146,30 +146,33 @@ public class SettingConversationActivity extends BaseActivity {
 //        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
         if (cursor == null)
             return; //not going to work
-        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
-                cursor, getContentResolver(), mProviderId, false, null);
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
-            mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
+            if (mConn.getState() == ImConnection.LOGGED_IN) {
+                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
 
-            mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
 
-            if (mSession != null) {
-                mGroupOwner = mSession.getGroupChatOwner();
-                if (mGroupOwner != null) {
-                    mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
-                    mAdminGroup = mGroupOwner.getName();
-                    if (!mIsOwner) {
+                if (mSession != null) {
+                    mGroupOwner = mSession.getGroupChatOwner();
+                    if (mGroupOwner != null) {
+                        mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                        mAdminGroup = mGroupOwner.getName();
+                        if (!mIsOwner) {
+                            btnEditGroupName.setVisibility(View.GONE);
+                            imgGroupPhoto.setVisibility(View.GONE);
+                            btnGroupPhoto.setEnabled(false);
+                        }
+                    } else {
                         btnEditGroupName.setVisibility(View.GONE);
                         imgGroupPhoto.setVisibility(View.GONE);
                         btnGroupPhoto.setEnabled(false);
                     }
-                } else {
-                    btnEditGroupName.setVisibility(View.GONE);
-                    imgGroupPhoto.setVisibility(View.GONE);
-                    btnGroupPhoto.setEnabled(false);
                 }
+            } else {
+                finish();
+                return;
             }
         } catch (RemoteException e) {
             AppFuncs.log(e.getLocalizedMessage());
@@ -501,9 +504,11 @@ public class SettingConversationActivity extends BaseActivity {
         net.wrappy.im.util.Debug.d("mSession " + mSession);
         if (mSession == null)
             try {
-                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-                if (mSession == null)
-                    mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+                if (mConn.getState() == ImConnection.LOGGED_IN) {
+                    mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                    if (mSession == null)
+                        mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
