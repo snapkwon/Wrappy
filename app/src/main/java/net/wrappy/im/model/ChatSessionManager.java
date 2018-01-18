@@ -19,6 +19,7 @@ package net.wrappy.im.model;
 
 import net.wrappy.im.service.adapters.ChatSessionAdapter;
 import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
+
 import org.jxmpp.jid.Jid;
 
 import java.util.Hashtable;
@@ -33,21 +34,21 @@ public abstract class ChatSessionManager {
     private CopyOnWriteArrayList<ChatSessionListener> mListeners;
     private ChatSessionManagerAdapter mAdapter;
 
-    /** Map session to the participant communicate with. */
-    protected Hashtable<String,ChatSession> mSessions;
+    /**
+     * Map session to the participant communicate with.
+     */
+    protected Hashtable<String, ChatSession> mSessions;
 
     protected ChatSessionManager() {
         mListeners = new CopyOnWriteArrayList<ChatSessionListener>();
-        mSessions = new Hashtable<String,ChatSession>();
+        mSessions = new Hashtable<String, ChatSession>();
     }
 
-    public void setAdapter (ChatSessionManagerAdapter adapter)
-    {
+    public void setAdapter(ChatSessionManagerAdapter adapter) {
         mAdapter = adapter;
     }
 
-    public ChatSessionManagerAdapter getAdapter ()
-    {
+    public ChatSessionManagerAdapter getAdapter() {
         return mAdapter;
     }
 
@@ -82,28 +83,25 @@ public abstract class ChatSessionManager {
 
         ChatSession session = mSessions.get(participant.getAddress().getBareAddress());
 
-        if (session == null)
-        {
+        if (session == null) {
             session = new ChatSession(participant, this);
             ChatSessionAdapter csa = mAdapter.getChatSessionAdapter(session, isNewSession);
 
             //this is redundant, as the getAdapter() returns the session instance itself
             session.setMessageListener(csa.getAdaptee().getMessageListener());
 
-            mSessions.put(participant.getAddress().getBareAddress(),session);
+            mSessions.put(participant.getAddress().getBareAddress(), session);
 
             for (ChatSessionListener listener : mListeners) {
                 listener.onChatSessionCreated(session);
             }
 
-        }
-        else
-        {
+        } else {
             ChatSessionAdapter csa = mAdapter.getChatSessionAdapter(session, isNewSession);
 
             //this is redundant, as the getAdapter() returns the session instance itself
             session.setMessageListener(csa.getAdaptee().getMessageListener());
-            
+
         }
 
         return session;
@@ -120,6 +118,10 @@ public abstract class ChatSessionManager {
         mSessions.remove(session.getParticipant().getAddress().getAddress());
     }
 
+    public void closeAllChatSession() {
+        mSessions.clear();
+    }
+
     /**
      * Sends a message to specified participant(s) asynchronously. TODO: more
      * docs on async callbacks.
@@ -130,7 +132,8 @@ public abstract class ChatSessionManager {
 
     /**
      * The resource of this JID s
+     *
      * @param jid
      */
-    public abstract boolean resourceSupportsOmemo (Jid jid);
+    public abstract boolean resourceSupportsOmemo(Jid jid);
 }

@@ -3420,12 +3420,18 @@ public class Imps {
         resolver.delete(LastRmqId.CONTENT_URI, null, null);
         resolver.delete(OutgoingRmq.CONTENT_URI, null, null);
         resolver.delete(BrandingResourceMapCache.CONTENT_URI, null, null);
-        resolver.delete(ProviderSettings.CONTENT_URI, null, null);
-        resolver.delete(Presence.CONTENT_URI, null, null);
+//        resolver.delete(ProviderSettings.CONTENT_URI, null, null);
+//        resolver.delete(Presence.CONTENT_URI, null, null);
         resolver.delete(Invitation.CONTENT_URI, null, null);
         resolver.delete(ContactsEtag.CONTENT_URI, null, null);
         resolver.delete(BlockedList.CONTENT_URI, null, null);
-        resolver.delete(Roster.CONTENT_URI, null, null);
+//        resolver.delete(Roster.CONTENT_URI, null, null);
         resolver.delete(AccountStatus.CONTENT_URI, null, null);
+//
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
