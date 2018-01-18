@@ -8,6 +8,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -256,7 +257,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     MainActivity.start(PatternActivity.this);
                 }
             }
-        })).execute(account);
+        })).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 //
 //
