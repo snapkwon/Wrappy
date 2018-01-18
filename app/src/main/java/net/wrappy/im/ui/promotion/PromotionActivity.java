@@ -47,6 +47,6 @@ public class PromotionActivity extends Activity {
         String shareBodyText = "Your sharing message goes here";
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject/Title");
         intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
-        startActivity(Intent.createChooser(intent, "Choose sharing method"));
+        startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
     }
 }
