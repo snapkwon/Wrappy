@@ -1181,6 +1181,8 @@ public class ConversationView {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 sendTypingStatus(true);
                 onOffMenuChat(true);
+                if (mStickerBox != null)
+                    mStickerBox.setVisibility(View.GONE);
                 return false;
             }
         });
