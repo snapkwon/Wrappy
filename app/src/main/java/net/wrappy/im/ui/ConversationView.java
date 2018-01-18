@@ -1003,7 +1003,7 @@ public class ConversationView {
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 
-                    mSendButton.setImageResource(R.drawable.ic_send);
+                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_36dp);
                     mSendButton.setVisibility(View.VISIBLE);
                     mButtonTalk.setVisibility(View.VISIBLE);
 
