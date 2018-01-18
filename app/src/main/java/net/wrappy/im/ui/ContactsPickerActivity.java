@@ -297,6 +297,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 showWaitinDialog();
+                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -473,7 +474,6 @@ public class ContactsPickerActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isClickedMenu) {
-            isClickedMenu = true;
             switch (item.getItemId()) {
                 case android.R.id.home:
                     onBackPressed();
@@ -525,6 +525,7 @@ public class ContactsPickerActivity extends BaseActivity {
                     startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
+            isClickedMenu = true;
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
