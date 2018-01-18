@@ -619,4 +619,5 @@
     <string name="email_tile">Email *</string>
     <string name="error_empty_email">Email cannot be empty</string>
     <string name="logout_noti">Do you logout this deivce?</string>
+    <string name="share_title">Choose sharing method</string>
 </resources>
