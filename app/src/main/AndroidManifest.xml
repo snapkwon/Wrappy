@@ -80,7 +80,7 @@
 
         <activity
             android:name=".RouterActivity"
-            android:theme="@style/InviteDialog">
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -179,7 +179,8 @@
         <activity
             android:name=".ui.ContactsPickerActivity"
             android:exported="false"
-            android:label="@string/choose_friend">
+            android:label="@string/choose_friend"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -230,7 +231,8 @@
         </activity>
         <activity
             android:name=".ui.legacy.SettingActivity"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -298,7 +300,8 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name=".ui.widgets.ImageViewActivity" />
+        <activity android:name=".ui.widgets.ImageViewActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.widgets.SecureCameraActivity" />
         <activity
             android:name=".MainActivity"
@@ -335,7 +338,8 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:screenOrientation="portrait">
 
         </activity>
 
@@ -391,11 +395,13 @@
 
         <activity
             android:name=".ui.LauncherActivity"
-            android:label="@string/title_activity_launcher" />
+            android:label="@string/title_activity_launcher"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.IntroActivity"
             android:label="@string/title_activity_launcher"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.ProfileActivity"
             android:theme="@style/NoActionBar" />
@@ -459,13 +465,17 @@
         <activity android:name=".ui.SettingConversationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.conference.ConferencePopupActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".ui.promotion.PromotionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".ui.WebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

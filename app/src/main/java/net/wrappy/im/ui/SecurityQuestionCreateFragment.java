@@ -22,6 +22,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.SecurityQuestions;
@@ -82,7 +83,7 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
     private void getListQuestion() {
 
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPIListenner() {
 
 
             @Override

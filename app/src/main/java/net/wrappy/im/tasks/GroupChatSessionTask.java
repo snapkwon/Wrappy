@@ -107,7 +107,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
             long mRequestedChatId = -1;
 
-            if (session == null && !isCancelled()) {
+            if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
                 if (session != null) {
                     if (needToStartChat) {
@@ -129,7 +129,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
                 publishProgress(mRequestedChatId);
             }
 //
-            if (invitees != null && invitees.size() > 0 && !isCancelled()) {
+            if (invitees != null && invitees.size() > 0) {
                 //wait a second for the server to sort itself out
                 try {
                     Thread.sleep(100);

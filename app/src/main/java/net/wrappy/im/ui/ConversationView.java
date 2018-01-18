@@ -88,7 +88,6 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -108,6 +107,7 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
@@ -1164,7 +1164,7 @@ public class ConversationView {
          clipboard.setPrimaryClip(clip); //
          }
 
-         Toast.makeText(mActivity, mContext.getString(R.string.toast_chat_copied_to_clipboard), Toast.LENGTH_SHORT).show();
+         AppFuncs.alert(mActivity, mContext.getString(R.string.toast_chat_copied_to_clipboard), false);
 
          return true;
 
@@ -1291,7 +1291,7 @@ public class ConversationView {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("message", mComposeMessage.getText().toString());
 
-        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 AppFuncs.log(s);
@@ -2126,7 +2126,7 @@ public class ConversationView {
 
 
                 } else {
-                    Toast.makeText(mActivity, "No giphy stickers available for your search", Toast.LENGTH_SHORT).show();
+                    AppFuncs.alert(mActivity, "No giphy stickers available for your search", false);
                 }
 
                 GiphyAPI.get().removeMonitor(mMonitor);
@@ -2290,7 +2290,7 @@ public class ConversationView {
         } catch (ActivityNotFoundException e) {
            // if the user clicked a link, e.g. geo:60.17,24.829, and there is
             //  no app to handle that kind of link, catch the exception
-            Toast.makeText(mActivity, R.string.error_no_app_to_handle_url, Toast.LENGTH_SHORT)
+            AppFuncs.alert(mActivity, R.string.error_no_app_to_handle_url, Toast.LENGTH_SHORT)
                     .show();
             return true;
         }
@@ -2368,7 +2368,7 @@ public class ConversationView {
 
                     String error = msg.getData().getString("err");
 
-                    Toast.makeText(mContext, mActivity.getString(R.string.error_tranferring_file) + error, Toast.LENGTH_LONG).show();
+                    AppFuncs.alert(mContext, mActivity.getString(R.string.error_tranferring_file) + error, true);
                     break;
                 case SHOW_DATA_PROGRESS:
                     break;
@@ -3198,7 +3198,7 @@ public class ConversationView {
             jsonObject.addProperty("screenShot", reference);
             jsonObject.addProperty("type", type);
 
-            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPI.RestAPIListenner() {
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.e(s);

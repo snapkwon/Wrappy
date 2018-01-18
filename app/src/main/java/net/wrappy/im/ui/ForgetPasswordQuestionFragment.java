@@ -19,6 +19,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.WpKMemberSecurityQuestionDto;
@@ -85,7 +86,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
     private void getListQuestion() {
         appFuncs.showProgressWaiting(getActivity());
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS+ Store.getStringData(getActivity(),Store.USERNAME) , new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS+ Store.getStringData(getActivity(),Store.USERNAME) , new RestAPIListenner() {
 
 
 
@@ -166,7 +167,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
     int time = 0;
     private void postDataForForgetPassword(JsonObject json) {
-        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {
@@ -187,7 +188,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
 
     private void postDataForChangeSecurityQuestions(JsonObject json) {
-        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (RestAPI.checkHttpCode(httpCode)) {

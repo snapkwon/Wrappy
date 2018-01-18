@@ -26,9 +26,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.yalantis.ucrop.UCrop;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
+import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.ConversationDetailActivity;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.SecureMediaStore;
 
@@ -87,6 +91,14 @@ public class AppFuncs {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
+    }
+
+    public static void alert(Context context, CharSequence s, boolean isLong) {
+        Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+    }
+
+    public static void alert(Context context, int s, boolean isLong) {
+        Toast.makeText(context, s, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
     }
 
     public static void alert(Context context, String s, boolean isLong) {
@@ -348,17 +360,30 @@ public class AppFuncs {
         return date;
     }
 
-    public static void shareApp(Activity activity) {
+    public static void shareApp(Activity activity, String content) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
-            String sAux = activity.getString(R.string.share_app_text)+"\n";
-            sAux = sAux + "https://play.google.com/store/apps/details?id=net.wrappy.im";
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            i.putExtra(Intent.EXTRA_TEXT, content);
             activity.startActivity(Intent.createChooser(i, "choose one"));
         } catch (Exception e) {
             //e.toString();
         }
+    }
+
+    public static void getSyncUserInfo(final long accountId) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    Registration registration = new Gson().fromJson(s, Registration.class);
+                    Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

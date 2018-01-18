@@ -66,7 +66,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
@@ -88,6 +87,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
@@ -389,7 +389,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         if (!address.isEmpty()) {
             String[] separated = address.split("@");
 
-            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPI.RestAPIListenner() {
+            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
@@ -536,7 +536,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     @OnClick({R.id.btnAddFriend})
     protected void onClickAddFriend(View v) {
-        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
@@ -871,9 +871,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             GooglePlayServicesUtil
                     .getErrorDialog(e.getConnectionStatusCode(), this, 0);
         } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, R.string.google_play_services_not_available,
-                    Toast.LENGTH_LONG)
-                    .show();
+            AppFuncs.alert(this, R.string.google_play_services_not_available,
+                    true);
         }
     }
 
@@ -902,9 +901,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             String fileName = contentUri.getLastPathSegment();
 
             Uri vfsUri;
-            if (resizeImage)
+            /*if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else if (importContent) {
+            else*/ if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, fileName, info.stream);
@@ -930,7 +929,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 }
             }
         } catch (Exception e) {
-            //  Toast.makeText(this, "Error sending file", Toast.LENGTH_LONG).show(); // TODO i18n
+            //  AppFuncs.alert(this, "Error sending file", true); // TODO i18n
             Log.e(ImApp.LOG_TAG, "error sending file", e);
         }
     }

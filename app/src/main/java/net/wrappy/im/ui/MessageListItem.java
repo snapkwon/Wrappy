@@ -51,7 +51,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -189,8 +188,9 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
 
-        if (nickname == null)
-            nickname = address;
+        if (nickname == null) {
+            nickname = ImApp.getNickname(address);
+        }
 
         lastMessage = formatMessage(body);
         showAvatar(address, nickname, true, presenceStatus, mReference);
@@ -337,7 +337,7 @@ public class MessageListItem extends FrameLayout {
 
     private void deleteAndLeaveGroup() {
         String groupName = lastMessage.split(":")[2];
-        Toast.makeText(context, groupName + " is deleted by admin", Toast.LENGTH_LONG).show();
+        AppFuncs.alert(context, groupName + " is deleted by admin", true);
         ((ConversationDetailActivity) context).finish();
     }
 
@@ -388,7 +388,7 @@ public class MessageListItem extends FrameLayout {
                 Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 context.startActivity(unrestrictedIntent);
             } catch (ActivityNotFoundException innerEx) {
-                Toast.makeText(context, "Please install a maps application", Toast.LENGTH_LONG).show();
+                AppFuncs.alert(context, "Please install a maps application", true);
             }
         }
     }
@@ -514,7 +514,6 @@ public class MessageListItem extends FrameLayout {
             Intent intent = new Intent(context, ImageViewActivity.class);
             intent.putExtra(ImageViewActivity.URI, mediaUri.toString());
             intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
-            intent.putExtra(ImageViewActivity.MIMETYPE, mimeType);
 
             context.startActivity(intent);
 
@@ -587,7 +586,7 @@ public class MessageListItem extends FrameLayout {
 
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Export Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+            AppFuncs.alert(getContext(), "Export Failed " + e.getMessage(), true);
             e.printStackTrace();
         }
     }

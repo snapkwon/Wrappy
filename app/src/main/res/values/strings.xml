@@ -615,4 +615,7 @@
     <string name="cancel_and_home">Process is cancel and go home.</string>
     <string name="invite_friends_text">Invite Friend</string>
     <string name="share_app_text">Let me recommend you this application</string>
+    <string name="email_tile">Email *</string>
+    <string name="error_empty_email">Email cannot be empty</string>
+    <string name="logout_noti">Do you logout this deivce?</string>
 </resources>

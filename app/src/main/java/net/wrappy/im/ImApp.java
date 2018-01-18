@@ -52,6 +52,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -285,7 +286,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         Intent intent = new Intent(this, LauncherActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
     }
 
     private void logoutConnection() {
@@ -1252,50 +1252,33 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (mConn != null) {
                 try {
                     if (mConn.getState() == ImConnection.LOGGED_IN) {
-                        String nickname = getNickname(contact.getAddress().getBareAddress());
-                        if (!TextUtils.isEmpty(nickname)) {
+                        String bareAddress = contact.getAddress().getBareAddress();
+                        String nickname = getNickname(bareAddress);
+                        if (!TextUtils.isEmpty(nickname) && !bareAddress.contains(nickname.toLowerCase())) {
                             IContactListManager manager = mConn.getContactListManager();
                             manager.approveSubscription(contact);
                         } else {
-                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPI.RestAPIListenner() {
+                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListenner() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
-                                    if (s != null) {
-                                        if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
-                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
-                                            try {
-                                                IContactListManager manager = null;
-                                                manager = mConn.getContactListManager();
+                                    if (RestAPI.checkHttpCode(httpCode)) {
+                                        try {
+                                            IContactListManager manager = null;
+                                            manager = mConn.getContactListManager();
+                                            if (TextUtils.isEmpty(s)) {
+                                                //Remove contact not exist in DB
+                                                ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
+                                            } else {
+                                                ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
                                                 manager.approveSubscription(contact);
-                                            } catch (RemoteException e1) {
-                                                e1.printStackTrace();
                                             }
-
+                                        } catch (RemoteException e1) {
+                                            e1.printStackTrace();
                                         }
                                     }
                                 }
                             });
-//                            RestAPI.apiGET(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser())).setCallback(new FutureCallback<Response<String>>() {
-//                                @Override
-//                                public void onCompleted(Exception e, Response<String> result) {
-//                                    if (result != null) {
-//                                        if (RestAPI.checkHttpCode(result.getHeaders().code()) && !TextUtils.isEmpty(result.getResult())) {
-//                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(result.getResult(), WpKMemberDto.getType()), mConn);
-//                                            try {
-//                                                IContactListManager manager = null;
-//                                                manager = mConn.getContactListManager();
-//                                                manager.approveSubscription(contact);
-//                                            } catch (RemoteException e1) {
-//                                                e1.printStackTrace();
-//                                            }
-//
-//                                        }
-//                                    }
-//                                }
-//                            });
                         }
-
-
                     }
                 } catch (RemoteException e) {
                     LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
@@ -1359,16 +1342,21 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 bannerReference = wpKMemberDto.getBanner().getReference();
             }
 
-            Cursor cursor = sImApp.getContentResolver().query(builder.build(), new String[]{Imps.Contacts._ID},
+            Uri queryUri = builder.build();
+            Cursor cursor = sImApp.getContentResolver().query(queryUri, new String[]{Imps.Contacts._ID},
                     selection, null, null);
+            boolean isUpdated = false;
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
-                    sImApp.getContentResolver().update(uri, values, null, null);
+                    isUpdated = sImApp.getContentResolver().update(uri, values, null, null) > 0;
+                } else {
+                    sImApp.getContentResolver().delete(queryUri, selection, null);
                 }
                 cursor.close();
-            } else {
+            }
+            if (!isUpdated) {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }

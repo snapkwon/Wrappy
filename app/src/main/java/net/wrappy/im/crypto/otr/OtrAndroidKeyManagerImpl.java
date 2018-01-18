@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import net.java.otr4j.OtrKeyManager;
 import net.java.otr4j.OtrKeyManagerListener;
@@ -20,6 +19,7 @@ import net.java.otr4j.session.SessionID;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrKeyManager;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.util.AES_256_CBC;
 import net.wrappy.im.util.LogCleaner;
@@ -85,7 +85,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
             return _instance;
         } catch (IOException ioe) {
-            Toast.makeText(context, R.string.your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app, Toast.LENGTH_LONG).show();
+            AppFuncs.alert(context, R.string.your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app, true);
             throw new RuntimeException("Could not open keystore", ioe);
         }
     }
@@ -921,7 +921,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
                 importOtrKeyStore(file, activity);
             }
         } else {
-            Toast.makeText(activity, R.string.otr_keysync_warning_message, Toast.LENGTH_LONG).show();
+            AppFuncs.alert(activity, R.string.otr_keysync_warning_message, true);
 
         }
 
@@ -997,7 +997,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
          }
          catch (Exception e)
          {
-         Toast.makeText(activity, "unable to open keystore for import", Toast.LENGTH_LONG).show();
+         AppFuncs.alert(activity, "unable to open keystore for import", true);
          return false;
          }
          }

@@ -18,6 +18,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.AwardHistory;
 import net.wrappy.im.model.PromotionLevel;
@@ -77,7 +78,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     }
 
     private void getPromotionHistory() {
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_HISTORY, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_HISTORY, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -102,7 +103,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     }
 
     private void getStatusInviteFriend() {
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -121,7 +122,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     }
 
     private void getPromotionBalance() {
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_BALANCE, new RestAPI.RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_BALANCE, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {

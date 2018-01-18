@@ -1,5 +1,6 @@
 package net.wrappy.im.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
+import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.model.BaseObject;
 import net.wrappy.im.model.T;
@@ -90,6 +92,7 @@ public class RestAPI {
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
     public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
+    private static String POST_VERIFY_CODE_CHANGE_PHONE = root_url + "member/mobile/update/%s/%s/%s";
     public static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
@@ -107,12 +110,16 @@ public class RestAPI {
 
     public static int NUMBER_REQUEST_TOKEN = 3;
 
+    public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
+        return String.format(POST_VERIFY_CODE_CHANGE_PHONE, user, oldPhone, newPhone);
+    }
+
     public static String getVerifyCodeUrl(String phoneNumber, String activeCode) {
         return String.format(POST_VERIFY_CODE, phoneNumber, activeCode);
     }
 
     public static String getVerifyCodeUrlResend(String user, String phone) {
-        return String.format(POST_VERIFY_RESEND_CODE,user,phone);
+        return String.format(POST_VERIFY_RESEND_CODE, user, phone);
     }
 
     public static String getGroupByXmppId(String xmppId) {
@@ -168,11 +175,6 @@ public class RestAPI {
 
     public static String getAvatarUrl(String reference) {
         return GET_PHOTO + reference;
-    }
-
-    public interface RestAPIListenner {
-        void OnComplete(int httpCode, String error, String s);
-        //public void OnTokenInvalid(String url);
     }
 
 
@@ -309,11 +311,11 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
-                            refreshTokenHttps(context, jsonObject,null, url, listenner, POST_METHOD);
+                            refreshTokenHttps(context, jsonObject, null, url, listenner, POST_METHOD);
                         }
 
                     } else {
-                        listenner.OnComplete((result != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                        listenner.OnComplete((result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -332,7 +334,7 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
-                            refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
+                            refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
 
                     } else {
@@ -355,7 +357,7 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
-                            refreshTokenHttps(context,null, jsonObject, url, listenner, POST_METHOD);
+                            refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
 
                     } else {
@@ -377,7 +379,7 @@ public class RestAPI {
                 try {
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
-                            refreshTokenHttps(context, null,jsonObject, url, listenner, DELETE_METHOD);
+                            refreshTokenHttps(context, null, jsonObject, url, listenner, DELETE_METHOD);
                         }
 
                     } else {
@@ -397,7 +399,7 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
                     if (checkExpiredToken(result.getResult())) {
-                        refreshTokenHttps(context, null,null, url, listenner, GET_METHOD);
+                        refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
                     }
 
                 } else {
@@ -447,7 +449,7 @@ public class RestAPI {
     private static int numberRefreshToken = 0;
 
 
-    public static void refreshTokenHttps(final Context context,final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
+    public static void refreshTokenHttps(final Context context, final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
         Ion.with(context).load("POST", refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -458,15 +460,20 @@ public class RestAPI {
                         listenner.OnComplete(httpCode, null, null);
                         return;
                     }
-                    if (!RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.alert(context, error, true);
+                    if (httpCode == 400 /*invalid expire token*/) {
+                        listenner.OnComplete(-1, context.getString(R.string.error_when_refresh_token), null);
+                        logout(context);
+                        return;
+                    }
+                    if (!RestAPI.checkHttpCode(httpCode) && httpCode != 0 /*no network*/) {
+//                        AppFuncs.alert(context, error, true);
                         if (numberRefreshToken >= NUMBER_REQUEST_TOKEN) {
                             numberRefreshToken = 0;
                             listenner.OnComplete(-1, context.getString(R.string.error_when_refresh_token), null);
-
+                            logout(context);
                         } else {
                             numberRefreshToken++;
-                            refreshTokenHttps(context,(jsonarray == null)?null:jsonarray, (json == null)?null:json, url, listenner, method);
+                            refreshTokenHttps(context, jsonarray, json, url, listenner, method);
                         }
                         return;
                     }
@@ -475,11 +482,9 @@ public class RestAPI {
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(context);
                     if (method == POST_METHOD) {
-                        if(json!=null) {
+                        if (json != null) {
                             PostDataWrappy(context, json, url, listenner);
-                        }
-                        else
-                        {
+                        } else {
                             PostDataWrappyArray(context, jsonarray, url, listenner);
                         }
                     } else if (method == DELETE_METHOD) {
@@ -493,6 +498,12 @@ public class RestAPI {
                 }
             }
         });
+    }
+
+    private static void logout(Context context) {
+        ImApp.sImApp.logout();
+        if (context instanceof Activity)
+            ((Activity) context).finishAffinity();
     }
 
     public static HashMap<String, String> jsonToMap(JsonObject object) {

@@ -34,10 +34,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.MigrateAccountTask;
@@ -129,13 +129,13 @@ public class AccountSettingsActivity extends PreferenceActivity implements
                 public void migrateComplete(OnboardingAccount account) {
                     mIsMigrating = false;
                     progress.dismiss();
-                    Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_complete, Toast.LENGTH_SHORT).show();
+                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_complete, false);
                     finish();
                 }
 
                 @Override
                 public void migrateFailed(long providerId, long accountId) {
-                    Toast.makeText(AccountSettingsActivity.this, R.string.upgrade_failed, Toast.LENGTH_SHORT).show();
+                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_failed, false);
                     mIsMigrating = false;
                     progress.dismiss();
 
@@ -209,9 +209,8 @@ public class AccountSettingsActivity extends PreferenceActivity implements
             try {
                 settings.setXmppResourcePrio(Integer.parseInt(value));
             } catch (NumberFormatException nfe) {
-                Toast.makeText(getBaseContext(),
-                        getString(R.string.error_account_settings_priority), Toast.LENGTH_SHORT)
-                        .show();
+                AppFuncs.alert(getBaseContext(),
+                        getString(R.string.error_account_settings_priority), false);
             }
             mXmppResourcePrio.setSummary(value);
         } else if (key.equals("pref_account_port")) {
@@ -219,8 +218,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
             try {
                 settings.setPort(Integer.parseInt(value));
             } catch (NumberFormatException nfe) {
-                Toast.makeText(getBaseContext(), getString(R.string.error_account_settings_port), Toast.LENGTH_SHORT)
-                        .show();
+                AppFuncs.alert(getBaseContext(), getString(R.string.error_account_settings_port), false);
             }
             if (settings.getPort() != 0)
                 mPort.setSummary(value);

@@ -37,19 +37,16 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -61,13 +58,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
-import com.thefinestartist.utils.content.Res;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -78,7 +74,6 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
-import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -363,7 +358,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
-        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPI.RestAPIListenner() {
+        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPIListenner() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 dismissWaitinDialog();
@@ -498,7 +493,7 @@ public class ContactsPickerActivity extends BaseActivity {
                             JsonParser parser = new JsonParser();
                             JsonArray json = (JsonArray) parser.parse(jsonObject);
 
-                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPI.RestAPIListenner() {
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListenner() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
                                     if (RestAPI.checkHttpCode(httpCode)) {
@@ -596,8 +591,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                 int screenWidth = Utils.getWithScreenDP(getApplicationContext());
                 int swipeLayoutWidth = (int) (screenWidth / 1.5);
-
-                int titleSize = Utils.convertSpToPixels(getResources().getDimension(R.dimen.title_size_swipe_menu), getApplicationContext());
+                int titleSize = Utils.convertSpToPixels(swipeLayoutWidth / 40, getApplicationContext());
 
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
@@ -629,13 +623,10 @@ public class ContactsPickerActivity extends BaseActivity {
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPI.RestAPIListenner() {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
-                                if (RestAPI.checkHttpCode(httpCode)) {
-                                    AppFuncs.log(s);
-                                    ImApp.removeContact(getContentResolver(), address, conn);
-                                }
+                                ImApp.removeContact(getContentResolver(), address, conn);
                             }
                         });
                         break;
@@ -790,7 +781,7 @@ public class ContactsPickerActivity extends BaseActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            if (mSearchString != null) {
+            if (!TextUtils.isEmpty(mSearchString)) {
                 buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
@@ -840,7 +831,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.USERNAME);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.DEFAULT_SORT_NICKNAME_ORDER);
             //    loader.setUpdateThrottle(50L);
             return loader;
         }
