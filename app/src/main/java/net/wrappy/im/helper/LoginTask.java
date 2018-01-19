@@ -6,6 +6,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -77,7 +78,11 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
 
             @Override
             public void stateChanged(int state, long accountId) {
-
+                if (state != ImConnection.LOGGED_IN) {
+                    if (listenner != null) {
+                        listenner.OnComplete(false, account);
+                    }
+                }
             }
         });
         signInHelper.activateAccount(account.providerId, account.accountId);
