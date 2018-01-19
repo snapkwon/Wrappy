@@ -1100,7 +1100,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     class ListenerAdapter implements MessageListener, GroupMemberListener, OtrEngineListener {
 
         public synchronized boolean onIncomingMessage(ChatSession ses, final Message msg) {
-            Debug.d("message Id " + msg.getID());
+//            Debug.d("message Id " + msg.getID());
             String body = msg.getBody();
             if (msg.getBody().startsWith(ConferenceConstant.DELETE_CHAT_FREFIX)) {
                 String packet_id = msg.getBody().replace(ConferenceConstant.DELETE_CHAT_FREFIX, "");
@@ -1132,18 +1132,21 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
             String bareAddress = mIsGroupChat ? new XmppAddress(nickname).getBareAddress() : bareUsername;
+            bareAddress = bareAddress.toLowerCase();
             Contact contact;
             try {
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
                 if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    if (bareAddress.contains(Constant.EMAIL_DOMAIN)) {
+                    if (bareAddress.contains(Constant.EMAIL_DOMAIN) || bareAddress.equals(nickname.toLowerCase())) {
                         nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                         if (TextUtils.isEmpty(nickname)) {
                             nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
                         }
-                    } else if (!TextUtils.isEmpty(nickname)) {
+                    }
+
+                    if (!TextUtils.isEmpty(nickname)) {
                         String accountName = Imps.Account.getAccountName(mContentResolver, mConnection.getAccountId());
                         if (nickname.equals(accountName)) {
                             msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
