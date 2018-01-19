@@ -1135,11 +1135,12 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             bareAddress = bareAddress.toLowerCase();
             Contact contact;
             try {
+                String regexUUID = "[0-9a-f]{8}-[0-9a-f]{4}-[34][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
                 contact = mConnection.getContactListManager().getContactByAddress(bareUsername);
                 if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    if (bareAddress.contains(Constant.EMAIL_DOMAIN) || bareAddress.equals(nickname.toLowerCase())) {
+                    if (bareAddress.contains(Constant.EMAIL_DOMAIN) || (bareAddress.equals(nickname.toLowerCase()) && bareAddress.matches(regexUUID))) {
                         nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                         if (TextUtils.isEmpty(nickname)) {
                             nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
