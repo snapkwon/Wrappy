@@ -1138,9 +1138,16 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
-                    if (TextUtils.isEmpty(nickname)) {
-                        nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
+                    if (bareAddress.contains(Constant.EMAIL_DOMAIN)) {
+                        nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
+                        if (TextUtils.isEmpty(nickname)) {
+                            nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
+                        }
+                    } else if (!TextUtils.isEmpty(nickname)) {
+                        String accountName = Imps.Account.getAccountName(mContentResolver, mConnection.getAccountId());
+                        if (nickname.equals(accountName)) {
+                            msg.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                        }
                     }
                 }
             } catch (Exception e) {
