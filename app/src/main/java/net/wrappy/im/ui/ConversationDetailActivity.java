@@ -99,6 +99,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -297,7 +298,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    Drawable d = new BitmapDrawable(getResources(), resource);
+                    Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, convertDpToPx(50), convertDpToPx(50), false));
                     mToolbar.setLogo(d);
                 }
 
@@ -320,17 +321,35 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             {
                 try {
                     if(getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY)!=null) {
-                        String[] nicknames = getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY).split(" ");
-                        String nickname = "";
-                        if (nicknames.length == 0) {
-                            nickname = "";
-                        } else if (nicknames.length == 1) {
-                            nickname = String.valueOf(nicknames[0].charAt(0));
-                        } else {
-                            nickname = nicknames[0].charAt(0) + String.valueOf(nicknames[1].charAt(0));
-                        }
-                        Bitmap b = createImage(convertDpToPx(50), convertDpToPx(50), Color.GREEN, nickname);
-                        Drawable d = new BitmapDrawable(getResources(), b);
+                        int padding = 24;
+                        LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY), padding);
+
+                        Drawable d ;//= new BitmapDrawable(getResources(), b);
+
+
+
+                        Bitmap output = Bitmap.createBitmap(convertDpToPx(50), convertDpToPx(50), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(output);
+
+                        Paint paintCicle = new Paint();
+
+                        Rect rect = new Rect(0, 0, convertDpToPx(50), convertDpToPx(50));
+                        RectF rectF = new RectF(rect);
+                        paintCicle.setColor(Color.GRAY);
+                        paintCicle.setAntiAlias(true);
+                        canvas.drawARGB(0, 0, 0, 0);
+
+// Set Border For Circle
+                        paintCicle.setStyle(Paint.Style.FILL);
+                        paintCicle.setStrokeWidth(1.0f);
+
+                        canvas.drawRoundRect(rectF, convertDpToPx(50), convertDpToPx(50), paintCicle);
+
+                        lavatar.draw(canvas);
+
+
+                        d = new BitmapDrawable(getResources(), output);
+
                         mToolbar.setLogo(d);
                     }
                 } catch (OutOfMemoryError ome) {

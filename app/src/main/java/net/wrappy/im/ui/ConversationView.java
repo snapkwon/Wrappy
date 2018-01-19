@@ -860,6 +860,7 @@ public class ConversationView {
         mHistory.setLayoutManager(llm);
 
         searchView = (SearchView) mActivity.findViewById(R.id.searchtext);
+
         searchView.setVisibility(View.GONE);
 
         inputlayout = (LinearLayout) mActivity.findViewById(R.id.inputLayout);
