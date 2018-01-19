@@ -192,6 +192,7 @@
                         android:layout_marginTop="10dp"
                         android:background="#fff"
                         android:orientation="vertical"
+                        android:visibility="gone"
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
