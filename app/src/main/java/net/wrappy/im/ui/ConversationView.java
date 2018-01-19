@@ -1003,7 +1003,7 @@ public class ConversationView {
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 
-                    mSendButton.setImageResource(R.drawable.ic_send);
+                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_36dp);
                     mSendButton.setVisibility(View.VISIBLE);
                     mButtonTalk.setVisibility(View.VISIBLE);
 
@@ -1181,6 +1181,8 @@ public class ConversationView {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 sendTypingStatus(true);
                 onOffMenuChat(true);
+                if (mStickerBox != null)
+                    mStickerBox.setVisibility(View.GONE);
                 return false;
             }
         });
