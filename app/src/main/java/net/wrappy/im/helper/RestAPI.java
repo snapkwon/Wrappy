@@ -103,6 +103,7 @@ public class RestAPI {
     public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
     public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
     public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+    public static String REFERRAL = root_url_dev + "member/inviter/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
