@@ -298,7 +298,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    Drawable d = new BitmapDrawable(getResources(), resource);
+                    Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, convertDpToPx(50), convertDpToPx(50), false));
                     mToolbar.setLogo(d);
                 }
 
