@@ -283,6 +283,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public void logout() {
         resetDB();
+        ImPluginHelper.getInstance(sImApp).reset();
         Intent intent = new Intent(this, LauncherActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

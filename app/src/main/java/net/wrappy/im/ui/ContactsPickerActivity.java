@@ -73,7 +73,6 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -298,6 +297,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 showWaitinDialog();
+                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -525,7 +525,6 @@ public class ContactsPickerActivity extends BaseActivity {
                     startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
-
             isClickedMenu = true;
             mHandler.postDelayed(new Runnable() {
                 @Override

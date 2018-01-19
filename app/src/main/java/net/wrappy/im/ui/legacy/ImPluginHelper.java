@@ -17,18 +17,6 @@
 
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.plugin.ImConfigNames;
-import net.wrappy.im.plugin.ImPlugin;
-import net.wrappy.im.plugin.ImPluginConstants;
-import net.wrappy.im.plugin.ImPluginInfo;
-
-import net.wrappy.im.ImApp;
-import net.wrappy.im.provider.Imps;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -43,6 +31,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+
+import net.wrappy.im.ImApp;
+import net.wrappy.im.plugin.ImConfigNames;
+import net.wrappy.im.plugin.ImPlugin;
+import net.wrappy.im.plugin.ImPluginConstants;
+import net.wrappy.im.plugin.ImPluginInfo;
+import net.wrappy.im.provider.Imps;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ImPluginHelper {
 
@@ -87,6 +86,10 @@ public class ImPluginHelper {
     // For testing
     public void skipLoadingPlugins() {
         mLoaded = true;
+    }
+
+    public void reset() {
+        mLoaded = false;
     }
 
     private List<ResolveInfo> getPlugins() {

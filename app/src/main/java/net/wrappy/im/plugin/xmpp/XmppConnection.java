@@ -2403,6 +2403,29 @@ public class XmppConnection extends ImConnection {
             }
         }
 
+        if (mTimerPackets != null)
+            mTimerPackets.cancel();
+
+        if (mTimerNewContacts != null) {
+            mTimerNewContacts.cancel();
+        }
+
+        if (mTimerPresence != null) {
+            mTimerPresence.cancel();
+        }
+
+        if (mStreamHandler != null) {
+            mStreamHandler.quickShutdown();
+            mStreamHandler = null;
+        }
+
+        mSessionManager.closeAllChatSession();
+
+        if (mConnection != null) {
+            mConnection.removeAllStanzaAcknowledgedListeners();
+            mConnection.removeAllStanzaIdAcknowledgedListeners();
+        }
+
         mChatGroupManager = null;
         mChatManager = null;
         mOmemoInstance = null;

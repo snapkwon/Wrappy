@@ -366,7 +366,7 @@ public class AppFuncs {
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
             i.putExtra(Intent.EXTRA_TEXT, content);
-            activity.startActivity(Intent.createChooser(i, "choose one"));
+            activity.startActivity(Intent.createChooser(i, activity.getString(R.string.share_title)));
         } catch (Exception e) {
             //e.toString();
         }

@@ -158,7 +158,7 @@ public class VerifyCodeFragment extends Fragment {
 //                                                } catch (Exception e) {
 //                                                    e.printStackTrace();
 //                                                }
-                                                MainActivity.start(getActivity());
+                                                MainActivity.start();
                                                 getActivity().finish();
                                                 //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
                                             }

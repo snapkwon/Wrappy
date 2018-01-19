@@ -8,6 +8,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -245,7 +246,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 //            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
 //            mExistingAccountTask.execute(username, password, accountName);
 //        }
-        (new LoginTask(this, new LoginTask.EventListenner() {
+        new LoginTask(this, new LoginTask.EventListenner() {
             @Override
             public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
                 appFuncs.dismissProgressWaiting();
@@ -253,10 +254,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     onLoginFailed();
                 } else {
                     AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
-                    MainActivity.start(PatternActivity.this);
+                    MainActivity.start();
+                    finish();
                 }
             }
-        })).execute(account);
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 //
 //

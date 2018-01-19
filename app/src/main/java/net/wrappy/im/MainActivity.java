@@ -17,7 +17,6 @@
 package net.wrappy.im;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -165,11 +164,11 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, MainActivity.class);
+    public static void start() {
+        Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
-        activity.startActivity(intent);
+        ImApp.sImApp.startActivity(intent);
     }
 
     @Override
@@ -1024,24 +1023,27 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-                        syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                        try {
+                            WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                            syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
             RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                        try {
+                            WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                            syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-
                 }
             });
         }
