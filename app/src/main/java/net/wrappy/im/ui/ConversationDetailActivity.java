@@ -59,12 +59,14 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -272,16 +274,23 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         canvas.drawRoundRect(rectF, roundPx, roundPx, paintCicle);
 
         paintText.setColor(Color.WHITE);
-        paintText.setTextSize(72);
+        paintText.setTextSize( convertDpToPx(25));
 
-        canvas.drawText(name, 75 - 23, 75 + 25, paintText);
+        canvas.drawText(name, convertDpToPx(17), convertDpToPx(28), paintText);
 
         return output;
     }
 
+    private int convertDpToPx(int dp){
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+
     public void updateStatusAvatar(boolean isgroupchat)
     {
         String references = getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY);
+
+      //  getSupportActionBar().getCustomView().findViewById()
         if(references != null && !references.isEmpty() ) {
             BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
             if (true)
@@ -290,7 +299,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                     Drawable d = new BitmapDrawable(getResources(), resource);
-                    getSupportActionBar().setIcon(d);
+                    mToolbar.setLogo(d);
                 }
 
                 @Override
@@ -306,28 +315,25 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 //    int padding = 24;
                 //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
                 // if(isgroup) {
-                getSupportActionBar().setIcon(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
+                mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
             }
             else
             {
                 try {
-                    String[] nicknames = getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY).split(" ");
-                    String nickname = "";
-                    if(nicknames.length == 0)
-                    {
-                        nickname = "";
+                    if(getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY)!=null) {
+                        String[] nicknames = getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY).split(" ");
+                        String nickname = "";
+                        if (nicknames.length == 0) {
+                            nickname = "";
+                        } else if (nicknames.length == 1) {
+                            nickname = String.valueOf(nicknames[0].charAt(0));
+                        } else {
+                            nickname = nicknames[0].charAt(0) + String.valueOf(nicknames[1].charAt(0));
+                        }
+                        Bitmap b = createImage(convertDpToPx(50), convertDpToPx(50), Color.GREEN, nickname);
+                        Drawable d = new BitmapDrawable(getResources(), b);
+                        mToolbar.setLogo(d);
                     }
-                    else if(nicknames.length ==1){
-                         nickname = String.valueOf(nicknames[0].charAt(0));
-                    }
-                    else
-                    {
-                        nickname = nicknames[0].charAt(0) + String.valueOf(nicknames[1].charAt(0));
-                    }
-                    Bitmap b = createImage(150,150 , Color.GREEN ,nickname);
-                    Drawable d = new BitmapDrawable(getResources(), b);
-
-                   getSupportActionBar().setIcon(d);
                 } catch (OutOfMemoryError ome) {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
@@ -355,6 +361,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mHandler = new MyHandler(this);
         mHandler.setOnHandleMessage(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mToolbar.setPadding(0,0,0,0);//for tab otherwise give space in tab
+        mToolbar.setContentInsetsAbsolute(0,0);
+
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
 
 
