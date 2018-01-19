@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -112,7 +111,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
             mApp = (ImApp) getActivity().getApplication();
             mConnection = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             mManager = mConnection.getChatSessionManager();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

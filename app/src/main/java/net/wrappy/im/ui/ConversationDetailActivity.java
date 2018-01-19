@@ -66,7 +66,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -725,7 +724,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     void startImagePicker() {
         startActivityForResult(getPickImageChooserIntent(), REQUEST_SEND_IMAGE);
-
     }
 
     /**
@@ -788,7 +786,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_camera, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -859,7 +857,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_pick_file, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -1103,7 +1101,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_audio, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.
