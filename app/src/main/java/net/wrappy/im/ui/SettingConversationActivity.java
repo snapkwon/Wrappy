@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
@@ -41,8 +42,10 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -53,10 +56,12 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
@@ -120,6 +125,8 @@ public class SettingConversationActivity extends BaseActivity {
 
     private WpKChatGroupDto groupid;
     ImApp imApp;
+
+    private List<WpKMemberDto> identifiers = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +201,9 @@ public class SettingConversationActivity extends BaseActivity {
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        identifiers = wpKChatGroup.getParticipators();
+                        Debug.e("identifiers.size: " + identifiers.size());
+
                         edGroupName.setText(wpKChatGroup.getName());
                         if (wpKChatGroup.getIcon() != null) {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
@@ -259,10 +269,12 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(ImApp.getNickname(new XmppAddress(c.getString(colUsername)).getBareAddress()));
+                        member.setNickname(c.getString(colNickname));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
+
+                        Debug.e("username: " + member.getUsername());
 
                         if (member.getAffiliation() != null) {
                             if (member.getAffiliation().contentEquals("owner") ||
@@ -273,7 +285,22 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
-                        members.add(member);
+                        if (member.getNickname() == null || member.getUsername().contains(member.getNickname())) {
+                            for(WpKMemberDto memberDto : identifiers) {
+                                for(WpKAuthDto authDto : memberDto.getWpKAuthDtoList()) {
+                                    if (authDto.getAccount().contains(member.getUsername())) {
+                                        member.setNickname(memberDto.getIdentifier());
+                                    }
+                                }
+                            }
+                        }
+//                            updateUnknownFriendInfoInGroup(member);
+//                            String nickname = Imps.GroupMembers.getNicknameFromGroup(cr, member.getUsername());
+//                            member.setNickname(nickname);
+//                        } else {
+                            members.add(member);
+//                        }
+
                     }
                     c.close();
                 }
@@ -291,6 +318,27 @@ public class SettingConversationActivity extends BaseActivity {
             }
         });
         mThreadUpdate.start();
+    }
+
+    private void updateUnknownFriendInfoInGroup(final MemberGroupDisplay member) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.getUsername()).getUser()), new RestAPIListenner() {
+            @Override
+            protected void OnComplete(int httpCode, String error, String s) {
+                try {
+                    Debug.e("s: " + s);
+                    if (s != null) {
+                        WpKMemberDto wpKMemberDto = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                        }.getType());
+                        if (wpKMemberDto != null) {
+                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), wpKMemberDto.getIdentifier());
+                            updateMembers();
+                        }
+                    }
+                } catch (IllegalStateException | JsonSyntaxException exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -559,7 +607,7 @@ public class SettingConversationActivity extends BaseActivity {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.log(s!=null?s:"");
+                        AppFuncs.log(s != null ? s : "");
                         leaveXmppGroup();
                     }
                 }
