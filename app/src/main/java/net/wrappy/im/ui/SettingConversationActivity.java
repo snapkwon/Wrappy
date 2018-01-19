@@ -405,8 +405,8 @@ public class SettingConversationActivity extends BaseActivity {
                 if (users != null) {
                     //start group and do invite hereartGrou
                     try {
-                        IImConnection conn = imApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
-                        if (conn.getState() == ImConnection.LOGGED_IN) {
+                        IImConnection conn = ImApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
+                        if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                             startGroupChat(group, users, conn);
                         }
                     } catch (Exception ex) {
@@ -438,7 +438,6 @@ public class SettingConversationActivity extends BaseActivity {
 
             }
         }
-
     }
 
     private void updateData() {
@@ -480,10 +479,7 @@ public class SettingConversationActivity extends BaseActivity {
 
     boolean isMuted() {
         try {
-            if (getSession() != null)
-                return getSession().isMuted();
-            else
-                return false;
+            return getSession() != null && getSession().isMuted();
         } catch (RemoteException re) {
             re.printStackTrace();
             return false;
@@ -559,7 +555,7 @@ public class SettingConversationActivity extends BaseActivity {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.log(s!=null?s:"");
+                        AppFuncs.log(s != null ? s : "");
                         leaveXmppGroup();
                     }
                 }
@@ -567,30 +563,24 @@ public class SettingConversationActivity extends BaseActivity {
         }
     }
 
-    private boolean leaveXmppGroup() {
+    private void leaveXmppGroup() {
         try {
             getSession().leave();
             //clear the stack and go back to the main activity
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            return true;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
-    private boolean deleteGroupByAdmin() {
+    private void deleteGroupByAdmin() {
         try {
-
             String groupName = wpKChatGroup.getName();
 
-            StringBuffer deleteCode = new StringBuffer();
-            deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
-            deleteCode.append(":");
-            deleteCode.append(groupName);
-            getSession().sendMessage(deleteCode.toString(), false);
+            String deleteCode = ConferenceConstant.DELETE_GROUP_BY_ADMIN + ":" + groupName;
+            getSession().sendMessage(deleteCode, false);
 
             getSession().delete();
 
@@ -598,11 +588,8 @@ public class SettingConversationActivity extends BaseActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            return true;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error deleting group", e);
         }
-        return false;
     }
-
 }
