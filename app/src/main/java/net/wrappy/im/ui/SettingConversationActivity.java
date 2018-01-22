@@ -302,14 +302,16 @@ public class SettingConversationActivity extends BaseActivity {
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
-                if (!Thread.currentThread().isInterrupted()) {
+                memberGroupAdapter.setData(memberGroupDisplays);
+               /* if (!Thread.currentThread().isInterrupted()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            memberGroupAdapter.setData(memberGroupDisplays);
                             memberGroupAdapter.notifyDataSetChanged();
                         }
                     });
-                }
+                }*/
             }
         });
         mThreadUpdate.start();
