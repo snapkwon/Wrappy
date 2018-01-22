@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
@@ -1783,7 +1784,8 @@ public class XmppConnection extends ImConnection {
             if (setAvatar) {
                 String avatar = DatabaseUtils.getAvatarFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
                 if (!TextUtils.isEmpty(avatar)) {
-                    vCard.setAvatar(avatar, "image/jpeg");
+                    String encodedAvatar = Base64.encodeToString(avatar.getBytes(), Base64.NO_WRAP);
+                    vCard.setAvatar(encodedAvatar, "image/jpeg");
                 }
             }
 
