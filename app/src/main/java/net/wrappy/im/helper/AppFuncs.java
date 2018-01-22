@@ -24,10 +24,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
 import net.wrappy.im.provider.Imps;
@@ -382,6 +384,23 @@ public class AppFuncs {
                     Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void sendRequestInviteFriend(final Activity activity) {
+        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        Gson gson = new Gson();
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
+                        AppFuncs.shareApp(activity,promotionSetting.getContent());
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });

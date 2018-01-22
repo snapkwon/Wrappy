@@ -3329,8 +3329,8 @@ public class ConversationView {
         stickerCode.append(assetUri.getLastPathSegment().split("\\.")[0]);
 
         stickerCode.append(":");
-
-        stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
+        //[Khoa][Android][Chat Group] When send sticker to Group, other members receive the text with username, not sticker
+//      stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
 
         sendMessageAsync(stickerCode.toString());
     }

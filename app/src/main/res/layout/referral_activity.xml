@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <net.wrappy.im.helper.layout.AppTextView
+        style="@style/AppText_Default_Light"
+        font_type="light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="@string/referral_text" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f4f4f4"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="60dp"
+        android:padding="24dp">
+        <net.wrappy.im.helper.layout.AppEditTextView
+            android:id="@+id/edReferralCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:hint="@string/referral_hint"
+            android:paddingLeft="36dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_user_2"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+
+
+    <net.wrappy.im.helper.layout.AppButton
+        android:id="@+id/btnReferralCheck"
+        style="@style/AppButton_OK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/action_done" />
+</LinearLayout>

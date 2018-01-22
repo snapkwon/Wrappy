@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,15 +39,6 @@ public class PromotionActivity extends Activity {
 
     @OnClick(R.id.lnInviteFriend)
     public void inviteFriendToGetPromotion() {
-        shareText();
-    }
-
-    public void shareText() {
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        String shareBodyText = "Your sharing message goes here";
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject/Title");
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
-        startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+        AppFuncs.sendRequestInviteFriend(this);
     }
 }

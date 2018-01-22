@@ -674,8 +674,6 @@ public class XmppConnection extends ImConnection {
                         muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                         mucCreated = true;
                         loadOldMessages(muc);
-                    } else {
-
                     }
 
                 } catch (Exception iae) {
@@ -910,7 +908,9 @@ public class XmppConnection extends ImConnection {
 
                 addMucListeners(muc, chatGroup);
 
-                loadOldMessages(muc);
+                if (findOrCreateSession(chatRoomJid, true) != null) {
+                    loadOldMessages(muc);
+                }
 
             } catch (Exception e) {
                 debug(TAG, "error joining MUC", e);
@@ -939,8 +939,10 @@ public class XmppConnection extends ImConnection {
         public void loadMembers(ChatGroup chatGroup) {
             try {
 
-                if (mConnection != null && mConnection.isAuthenticated())
+                if (mConnection != null && mConnection.isAuthenticated()) {
                     loadMembers(mMUCs.get(chatGroup.getAddress().getAddress()), chatGroup);
+                    loadOldMessages(mMUCs.get(chatGroup.getAddress().getAddress()));
+                }
 
             } catch (Exception e) {
                 debug(TAG, "Could not load members", e);
@@ -2265,7 +2267,7 @@ public class XmppConnection extends ImConnection {
             if (drIncoming != null)
                 session.onMessageReceipt(drIncoming.getId());
 
-            if (body != null && session != null) {
+            if (body != null) {
 
                 Message rec = new Message(body);
                 rec.setTo(new XmppAddress(smackMessage.getTo().toString()));
@@ -2321,8 +2323,6 @@ public class XmppConnection extends ImConnection {
                 }
 
             }
-
-
         }
     }
 
@@ -2483,7 +2483,7 @@ public class XmppConnection extends ImConnection {
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
             Jid jid = JidCreate.from(address);
 
-            if (jid.hasNoResource())
+            if (jid.hasNoResource() && !groupChat)
                 return null;
 
             //create a session if this it not groupchat
@@ -4657,18 +4657,20 @@ public class XmppConnection extends ImConnection {
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
         org.jivesoftware.smack.packet.Message oldMessage = null;
-        while ((oldMessage = muc.nextMessage(2000)) != null) {
-            DelayInformation inf = null;
-            Date date = new Date();
-            try {
-                inf = oldMessage.getExtension("x", "jabber:x:delay");
-                // get offline message timestamp
-                if (inf != null) {
-                    date = inf.getStamp();
+        if (findOrCreateSession(muc.getRoom().asEntityBareJidString(), true) != null) {
+            while ((oldMessage = muc.nextMessage(2000)) != null) {
+                DelayInformation inf = null;
+                Date date = new Date();
+                try {
+                    inf = oldMessage.getExtension("delay", DelayInformation.NAMESPACE);
+                    // get offline message timestamp
+                    if (inf != null) {
+                        date = inf.getStamp();
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
+                handleMessage(oldMessage, false, date);
             }
-            handleMessage(oldMessage, false, date);
         }
     }
 

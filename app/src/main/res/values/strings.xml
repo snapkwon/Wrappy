@@ -542,7 +542,7 @@
     <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
-    <string name="referral_hint">Phone Number</string>
+    <string name="referral_hint">Referral code</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
@@ -620,4 +620,6 @@
     <string name="error_empty_email">Email cannot be empty</string>
     <string name="logout_noti">Are you sure you want to logout this deivce?</string>
     <string name="share_title">Choose sharing method</string>
+    <string name="referral_text">Enter your referral code (optional)</string>
+    <string name="input_referral_error">Username isn\'t exist</string>
 </resources>
