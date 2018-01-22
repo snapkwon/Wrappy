@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
@@ -288,8 +289,10 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         ;
 
         mNotifyBuilder = new NotificationCompat.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setSmallIcon(R.drawable.notify_zom);
+                .setContentTitle(getString(R.string.app_name));
+        mNotifyBuilder.setSmallIcon(R.drawable.notify_wrappy);
+        mNotifyBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                R.mipmap.ic_launcher));
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             mNotifyBuilder.setPriority(Notification.PRIORITY_MIN);
@@ -675,12 +678,13 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
                 if (!isNetworkAvailable()) {
                     message = getString(R.string.error_suspended_connection);
-                    mNotifyBuilder.setSmallIcon(R.drawable.intro1);
                 } else {
                     message = getString(R.string.app_unlocked);
-                    mNotifyBuilder.setSmallIcon(R.drawable.intro1);
                 }
 
+                mNotifyBuilder.setSmallIcon(R.drawable.notify_wrappy);
+                mNotifyBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_launcher));
                 mNotifyBuilder.setContentText(message);
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
