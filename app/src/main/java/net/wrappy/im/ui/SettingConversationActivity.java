@@ -317,27 +317,6 @@ public class SettingConversationActivity extends BaseActivity {
         mThreadUpdate.start();
     }
 
-    private void updateUnknownFriendInfoInGroup(final MemberGroupDisplay member) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.getUsername()).getUser()), new RestAPIListenner() {
-            @Override
-            protected void OnComplete(int httpCode, String error, String s) {
-                try {
-                    Debug.e("s: " + s);
-                    if (s != null) {
-                        WpKMemberDto wpKMemberDto = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
-                        }.getType());
-                        if (wpKMemberDto != null) {
-                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), wpKMemberDto.getIdentifier());
-                            updateMembers();
-                        }
-                    }
-                } catch (IllegalStateException | JsonSyntaxException exception) {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
