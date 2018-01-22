@@ -622,4 +622,5 @@
     <string name="share_title">Choose sharing method</string>
     <string name="referral_text">Enter your referral code (optional)</string>
     <string name="input_referral_error">Username isn\'t exist</string>
+    <string name="update_profile">Update Profile</string>
 </resources>
