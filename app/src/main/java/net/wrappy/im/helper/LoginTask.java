@@ -12,6 +12,7 @@ import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 
+import java.lang.ref.WeakReference;
 import java.security.KeyPair;
 
 /**
@@ -20,10 +21,11 @@ import java.security.KeyPair;
 
 public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
 
-    Activity activity;
-    SimpleAlertHandler mHandler;
-    EventListenner listenner;
-    RegistrationAccount registrationAccount;
+    private Activity activity;
+    private SimpleAlertHandler mHandler;
+    private EventListenner listenner;
+    private RegistrationAccount registrationAccount;
+    private WeakReference<Activity> weakReference;
 
     public interface EventListenner {
         void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount);
@@ -33,6 +35,7 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
         this.activity = activity;
         this.listenner = listenner;
         mHandler = new SimpleAlertHandler(activity);
+        weakReference = new WeakReference<>(activity);
     }
 
 
@@ -60,6 +63,9 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
 
     @Override
     protected void onPostExecute(final OnboardingAccount account) {
+        if (weakReference.get() == null)
+            return;
+
         if (account == null) {
             listenner.OnComplete(false, null);
             return;

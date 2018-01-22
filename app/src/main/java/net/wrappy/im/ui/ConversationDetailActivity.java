@@ -558,7 +558,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override
                     public void onFinished(Integer code) {
                         startChat();

@@ -1411,7 +1411,7 @@ public class ConversationView implements OnHandleMessage {
     private void resendFriendRequest() {
         //if not group chat, then send the contact another friend request
         if (!isGroupChat())
-            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(mRemoteAddress, null, null);
+            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(mRemoteAddress, null, null);
 
     }
 

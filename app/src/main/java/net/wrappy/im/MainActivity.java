@@ -627,13 +627,13 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         if (resultScan.startsWith("xmpp:")) {
                             address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint = XmppUriHelper.getOtrFingerprint(resultScan);
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, fingerprint);
 
                         } else {
                             //parse each string and if they are for a new user then add the user
                             OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(diLink.username, diLink.fingerprint, diLink.nickname);
                         }
 
                         if (address != null)

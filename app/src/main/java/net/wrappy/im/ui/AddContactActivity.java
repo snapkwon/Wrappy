@@ -339,7 +339,7 @@ public class AddContactActivity extends BaseActivity {
 
             String address = recipient.getAddress();
             if (pattern.matcher(address).matches()) {
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, null, null);
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, null, null);
                 foundOne = true;
             }
         }
@@ -446,7 +446,7 @@ public class AddContactActivity extends BaseActivity {
                             String address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint =  XmppUriHelper.getOtrFingerprint(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, fingerprint);
 
                             Intent intent=new Intent();
                             intent.putExtra(BundleKeyConstant.RESULT_KEY, address);
@@ -458,7 +458,7 @@ public class AddContactActivity extends BaseActivity {
                             //parse each string and if they are for a new user then add the user
                             OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(diLink.username, diLink.fingerprint, diLink.nickname);
 
                             Intent intent=new Intent();
                             intent.putExtra(BundleKeyConstant.RESULT_KEY, diLink.username);
