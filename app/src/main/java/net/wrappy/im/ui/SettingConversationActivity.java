@@ -126,7 +126,7 @@ public class SettingConversationActivity extends BaseActivity {
     private WpKChatGroupDto groupid;
     ImApp imApp;
 
-    private List<WpKMemberDto> identifiers = null;
+    private List<WpKMemberDto> identifiers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,7 +202,6 @@ public class SettingConversationActivity extends BaseActivity {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
                         identifiers = wpKChatGroup.getParticipators();
-                        Debug.e("identifiers.size: " + identifiers.size());
 
                         edGroupName.setText(wpKChatGroup.getName());
                         if (wpKChatGroup.getIcon() != null) {
@@ -286,20 +285,16 @@ public class SettingConversationActivity extends BaseActivity {
                         }
 
                         if (member.getNickname() == null || member.getUsername().contains(member.getNickname())) {
-                            for(WpKMemberDto memberDto : identifiers) {
-                                for(WpKAuthDto authDto : memberDto.getWpKAuthDtoList()) {
-                                    if (authDto.getAccount().contains(member.getUsername())) {
-                                        member.setNickname(memberDto.getIdentifier());
-                                    }
+                            for (WpKMemberDto memberDto : identifiers) {
+                                String account = memberDto.getXMPPAuthDto().getAccount();
+                                if (member.getUsername().contains(account)) {
+                                    member.setNickname(memberDto.getIdentifier());
+                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                                    break;
                                 }
                             }
                         }
-//                            updateUnknownFriendInfoInGroup(member);
-//                            String nickname = Imps.GroupMembers.getNicknameFromGroup(cr, member.getUsername());
-//                            member.setNickname(nickname);
-//                        } else {
-                            members.add(member);
-//                        }
+                        members.add(member);
 
                     }
                     c.close();
@@ -311,7 +306,7 @@ public class SettingConversationActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mGroupRecycleView.getAdapter().notifyDataSetChanged();
+                            memberGroupAdapter.notifyDataSetChanged();
                         }
                     });
                 }
