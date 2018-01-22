@@ -6,7 +6,6 @@
     android:orientation="horizontal"
     android:layout_margin="10dp">
 
-
     <net.wrappy.im.helper.layout.AppTextView
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"

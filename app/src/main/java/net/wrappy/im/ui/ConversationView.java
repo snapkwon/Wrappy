@@ -125,7 +125,6 @@ import net.wrappy.im.ui.MessageListItem.DeliveryState;
 import net.wrappy.im.ui.MessageListItem.EncryptionState;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.legacy.adapter.ChatListenerAdapter;
 import net.wrappy.im.ui.stickers.Sticker;
@@ -152,7 +151,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ConversationView {
+public class ConversationView implements OnHandleMessage {
     // This projection and index are set for the query of active chats
     public static final String[] CHAT_PROJECTION = {Imps.Contacts._ID, Imps.Contacts.ACCOUNT,
             Imps.Contacts.PROVIDER, Imps.Contacts.USERNAME,
@@ -207,12 +206,10 @@ public class ConversationView {
     static final StyleSpan STYLE_BOLD = new StyleSpan(Typeface.BOLD);
     static final StyleSpan STYLE_NORMAL = new StyleSpan(Typeface.NORMAL);
 
-    Markup mMarkup;
-
-    ConversationDetailActivity mActivity;
+    private ConversationDetailActivity mActivity;
     ImApp mApp;
-    private SimpleAlertHandler mHandler;
-    IImConnection mConn;
+    private ChatViewHandler mHandler;
+    private IImConnection mConn;
 
     //private ImageView mStatusIcon;
     // private TextView mTitle;
@@ -280,10 +277,6 @@ public class ConversationView {
     // array data of spinner language
     private String[] arraySpinner = null;
     private ChatSessionInitTask task;
-
-    public SimpleAlertHandler getHandler() {
-        return mHandler;
-    }
 
     public int getType() {
         return mViewType;
@@ -836,6 +829,7 @@ public class ConversationView {
 
         mApp = (ImApp) mActivity.getApplication();
         mHandler = new ChatViewHandler(mActivity);
+        mHandler.setOnHandleMessage(this);
 
         initViews();
 
@@ -2219,47 +2213,67 @@ public class ConversationView {
         }
     }
 
-    private final class ChatViewHandler extends SimpleAlertHandler {
+    @Override
+    public void onHandle(Message msg) {
+
+        long providerId = ((long) msg.arg1 << 32) | msg.arg2;
+        if (providerId != mProviderId) {
+            return;
+        }
+
+        switch (msg.what) {
+
+            case ImApp.EVENT_CONNECTION_DISCONNECTED:
+                Debug.d("Handle event connection disconnected.");
+                updateWarningView();
+                return;
+            case PROMPT_FOR_DATA_TRANSFER:
+                showPromptForData(msg.getData().getString("from"), msg.getData().getString("file"));
+                break;
+            case SHOW_DATA_ERROR:
+
+                String error = msg.getData().getString("err");
+
+                AppFuncs.alert(mContext, mActivity.getString(R.string.error_tranferring_file) + error, true);
+                break;
+            case SHOW_DATA_PROGRESS:
+                break;
+            case SHOW_TYPING:
+
+                boolean isTyping = msg.getData().getBoolean("typing");
+                mActivity.findViewById(R.id.tvTyping).setVisibility(isTyping ? View.VISIBLE : View.GONE);
+
+            default:
+                updateWarningView();
+        }
+
+    }
+
+    private static class ChatViewHandler extends SimpleAlertHandler {
 
 
-        public ChatViewHandler(Activity activity) {
+        private ChatViewHandler(Activity activity) {
             super(activity);
+        }
+
+
+        private OnHandleMessage onHandleMessage;
+
+        public void setOnHandleMessage(OnHandleMessage onHandleMessage) {
+            this.onHandleMessage = onHandleMessage;
         }
 
         @Override
         public void handleMessage(Message msg) {
-            long providerId = ((long) msg.arg1 << 32) | msg.arg2;
-            if (providerId != mProviderId) {
-                return;
+            if (msg.what == 1 && onHandleMessage != null) {
+                onHandleMessage.onHandle(msg);
             }
-
             switch (msg.what) {
 
                 case ImApp.EVENT_CONNECTION_DISCONNECTED:
-                    Debug.d("Handle event connection disconnected.");
-                    updateWarningView();
                     promptDisconnectedEvent(msg);
-                    return;
-                case PROMPT_FOR_DATA_TRANSFER:
-                    showPromptForData(msg.getData().getString("from"), msg.getData().getString("file"));
                     break;
-                case SHOW_DATA_ERROR:
-
-                    String error = msg.getData().getString("err");
-
-                    AppFuncs.alert(mContext, mActivity.getString(R.string.error_tranferring_file) + error, true);
-                    break;
-                case SHOW_DATA_PROGRESS:
-                    break;
-                case SHOW_TYPING:
-
-                    boolean isTyping = msg.getData().getBoolean("typing");
-                    mActivity.findViewById(R.id.tvTyping).setVisibility(isTyping ? View.VISIBLE : View.GONE);
-
-                default:
-                    updateWarningView();
             }
-
             super.handleMessage(msg);
         }
     }
@@ -3031,7 +3045,7 @@ public class ConversationView {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, mMarkup, false, encState, isGroupChat(), mPresenceStatus, avatar, textsearch);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, false, encState, isGroupChat(), mPresenceStatus, avatar, textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -3041,7 +3055,7 @@ public class ConversationView {
                     if (errCode != 0) {
                         messageView.bindErrorMessage(errCode);
                     } else {
-                        messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, mMarkup, false,
+                        messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, false,
                                 deliveryState, encState, textsearch);
                     }
 
@@ -3335,7 +3349,7 @@ public class ConversationView {
         sendMessageAsync(stickerCode.toString());
     }
 
-    void approveSubscription() {
+    private void approveSubscription() {
 
         if (mConn != null) {
             try {
@@ -3484,12 +3498,12 @@ public class ConversationView {
         return popupWindow;
     }
 
-    public void startAudioConference() {
+    void startAudioConference() {
         String roomId = getRoomId(ConferenceMessage.ConferenceType.AUDIO);
         ConferenceActivity.startAudioCall(mContext, roomId);
     }
 
-    public void startVideoConference() {
+    void startVideoConference() {
         String roomId = getRoomId(ConferenceMessage.ConferenceType.VIDEO);
         Debug.d("room Id " + roomId);
         ConferenceActivity.startVideoCall(mContext, roomId);
@@ -3503,7 +3517,7 @@ public class ConversationView {
         return roomId;
     }
 
-    public void startSettingScreen() {
+    void startSettingScreen() {
         Intent intent = new Intent(mActivity, SettingConversationActivity.class);
         intent.putExtra("chatId", mLastChatId);
         intent.putExtra("account", mAccountId);

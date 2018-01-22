@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:background="@color/zom_primary"
+            android:background="@color/wrappy_primary"
             android:paddingBottom="10dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
