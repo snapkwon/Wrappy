@@ -463,7 +463,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
 
                     mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
                     mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_light));
-                    mUpgradeAction.setTextColor(getResources().getColor(R.color.zom_primary));
+                    mUpgradeAction.setTextColor(getResources().getColor(R.color.wrappy_primary));
                     mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

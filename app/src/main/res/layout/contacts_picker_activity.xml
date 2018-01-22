@@ -100,7 +100,7 @@
                     android:layout_margin="3dp"
                     android:padding="6dp"
                     android:src="@drawable/ic_person_add_white_36dp"
-                    app:circleColor="@color/zom_primary" />
+                    app:circleColor="@color/wrappy_primary" />
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:layout_width="match_parent"
