@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
@@ -41,8 +42,10 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -53,10 +56,12 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
@@ -120,6 +125,8 @@ public class SettingConversationActivity extends BaseActivity {
 
     private WpKChatGroupDto groupid;
     ImApp imApp;
+
+    private List<WpKMemberDto> identifiers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +201,8 @@ public class SettingConversationActivity extends BaseActivity {
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        identifiers = wpKChatGroup.getParticipators();
+
                         edGroupName.setText(wpKChatGroup.getName());
                         if (wpKChatGroup.getIcon() != null) {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
@@ -259,10 +268,12 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(ImApp.getNickname(new XmppAddress(c.getString(colUsername)).getBareAddress()));
+                        member.setNickname(c.getString(colNickname));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
+
+                        Debug.e("username: " + member.getUsername());
 
                         if (member.getAffiliation() != null) {
                             if (member.getAffiliation().contentEquals("owner") ||
@@ -273,21 +284,34 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
+                        if (member.getNickname() == null || member.getUsername().contains(member.getNickname())) {
+                            for (WpKMemberDto memberDto : identifiers) {
+                                String account = memberDto.getXMPPAuthDto().getAccount();
+                                if (member.getUsername().contains(account)) {
+                                    member.setNickname(memberDto.getIdentifier());
+                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                                    break;
+                                }
+                            }
+                        }
                         members.add(member);
+
                     }
                     c.close();
                 }
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
-                if (!Thread.currentThread().isInterrupted()) {
+                memberGroupAdapter.setData(memberGroupDisplays);
+               /* if (!Thread.currentThread().isInterrupted()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mGroupRecycleView.getAdapter().notifyDataSetChanged();
+                            memberGroupAdapter.setData(memberGroupDisplays);
+                            memberGroupAdapter.notifyDataSetChanged();
                         }
                     });
-                }
+                }*/
             }
         });
         mThreadUpdate.start();

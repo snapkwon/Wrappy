@@ -40,6 +40,7 @@ import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.AccountViewFragment;
 import net.wrappy.im.ui.ContactsPickerActivity;
+import net.wrappy.im.ui.OnHandleMessage;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
@@ -60,7 +61,7 @@ import java.util.UUID;
 
 import static net.wrappy.im.util.BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS;
 
-public class ImUrlActivity extends Activity {
+public class ImUrlActivity extends Activity implements OnHandleMessage {
     private static final String TAG = "ImUrlActivity";
 
     private static final int REQUEST_PICK_CONTACTS = RESULT_FIRST_USER + 1;
@@ -80,11 +81,12 @@ public class ImUrlActivity extends Activity {
     private String mSendType;
     private String mSendText;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mHandlerRouter = new MyHandler();
+        mHandlerRouter.setOnHandleMessage(this);
         doOnCreate();
     }
 
@@ -349,7 +351,7 @@ public class ImUrlActivity extends Activity {
                 ImApp app = (ImApp) getApplication();
                 app.initAccountInfo();
 
-                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp) getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor, diLink.username, diLink.fingerprint, diLink.nickname);
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId()).executeOnExecutor(ImApp.sThreadPoolExecutor, diLink.username, diLink.fingerprint, diLink.nickname);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("newcontact", diLink.username);
@@ -407,7 +409,7 @@ public class ImUrlActivity extends Activity {
                 if (parts.length > 2)
                     nickname = parts[2];
 
-                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId(), (ImApp) getApplication()).executeOnExecutor(ImApp.sThreadPoolExecutor, username, fingerprint);
+                new AddContactAsyncTask(app.getDefaultProviderId(), app.getDefaultAccountId()).executeOnExecutor(ImApp.sThreadPoolExecutor, username, fingerprint);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("newcontact", username);
@@ -518,34 +520,23 @@ public class ImUrlActivity extends Activity {
         }, false);
     }
 
-    Handler mHandlerRouter = new Handler() {
+    private static class MyHandler extends Handler {
+        private OnHandleMessage onHandleMessage;
+
+        public void setOnHandleMessage(OnHandleMessage onHandleMessage) {
+            this.onHandleMessage = onHandleMessage;
+        }
 
         @Override
         public void handleMessage(Message msg) {
-
-            if (msg.what == 1) {
-                Uri uriAccountData = getIntent().getData();
-
-                if (uriAccountData.getScheme().equals("immu")) {
-                    //need to generate proper IMA url for account setup
-                    String randomJid = ((int) (Math.random() * 1000)) + "";
-                    String regUser = mFromAddress + randomJid;
-                    String regPass = UUID.randomUUID().toString().substring(0, 16);
-                    String regDomain = mHost.replace("conference.", "");
-                    uriAccountData = Uri.parse("ima://" + regUser + ':' + regPass + '@' + regDomain);
-                }
-
-                Intent intent = new Intent(ImUrlActivity.this, AccountViewFragment.class);
-                intent.setAction(Intent.ACTION_INSERT);
-                intent.setData(uriAccountData);
-                startActivityForResult(intent, REQUEST_CREATE_ACCOUNT);
-
-            } else if (msg.what == 2) {
-                doOnCreate();
+            if (onHandleMessage != null) {
+                onHandleMessage.onHandle(msg);
             }
+            super.handleMessage(msg);
         }
+    }
 
-    };
+    MyHandler mHandlerRouter;
 
     void openOtrInBand(final Uri data, final String type) {
 
@@ -740,6 +731,7 @@ public class ImUrlActivity extends Activity {
     }
 
     private void doOnCreate() {
+
         Intent intent = getIntent();
         if (Intent.ACTION_INSERT.equals(intent.getAction())) {
             if (!resolveInsertIntent(intent)) {
@@ -834,4 +826,28 @@ public class ImUrlActivity extends Activity {
     static final int ACTIVE_ACCOUNT_KEEP_SIGNED_IN = 8;
     static final int ACCOUNT_PRESENCE_STATUS = 9;
     static final int ACCOUNT_CONNECTION_STATUS = 10;
+
+    @Override
+    public void onHandle(Message msg) {
+        if (msg.what == 1) {
+            Uri uriAccountData = getIntent().getData();
+
+            if (uriAccountData.getScheme().equals("immu")) {
+                //need to generate proper IMA url for account setup
+                String randomJid = ((int) (Math.random() * 1000)) + "";
+                String regUser = mFromAddress + randomJid;
+                String regPass = UUID.randomUUID().toString().substring(0, 16);
+                String regDomain = mHost.replace("conference.", "");
+                uriAccountData = Uri.parse("ima://" + regUser + ':' + regPass + '@' + regDomain);
+            }
+
+            Intent intent = new Intent(ImUrlActivity.this, AccountViewFragment.class);
+            intent.setAction(Intent.ACTION_INSERT);
+            intent.setData(uriAccountData);
+            startActivityForResult(intent, REQUEST_CREATE_ACCOUNT);
+
+        } else if (msg.what == 2) {
+            doOnCreate();
+        }
+    }
 }

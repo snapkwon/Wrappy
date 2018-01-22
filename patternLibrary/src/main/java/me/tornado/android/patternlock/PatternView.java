@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -1224,7 +1225,7 @@ public class PatternView extends View {
 
     private void drawCirclegray(Canvas canvas, float centerX, float centerY, float radius,
                             boolean partOfPattern, float alpha) {
-        mPaint.setColor(0xD8D8D8);
+        mPaint.setColor(Color.parseColor("#EFEEEE"));
         mPaint.setAlpha((int) (alpha * 255));
         canvas.drawCircle(centerX, centerY, radius, mPaint);
     }

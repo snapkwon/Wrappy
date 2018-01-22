@@ -198,7 +198,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private TextView txtStatus;
 
     @Override
-    public void onHandle() {
+    public void onHandle(Message msg) {
         handleMessage();
     }
 
@@ -218,7 +218,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         public void handleMessage(Message msg) {
             if (weakReference != null && weakReference.get() != null) {
                 if (msg.what == 1 && onHandleMessage != null) {
-                    onHandleMessage.onHandle();
+                    onHandleMessage.onHandle(msg);
                 }
             }
         }
@@ -261,7 +261,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         Rect rect = new Rect(0, 0, width, height);
         RectF rectF = new RectF(rect);
         float density = ConversationDetailActivity.this.getResources().getDisplayMetrics().density;
-        float roundPx = 100*density;
+        float roundPx = 100 * density;
 
         paintCicle.setColor(Color.GRAY);
         paintCicle.setAntiAlias(true);
@@ -274,24 +274,23 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         canvas.drawRoundRect(rectF, roundPx, roundPx, paintCicle);
 
         paintText.setColor(Color.WHITE);
-        paintText.setTextSize( convertDpToPx(25));
+        paintText.setTextSize(convertDpToPx(25));
 
         canvas.drawText(name, convertDpToPx(17), convertDpToPx(28), paintText);
 
         return output;
     }
 
-    private int convertDpToPx(int dp){
+    private int convertDpToPx(int dp) {
         return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
 
-    public void updateStatusAvatar(boolean isgroupchat)
-    {
+    public void updateStatusAvatar(boolean isgroupchat) {
         String references = getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY);
 
-      //  getSupportActionBar().getCustomView().findViewById()
-        if(references != null && !references.isEmpty() ) {
+        //  getSupportActionBar().getCustomView().findViewById()
+        if (references != null && !references.isEmpty()) {
             BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
             if (true)
                 request.transform(new CircleTransform(ConversationDetailActivity.this));
@@ -308,24 +307,19 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     AppFuncs.log(e.getLocalizedMessage());
                 }
             });
-        }
-        else
-        {
-            if(isgroupchat == true) {
+        } else {
+            if (isgroupchat == true) {
                 //    int padding = 24;
                 //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
                 // if(isgroup) {
                 mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
-            }
-            else
-            {
+            } else {
                 try {
-                    if(getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY)!=null) {
+                    if (getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY) != null) {
                         int padding = 24;
                         LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY), padding);
 
-                        Drawable d ;//= new BitmapDrawable(getResources(), b);
-
+                        Drawable d;//= new BitmapDrawable(getResources(), b);
 
 
                         Bitmap output = Bitmap.createBitmap(convertDpToPx(50), convertDpToPx(50), Bitmap.Config.ARGB_8888);
@@ -380,8 +374,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mHandler.setOnHandleMessage(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        mToolbar.setPadding(0,0,0,0);//for tab otherwise give space in tab
-        mToolbar.setContentInsetsAbsolute(0,0);
+        mToolbar.setPadding(0, 0, 0, 0);//for tab otherwise give space in tab
+        mToolbar.setContentInsetsAbsolute(0, 0);
 
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
 
@@ -401,7 +395,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-       // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
+        // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
 
         applyStyleForToolbar();
 
@@ -425,10 +419,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     }
                 }
             });
-        }
-        else
-        {
-
         }
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -568,7 +558,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override
                     public void onFinished(Integer code) {
                         startChat();
@@ -930,7 +920,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             Uri vfsUri;
             /*if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else*/ if (importContent) {
+            else*/
+            if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, fileName, info.stream);

@@ -627,13 +627,13 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         if (resultScan.startsWith("xmpp:")) {
                             address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint = XmppUriHelper.getOtrFingerprint(resultScan);
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, fingerprint);
 
                         } else {
                             //parse each string and if they are for a new user then add the user
                             OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(diLink.username, diLink.fingerprint, diLink.nickname);
                         }
 
                         if (address != null)
@@ -1142,7 +1142,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private void rejoinGroupChat() {
         if (!sessionTasks.isEmpty()) {
             try {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
                 if (conn.getState() == ImConnection.LOGGED_IN) {
                     String nickname = mApp.getDefaultNickname();
                     groupSessionTask = new GroupChatSessionTask(this, sessionTasks.pop(), conn);
@@ -1164,7 +1164,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 
         try {
             if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
                 SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
                 if (handler != null) {
                     handler.removeCallbacks(runable);

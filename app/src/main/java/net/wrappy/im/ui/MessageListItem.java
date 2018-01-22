@@ -63,7 +63,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
@@ -178,7 +177,7 @@ public class MessageListItem extends FrameLayout {
         return lastMessage;
     }
 
-    public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
+    public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date,
                                     boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference, String textsearch) {
 
 
@@ -662,7 +661,7 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
-    public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
+    public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, boolean scrolling,
                                     DeliveryState delivery, EncryptionState encryption, String textsearch) {
 
         mHolder = holder;

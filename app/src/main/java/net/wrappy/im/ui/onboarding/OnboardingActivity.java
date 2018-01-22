@@ -767,7 +767,7 @@ public class OnboardingActivity extends BaseActivity {
                         //parse each string and if they are for a new user then add the user
                         OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId, mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId).execute(diLink.username, diLink.fingerprint, diLink.nickname);
 
                         //if they are for a group chat, then add the group
                     } catch (Exception e) {
