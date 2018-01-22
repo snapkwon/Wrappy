@@ -39,6 +39,7 @@ public class ReferralActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle(getString(R.string.Referral));
         appFuncs = AppFuncs.getInstance();
     }
 

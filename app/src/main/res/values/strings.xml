@@ -435,10 +435,10 @@
     <string name="Page11Message">A pioneer in an innovative\n&amp; constantly evolving era.</string>
     <string name="StartMessaging">Start Messaging</string>
 
-    <string name="id_or_username">ID/Username</string>
+    <string name="id_or_username">Input the username</string>
     <string name="forget_password">Forget Password</string>
     <string name="login">Login</string>
-    <string name="waiting_dialog">Waiting...</string>
+    <string name="waiting_dialog">Waiting…</string>
     <string name="search_username">Search username</string>
     <string name="add_contact">ADD CONTACT</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
@@ -622,5 +622,6 @@
     <string name="share_title">Choose sharing method</string>
     <string name="referral_text">Enter your referral code (optional)</string>
     <string name="input_referral_error">Username isn\'t exist</string>
+    <string name="Referral">Referral</string>
     <string name="update_profile">Update Profile</string>
 </resources>

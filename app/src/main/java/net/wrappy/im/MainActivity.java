@@ -68,12 +68,15 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.ConnectionListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IContactListManager;
@@ -163,6 +166,9 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private ChatSessionInitTask task;
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
+
+    //XmppConnection listener
+    ConnectionListener connectionListener;
 
     public static void start() {
         Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
@@ -435,7 +441,35 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             mLoadContactHandler = null;
             syncContactRunnable = null;
         }
+
         super.onDestroy();
+    }
+
+
+    /*
+    * Register to liten event from the connection
+    * */
+    private void registerConnection(IImConnection connection) {
+        if (connectionListener == null) {
+            connectionListener = new ConnectionListener() {
+                @Override
+                public void onStateChanged(int state, ImErrorInfo error) {
+                    //update status connection from state
+                    checkConnection();
+                }
+
+                @Override
+                public void onUserPresenceUpdated() {
+
+                }
+
+                @Override
+                public void onUpdatePresenceError(ImErrorInfo error) {
+
+                }
+            };
+            ((XmppConnection) connection).addConnectionListener(connectionListener);
+        }
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -450,6 +484,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
+                registerConnection(conn);
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
