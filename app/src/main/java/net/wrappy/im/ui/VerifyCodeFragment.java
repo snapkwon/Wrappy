@@ -74,7 +74,7 @@ public class VerifyCodeFragment extends Fragment {
         mainView = inflater.inflate(R.layout.verify_code_fragment, null);
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
-        data = getArguments().getString("data","");
+        data = getArguments().getString("data", "");
         if (!TextUtils.isEmpty(data)) {
             Gson gson = new Gson();
             registration = gson.fromJson(data, Registration.class);
@@ -139,27 +139,11 @@ public class VerifyCodeFragment extends Fragment {
                                         public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
                                             appFuncs.dismissProgressWaiting();
                                             if (!isSuccess) {
-                                                AppFuncs.alert(getActivity(),getString(R.string.network_error),false);
+                                                AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                                             } else {
                                                 AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
-//                                                String avatar = "";
-//                                                String banner = "";
-//                                                if (registration.getWpKMemberDto().getAvatar()!=null) {
-//                                                    avatar = registration.getWpKMemberDto().getAvatar().getReference();
-//                                                }
-//                                                if (registration.getWpKMemberDto().getBanner()!=null) {
-//                                                    banner = registration.getWpKMemberDto().getBanner().getReference();
-//                                                }
-//                                                String hash = DatabaseUtils.generateHashFromAvatar(avatar);
-//
-//                                                try {
-//                                                    DatabaseUtils.insertAvatarBlob(getActivity().getContentResolver(), Imps.Avatars.CONTENT_URI, onboardingAccount.providerId, onboardingAccount.accountId, avatar, banner, hash, onboardingAccount.username);
-//                                                } catch (Exception e) {
-//                                                    e.printStackTrace();
-//                                                }
                                                 ReferralActivity.start();
                                                 getActivity().finish();
-                                                //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
                                             }
                                         }
                                     })).execute(account);
@@ -174,7 +158,7 @@ public class VerifyCodeFragment extends Fragment {
                     } else {
                         appFuncs.dismissProgressWaiting();
                         txtPin.setText("");
-                        AppFuncs.alert(getActivity(), getString(R.string.verify_fail), false);
+                        AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                     }
                 }
             });
