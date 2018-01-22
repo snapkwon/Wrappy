@@ -263,26 +263,7 @@ public class MessageListItem extends FrameLayout {
                 bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-                String[] cmds = lastMessage.split(":");
-
-                String mimeTypeSticker = "image/png";
-                try {
-                    String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
-
-                    //make sure sticker exists
-                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                    afd.getLength();
-                    afd.close();
-
-                    //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                    //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
-                } catch (Exception e) {
-                    cmdSuccess = false;
-                }
+                cmdSuccess = bindSticker(lastMessage, id);
             }
             if (!cmdSuccess) {
                 mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
@@ -758,26 +739,7 @@ public class MessageListItem extends FrameLayout {
                 bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-                String[] cmds = lastMessage.split(":");
-
-                String mimeTypeSticker = "image/png";
-                try {
-                    String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
-
-                    //make sure sticker exists
-                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                    afd.getLength();
-                    afd.close();
-
-                    //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                    //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
-                } catch (Exception e) {
-                    cmdSuccess = false;
-                }
+                cmdSuccess = bindSticker(lastMessage, id);
             }
 
             if (!cmdSuccess) {
@@ -977,6 +939,30 @@ public class MessageListItem extends FrameLayout {
         }
 
         return spanText;
+    }
+
+    private boolean bindSticker(String message, int id) {
+        String[] cmds = message.split(":");
+        boolean cmdSuccess = false;
+        String mimeTypeSticker = "image/png";
+        try {
+            String[] stickerParts = cmds[1].split("-");
+            String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1] + ".png";
+
+            //make sure sticker exists
+            AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+            afd.getLength();
+            afd.close();
+
+            //now setup the new URI for loading local sticker asset
+            Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
+
+            //now load the thumbnail
+            cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
+        } catch (Exception e) {
+            cmdSuccess = false;
+        }
+        return cmdSuccess;
     }
 
     private CharSequence formatPresenceUpdates(String contact, int type, Date date, boolean isGroupChat,
