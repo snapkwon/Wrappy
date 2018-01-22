@@ -618,7 +618,7 @@
     <string name="share_app_text">Let me recommend you this application</string>
     <string name="email_tile">Email *</string>
     <string name="error_empty_email">Email cannot be empty</string>
-    <string name="logout_noti">Do you logout this deivce?</string>
+    <string name="logout_noti">Are you sure you want to logout this deivce?</string>
     <string name="share_title">Choose sharing method</string>
     <string name="referral_text">Enter your referral code (optional)</string>
     <string name="input_referral_error">Username isn\'t exist</string>
