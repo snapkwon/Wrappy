@@ -412,7 +412,7 @@ public class OnboardingManager {
                 pCursor, cr, providerId, false /* don't keep updated */, null /* no handler */);
 
         //should check to see if Orbot is installed and running
-        boolean doDnsSrvLookup = true;
+        boolean doDnsSrvLookup = false;
 
         settings.setRequireTls(true);
         settings.setTlsCertVerify(true);

@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
@@ -158,7 +157,7 @@ public class VerifyCodeFragment extends Fragment {
 //                                                } catch (Exception e) {
 //                                                    e.printStackTrace();
 //                                                }
-                                                MainActivity.start();
+                                                ReferralActivity.start();
                                                 getActivity().finish();
                                                 //appDelegate.onChangeInApp(VerifyEmailOrPhoneActivity.VERIFY_OK, "");
                                             }

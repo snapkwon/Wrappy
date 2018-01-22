@@ -155,6 +155,7 @@
     <style name="AppBaseTheme.Toolbar" parent="Widget.AppCompat.ActionBar.Solid">
         <item name="android:textColorPrimary">#ffffff</item>
         <item name="colorControlNormal">#ffffff</item>
+
     </style>
 
     <style name="AppThemeNoAction" parent="@style/AppTheme">

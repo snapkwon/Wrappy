@@ -355,10 +355,6 @@
             android:exported="false"
             android:title="@string/photo_gallery" />
         <activity
-            android:name=".ui.StickerActivity"
-            android:exported="false"
-            android:title="@string/action_stickers" />
-        <activity
             android:name=".ui.PanicSetupActivity"
             android:label="@string/panic_trigger_app"
             android:theme="@style/AppThemeNoAction">
@@ -474,6 +470,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".ui.WebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".ui.ReferralActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
     </application>

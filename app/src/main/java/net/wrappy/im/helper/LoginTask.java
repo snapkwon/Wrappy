@@ -6,6 +6,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -58,7 +59,7 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
     }
 
     @Override
-    protected void onPostExecute(OnboardingAccount account) {
+    protected void onPostExecute(final OnboardingAccount account) {
         if (account == null) {
             listenner.OnComplete(false,null);
             return;
@@ -67,9 +68,24 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
         mApp.setDefaultAccount(account.providerId, account.accountId);
 
         SignInHelper signInHelper = new SignInHelper(activity, mHandler);
+        signInHelper.setSignInListener(new SignInHelper.SignInListener() {
+            @Override
+            public void connectedToService() {
+                if (listenner != null) {
+                    listenner.OnComplete(true, account);
+                }
+            }
+
+            @Override
+            public void stateChanged(int state, long accountId) {
+                if (state != ImConnection.LOGGED_IN) {
+                    if (listenner != null) {
+                        listenner.OnComplete(false, account);
+                    }
+                }
+            }
+        });
         signInHelper.activateAccount(account.providerId, account.accountId);
         signInHelper.signIn(account.password, account.providerId, account.accountId, true);
-
-        listenner.OnComplete(true,account);
     }
 }

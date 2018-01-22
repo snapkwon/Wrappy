@@ -1332,6 +1332,10 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
 
+            if (!values.containsKey(Imps.Contacts.TYPE)) {
+                values.put(Imps.Contacts.TYPE, Imps.ContactsColumns.TYPE_NORMAL);
+            }
+
             String avatarReference = "";
             String bannerReference = "";
             String hash = "";

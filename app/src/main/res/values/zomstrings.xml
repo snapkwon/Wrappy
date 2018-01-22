@@ -40,7 +40,10 @@
   <string name="choose_language">Switch Language</string>
   <string name="welcome_to_zom">WELCOME TO &appName;</string>
   <string name="onboarding_generate">Create a &appName; ID and we will generate a secure password for you.</string>
-  <string name="grant_perms">You must grant permission for &appName; to use the camera</string>
+  <string name="grant_perms_camera">You must grant permission for &appName; to use the camera</string>
+  <string name="grant_perms_pick_file">You must grant permission for &appName; to select file</string>
+  <!--<string name="grant_perms_pick_image">You must grant permission for &appName; to select image</string>-->
+  <string name="grant_perms_audio">You must grant permission for &appName; to record audio</string>
 
   <string name="menu_refresh">Refresh Session</string>
 

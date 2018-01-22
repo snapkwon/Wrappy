@@ -288,7 +288,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     @Override
     public void onCacheWordUninitialized() {
-            int i =0;
+        int i = 0;
     }
 
     @Override
@@ -716,22 +716,22 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             StringBuilder buf = new StringBuilder();
             // creating the "account" table
             buf.append("CREATE TABLE ")
-            .append(TABLE_ACCOUNTS)
-            .append(" (")
-            .append("_id INTEGER PRIMARY KEY,")
-            .append("name TEXT,")
-            .append("provider INTEGER,")
-            .append("username TEXT,")
-            .append("pw TEXT,")
-            .append("active INTEGER NOT NULL DEFAULT 0,")
-            .append("locked INTEGER NOT NULL DEFAULT 0,")
-            .append("keep_signed_in INTEGER NOT NULL DEFAULT 0,")
-            .append("last_login_state INTEGER NOT NULL DEFAULT 0,")
-            .append("account_name TEXT,")
-            .append("email TEXT,")
-            .append("phone TEXT,")
-            .append("gender TEXT,")
-            .append("UNIQUE (provider, username)").append(");");
+                    .append(TABLE_ACCOUNTS)
+                    .append(" (")
+                    .append("_id INTEGER PRIMARY KEY,")
+                    .append("name TEXT,")
+                    .append("provider INTEGER,")
+                    .append("username TEXT,")
+                    .append("pw TEXT,")
+                    .append("active INTEGER NOT NULL DEFAULT 0,")
+                    .append("locked INTEGER NOT NULL DEFAULT 0,")
+                    .append("keep_signed_in INTEGER NOT NULL DEFAULT 0,")
+                    .append("last_login_state INTEGER NOT NULL DEFAULT 0,")
+                    .append("account_name TEXT,")
+                    .append("email TEXT,")
+                    .append("phone TEXT,")
+                    .append("gender TEXT,")
+                    .append("UNIQUE (provider, username)").append(");");
 
             db.execSQL(buf.toString());
         }
@@ -756,7 +756,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             buf.append("contactList INTEGER,");
             buf.append("type INTEGER,");
             buf.append("subscriptionStatus INTEGER,");
-            buf.append("subscriptionType INTEGER,");
+            buf.append("subscriptionType INTEGER NOT NULL DEFAULT 2,");
 
             // the following are derived from Google Contact Extension, we don't include all
             // the attributes, just the ones we can use.
@@ -1962,7 +1962,6 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     }
 
 
-
     static class MyCrossProcessCursorWrapper extends net.sqlcipher.CrossProcessCursorWrapper {
         public MyCrossProcessCursorWrapper(net.sqlcipher.Cursor cursor) {
             super(cursor);
@@ -2676,7 +2675,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         int match = mUrlMatcher.match(url);
 
 
-        log("insert to " + url + ", match " + match);
+        log("insert to " + url + ", match " + match + " initialValues : " + initialValues.toString());
         switch (match) {
             case MATCH_PROVIDERS:
                 // Insert into the providers table
@@ -2711,7 +2710,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
                 break;
 
             case MATCH_CONTACTS_ROSTER:
-                rowID = db.insert(TABLE_ROSTER,"name",initialValues);
+                rowID = db.insert(TABLE_ROSTER, "name", initialValues);
                 if (rowID > 0) {
                     resultUri = Uri.parse(Imps.Contacts.CONTENT_URI + "/" + rowID);
                 }
@@ -3717,6 +3716,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
         int match = mUrlMatcher.match(url);
         final SQLiteDatabase db = getDBHelper().getWritableDatabase();
 
+        log("updateInternal to " + url + ", match " + match + " initialValues : " + values.toString());
         switch (match) {
             case MATCH_PROVIDERS_BY_ID:
                 changedItemId = url.getPathSegments().get(1);
@@ -4107,6 +4107,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
     static void log(String message) {
         //LogCleaner.debug(LOG_TAG, message);
+//        Debug.i(message);
     }
 
 }

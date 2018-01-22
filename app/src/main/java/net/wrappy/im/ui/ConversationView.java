@@ -39,7 +39,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -51,13 +50,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.Html;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -94,14 +89,12 @@ import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
-import net.ironrabbit.type.CustomTypefaceSpan;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionStatus;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.TranslateAPI.InAppTranslation;
-import net.wrappy.im.bho.DictionarySearch;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
@@ -224,8 +217,8 @@ public class ConversationView {
     //private ImageView mStatusIcon;
     // private TextView mTitle;
     /*package*/ RecyclerView mHistory;
-    EditText mComposeMessage;
-    private ImageButton mOnOffMenu,mSendButton, mMicStiker;
+    public EditText mComposeMessage;
+    private ImageButton mOnOffMenu, mSendButton, mMicStiker;
     private TextView mButtonTalk;
     private ImageButton mButtonAttach;
     private ImageButton mButtonCaption;
@@ -251,22 +244,22 @@ public class ConversationView {
     //   private boolean isServiceUp;
     private IChatSession mCurrentChatSession;
 
-    long mLastChatId = -1;
-    String mRemoteNickname;
-    String mRemoteAddress;
-    String mRemoteReference;
-    RoundedAvatarDrawable mRemoteAvatar = null;
-    Drawable mRemoteHeader = null;
-    int mSubscriptionType;
-    int mSubscriptionStatus;
+    private long mLastChatId = -1;
+    private String mRemoteNickname;
+    public String mRemoteAddress;
+    private String mRemoteReference;
+    private RoundedAvatarDrawable mRemoteAvatar = null;
+    private Drawable mRemoteHeader = null;
+    private int mSubscriptionType;
+    private int mSubscriptionStatus;
 
     long mProviderId = -1;
     long mAccountId = -1;
     long mInvitationId;
-    private Context mContext; // TODO
+    private Context mContext;
     private int mPresenceStatus;
     private Date mLastSeen;
-    public String tempPacketIDSelect = "";
+    private String tempPacketIDSelect = "";
     private int mViewType;
 
     private boolean istranslate;
@@ -314,7 +307,7 @@ public class ConversationView {
     }
 
     public void onOffMenuChat(boolean status) {
-        if(status == true) {
+        if (status) {
             mButtonAttach.setVisibility(View.GONE);
             mButtonCaption.setVisibility(View.GONE);
             mButtonImage.setVisibility(View.GONE);
@@ -323,9 +316,7 @@ public class ConversationView {
             mMicStiker.setVisibility(View.GONE);
             mSendButton.setVisibility(View.VISIBLE);
             mOnOffMenu.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             mButtonAttach.setVisibility(View.VISIBLE);
             mButtonCaption.setVisibility(View.VISIBLE);
             mButtonImage.setVisibility(View.VISIBLE);
@@ -345,7 +336,7 @@ public class ConversationView {
     }
 
     public void focusSearchmode() {
-        if(isSearchMode) {
+        if (isSearchMode) {
             searchView.setIconifiedByDefault(true);
             searchView.setFocusable(true);
             searchView.setIconified(false);
@@ -869,6 +860,7 @@ public class ConversationView {
         mHistory.setLayoutManager(llm);
 
         searchView = (SearchView) mActivity.findViewById(R.id.searchtext);
+
         searchView.setVisibility(View.GONE);
 
         inputlayout = (LinearLayout) mActivity.findViewById(R.id.inputLayout);
@@ -906,7 +898,7 @@ public class ConversationView {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                if(query.isEmpty()) {
+                if (query.isEmpty()) {
                     mMessageAdapter.searchText(query);
                 }
 
@@ -1003,7 +995,7 @@ public class ConversationView {
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 
-                    mSendButton.setImageResource(R.drawable.ic_send);
+                    mSendButton.setImageResource(R.drawable.ic_keyboard_black_36dp);
                     mSendButton.setVisibility(View.VISIBLE);
                     mButtonTalk.setVisibility(View.VISIBLE);
 
@@ -1181,6 +1173,8 @@ public class ConversationView {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 sendTypingStatus(true);
                 onOffMenuChat(true);
+                if (mStickerBox != null)
+                    mStickerBox.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -1234,22 +1228,6 @@ public class ConversationView {
             }
         });
 
-        // TODO: this is a hack to implement BUG #1611278, when dispatchKeyEvent() works with
-        // the soft keyboard, we should remove this hack.
-        mComposeMessage.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int before, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int after) {
-
-            }
-
-            public void afterTextChanged(Editable s) {
-                doWordSearch();
-                userActionDetected();
-            }
-        });
-
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendMessageAsync();
@@ -1279,7 +1257,7 @@ public class ConversationView {
             mSendButton.setVisibility(View.GONE);
             mButtonTalk.setVisibility(View.GONE);
             mComposeMessage.setVisibility(View.VISIBLE);
-          //  mButtonVoice.setVisibility(View.VISIBLE);
+            //  mButtonVoice.setVisibility(View.VISIBLE);
 
 
         }
@@ -1323,103 +1301,6 @@ public class ConversationView {
                 Log.e(ImApp.LOG_TAG, "error sending typing status", ie);
             }
             mLastIsTyping = isTyping;
-        }
-
-    }
-
-    DictionarySearch ds = null;
-    PopupMenu mPopupWords = null;
-    SearchWordTask taskSearch = null;
-
-    private class SearchWordTask extends AsyncTask<String, Long, ArrayList<String>> {
-
-        private String mLastSearchTerm = null;
-
-        protected ArrayList<String> doInBackground(String... searchTerm) {
-
-            String[] searchTerms = searchTerm[0].split("་");
-
-            if (searchTerms.length > 0) {
-                mLastSearchTerm = searchTerms[searchTerms.length - 1];
-
-                ArrayList<String> result = ds.getMatchingWords(mLastSearchTerm);
-
-                return result;
-            } else
-                return null;
-        }
-
-        protected void onProgressUpdate(Long... progress) {
-
-        }
-
-        protected void onPostExecute(ArrayList<String> result) {
-            if (result != null && result.size() > 0) {
-
-                if (mPopupWords == null) {
-
-                    mPopupWords = new PopupMenu(mActivity, mComposeMessage);
-
-                    mPopupWords.setOnMenuItemClickListener(new
-                                                                   PopupMenu.OnMenuItemClickListener() {
-                                                                       @Override
-                                                                       public boolean onMenuItemClick(MenuItem item) {
-
-                                                                           String[] currentText = mComposeMessage.getText().toString().split("་");
-
-                                                                           currentText[currentText.length - 1] = item.toString();
-
-                                                                           mComposeMessage.setText("");
-
-                                                                           for (int i = 0; i < currentText.length; i++) {
-                                                                               mComposeMessage.append(currentText[i]);
-
-                                                                               if ((i + 1) != currentText.length)
-                                                                                   mComposeMessage.append("་");
-                                                                           }
-
-                                                                           mComposeMessage.setSelection(mComposeMessage.getText().length());
-
-                                                                           return true;
-                                                                       }
-                                                                   });
-
-                }
-
-                mPopupWords.getMenu().clear();
-
-                for (String item : result) {
-                    if (!TextUtils.isEmpty(item)) {
-                        SpannableStringBuilder sb = new SpannableStringBuilder(item);
-                        sb.setSpan(new CustomTypefaceSpan("", mActivity), 0, item.length(), 0);
-                        mPopupWords.getMenu().addSubMenu(sb);
-
-                    }
-
-
-                }
-
-                mPopupWords.show();
-
-            }
-        }
-    }
-
-    private void doWordSearch() {
-
-        if (Preferences.getUseTibetanDictionary()) {
-            if (ds == null)
-                ds = new DictionarySearch(mActivity);
-
-            String searchText = mComposeMessage.getText().toString();
-
-            if (!TextUtils.isEmpty(searchText)) {
-                if (taskSearch == null || taskSearch.getStatus() == AsyncTask.Status.FINISHED) {
-                    taskSearch = new SearchWordTask();
-                    taskSearch.execute(mComposeMessage.getText().toString());
-
-                }
-            }
         }
 
     }
@@ -1468,10 +1349,10 @@ public class ConversationView {
 
         updateWarningView();
 
-      //  mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
-     //   mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
+        //  mActivity.findViewById(R.id.btnAttachPicture).setEnabled(true);
+        //   mActivity.findViewById(R.id.btnTakePicture).setEnabled(true);
         //mActivity.findViewById(R.id.btnAttachFile).setEnabled(true);
-       // mButtonVoice.setEnabled(true);
+        // mButtonVoice.setEnabled(true);
 
     }
 
@@ -2739,14 +2620,13 @@ public class ConversationView {
             textsearch = text;
             searchpos = 0;
             searchCol.clear();
-            if(text.isEmpty())
-            {
+            if (text.isEmpty()) {
                 btnsearchbottom.setVisibility(View.GONE);
                 btnsearchup.setVisibility(View.GONE);
                 notifyDataSetChanged();
                 return;
             }
-            if(c!=null) {
+            if (c != null) {
                 if (c.moveToFirst()) {
                     do {
                         if (c.getString(mBodyColumn).contains(text)) {
@@ -2762,9 +2642,7 @@ public class ConversationView {
                     mCallback.search(searchCol.get(searchpos));
                     btnsearchbottom.setVisibility(View.VISIBLE);
                     btnsearchup.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                } else {
                     btnsearchbottom.setVisibility(View.GONE);
                     btnsearchup.setVisibility(View.GONE);
                 }
@@ -3001,15 +2879,11 @@ public class ConversationView {
                 if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
-                        String translate = "" ;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-
-                        {
-                            translate = String.valueOf(Html.fromHtml("<h2>" + bodytranslate.get(viewHolder.getPos()).mTexttranslate +"</h2>", Html.FROM_HTML_MODE_COMPACT));
-                        }
-                        else {
-
-                            translate = String.valueOf(Html.fromHtml("<h2>" +bodytranslate.get(viewHolder.getPos()).mTexttranslate + "</h2>"));
+                        String translate = "";
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            translate = String.valueOf(Html.fromHtml("<h2>" + bodytranslate.get(viewHolder.getPos()).mTexttranslate + "</h2>", Html.FROM_HTML_MODE_COMPACT));
+                        } else {
+                            translate = String.valueOf(Html.fromHtml("<h2>" + bodytranslate.get(viewHolder.getPos()).mTexttranslate + "</h2>"));
                         }
 
                         viewHolder.txttranslate.setText(Html.fromHtml(translate));
@@ -3094,15 +2968,15 @@ public class ConversationView {
                     if (viewHolder.getItemViewType() == 1) {
 
                         if ((!TextUtils.isEmpty(body)) && !(body.charAt(0) == '/' || body.charAt(0) == ':' || body.startsWith("vfs"))) {
-                            BottomSheetCell sheetCell = new BottomSheetCell(1,0, mContext.getString(R.string.message_edit));
+                            BottomSheetCell sheetCell = new BottomSheetCell(1, 0, mContext.getString(R.string.message_edit));
                             bottomSheetCells.add(sheetCell);
                         }
-                        BottomSheetCell sheetCell = new BottomSheetCell(2,0, mContext.getString(R.string.message_delete));
+                        BottomSheetCell sheetCell = new BottomSheetCell(2, 0, mContext.getString(R.string.message_delete));
                         bottomSheetCells.add(sheetCell);
                     } else {
-                        BottomSheetCell sheetCell = new BottomSheetCell(3,0, mContext.getString(R.string.message_spam));
+                        BottomSheetCell sheetCell = new BottomSheetCell(3, 0, mContext.getString(R.string.message_spam));
                         bottomSheetCells.add(sheetCell);
-                        sheetCell = new BottomSheetCell(4,0, mContext.getString(R.string.menu_violence));
+                        sheetCell = new BottomSheetCell(4, 0, mContext.getString(R.string.menu_violence));
                         bottomSheetCells.add(sheetCell);
                     }
 
@@ -3455,8 +3329,8 @@ public class ConversationView {
         stickerCode.append(assetUri.getLastPathSegment().split("\\.")[0]);
 
         stickerCode.append(":");
-
-        stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
+        //[Khoa][Android][Chat Group] When send sticker to Group, other members receive the text with username, not sticker
+//      stickerCode.append(Imps.Account.getAccountName(mActivity.getContentResolver(), mAccountId));
 
         sendMessageAsync(stickerCode.toString());
     }
