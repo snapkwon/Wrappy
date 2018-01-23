@@ -873,7 +873,7 @@ public class MessageListItem extends FrameLayout {
                     int len = spanText.length();
 
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_delivered_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 } else {
                     deliveryText.append("X");
@@ -891,7 +891,7 @@ public class MessageListItem extends FrameLayout {
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
                     deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
@@ -908,7 +908,7 @@ public class MessageListItem extends FrameLayout {
                     spanText = new SpannableString(deliveryText.toString());
                     int len = spanText.length();
                     spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_sent_grey), len - 2, len - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
                     deliveryText.append("X");
                     spanText = new SpannableString(deliveryText.toString());
@@ -926,8 +926,8 @@ public class MessageListItem extends FrameLayout {
                 spanText = new SpannableString(deliveryText.toString());
                 int len = spanText.length();
 
-                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
-                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                if (encryptionState == EncryptionState.ENCRYPTED || encryptionState == EncryptionState.ENCRYPTED_AND_VERIFIED)
+//                    spanText.setSpan(new ImageSpan(getContext(), R.drawable.ic_encrypted_grey), len - 1, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } else if (messageType == Imps.MessageType.OUTGOING) {
                 //do nothing
                 deliveryText.append("X");

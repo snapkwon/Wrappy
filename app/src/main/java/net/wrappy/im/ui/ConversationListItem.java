@@ -339,8 +339,8 @@ public class ConversationListItem extends FrameLayout {
 
         holder.mLine1.setVisibility(View.VISIBLE);
 
-        if (providerId != -1)
-            getEncryptionState(providerId, accountId, address, holder);
+//        if (providerId != -1)
+//            getEncryptionState(providerId, accountId, address, holder);
 
         if (chatFavorite == Imps.Chats.CHAT_PIN) {
             holder.mPinIcon.setVisibility(VISIBLE);
