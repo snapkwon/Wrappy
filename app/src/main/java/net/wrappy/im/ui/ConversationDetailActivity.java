@@ -88,7 +88,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
@@ -411,12 +411,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         if (!address.isEmpty()) {
             String[] separated = address.split("@");
 
-            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListenner() {
+            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    if (RestAPI.checkHttpCode(httpCode)) {
-                        chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
-                    }
+                    chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
                 }
             });
         }
@@ -554,7 +552,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     @OnClick({R.id.btnAddFriend})
     protected void onClickAddFriend(View v) {
-        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();

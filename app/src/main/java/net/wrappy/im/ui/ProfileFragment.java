@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,12 +13,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -32,7 +36,7 @@ import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
@@ -45,6 +49,7 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
+import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -100,6 +105,8 @@ public class ProfileFragment extends BaseFragmentV4 {
     ImageButton btnProfileCameraHeader;
     @BindView(R.id.spnProfile)
     AppCompatSpinner spnProfile;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
 
     ArrayAdapter adapterGender;
 
@@ -127,6 +134,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         mainView = inflater.inflate(R.layout.profile_fragment, null);
         ButterKnife.bind(this, mainView);
         mApp = (ImApp) getActivity().getApplication();
@@ -174,11 +182,10 @@ public class ProfileFragment extends BaseFragmentV4 {
             }
         };
         spnProfile.setAdapter(adapterGender);
-        spnProfile.setSelection(1);
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0,1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toUpperCase();
+                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0, 1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toLowerCase();
                 edGender.setText(upperString);
             }
 
@@ -187,50 +194,63 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             }
         });
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (edEmail.isEnabled()) {
+                    AppFuncs.dismissKeyboard(getActivity());
+                }
+            }
+        });
         getDataMember();
     }
 
     private void getDataMember() {
         String url = RestAPI.getMemberByIdUrl(jid);
-        RestAPI.GetDataWrappy(getActivity(), url, new RestAPIListenner() {
+        RestAPIListener listener = new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    Gson gson = new Gson();
-                    try {
-                        AppFuncs.log("load: " + s);
-                        wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
-                        wpKMemberDtoTemp = gson.fromJson(s, WpKMemberDto.getType());
-                        txtUsername.setText(wpKMemberDto.getIdentifier());
-                        edEmail.setText(wpKMemberDto.getEmail());
-                        edPhone.setText(wpKMemberDto.getMobile());
-                        if (wpKMemberDto.getGender()!=null) {
-                            String upperString = wpKMemberDto.getGender().substring(0,1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
-                            edGender.setText(upperString);
+                Gson gson = new Gson();
+                try {
+                    AppFuncs.log("load: " + s);
+                    wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
+                    wpKMemberDtoTemp = gson.fromJson(s, WpKMemberDto.getType());
+                    txtUsername.setText(wpKMemberDto.getIdentifier());
+                    edEmail.setText(wpKMemberDto.getEmail());
+                    edPhone.setText(wpKMemberDto.getMobile());
+                    if (wpKMemberDto.getGender() != null) {
+                        String upperString = wpKMemberDto.getGender().substring(0, 1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
+                        if (upperString.startsWith("F")) {
+                            spnProfile.setSelection(0);
+                        } else {
+                            spnProfile.setSelection(1);
                         }
-
-                        if (wpKMemberDto.getAvatar() != null) {
-                            GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
-                        }
-                        if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                            GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
-                            //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
-                        }
-
-                        //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
 
-                } else {
-                    AppFuncs.alert(getActivity(), getString(R.string.error_get_user_profile), true);
-                    if (!isSelf) {
-                        getActivity().finish();
+                    if (wpKMemberDto.getAvatar() != null) {
+                        GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                     }
-                    //
+                    if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
+                        GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                        //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
+                    }
+
+                    //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        };
+        listener.setOnListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isSelf) {
+                    getActivity().finish();
                 }
             }
         });
+        RestAPI.GetDataWrappy(getActivity(), url, listener);
     }
 
     private void logout() {
@@ -244,13 +264,15 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             String email = edEmail.getText().toString().trim();
             String gender = edGender.getText().toString().trim().toUpperCase();
-            if (!TextUtils.isEmpty(email)) if (!AppFuncs.isEmailValid(email)) {
-                AppFuncs.alert(getActivity(), getString(R.string.error_invalid_email), true);
+            if (!TextUtils.isEmpty(Utils.isValidEmail(getActivity(), email))) {
+                AppFuncs.alert(getActivity(), Utils.isValidEmail(getActivity(), email), true);
                 return;
             }
             edEmail.clearFocus();
             edGender.clearFocus();
             edEmail.setEnabled(false);
+            edPhone.setTextColor(Color.BLACK);
+            txtUsername.setTextColor(Color.BLACK);
             wpKMemberDto.setEmail(email);
             wpKMemberDto.setGender(gender);
             updateData();
@@ -292,14 +314,12 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgPhotoAvatar.setImageResource(R.drawable.avatar);
                                 if (wpKMemberDtoTemp.getAvatar() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListener(getActivity()) {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
-                                                if (RestAPI.checkHttpCode(httpCode)) {
-                                                    wpKMemberDtoTemp.setAvatar(null);
-                                                    wpKMemberDto.setAvatar(null);
-                                                    AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
-                                                }
+                                                wpKMemberDtoTemp.setAvatar(null);
+                                                wpKMemberDto.setAvatar(null);
+                                                AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
                                             }
                                         });
                                     }
@@ -308,14 +328,12 @@ public class ProfileFragment extends BaseFragmentV4 {
                                 imgProfileHeader.setImageResource(android.R.color.transparent);
                                 if (wpKMemberDto.getBanner() != null) {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPIListenner() {
+                                        RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPIListener(getActivity()) {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
-                                                if (RestAPI.checkHttpCode(httpCode)) {
-                                                    wpKMemberDto.setBanner(null);
-                                                    wpKMemberDtoTemp.setBanner(null);
-                                                    AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
-                                                }
+                                                wpKMemberDto.setBanner(null);
+                                                wpKMemberDtoTemp.setBanner(null);
+                                                AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
                                             }
                                         });
                                     }
@@ -339,7 +357,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                 public void onClick(View view) {
                     logout();
                 }
-            },null);
+            }, null);
 //            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
 //            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
 //            sheetCells.add(sheetCell);
@@ -374,11 +392,11 @@ public class ProfileFragment extends BaseFragmentV4 {
                 }
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 final Uri resultUri = UCrop.getOutput(data);
-                appFuncs.showProgressWaiting(getActivity());
+                AppFuncs.showProgressWaiting(getActivity());
                 RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                     @Override
                     public void onCompleted(Exception e, Response<String> result) {
-                        appFuncs.dismissProgressWaiting();
+                        AppFuncs.dismissProgressWaiting();
                         try {
                             String reference = RestAPI.getPhotoReference(result.getResult());
                             if (!TextUtils.isEmpty(reference)) {
@@ -411,39 +429,35 @@ public class ProfileFragment extends BaseFragmentV4 {
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKMemberDto);
         AppFuncs.log("update: " + jsonObject.toString());
-        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
+        RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
-                    if (wpKMemberDto != null) {
-                        String avatarReference = wpKMemberDto.getAvatar() != null ? wpKMemberDto.getAvatar().getReference() : "";
-                        String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
-                        String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-                        String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
-                        DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
-                        ImApp.broadcastIdentity(null);
-                        spnProfile.setVisibility(View.INVISIBLE);
-                        if (appDelegate != null) {
-                            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
-                        }
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (wpKMemberDto.getAvatar() != null) {
-                                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), true);
-                                }
-                                if (wpKMemberDto.getBanner() != null) {
-                                    GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
-                                }
-                            }
-                        });
-                        wpKMemberDtoTemp = wpKMemberDto;
-                    } else {
-                        AppFuncs.alert(getActivity(),getString(R.string.network_error),false);
+                AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
+                if (wpKMemberDto != null) {
+                    String avatarReference = wpKMemberDto.getAvatar() != null ? wpKMemberDto.getAvatar().getReference() : "";
+                    String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
+                    String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
+                    String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                    DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                    ImApp.broadcastIdentity(null);
+                    spnProfile.setVisibility(View.INVISIBLE);
+                    if (appDelegate != null) {
+                        appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
                     }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (wpKMemberDto.getAvatar() != null) {
+                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), true);
+                            }
+                            if (wpKMemberDto.getBanner() != null) {
+                                GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                            }
+                        }
+                    });
+                    wpKMemberDtoTemp = wpKMemberDto;
                 } else {
-                    AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
+                    AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                 }
             }
         });
@@ -458,6 +472,10 @@ public class ProfileFragment extends BaseFragmentV4 {
     public void onDataChange() {
         edEmail.setEnabled(true);
         edEmail.setFocusable(true);
+        edEmail.requestFocus();
+        edEmail.setFocusableInTouchMode(true);
+        edPhone.setTextColor(getResources().getColor(R.color.line));
+        txtUsername.setTextColor(getResources().getColor(R.color.line));
         btnProfileSubmit.setVisibility(View.VISIBLE);
         spnProfile.setVisibility(View.VISIBLE);
     }
