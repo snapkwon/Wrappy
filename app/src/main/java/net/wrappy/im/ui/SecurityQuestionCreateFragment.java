@@ -22,7 +22,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppButton;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.SecurityQuestions;
@@ -86,15 +86,12 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
     private void getListQuestion() {
 
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPIListenner() {
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPIListener(getActivity()) {
 
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (!RestAPI.checkHttpCode(httpCode)) {
-                        return;
-                    }
                     JsonArray jsonArray = (new JsonParser()).parse(s).getAsJsonArray();
                     ArrayList<String> stringQuestions = new ArrayList<>();
                     for (JsonElement jsonElement : jsonArray) {

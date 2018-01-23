@@ -70,7 +70,7 @@
     <string name="select_domain_new_account">Chat service domain</string>
     <string name="registering_new_account_">Registering new account…</string>
 
-    <string name="signing_in_wait">Signing in\u2026</string>
+    <string name="signing_in_wait">The application is in sync. Please wait</string>
     <string name="signing_out_wait">Signing out\u2026</string>
 
     <!-- Views: Settings: Account -->
@@ -552,8 +552,6 @@
     <string name="complete">COMPLETE</string>
     <string name="current_balance">Current Balance</string>
     <string name="add_photo">Add Photo!</string>
-    <string name="error_group_name_empty">Group Name is empty</string>
-    <string name="error_group_empty">No member in group</string>
     <string name="error_upload_photo">Upload group photo fail!</string>
     <string name="error_creating_group">Create Group Fail</string>
     <string name="select_file_to_send">Select File</string>
@@ -571,12 +569,9 @@
     <string name="logout_device">Logout this device</string>
     <string name="message_remove_avatar_success">Remove Avatar Success</string>
     <string name="message_remove_banner_success">Remove Banner Success</string>
-    <string name="error_invalid_email">Email is not valid format</string>
     <string name="error_get_user_profile">Could note get user profile</string>
     <string name="hint_password"><small><i>Input Password</i></small></string>
     <string name="error_reset_password">Reset password fail</string>
-    <string name="error_username_or_password">The username or pattern is incorrect</string>
-    <string name="error_empty_username">Please input your username</string>
     <string name="warning">Warning</string>
     <string name="error_tranferring_file">Error transferring file:</string>
     <string name="message_download_attachment">Do you want to save this file?</string><!-- this flow should be defined again -->
@@ -617,8 +612,9 @@
     <string name="logout_noti">Are you sure you want to logout this device?</string>
     <string name="share_title">Choose sharing method</string>
     <string name="referral_text">Enter your referral code (optional)</string>
-    <string name="input_referral_error">Username isn\'t exist</string>
     <string name="Referral">Referral</string>
     <string name="update_profile">Update Profile</string>
     <string name="question">Question %d</string>
+    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
+    <string name="remove_member_success">Remove %s in this group</string>
 </resources>

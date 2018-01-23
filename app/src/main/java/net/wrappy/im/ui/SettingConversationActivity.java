@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
@@ -33,7 +32,7 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -42,7 +41,6 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
-import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
@@ -193,7 +191,7 @@ public class SettingConversationActivity extends BaseActivity {
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
             }
-            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListenner() {
+            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
@@ -466,15 +464,13 @@ public class SettingConversationActivity extends BaseActivity {
 
     private void updateData() {
         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListenner() {
+        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
-                    if (RestAPI.checkHttpCode(httpCode)) {
-                        updateAvatarAndNotify(true);
-                        AppFuncs.alert(getApplicationContext(), "Update Success", false);
-                    }
+                    updateAvatarAndNotify(true);
+                    AppFuncs.alert(getApplicationContext(), "Update Success", false);
                 }
             }
         });
@@ -549,13 +545,11 @@ public class SettingConversationActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-                RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListenner() {
+                RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
                     @Override
                     public void OnComplete(int httpCode, String error, String s) {
-                        if (RestAPI.checkHttpCode(httpCode)) {
-                            AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
-                            deleteGroupByAdmin();
-                        }
+                        AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                        deleteGroupByAdmin();
                     }
                 });
 
@@ -575,13 +569,11 @@ public class SettingConversationActivity extends BaseActivity {
     private void leaveGroup() {
         if (wpKChatGroup != null) {
             RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
-                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListenner() {
+                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    if (RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.log(s != null ? s : "");
-                        leaveXmppGroup();
-                    }
+                    AppFuncs.log(s != null ? s : "");
+                    leaveXmppGroup();
                 }
             });
         }

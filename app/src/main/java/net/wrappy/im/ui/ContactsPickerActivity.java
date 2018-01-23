@@ -63,7 +63,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -358,33 +358,29 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
-        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPIListenner() {
+        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 dismissWaitinDialog();
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    ArrayList<String> users = new ArrayList<>();
-                    ArrayList<Integer> providers = new ArrayList<>();
-                    ArrayList<Integer> accounts = new ArrayList<>();
-                    WpKChatGroupDto chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
+                ArrayList<String> users = new ArrayList<>();
+                ArrayList<Integer> providers = new ArrayList<>();
+                ArrayList<Integer> accounts = new ArrayList<>();
+                WpKChatGroupDto chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
 
-                    for (int i = 0; i < mSelection.size(); i++) {
-                        SelectedContact contact = mSelection.valueAt(i);
-                        users.add(contact.username);
-                        providers.add(contact.provider);
-                        accounts.add(contact.account);
-                    }
-                    Store.putStringData(getApplicationContext(), groupName, reference);
-                    Intent data = new Intent();
-                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, chatGroupDto);
-                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
-                    data.putIntegerArrayListExtra(BundleKeyConstant.PROVIDER_KEY, providers);
-                    data.putIntegerArrayListExtra(BundleKeyConstant.ACCOUNT_KEY, accounts);
-                    setResult(RESULT_OK, data);
-                    finish();
-                } else {
-                    AppFuncs.alert(getApplicationContext(), getString(R.string.error_creating_group), true);
+                for (int i = 0; i < mSelection.size(); i++) {
+                    SelectedContact contact = mSelection.valueAt(i);
+                    users.add(contact.username);
+                    providers.add(contact.provider);
+                    accounts.add(contact.account);
                 }
+                Store.putStringData(getApplicationContext(), groupName, reference);
+                Intent data = new Intent();
+                data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, chatGroupDto);
+                data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+                data.putIntegerArrayListExtra(BundleKeyConstant.PROVIDER_KEY, providers);
+                data.putIntegerArrayListExtra(BundleKeyConstant.ACCOUNT_KEY, accounts);
+                setResult(RESULT_OK, data);
+                finish();
             }
         });
     }
@@ -493,22 +489,20 @@ public class ContactsPickerActivity extends BaseActivity {
                             JsonParser parser = new JsonParser();
                             JsonArray json = (JsonArray) parser.parse(jsonObject);
 
-                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListenner() {
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
-                                    if (RestAPI.checkHttpCode(httpCode)) {
-                                        ArrayList<String> users = new ArrayList<>();
-                                        for (int i = 0; i < mSelection.size(); i++) {
-                                            SelectedContact contact = mSelection.valueAt(i);
-                                            users.add(contact.username);
-                                        }
-                                        Intent data = new Intent();
-                                        data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
-                                        data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
-
-                                        setResult(RESULT_OK, data);
-                                        finish();
+                                    ArrayList<String> users = new ArrayList<>();
+                                    for (int i = 0; i < mSelection.size(); i++) {
+                                        SelectedContact contact = mSelection.valueAt(i);
+                                        users.add(contact.username);
                                     }
+                                    Intent data = new Intent();
+                                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
+                                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+
+                                    setResult(RESULT_OK, data);
+                                    finish();
                                 }
                             });
                         } else {
@@ -622,7 +616,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListenner() {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListener(ContactsPickerActivity.this) {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
                                 ImApp.removeContact(getContentResolver(), address, conn);
