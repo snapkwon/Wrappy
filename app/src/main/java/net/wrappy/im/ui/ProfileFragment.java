@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -170,9 +168,8 @@ public class ProfileFragment extends BaseFragmentV4 {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View v = vi.inflate(android.R.layout.simple_spinner_item, null);
-                final TextView t = (TextView) v.findViewById(android.R.id.text1);
-                t.setText(arr[position]);
+                final AppTextView v = (AppTextView) vi.inflate(R.layout.update_profile_textview, null);
+                v.setText(arr[position]);
                 return v;
             }
         };
@@ -181,7 +178,8 @@ public class ProfileFragment extends BaseFragmentV4 {
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                edGender.setText(getResources().getStringArray(R.array.profile_gender)[i]);
+                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0,1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toUpperCase();
+                edGender.setText(upperString);
             }
 
             @Override
@@ -206,12 +204,17 @@ public class ProfileFragment extends BaseFragmentV4 {
                         txtUsername.setText(wpKMemberDto.getIdentifier());
                         edEmail.setText(wpKMemberDto.getEmail());
                         edPhone.setText(wpKMemberDto.getMobile());
-                        edGender.setText(wpKMemberDto.getGender());
+                        if (wpKMemberDto.getGender()!=null) {
+                            String upperString = wpKMemberDto.getGender().substring(0,1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
+                            edGender.setText(upperString);
+                        }
+
                         if (wpKMemberDto.getAvatar() != null) {
                             GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), false);
                         }
                         if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
-                            GlideHelper.loadBitmapToImageView(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
+                            GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                            //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                         }
 
                         //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
@@ -331,26 +334,33 @@ public class ProfileFragment extends BaseFragmentV4 {
             Intent intent = new Intent(getActivity(), SecurityQuestionActivity.class);
             startActivity(intent);
         } else if (view.getId() == R.id.lnProfileLogout) {
-            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
-            sheetCells.add(sheetCell);
-            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
-            sheetCells.add(sheetCell);
-            BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+            PopupUtils.showCustomDialog(getActivity(), getString(R.string.warning), getString(R.string.logout_noti), R.string.ok, R.string.cancel, new View.OnClickListener() {
                 @Override
-                public void onSelectBottomSheetCell(int index) {
-                    if (index == 1) {
-                        logout();
-                        //AppFuncs.alert(getActivity(), "Logout this device", true);
-                    } else if (index == 2) {
-                        logout();
-                        //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
-                    }
+                public void onClick(View view) {
+                    logout();
                 }
-            });
-            bottomSheetDialog.show();
+            },null);
+//            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+//            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
+//            sheetCells.add(sheetCell);
+//            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
+//            sheetCells.add(sheetCell);
+//            BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
+//                @Override
+//                public void onSelectBottomSheetCell(int index) {
+//                    if (index == 1) {
+//                        logout();
+//                        //AppFuncs.alert(getActivity(), "Logout this device", true);
+//                    } else if (index == 2) {
+//                        logout();
+//                        //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
+//                    }
+//                }
+//            });
+//            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
-            AppFuncs.shareApp(getActivity());
+            AppFuncs.sendRequestInviteFriend(getActivity());
+
         }
     }
 

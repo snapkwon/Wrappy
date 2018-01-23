@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
@@ -73,6 +74,7 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.provider.ChatStateExtensionProvider;
 import org.jivesoftware.smackx.commands.provider.AdHocCommandDataProvider;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.disco.provider.DiscoverItemsProvider;
@@ -673,8 +675,6 @@ public class XmppConnection extends ImConnection {
                         muc.createOrJoin(Resourcepart.from(nickname), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
                         mucCreated = true;
                         loadOldMessages(muc);
-                    } else {
-
                     }
 
                 } catch (Exception iae) {
@@ -909,7 +909,9 @@ public class XmppConnection extends ImConnection {
 
                 addMucListeners(muc, chatGroup);
 
-                loadOldMessages(muc);
+                if (findOrCreateSession(chatRoomJid, true) != null) {
+                    loadOldMessages(muc);
+                }
 
             } catch (Exception e) {
                 debug(TAG, "error joining MUC", e);
@@ -938,8 +940,10 @@ public class XmppConnection extends ImConnection {
         public void loadMembers(ChatGroup chatGroup) {
             try {
 
-                if (mConnection != null && mConnection.isAuthenticated())
+                if (mConnection != null && mConnection.isAuthenticated()) {
                     loadMembers(mMUCs.get(chatGroup.getAddress().getAddress()), chatGroup);
+                    loadOldMessages(mMUCs.get(chatGroup.getAddress().getAddress()));
+                }
 
             } catch (Exception e) {
                 debug(TAG, "Could not load members", e);
@@ -1780,7 +1784,8 @@ public class XmppConnection extends ImConnection {
             if (setAvatar) {
                 String avatar = DatabaseUtils.getAvatarFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
                 if (!TextUtils.isEmpty(avatar)) {
-                    vCard.setAvatar(avatar, "image/jpeg");
+                    String encodedAvatar = Base64.encodeToString(avatar.getBytes(), Base64.NO_WRAP);
+                    vCard.setAvatar(encodedAvatar, "image/jpeg");
                 }
             }
 
@@ -2226,6 +2231,10 @@ public class XmppConnection extends ImConnection {
     }
 
     private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo) {
+        handleMessage(smackMessage, isOmemo, new Date());
+    }
+
+    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -2260,13 +2269,12 @@ public class XmppConnection extends ImConnection {
             if (drIncoming != null)
                 session.onMessageReceipt(drIncoming.getId());
 
-            if (body != null && session != null) {
+            if (body != null) {
 
                 Message rec = new Message(body);
-
                 rec.setTo(new XmppAddress(smackMessage.getTo().toString()));
                 rec.setFrom(new XmppAddress(smackMessage.getFrom().toString()));
-                rec.setDateTime(new Date());
+                rec.setDateTime(date);
 
                 rec.setID(smackMessage.getStanzaId());
 
@@ -2317,8 +2325,6 @@ public class XmppConnection extends ImConnection {
                 }
 
             }
-
-
         }
     }
 
@@ -2399,6 +2405,29 @@ public class XmppConnection extends ImConnection {
             }
         }
 
+        if (mTimerPackets != null)
+            mTimerPackets.cancel();
+
+        if (mTimerNewContacts != null) {
+            mTimerNewContacts.cancel();
+        }
+
+        if (mTimerPresence != null) {
+            mTimerPresence.cancel();
+        }
+
+        if (mStreamHandler != null) {
+            mStreamHandler.quickShutdown();
+            mStreamHandler = null;
+        }
+
+        mSessionManager.closeAllChatSession();
+
+        if (mConnection != null) {
+            mConnection.removeAllStanzaAcknowledgedListeners();
+            mConnection.removeAllStanzaIdAcknowledgedListeners();
+        }
+
         mChatGroupManager = null;
         mChatManager = null;
         mOmemoInstance = null;
@@ -2456,7 +2485,7 @@ public class XmppConnection extends ImConnection {
             ChatSession session = mSessionManager.findSession(JidCreate.bareFrom(address));
             Jid jid = JidCreate.from(address);
 
-            if (jid.hasNoResource())
+            if (jid.hasNoResource() && !groupChat)
                 return null;
 
             //create a session if this it not groupchat
@@ -4630,8 +4659,21 @@ public class XmppConnection extends ImConnection {
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
         org.jivesoftware.smack.packet.Message oldMessage = null;
-        while ((oldMessage = muc.nextMessage(2000)) != null)
-            handleMessage(oldMessage, false);
+        if (findOrCreateSession(muc.getRoom().asEntityBareJidString(), true) != null) {
+            while ((oldMessage = muc.nextMessage(2000)) != null) {
+                DelayInformation inf = null;
+                Date date = new Date();
+                try {
+                    inf = oldMessage.getExtension("delay", DelayInformation.NAMESPACE);
+                    // get offline message timestamp
+                    if (inf != null) {
+                        date = inf.getStamp();
+                    }
+                } catch (Exception e) {
+                }
+                handleMessage(oldMessage, false, date);
+            }
+        }
     }
 
     private void buildOmemoSession(BareJid bareJid) {

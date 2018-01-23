@@ -51,7 +51,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -64,7 +63,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.Markup;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
@@ -179,7 +177,7 @@ public class MessageListItem extends FrameLayout {
         return lastMessage;
     }
 
-    public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date, Markup smileyRes,
+    public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date,
                                     boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference, String textsearch) {
 
 
@@ -189,8 +187,9 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
 
-        if (nickname == null)
-            nickname = address;
+        if (nickname == null) {
+            nickname = ImApp.getNickname(address);
+        }
 
         lastMessage = formatMessage(body);
         showAvatar(address, nickname, true, presenceStatus, mReference);
@@ -263,26 +262,7 @@ public class MessageListItem extends FrameLayout {
                 bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-                String[] cmds = lastMessage.split(":");
-
-                String mimeTypeSticker = "image/png";
-                try {
-                    String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
-
-                    //make sure sticker exists
-                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                    afd.getLength();
-                    afd.close();
-
-                    //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                    //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false, true);
-                } catch (Exception e) {
-                    cmdSuccess = false;
-                }
+                cmdSuccess = bindSticker(lastMessage, id);
             }
             if (!cmdSuccess) {
                 mHolder.mTextViewForMessages.setText(new SpannableString(lastMessage));
@@ -681,7 +661,7 @@ public class MessageListItem extends FrameLayout {
         }
     }
 
-    public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, Markup smileyRes, boolean scrolling,
+    public void bindOutgoingMessage(MessageViewHolder holder, int id, int messageType, String address, final String mimeType, final String body, Date date, boolean scrolling,
                                     DeliveryState delivery, EncryptionState encryption, String textsearch) {
 
         mHolder = holder;
@@ -758,26 +738,7 @@ public class MessageListItem extends FrameLayout {
                 bindRemoveMemberGroup(lastMessage);
                 cmdSuccess = true;
             } else if (lastMessage.startsWith(":")) {
-                String[] cmds = lastMessage.split(":");
-
-                String mimeTypeSticker = "image/png";
-                try {
-                    String[] stickerParts = cmds[1].split("-");
-                    String stickerPath = "stickers/" + stickerParts[0] + "/" + stickerParts[1] + ".png";
-
-                    //make sure sticker exists
-                    AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
-                    afd.getLength();
-                    afd.close();
-
-                    //now setup the new URI for loading local sticker asset
-                    Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
-
-                    //now load the thumbnail
-                    cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
-                } catch (Exception e) {
-                    cmdSuccess = false;
-                }
+                cmdSuccess = bindSticker(lastMessage, id);
             }
 
             if (!cmdSuccess) {
@@ -977,6 +938,30 @@ public class MessageListItem extends FrameLayout {
         }
 
         return spanText;
+    }
+
+    private boolean bindSticker(String message, int id) {
+        String[] cmds = message.split(":");
+        boolean cmdSuccess = false;
+        String mimeTypeSticker = "image/png";
+        try {
+            String[] stickerParts = cmds[1].split("-");
+            String stickerPath = "stickers/" + stickerParts[0].toLowerCase() + "/" + stickerParts[1] + ".png";
+
+            //make sure sticker exists
+            AssetFileDescriptor afd = getContext().getAssets().openFd(stickerPath);
+            afd.getLength();
+            afd.close();
+
+            //now setup the new URI for loading local sticker asset
+            Uri mediaUri = Uri.parse("asset://localhost/" + stickerPath);
+
+            //now load the thumbnail
+            cmdSuccess = showMediaThumbnail(mimeTypeSticker, mediaUri, id, mHolder, false);
+        } catch (Exception e) {
+            cmdSuccess = false;
+        }
+        return cmdSuccess;
     }
 
     private CharSequence formatPresenceUpdates(String contact, int type, Date date, boolean isGroupChat,

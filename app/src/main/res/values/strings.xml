@@ -435,10 +435,10 @@
     <string name="Page11Message">A pioneer in an innovative\n&amp; constantly evolving era.</string>
     <string name="StartMessaging">Start Messaging</string>
 
-    <string name="id_or_username">ID/Username</string>
+    <string name="id_or_username">Input the username</string>
     <string name="forget_password">Forget Password</string>
     <string name="login">Login</string>
-    <string name="waiting_dialog">Waiting...</string>
+    <string name="waiting_dialog">Waiting…</string>
     <string name="search_username">Search username</string>
     <string name="add_contact">ADD CONTACT</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
@@ -542,7 +542,7 @@
     <string name="mobile_phone">Mobile Phone</string>
     <string name="gender">Gender</string>
     <string name="referral">Referral</string>
-    <string name="referral_hint">Phone Number</string>
+    <string name="referral_hint">Referral code</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
@@ -583,6 +583,7 @@
 
     <string name="error_registration">Registration fail. Try Again!</string>
 
+    <string name="location_message">Location Message</string>
     <string name="you_sent_sticker">You sent a sticker</string>
     <string name="user_sent_sticker">%1$s sent a sticker</string>
     <string name="tab_menu_menu">Menu</string>
@@ -613,7 +614,7 @@
     <string name="invite_friends_text">Invite Friend</string>
     <string name="share_app_text">Let me recommend you this application</string>
     <string name="email_tile">Email *</string>
-    <string name="logout_noti">Are you sure you want to logout this deivce?</string>
+    <string name="logout_noti">Are you sure you want to logout this device?</string>
     <string name="share_title">Choose sharing method</string>
     <string name="referral_text">Enter your referral code (optional)</string>
     <string name="input_referral_error">Username isn\'t exist</string>

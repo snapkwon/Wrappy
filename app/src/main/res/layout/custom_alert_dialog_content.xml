@@ -27,7 +27,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:gravity="center_horizontal"
-        android:lines="2"
         android:maxLines="3"
         android:textColor="@android:color/black"
         android:textSize="14sp" />

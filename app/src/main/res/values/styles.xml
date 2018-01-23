@@ -35,16 +35,16 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">false</item>
         <item name="android:actionBarStyle">@style/SupportApp.MyActionBar</item>
-        <item name="colorPrimary">@color/zom_primary</item>
+        <item name="colorPrimary">@color/wrappy_primary</item>
 
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">@color/menu_text_active</item>
-        <item name="colorAccent">@color/zom_primary</item>
+        <item name="colorAccent">@color/wrappy_primary</item>
 
     </style>
 
     <style name="SupportApp.MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/zom_primary</item>
+        <item name="android:background">@color/wrappy_primary</item>
         <item name="android:color">@android:color/white</item>
         <item name="android:logo">@android:color/transparent</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_ab_arrow_back</item>
@@ -107,14 +107,14 @@
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
         <!-- colorPrimary is used for the default action bar background -->
-        <item name="colorPrimary">@color/zom_primary</item>
+        <item name="colorPrimary">@color/wrappy_primary</item>
 
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">#444344</item>
 
         <!-- colorAccent is used as the default value for colorControlActivated,
              which is used to tint widgets -->
-        <item name="colorAccent">@color/zom_primary</item>
+        <item name="colorAccent">@color/wrappy_primary</item>
 
         <!-- You can also set colorControlNormal, colorControlActivated
              colorControlHighlight, and colorSwitchThumbNormal. -->
@@ -148,13 +148,14 @@
     </style>
 
     <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">@color/zom_primary</item>
+        <item name="background">@color/wrappy_primary</item>
     </style>
 
     <!--Action bar-->
     <style name="AppBaseTheme.Toolbar" parent="Widget.AppCompat.ActionBar.Solid">
         <item name="android:textColorPrimary">#ffffff</item>
         <item name="colorControlNormal">#ffffff</item>
+
     </style>
 
     <style name="AppThemeNoAction" parent="@style/AppTheme">
@@ -280,7 +281,7 @@
     <style name="divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
-        <item name="android:background">@color/message_background_dark</item>
+        <item name="android:background">@color/txt_light</item>
     </style>
 
     <style name="dividerMainMenu" parent="divider">

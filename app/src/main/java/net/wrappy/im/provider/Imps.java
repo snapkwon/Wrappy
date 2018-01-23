@@ -766,6 +766,8 @@ public class Imps {
          */
         public static final String DEFAULT_SORT_ORDER = "subscriptionType DESC, last_message_date DESC,"
                 + " mode DESC, nickname COLLATE NOCASE ASC";
+
+        public static final String DEFAULT_SORT_NICKNAME_ORDER = "nickname ASC";
         /**
          * The default sort order for this table
          */
@@ -3413,5 +3415,23 @@ public class Imps {
         resolver.delete(Provider.CONTENT_URI, null, null);
         resolver.delete(Avatars.CONTENT_URI, null, null);
         resolver.delete(ContactList.CONTENT_URI, null, null);
+        resolver.delete(SessionCookies.CONTENT_URI, null, null);
+        resolver.delete(ServerToDeviceRmqIds.CONTENT_URI, null, null);
+        resolver.delete(LastRmqId.CONTENT_URI, null, null);
+        resolver.delete(OutgoingRmq.CONTENT_URI, null, null);
+        resolver.delete(BrandingResourceMapCache.CONTENT_URI, null, null);
+//        resolver.delete(ProviderSettings.CONTENT_URI, null, null);
+//        resolver.delete(Presence.CONTENT_URI, null, null);
+        resolver.delete(Invitation.CONTENT_URI, null, null);
+        resolver.delete(ContactsEtag.CONTENT_URI, null, null);
+        resolver.delete(BlockedList.CONTENT_URI, null, null);
+//        resolver.delete(Roster.CONTENT_URI, null, null);
+        resolver.delete(AccountStatus.CONTENT_URI, null, null);
+//
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }

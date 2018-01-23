@@ -767,7 +767,7 @@ public class OnboardingActivity extends BaseActivity {
                         //parse each string and if they are for a new user then add the user
                         OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId, mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                        new AddContactAsyncTask(mNewAccount.providerId, mNewAccount.accountId).execute(diLink.username, diLink.fingerprint, diLink.nickname);
 
                         //if they are for a group chat, then add the group
                     } catch (Exception e) {
@@ -976,7 +976,7 @@ public class OnboardingActivity extends BaseActivity {
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mViewFlipper, R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mViewFlipper, R.string.grant_perms_camera, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.

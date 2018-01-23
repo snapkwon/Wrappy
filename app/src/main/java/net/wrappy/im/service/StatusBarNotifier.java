@@ -40,7 +40,6 @@ import net.wrappy.im.model.Contact;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
-import net.wrappy.im.util.SystemServices;
 
 import java.util.ArrayList;
 
@@ -182,15 +181,6 @@ public class StatusBarNotifier {
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.presence_offline);
         notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.alerts_and_states_error);
-    }
-
-
-    public void notifyFile(long providerId, long accountId, long id, String username,
-            String nickname, String path, Uri uri, String type, boolean b) {
-     
-        String message = mContext.getString(R.string.file_notify_text);
-        Intent intent = SystemServices.Viewer.getViewIntent(uri, type);
-        notify(message, nickname, message, message, providerId, accountId, intent, false, R.drawable.ic_stat_status);
     }
 
     public void dismissNotifications(long providerId) {

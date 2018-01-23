@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -112,7 +111,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
             mApp = (ImApp) getActivity().getApplication();
             mConnection = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             mManager = mConnection.getChatSessionManager();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -464,7 +463,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
 
                     mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
                     mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_light));
-                    mUpgradeAction.setTextColor(getResources().getColor(R.color.zom_primary));
+                    mUpgradeAction.setTextColor(getResources().getColor(R.color.wrappy_primary));
                     mUpgradeAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

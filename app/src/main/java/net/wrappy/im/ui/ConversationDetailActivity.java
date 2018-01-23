@@ -32,6 +32,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -54,6 +59,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -93,6 +99,7 @@ import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -191,7 +198,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private TextView txtStatus;
 
     @Override
-    public void onHandle() {
+    public void onHandle(Message msg) {
         handleMessage();
     }
 
@@ -211,7 +218,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         public void handleMessage(Message msg) {
             if (weakReference != null && weakReference.get() != null) {
                 if (msg.what == 1 && onHandleMessage != null) {
-                    onHandleMessage.onHandle();
+                    onHandleMessage.onHandle(msg);
                 }
             }
         }
@@ -244,17 +251,54 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     };
 
-    public void updateStatusAvatar(String references)
-    {
-        if(references != null && !references.isEmpty() ) {
+    public Bitmap createImage(int width, int height, int color, String name) {
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        Paint paintCicle = new Paint();
+        Paint paintText = new Paint();
+
+        Rect rect = new Rect(0, 0, width, height);
+        RectF rectF = new RectF(rect);
+        float density = ConversationDetailActivity.this.getResources().getDisplayMetrics().density;
+        float roundPx = 100 * density;
+
+        paintCicle.setColor(Color.GRAY);
+        paintCicle.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+
+// Set Border For Circle
+        paintCicle.setStyle(Paint.Style.FILL);
+        paintCicle.setStrokeWidth(1.0f);
+
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paintCicle);
+
+        paintText.setColor(Color.WHITE);
+        paintText.setTextSize(convertDpToPx(25));
+
+        canvas.drawText(name, convertDpToPx(17), convertDpToPx(28), paintText);
+
+        return output;
+    }
+
+    private int convertDpToPx(int dp) {
+        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+
+    public void updateStatusAvatar(boolean isgroupchat) {
+        String references = getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY);
+
+        //  getSupportActionBar().getCustomView().findViewById()
+        if (references != null && !references.isEmpty()) {
             BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
             if (true)
                 request.transform(new CircleTransform(ConversationDetailActivity.this));
             request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    Drawable d = new BitmapDrawable(getResources(), resource);
-                    getSupportActionBar().setIcon(d);
+                    Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, convertDpToPx(50), convertDpToPx(50), false));
+                    mToolbar.setLogo(d);
                 }
 
                 @Override
@@ -263,14 +307,50 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     AppFuncs.log(e.getLocalizedMessage());
                 }
             });
-        }
-        else
-        {
-            //    int padding = 24;
-            //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
-           // if(isgroup) {
-                getSupportActionBar().setIcon(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
-          /*  }
+        } else {
+            if (isgroupchat == true) {
+                //    int padding = 24;
+                //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
+                // if(isgroup) {
+                mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
+            } else {
+                try {
+                    if (getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY) != null) {
+                        int padding = 24;
+                        LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY), padding);
+
+                        Drawable d;//= new BitmapDrawable(getResources(), b);
+
+
+                        Bitmap output = Bitmap.createBitmap(convertDpToPx(50), convertDpToPx(50), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(output);
+
+                        Paint paintCicle = new Paint();
+
+                        Rect rect = new Rect(0, 0, convertDpToPx(50), convertDpToPx(50));
+                        RectF rectF = new RectF(rect);
+                        paintCicle.setColor(Color.GRAY);
+                        paintCicle.setAntiAlias(true);
+                        canvas.drawARGB(0, 0, 0, 0);
+
+// Set Border For Circle
+                        paintCicle.setStyle(Paint.Style.FILL);
+                        paintCicle.setStrokeWidth(1.0f);
+
+                        canvas.drawRoundRect(rectF, convertDpToPx(50), convertDpToPx(50), paintCicle);
+
+                        lavatar.draw(canvas);
+
+
+                        d = new BitmapDrawable(getResources(), output);
+
+                        mToolbar.setLogo(d);
+                    }
+                } catch (OutOfMemoryError ome) {
+                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
+                }
+            }
+            /*  }
             else
             {
                 int padding = 24;
@@ -293,6 +373,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mHandler = new MyHandler(this);
         mHandler.setOnHandleMessage(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mToolbar.setPadding(0, 0, 0, 0);//for tab otherwise give space in tab
+        mToolbar.setContentInsetsAbsolute(0, 0);
+
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
 
 
@@ -311,7 +395,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-       // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
+        // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
 
         applyStyleForToolbar();
 
@@ -336,10 +420,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 }
             });
         }
-        else
-        {
-
-        }
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -362,7 +442,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         // set background for this screen
         loadBitmapPreferences();
 
-        updateStatusAvatar(getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY));
+        updateStatusAvatar(mConvoView.isGroupChat());
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -478,7 +558,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).setCallback(new AddContactAsyncTask.AddContactCallback() {
+                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override
                     public void onFinished(Integer code) {
                         startChat();
@@ -634,7 +714,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     void startImagePicker() {
         startActivityForResult(getPickImageChooserIntent(), REQUEST_SEND_IMAGE);
-
     }
 
     /**
@@ -697,7 +776,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_camera, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -768,7 +847,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_pick_file, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -841,7 +920,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             Uri vfsUri;
             /*if (resizeImage)
                 vfsUri = SecureMediaStore.resizeAndImportImage(this, sessionId, contentUri, info.type);
-            else*/ if (importContent) {
+            else*/
+            if (importContent) {
 
                 if (contentUri.getScheme() == null || contentUri.getScheme().equals("assets"))
                     vfsUri = SecureMediaStore.importContent(sessionId, fileName, info.stream);
@@ -1012,7 +1092,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mConvoView.getHistoryView(), R.string.grant_perms_audio, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.

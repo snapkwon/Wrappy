@@ -28,6 +28,16 @@
             android:gravity="center|bottom"
             android:textAppearance="?android:textAppearanceMedium" />
 
+        <TextView
+            android:id="@+id/pl_message_text_error"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:gravity="center|bottom"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/error"
+            android:visibility="gone"/>
+
         <me.tornado.android.patternlock.PatternView
             android:id="@+id/pl_pattern"
             android:layout_width="match_parent"

@@ -6,6 +6,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:gravity="center|top"
+    android:background="#ffffff"
     android:orientation="vertical">
 
     <LinearLayout

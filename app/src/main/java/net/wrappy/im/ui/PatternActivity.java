@@ -7,12 +7,18 @@ package net.wrappy.im.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -72,6 +78,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         ActionBar actionbar = getSupportActionBar();
         actionbar.setHomeButtonEnabled(true);
         actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionbar.setCustomView(R.layout.actionbar_register);
+        TextView title = (TextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
+        ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         appFuncs = AppFuncs.getInstance();
         //mHandler = new SimpleAlertHandler(this);
 
@@ -92,15 +109,15 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         if (type_request == REQUEST_CODE_LOGIN) {
             this.setTypePattern(TYPE_NOCONFIRM);
-            actionbar.setTitle(R.string.login);
+            title.setText(R.string.login);
 
         } else {
             this.setTypePattern(TYPE_CONFIRM);
 
             if (hashResetPassword.isEmpty()) {
-                actionbar.setTitle(R.string.registration);
+                title.setText(R.string.registration);
             } else {
-                actionbar.setTitle(R.string.forget_password);
+                title.setText(R.string.forget_password);
             }
         }
 
@@ -245,7 +262,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 //            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
 //            mExistingAccountTask.execute(username, password, accountName);
 //        }
-        (new LoginTask(this, new LoginTask.EventListenner() {
+        new LoginTask(this, new LoginTask.EventListenner() {
             @Override
             public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
                 appFuncs.dismissProgressWaiting();
@@ -253,10 +270,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     onLoginFailed();
                 } else {
                     AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
-                    MainActivity.start(PatternActivity.this);
+                    MainActivity.start();
+                    finish();
                 }
             }
-        })).execute(account);
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 //
 //

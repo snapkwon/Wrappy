@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
@@ -41,8 +42,10 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -53,10 +56,12 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
@@ -121,6 +126,8 @@ public class SettingConversationActivity extends BaseActivity {
     private WpKChatGroupDto groupid;
     ImApp imApp;
 
+    private List<WpKMemberDto> identifiers = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
@@ -146,30 +153,33 @@ public class SettingConversationActivity extends BaseActivity {
 //        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
         if (cursor == null)
             return; //not going to work
-        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
-                cursor, getContentResolver(), mProviderId, false, null);
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
-            mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + '@' + providerSettings.getDomain();
+            if (mConn.getState() == ImConnection.LOGGED_IN) {
+                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
 
-            mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
 
-            if (mSession != null) {
-                mGroupOwner = mSession.getGroupChatOwner();
-                if (mGroupOwner != null) {
-                    mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
-                    mAdminGroup = mGroupOwner.getName();
-                    if (!mIsOwner) {
+                if (mSession != null) {
+                    mGroupOwner = mSession.getGroupChatOwner();
+                    if (mGroupOwner != null) {
+                        mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                        mAdminGroup = mGroupOwner.getName();
+                        if (!mIsOwner) {
+                            btnEditGroupName.setVisibility(View.GONE);
+                            imgGroupPhoto.setVisibility(View.GONE);
+                            btnGroupPhoto.setEnabled(false);
+                        }
+                    } else {
                         btnEditGroupName.setVisibility(View.GONE);
                         imgGroupPhoto.setVisibility(View.GONE);
                         btnGroupPhoto.setEnabled(false);
                     }
-                } else {
-                    btnEditGroupName.setVisibility(View.GONE);
-                    imgGroupPhoto.setVisibility(View.GONE);
-                    btnGroupPhoto.setEnabled(false);
                 }
+            } else {
+                finish();
+                return;
             }
         } catch (RemoteException e) {
             AppFuncs.log(e.getLocalizedMessage());
@@ -191,6 +201,8 @@ public class SettingConversationActivity extends BaseActivity {
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        identifiers = wpKChatGroup.getParticipators();
+
                         edGroupName.setText(wpKChatGroup.getName());
                         if (wpKChatGroup.getIcon() != null) {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
@@ -256,10 +268,12 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(ImApp.getNickname(new XmppAddress(c.getString(colUsername)).getBareAddress()));
+                        member.setNickname(c.getString(colNickname));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
+
+                        Debug.e("username: " + member.getUsername());
 
                         if (member.getAffiliation() != null) {
                             if (member.getAffiliation().contentEquals("owner") ||
@@ -270,21 +284,34 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
+                        if (member.getNickname() == null || member.getUsername().contains(member.getNickname())) {
+                            for (WpKMemberDto memberDto : identifiers) {
+                                String account = memberDto.getXMPPAuthDto().getAccount();
+                                if (member.getUsername().contains(account)) {
+                                    member.setNickname(memberDto.getIdentifier());
+                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                                    break;
+                                }
+                            }
+                        }
                         members.add(member);
+
                     }
                     c.close();
                 }
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
-                if (!Thread.currentThread().isInterrupted()) {
+                memberGroupAdapter.setData(memberGroupDisplays);
+               /* if (!Thread.currentThread().isInterrupted()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mGroupRecycleView.getAdapter().notifyDataSetChanged();
+                            memberGroupAdapter.setData(memberGroupDisplays);
+                            memberGroupAdapter.notifyDataSetChanged();
                         }
                     });
-                }
+                }*/
             }
         });
         mThreadUpdate.start();
@@ -402,8 +429,8 @@ public class SettingConversationActivity extends BaseActivity {
                 if (users != null) {
                     //start group and do invite hereartGrou
                     try {
-                        IImConnection conn = imApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
-                        if (conn.getState() == ImConnection.LOGGED_IN) {
+                        IImConnection conn = ImApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
+                        if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                             startGroupChat(group, users, conn);
                         }
                     } catch (Exception ex) {
@@ -435,7 +462,6 @@ public class SettingConversationActivity extends BaseActivity {
 
             }
         }
-
     }
 
     private void updateData() {
@@ -477,10 +503,7 @@ public class SettingConversationActivity extends BaseActivity {
 
     boolean isMuted() {
         try {
-            if (getSession() != null)
-                return getSession().isMuted();
-            else
-                return false;
+            return getSession() != null && getSession().isMuted();
         } catch (RemoteException re) {
             re.printStackTrace();
             return false;
@@ -501,9 +524,11 @@ public class SettingConversationActivity extends BaseActivity {
         net.wrappy.im.util.Debug.d("mSession " + mSession);
         if (mSession == null)
             try {
-                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-                if (mSession == null)
-                    mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+                if (mConn.getState() == ImConnection.LOGGED_IN) {
+                    mSession = mConn.getChatSessionManager().getChatSession(mAddress);
+                    if (mSession == null)
+                        mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -554,7 +579,7 @@ public class SettingConversationActivity extends BaseActivity {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     if (RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.log(s!=null?s:"");
+                        AppFuncs.log(s != null ? s : "");
                         leaveXmppGroup();
                     }
                 }
@@ -562,30 +587,24 @@ public class SettingConversationActivity extends BaseActivity {
         }
     }
 
-    private boolean leaveXmppGroup() {
+    private void leaveXmppGroup() {
         try {
             getSession().leave();
             //clear the stack and go back to the main activity
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            return true;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
-    private boolean deleteGroupByAdmin() {
+    private void deleteGroupByAdmin() {
         try {
-
             String groupName = wpKChatGroup.getName();
 
-            StringBuffer deleteCode = new StringBuffer();
-            deleteCode.append(ConferenceConstant.DELETE_GROUP_BY_ADMIN);
-            deleteCode.append(":");
-            deleteCode.append(groupName);
-            getSession().sendMessage(deleteCode.toString(), false);
+            String deleteCode = ConferenceConstant.DELETE_GROUP_BY_ADMIN + ":" + groupName;
+            getSession().sendMessage(deleteCode, false);
 
             getSession().delete();
 
@@ -593,11 +612,8 @@ public class SettingConversationActivity extends BaseActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            return true;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "error deleting group", e);
         }
-        return false;
     }
-
 }

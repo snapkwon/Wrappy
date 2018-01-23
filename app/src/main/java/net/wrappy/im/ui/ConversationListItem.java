@@ -52,7 +52,6 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.DateUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -265,6 +264,8 @@ public class ConversationListItem extends FrameLayout {
                             } else {
                                 holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
+                        } else if (message.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
+                            holder.mLine2.setText(getResources().getString(R.string.location_message));
                         } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
 
                             IChatSession session = manager.getChatSession(address);
@@ -330,7 +331,7 @@ public class ConversationListItem extends FrameLayout {
             }
             holder.mStatusText.setText(status);
         } else if (holder.mLine2 != null) {
-            holder.mLine2.setText(address);
+//            holder.mLine2.setText(address); // Don't show addess when msg empty
 
             if (holder.mMediaThumb != null)
                 holder.mMediaThumb.setVisibility(View.GONE);

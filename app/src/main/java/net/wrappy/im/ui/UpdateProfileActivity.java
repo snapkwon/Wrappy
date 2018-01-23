@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -119,9 +120,21 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle("Update Profile");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_register);
+
+        TextView title = (TextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
+        title.setText(R.string.update_profile);
+
+        ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         appFuncs = AppFuncs.getInstance();
         btnCameraAvatar.setVisibility(View.VISIBLE);
         btnCameraHeader.setVisibility(View.VISIBLE);

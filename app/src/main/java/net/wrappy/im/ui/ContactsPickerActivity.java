@@ -37,6 +37,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -296,6 +297,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 showWaitinDialog();
+                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -523,7 +525,6 @@ public class ContactsPickerActivity extends BaseActivity {
                     startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
-
             isClickedMenu = true;
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -589,8 +590,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                 int screenWidth = Utils.getWithScreenDP(getApplicationContext());
                 int swipeLayoutWidth = (int) (screenWidth / 1.5);
-
-                int titleSize = Utils.convertSpToPixels(getResources().getDimension(R.dimen.title_size_swipe_menu), getApplicationContext());
+                int titleSize = Utils.convertSpToPixels(swipeLayoutWidth / 40, getApplicationContext());
 
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xff, 0x00,
@@ -625,10 +625,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListenner() {
                             @Override
                             public void OnComplete(int httpCode, String error, String s) {
-                                if (RestAPI.checkHttpCode(httpCode)) {
-                                    AppFuncs.log(s);
-                                    ImApp.removeContact(getContentResolver(), address, conn);
-                                }
+                                ImApp.removeContact(getContentResolver(), address, conn);
                             }
                         });
                         break;
@@ -783,7 +780,7 @@ public class ContactsPickerActivity extends BaseActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            if (mSearchString != null) {
+            if (!TextUtils.isEmpty(mSearchString)) {
                 buf.append('(');
                 buf.append(Imps.Contacts.NICKNAME);
                 buf.append(" LIKE ");
@@ -833,7 +830,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
             CursorLoader loader = new CursorLoader(ContactsPickerActivity.this, mUri, ContactListItem.CONTACT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.USERNAME);
+                    buf == null ? null : buf.toString(), null, Imps.Contacts.DEFAULT_SORT_NICKNAME_ORDER);
             //    loader.setUpdateThrottle(50L);
             return loader;
         }

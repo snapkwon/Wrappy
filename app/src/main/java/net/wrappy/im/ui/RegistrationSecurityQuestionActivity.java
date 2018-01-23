@@ -2,9 +2,12 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,9 +32,20 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity_security_question);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle(R.string.registration);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_register);
+
+        TextView title = (TextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
+        title.setText(R.string.registration);
+
+        ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion,SecurityQuestionCreateFragment.newsIntance(0)).commit();
     }
 

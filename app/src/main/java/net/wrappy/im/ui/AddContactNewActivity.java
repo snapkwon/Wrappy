@@ -158,7 +158,7 @@ public class AddContactNewActivity extends BaseActivity {
 
             String address = recipient.getAddress();
             if (pattern.matcher(address).matches()) {
-                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, null, null);
+                new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, null, null);
                 foundOne = true;
             }
         }

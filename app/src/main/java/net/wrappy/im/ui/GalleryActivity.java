@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -46,8 +47,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
-
-import net.wrappy.im.R;
 
 public class GalleryActivity extends BaseActivity {
 
@@ -114,7 +113,7 @@ public class GalleryActivity extends BaseActivity {
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(view, R.string.grant_perms, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.grant_perms_camera, Snackbar.LENGTH_LONG).show();
             } else {
 
                 // No explanation needed, we can request the permission.

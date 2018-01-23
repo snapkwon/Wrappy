@@ -24,10 +24,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
 import net.wrappy.im.provider.Imps;
@@ -360,15 +362,13 @@ public class AppFuncs {
         return date;
     }
 
-    public static void shareApp(Activity activity) {
+    public static void shareApp(Activity activity, String content) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.app_name));
-            String sAux = activity.getString(R.string.share_app_text) + "\n";
-            sAux = sAux + "https://play.google.com/store/apps/details?id=net.wrappy.im";
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
-            activity.startActivity(Intent.createChooser(i, "choose one"));
+            i.putExtra(Intent.EXTRA_TEXT, content);
+            activity.startActivity(Intent.createChooser(i, activity.getString(R.string.share_title)));
         } catch (Exception e) {
             //e.toString();
         }
@@ -384,6 +384,23 @@ public class AppFuncs {
                     Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void sendRequestInviteFriend(final Activity activity) {
+        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                try {
+                    if (RestAPI.checkHttpCode(httpCode)) {
+                        Gson gson = new Gson();
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
+                        AppFuncs.shareApp(activity,promotionSetting.getContent());
+                    }
+                }catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });

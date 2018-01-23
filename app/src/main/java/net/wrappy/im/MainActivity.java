@@ -17,7 +17,6 @@
 package net.wrappy.im;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -69,12 +68,15 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListenner;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.model.ConnectionListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
+import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IContactListManager;
@@ -165,10 +167,14 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, MainActivity.class);
+    //XmppConnection listener
+    ConnectionListener connectionListener;
+
+    public static void start() {
+        Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
+        intent.putExtra(MainActivity.IS_FROM_PATTERN_ACTIVITY, true);
+        ImApp.sImApp.startActivity(intent);
     }
 
     @Override
@@ -435,7 +441,35 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             mLoadContactHandler = null;
             syncContactRunnable = null;
         }
+
         super.onDestroy();
+    }
+
+
+    /*
+    * Register to liten event from the connection
+    * */
+    private void registerConnection(IImConnection connection) {
+        if (connectionListener == null) {
+            connectionListener = new ConnectionListener() {
+                @Override
+                public void onStateChanged(int state, ImErrorInfo error) {
+                    //update status connection from state
+                    checkConnection();
+                }
+
+                @Override
+                public void onUserPresenceUpdated() {
+
+                }
+
+                @Override
+                public void onUpdatePresenceError(ImErrorInfo error) {
+
+                }
+            };
+            ((XmppConnection) connection).addConnectionListener(connectionListener);
+        }
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -450,6 +484,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
+                registerConnection(conn);
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
@@ -592,13 +627,13 @@ public class MainActivity extends BaseActivity implements AppDelegate {
                         if (resultScan.startsWith("xmpp:")) {
                             address = XmppUriHelper.parse(Uri.parse(resultScan)).get(XmppUriHelper.KEY_ADDRESS);
                             String fingerprint = XmppUriHelper.getOtrFingerprint(resultScan);
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(address, fingerprint);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(address, fingerprint);
 
                         } else {
                             //parse each string and if they are for a new user then add the user
                             OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                            new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(diLink.username, diLink.fingerprint, diLink.nickname);
                         }
 
                         if (address != null)
@@ -1023,24 +1058,27 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-                        syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                        try {
+                            WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                            syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
             RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListenner() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                        try {
+                            WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                            syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-
                 }
             });
         }
@@ -1104,7 +1142,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private void rejoinGroupChat() {
         if (!sessionTasks.isEmpty()) {
             try {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
                 if (conn.getState() == ImConnection.LOGGED_IN) {
                     String nickname = mApp.getDefaultNickname();
                     groupSessionTask = new GroupChatSessionTask(this, sessionTasks.pop(), conn);
@@ -1126,7 +1164,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 
         try {
             if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
                 SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
                 if (handler != null) {
                     handler.removeCallbacks(runable);
