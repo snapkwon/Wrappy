@@ -49,5 +49,6 @@
     <string name="error_8030">Report already not exists</string>
     <string name="error_8031">Inviter user not exists</string>
     <string name="error_8032">Create user on the xmpp fail</string>
+    <string name="error_8033">Member answered wrong security question</string>
 
 </resources>

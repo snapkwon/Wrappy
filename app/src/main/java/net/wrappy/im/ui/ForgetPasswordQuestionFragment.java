@@ -146,6 +146,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
 
     private void postResultToServer() {
+        AppFuncs.showProgressWaiting(getActivity());
         JsonObject jsonObject = new JsonObject();
         try {
             jsonObject.add("kMemberSecurityQuestionDtoList", AppFuncs.convertToJson(stringQuestions).getAsJsonArray());
@@ -168,12 +169,14 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
+                AppFuncs.dismissProgressWaiting();
                 if (!TextUtils.isEmpty(s))
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
             }
 
             @Override
             protected void onError(int errorCode) {
+                AppFuncs.dismissProgressWaiting();
                 if (time > 2) {
                     AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_2nd), true);
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, "");
