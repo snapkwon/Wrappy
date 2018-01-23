@@ -47,9 +47,12 @@ public class SecurityQuestionCreateFragment extends Fragment {
     ArrayAdapter<String> questionsAdapter;
     AppDelegate appDelegate;
 
-    @BindView(R.id.btnQuestionComplete) AppButton btnQuestionComplete;
-    @BindView(R.id.securityQuestionLayout) LinearLayout securityQuestionLayout;
-    @BindView(R.id.txtSecurityTitle) AppTextView txtSecurityTitle;
+    @BindView(R.id.btnQuestionComplete)
+    AppButton btnQuestionComplete;
+    @BindView(R.id.securityQuestionLayout)
+    LinearLayout securityQuestionLayout;
+    @BindView(R.id.txtSecurityTitle)
+    AppTextView txtSecurityTitle;
 
     ArrayList<Spinner> spinnersQuestion = new ArrayList<>();
     ArrayList<EditText> appEditTextViewsAnswers = new ArrayList<>();
@@ -57,7 +60,7 @@ public class SecurityQuestionCreateFragment extends Fragment {
     public static SecurityQuestionCreateFragment newsIntance(int type) {
         SecurityQuestionCreateFragment fragment = new SecurityQuestionCreateFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("type",type);
+        bundle.putInt("type", type);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -71,10 +74,10 @@ public class SecurityQuestionCreateFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.security_question_create_fragment,null);
-        ButterKnife.bind(this,mainView);
-        int type = getArguments().getInt("type",0);
-        if (type==1) {
+        mainView = inflater.inflate(R.layout.security_question_create_fragment, null);
+        ButterKnife.bind(this, mainView);
+        int type = getArguments().getInt("type", 0);
+        if (type == 1) {
             txtSecurityTitle.setText(getString(R.string.choose_new_secret_question));
         }
         getListQuestion();
@@ -107,17 +110,17 @@ public class SecurityQuestionCreateFragment extends Fragment {
                             }
                             stringQuestions.add(question);
 
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
-                    questionsAdapter = new ArrayAdapter<String>(getActivity(),R.layout.registration_activity_security_question_item_textview,stringQuestions);
+                    questionsAdapter = new ArrayAdapter<String>(getActivity(), R.layout.registration_activity_security_question_item_textview, stringQuestions);
                     securityQuestionLayout.removeAllViews();
-                    for (int i=0 ; i < 3; i++) {
-                        View questionLayoutView = LayoutInflater.from(getActivity()).inflate(R.layout.registration_activity_security_question_item,null);
+                    for (int i = 0; i < 3; i++) {
+                        View questionLayoutView = LayoutInflater.from(getActivity()).inflate(R.layout.registration_activity_security_question_item, null);
                         securityQuestionLayout.addView(questionLayoutView);
                         AppTextView txtQuestionTitle = (AppTextView) questionLayoutView.findViewById(R.id.txtQuestionTitle);
-                        txtQuestionTitle.setText("Question " + String.valueOf(i+1));
+                        txtQuestionTitle.setText(String.format(getString(R.string.question), (i + 1)));
                         Spinner questionSpinner = (Spinner) questionLayoutView.findViewById(R.id.spinnerQuestion);
                         spinnersQuestion.add(questionSpinner);
                         questionSpinner.setAdapter(questionsAdapter);
@@ -128,7 +131,7 @@ public class SecurityQuestionCreateFragment extends Fragment {
                         appEditTextViewsAnswers.add(editTextView);
                     }
                     btnQuestionComplete.setEnabled(true);
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -144,50 +147,49 @@ public class SecurityQuestionCreateFragment extends Fragment {
                 ArrayList<String> strings = new ArrayList<>();
                 ArrayList<String> stringQuestions = new ArrayList<>();
                 ArrayList<SecurityQuestions> securityQuestions = new ArrayList<>();
-                for (int i=0; i < spinnersQuestion.size(); i++) {
+                for (int i = 0; i < spinnersQuestion.size(); i++) {
                     Spinner spinner = spinnersQuestion.get(i);
                     String question = spinner.getSelectedItem().toString();
                     EditText editTextView = appEditTextViewsAnswers.get(i);
                     String answer = editTextView.getText().toString().trim();
                     if (stringQuestions.size() > 0) {
                         if (stringQuestions.contains(question)) {
-                            errorString = "Your question have duplicated";
+                            errorString = getString(R.string.error_question_duplicate);
                             break;
                         }
                     }
                     // validate answer text
                     if (answer.isEmpty()) {
-                        errorString = String.format("Your answer of question %d is empty", (i+1));
+                        errorString = String.format(getString(R.string.error_empty_answer), (i + 1));
                         break;
                     }
 
                     if (answer.length() < 3) {
-                        errorString = String.format("Your answer of question %d must have at least 3 letter", (i+1));
+                        errorString = String.format(getString(R.string.error_min_length_answer), (i + 1));
                         break;
                     }
 
                     if (strings.size() > 0) {
                         if (strings.contains(answer)) {
-                            errorString = "Your answer have duplicated";
+                            errorString = getString(R.string.error_duplicate_answer);
                             break;
                         }
                     }
                     strings.add(answer);
                     stringQuestions.add(question);
-                    SecurityQuestions questions = new SecurityQuestions(i+1,question,answer);
+                    SecurityQuestions questions = new SecurityQuestions(i + 1, question, answer);
                     securityQuestions.add(questions);
                 }
                 if (!errorString.isEmpty()) {
-                    AppFuncs.alert(getActivity(),errorString,true);
+                    AppFuncs.alert(getActivity(), errorString, true);
                     return;
                 }
-                if (securityQuestions!=null) {
-                    String s = AppFuncs.convertToJson(securityQuestions).toString();
-                    appDelegate.onChangeInApp(ACTION_FROM_CREATE_NEW,s);
-                }
+
+                String s = AppFuncs.convertToJson(securityQuestions).toString();
+                appDelegate.onChangeInApp(ACTION_FROM_CREATE_NEW, s);
             }
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

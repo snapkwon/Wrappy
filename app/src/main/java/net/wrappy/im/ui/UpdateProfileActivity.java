@@ -321,12 +321,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
                     AppFuncs.log("Upload " + reference);
-                    if (result != null) {
-                        if (type == RestAPI.PHOTO_AVATAR) {
-                            avatarReference = reference;
-                        } else {
-                            bannerReference = reference;
-                        }
+                    if (type.equals(RestAPI.PHOTO_AVATAR)) {
+                        avatarReference = reference;
+                    } else {
+                        bannerReference = reference;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -408,7 +406,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
                 error = getString(R.string.error_invalid_email);
             } else if (TextUtils.isEmpty(email)) {
-                error = getString(R.string.error_empty_email);;
+                error = getString(R.string.error_empty_email);
             }
             if (wpkCountry != null) {
                 String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();

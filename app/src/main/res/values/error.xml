@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_question_duplicate">Your question have duplicated</string>
+    <string name="error_empty_answer">Your answer of question %d is empty</string>
+    <string name="error_min_length_answer">Your answer of question %d must have at least 3 letter</string>
+    <string name="error_duplicate_answer">Your answer have duplicated</string>
+    <string name="error_invalid_text_length">Username must be at least 6 characters</string>
+    <string name="error_invalid_characters">Username can not contain special characters</string>
+    <string name="error_empty_phone">Please input the mobile phone</string>
+    <string name="error_empty_email">Please input the email</string>
+
+</resources>

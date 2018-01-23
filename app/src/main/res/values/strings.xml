@@ -571,19 +571,16 @@
     <string name="logout_device">Logout this device</string>
     <string name="message_remove_avatar_success">Remove Avatar Success</string>
     <string name="message_remove_banner_success">Remove Banner Success</string>
-    <string name="error_invalid_email">Invalid email format</string>
+    <string name="error_invalid_email">Email is not valid format</string>
     <string name="error_get_user_profile">Could note get user profile</string>
     <string name="hint_password"><small><i>Input Password</i></small></string>
     <string name="error_reset_password">Reset password fail</string>
-    <string name="error_username_or_password">The username or password is incorrect</string>
-    <string name="error_empty_username">username cannot be empty</string>
-    <string name="error_empty_phone">phone cannot be empty</string>
+    <string name="error_username_or_password">The username or pattern is incorrect</string>
+    <string name="error_empty_username">Please input your username</string>
     <string name="warning">Warning</string>
     <string name="error_tranferring_file">Error transferring file:</string>
     <string name="message_download_attachment">Do you want to save this file?</string><!-- this flow should be defined again -->
 
-    <string name="error_invalid_text_length">Length of username must be more than 6 characters</string>
-    <string name="error_invalid_characters">Username contains special characters</string>
     <string name="error_registration">Registration fail. Try Again!</string>
 
     <string name="you_sent_sticker">You sent a sticker</string>
@@ -616,5 +613,11 @@
     <string name="invite_friends_text">Invite Friend</string>
     <string name="share_app_text">Let me recommend you this application</string>
     <string name="email_tile">Email *</string>
-    <string name="error_empty_email">Email cannot be empty</string>
+    <string name="logout_noti">Are you sure you want to logout this deivce?</string>
+    <string name="share_title">Choose sharing method</string>
+    <string name="referral_text">Enter your referral code (optional)</string>
+    <string name="input_referral_error">Username isn\'t exist</string>
+    <string name="Referral">Referral</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="question">Question %d</string>
 </resources>
