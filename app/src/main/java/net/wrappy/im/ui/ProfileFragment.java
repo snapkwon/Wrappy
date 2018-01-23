@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,12 +13,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -100,6 +104,8 @@ public class ProfileFragment extends BaseFragmentV4 {
     ImageButton btnProfileCameraHeader;
     @BindView(R.id.spnProfile)
     AppCompatSpinner spnProfile;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
 
     ArrayAdapter adapterGender;
 
@@ -127,6 +133,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         mainView = inflater.inflate(R.layout.profile_fragment, null);
         ButterKnife.bind(this, mainView);
         mApp = (ImApp) getActivity().getApplication();
@@ -174,17 +181,24 @@ public class ProfileFragment extends BaseFragmentV4 {
             }
         };
         spnProfile.setAdapter(adapterGender);
-        spnProfile.setSelection(1);
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0,1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toUpperCase();
+                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0, 1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toLowerCase();
                 edGender.setText(upperString);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (edEmail.isEnabled()) {
+                    AppFuncs.dismissKeyboard(getActivity());
+                }
             }
         });
         getDataMember();
@@ -204,9 +218,14 @@ public class ProfileFragment extends BaseFragmentV4 {
                         txtUsername.setText(wpKMemberDto.getIdentifier());
                         edEmail.setText(wpKMemberDto.getEmail());
                         edPhone.setText(wpKMemberDto.getMobile());
-                        if (wpKMemberDto.getGender()!=null) {
-                            String upperString = wpKMemberDto.getGender().substring(0,1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
-                            edGender.setText(upperString);
+                        if (wpKMemberDto.getGender() != null) {
+                            String upperString = wpKMemberDto.getGender().substring(0, 1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
+                            if (upperString.startsWith("F")) {
+                                spnProfile.setSelection(0);
+                            } else {
+                                spnProfile.setSelection(1);
+                            }
+                            //edGender.setText(upperString);
                         }
 
                         if (wpKMemberDto.getAvatar() != null) {
@@ -251,6 +270,8 @@ public class ProfileFragment extends BaseFragmentV4 {
             edEmail.clearFocus();
             edGender.clearFocus();
             edEmail.setEnabled(false);
+            edPhone.setTextColor(Color.BLACK);
+            txtUsername.setTextColor(Color.BLACK);
             wpKMemberDto.setEmail(email);
             wpKMemberDto.setGender(gender);
             updateData();
@@ -339,7 +360,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                 public void onClick(View view) {
                     logout();
                 }
-            },null);
+            }, null);
 //            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
 //            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
 //            sheetCells.add(sheetCell);
@@ -440,7 +461,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                         });
                         wpKMemberDtoTemp = wpKMemberDto;
                     } else {
-                        AppFuncs.alert(getActivity(),getString(R.string.network_error),false);
+                        AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                     }
                 } else {
                     AppFuncs.alert(getActivity(), getString(R.string.update_profile_fail), true);
@@ -458,6 +479,10 @@ public class ProfileFragment extends BaseFragmentV4 {
     public void onDataChange() {
         edEmail.setEnabled(true);
         edEmail.setFocusable(true);
+        edEmail.requestFocus();
+        edEmail.setFocusableInTouchMode(true);
+        edPhone.setTextColor(getResources().getColor(R.color.line));
+        txtUsername.setTextColor(getResources().getColor(R.color.line));
         btnProfileSubmit.setVisibility(View.VISIBLE);
         spnProfile.setVisibility(View.VISIBLE);
     }
