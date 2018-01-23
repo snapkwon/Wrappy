@@ -65,7 +65,7 @@ import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.ConnectionListener;
@@ -257,7 +257,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     }
 
     private void showPopUpNotice() {
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -1055,29 +1055,25 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             sessionTasks.clear();
             Imps.Chats.reset(getContentResolver());
             Imps.Contacts.reset(getContentResolver());
-            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListener() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
-                        try {
-                            WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
-                            syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
+                        syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
-            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
-                        try {
-                            WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                            syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });

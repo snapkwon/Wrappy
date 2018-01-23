@@ -12,9 +12,8 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
-import net.wrappy.im.util.PopupUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -25,9 +24,8 @@ import butterknife.OnClick;
 
 public class ReferralActivity extends BaseActivity {
 
-    @BindView(R.id.edReferralCode) AppEditTextView edReferralCode;
-
-    AppFuncs appFuncs;
+    @BindView(R.id.edReferralCode)
+    AppEditTextView edReferralCode;
 
     public static void start() {
         Intent intent = new Intent(ImApp.sImApp, ReferralActivity.class);
@@ -40,24 +38,17 @@ public class ReferralActivity extends BaseActivity {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle(getString(R.string.Referral));
-        appFuncs = AppFuncs.getInstance();
     }
 
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
         String referral = edReferralCode.getText().toString().trim();
         if (!TextUtils.isEmpty(referral)) {
-            appFuncs.showProgressWaiting(this);
-            RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListenner() {
+            AppFuncs.showProgressWaiting(this);
+            RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListener(this) {
                 @Override
                 protected void OnComplete(int httpCode, String error, String s) {
-                    appFuncs.dismissProgressWaiting();
-                    if (RestAPI.checkHttpCode(httpCode)) {
-                        MainActivity.start();
-                    } else {
-                        PopupUtils.showCustomDialog(ReferralActivity.this, getString(R.string.error), getString(R.string.input_referral_error), R.string.cancel, null);
-                    }
-
+                    MainActivity.start();
                 }
             });
         } else {

@@ -47,7 +47,7 @@ import net.wrappy.im.crypto.otr.OtrDataHandler;
 import net.wrappy.im.crypto.otr.OtrDebugLogger;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -923,7 +923,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
     private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
@@ -1303,7 +1303,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
 
         private void updateUnknownFriendInfoInGroup(final Uri uri, final String bareAddress, String jid) {
-            RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListenner() {
+            RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.d(s);

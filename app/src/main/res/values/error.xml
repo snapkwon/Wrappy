@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_question_duplicate">Your question have duplicated</string>
+    <string name="error_empty_answer">Your answer of question %d is empty</string>
+    <string name="error_min_length_answer">Your answer of question %d must have at least 3 letter</string>
+    <string name="error_duplicate_answer">Your answer have duplicated</string>
+    <string name="error_invalid_text_length">Username must be at least 6 characters</string>
+    <string name="error_invalid_characters">Username can not contain special characters</string>
+    <string name="error_empty_phone">Please input the mobile phone</string>
+    <string name="error_empty_email">Please input the email</string>
+    <string name="error_input_referral">Referral is not valid</string>
+    <string name="error_empty_passcode">Please input the passcode</string>
+    <string name="error_invalid_passcode">Please check the passcode</string>
+    <string name="error_invalid_email">Email is not valid format</string>
+    <string name="error_group_name_empty">Please input the group name</string>
+    <string name="error_group_empty">Please choose members</string>
+    <string name="error_empty_username">Please input your username</string>
+    <string name="error_wrong_answer_1st">Answer wrong! Try Again</string>
+    <string name="error_wrong_answer_2nd">Answer wrong! Try Email</string>
+
+
+    <!--error code from server-->
+    <string name="error_0">Internet may not be available. Please check again</string>
+    <string name="error_400">The username or pattern is incorrect</string>
+    <string name="error_8000">Version mismatch</string>
+    <string name="error_8001">Access is denied</string>
+    <string name="error_8002">Please try again later</string>
+    <string name="error_8003">Member already exists</string>
+    <string name="error_8004">Member not exists</string>
+    <string name="error_8005">Member already activated</string>
+    <string name="error_8006">Member not activated</string>
+    <string name="error_8007">Member invalid email address</string>
+    <string name="error_8009">Verification code expiry or invalid</string>
+    <string name="error_8010">Asset not exists</string>
+    <string name="error_8011">Asset retain failure file empty</string>
+    <string name="error_8013">Asset fetch failure file unavailable</string>
+    <string name="error_8016">Asset type not determines</string>
+    <string name="error_8017">Registrant not exists</string>
+    <string name="error_8020">Mail exception</string>
+    <string name="error_8021">Sms exception payload length exceed limit</string>
+    <string name="error_8022">Username already exists</string>
+    <string name="error_8023">Mobile already exists</string>
+    <string name="error_8024">Email already exists</string>
+    <string name="error_8025">Resource not exists</string>
+    <string name="error_8026">Member security questions not found</string>
+    <string name="error_8027">Member doesn\'t exist</string>
+    <string name="error_8028">Email doesn\'t exist</string>
+    <string name="error_8029">Report already exists</string>
+    <string name="error_8030">Report already not exists</string>
+    <string name="error_8031">Inviter user not exists</string>
+    <string name="error_8032">Create user on the xmpp fail</string>
+
+</resources>

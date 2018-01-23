@@ -52,7 +52,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -1190,8 +1190,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
     public boolean doUpgrade(Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener) {
 
-        boolean result = false;
-
         long lastAccountId = settings.getLong("defaultAccountId", -1);
 
         final Uri uri = Imps.Provider.CONTENT_URI_WITH_ACCOUNT;
@@ -1238,8 +1236,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         mNeedsAccountUpgrade = false;
 
-        return result;
-
+        return false;
     }
 
     /*
@@ -1259,23 +1256,20 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                             IContactListManager manager = mConn.getContactListManager();
                             manager.approveSubscription(contact);
                         } else {
-                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListenner() {
+                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListener() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
-                                    if (RestAPI.checkHttpCode(httpCode)) {
-                                        try {
-                                            IContactListManager manager = null;
-                                            manager = mConn.getContactListManager();
-                                            if (TextUtils.isEmpty(s)) {
-                                                //Remove contact not exist in DB
-                                                ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
-                                            } else {
-                                                ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
-                                                manager.approveSubscription(contact);
-                                            }
-                                        } catch (RemoteException e1) {
-                                            e1.printStackTrace();
+                                    try {
+                                        IContactListManager manager = mConn.getContactListManager();
+                                        if (TextUtils.isEmpty(s)) {
+                                            //Remove contact not exist in DB
+                                            ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
+                                        } else {
+                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
+                                            manager.approveSubscription(contact);
                                         }
+                                    } catch (RemoteException e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
                             });

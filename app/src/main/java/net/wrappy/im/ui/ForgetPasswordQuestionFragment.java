@@ -19,7 +19,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.WpKMemberSecurityQuestionDto;
@@ -42,11 +42,16 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     private static String TYPE = "typeofsecu";
 
     View mainView;
-    @BindView(R.id.txtSecurityForgetQuestion01) AppTextView txtSecurityForgetQuestion01;
-    @BindView(R.id.txtSecurityForgetQuestion02) AppTextView txtSecurityForgetQuestion02;
-    @BindView(R.id.edSecurityForgetQuestion01) AppEditTextView edSecurityForgetQuestion01;
-    @BindView(R.id.edSecurityForgetQuestion02) AppEditTextView edSecurityForgetQuestion02;
-    @BindView(R.id.txtSecurityQuestionTitle) AppTextView txtSecurityQuestionTitle;
+    @BindView(R.id.txtSecurityForgetQuestion01)
+    AppTextView txtSecurityForgetQuestion01;
+    @BindView(R.id.txtSecurityForgetQuestion02)
+    AppTextView txtSecurityForgetQuestion02;
+    @BindView(R.id.edSecurityForgetQuestion01)
+    AppEditTextView edSecurityForgetQuestion01;
+    @BindView(R.id.edSecurityForgetQuestion02)
+    AppEditTextView edSecurityForgetQuestion02;
+    @BindView(R.id.txtSecurityQuestionTitle)
+    AppTextView txtSecurityQuestionTitle;
 
     AppDelegate appDelegate;
     ArrayList<WpKMemberSecurityQuestionDto> stringQuestions = new ArrayList<>();
@@ -65,7 +70,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     public static ForgetPasswordQuestionFragment newInstance(int type) {
         ForgetPasswordQuestionFragment fragment = new ForgetPasswordQuestionFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(TYPE,type);
+        bundle.putInt(TYPE, type);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -73,11 +78,11 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.forget_password_question_fragment,null);
+        mainView = inflater.inflate(R.layout.forget_password_question_fragment, null);
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
-        type = getArguments().getInt(TYPE,0);
-        if (type==1) {
+        type = getArguments().getInt(TYPE, 0);
+        if (type == 1) {
             txtSecurityQuestionTitle.setText(getString(R.string.security_change_old_question));
         }
         getListQuestion();
@@ -85,20 +90,12 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     }
 
     private void getListQuestion() {
-        appFuncs.showProgressWaiting(getActivity());
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS+ Store.getStringData(getActivity(),Store.USERNAME) , new RestAPIListenner() {
-
-
-
+        AppFuncs.showProgressWaiting(getActivity());
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS + Store.getStringData(getActivity(), Store.USERNAME), new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    appFuncs.dismissProgressWaiting();
-                    if (!RestAPI.checkHttpCode(httpCode)) {
-                        AppFuncs.alert(getActivity(),"Check internet connection",true);
-                        getActivity().finish();
-                        return;
-                    }
+                    AppFuncs.dismissProgressWaiting();
 
                     JsonArray jsonArray = (new JsonParser()).parse(s).getAsJsonArray();
 
@@ -114,13 +111,13 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                             questionDto.setIndex(index);
                             stringQuestions.add(questionDto);
 
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                     txtSecurityForgetQuestion01.setText("1. " + stringQuestions.get(0).getQuestion());
                     txtSecurityForgetQuestion02.setText("2. " + stringQuestions.get(1).getQuestion());
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -134,30 +131,30 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         String answer02 = edSecurityForgetQuestion02.getText().toString().trim();
         String error = "";
         if (answer01.isEmpty()) {
-            error = "Answer of question 01 is empty";
+            error = String.format(getString(R.string.error_empty_answer), 1);
         } else if (answer02.isEmpty()) {
-            error = "Answer of question 02 is empty";
+            error = String.format(getString(R.string.error_empty_answer), 2);
         } else {
-            if (stringQuestions!=null && stringQuestions.size() > 1) {
+            if (stringQuestions != null && stringQuestions.size() > 1) {
                 stringQuestions.get(0).setAnswer(answer01);
                 stringQuestions.get(1).setAnswer(answer02);
                 postResultToServer();
             }
         }
         if (!error.isEmpty()) {
-            AppFuncs.alert(getActivity(),error,true);
+            AppFuncs.alert(getActivity(), error, true);
         }
     }
 
     private void postResultToServer() {
         JsonObject jsonObject = new JsonObject();
         try {
-            jsonObject.add("kMemberSecurityQuestionDtoList",AppFuncs.convertToJson(stringQuestions).getAsJsonArray());
-        }catch (Exception ex){
+            jsonObject.add("kMemberSecurityQuestionDtoList", AppFuncs.convertToJson(stringQuestions).getAsJsonArray());
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if (type==0) {
+        if (type == 0) {
             postDataForForgetPassword(jsonObject);
         } else {
             postDataForChangeSecurityQuestions(jsonObject);
@@ -165,44 +162,47 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
 
     }
+
     int time = 0;
+
     private void postDataForForgetPassword(JsonObject json) {
-        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    if (!TextUtils.isEmpty(s))
-                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
-                } else {
-                    if (time > 2) {
-                        AppFuncs.alert(getActivity(), "Answer wrong! Try Email", true);
-                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,"");
-                    } else {
-                        AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
-                    }
-                    time++;
+                if (!TextUtils.isEmpty(s))
+                    appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
+            }
 
+            @Override
+            protected void onError(int errorCode) {
+                if (time > 2) {
+                    AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_2nd), true);
+                    appDelegate.onChangeInApp(ACTION_FROM_QUESTION, "");
+                } else {
+                    AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_1st), true);
                 }
+                time++;
             }
         });
     }
 
     private void postDataForChangeSecurityQuestions(JsonObject json) {
-        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListenner() {
+        RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    if (!TextUtils.isEmpty(s))
-                        appDelegate.onChangeInApp(ACTION_FROM_QUESTION,s);
-                } else {
-                    AppFuncs.alert(getActivity(), "Answer wrong! Try Again", true);
-                }
+                if (!TextUtils.isEmpty(s))
+                    appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
+            }
+
+            @Override
+            protected void onError(int errorCode) {
+                AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_1st), true);
             }
         });
     }
 
     private void TAG(String s) {
-        Log.i("LTH",s);
+        Log.i("LTH", s);
     }
 
 }
