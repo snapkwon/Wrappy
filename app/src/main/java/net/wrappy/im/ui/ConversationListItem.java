@@ -38,11 +38,13 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.zxing.common.StringUtils;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -52,6 +54,7 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.DateUtils;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -251,6 +254,10 @@ public class ConversationListItem extends FrameLayout {
 //                        setThumbnail(getContext().getContentResolver(), holder, mediaUri);
                         String resultMessage = message;
                         if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                            String state = ConferenceUtils.getStateConferenceMessage(message);
+                            if (state.contains("missed")) {
+                                holder.mLine2.setTextColor(Color.RED);
+                            }
                             holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
                         } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
                                 message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
