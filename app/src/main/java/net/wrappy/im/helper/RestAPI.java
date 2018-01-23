@@ -344,7 +344,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(0, null, null);
+                    listenner.onError(0);
                 }
 
             }
@@ -368,7 +368,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(0, null, null);
+                    listenner.onError(0);
                 }
 
             }
@@ -391,6 +391,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    listenner.onError(0);
                 }
 
             }
@@ -401,14 +402,19 @@ public class RestAPI {
         apiGET(context, url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
-                    if (checkExpiredToken(result.getResult())) {
-                        refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
+                try {
+                    if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredToken(result.getResult())) {
+                            refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
+                        }
+                    } else if (checkHttpCode(result.getHeaders().code())) {
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    } else {
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
                     }
-                } else if (checkHttpCode(result.getHeaders().code())) {
-                    listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
-                } else {
-                    listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    listenner.onError(0);
                 }
             }
         });
@@ -485,9 +491,9 @@ public class RestAPI {
                     } else if (method == GET_METHOD) {
                         GetDataWrappy(context, url, listenner);
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    listenner.onError(0);
                 }
             }
         });

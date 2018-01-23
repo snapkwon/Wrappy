@@ -56,7 +56,6 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     AppDelegate appDelegate;
     ArrayList<WpKMemberSecurityQuestionDto> stringQuestions = new ArrayList<>();
 
-    int count = 0;
     int type = 0;
 
     @Override
@@ -190,13 +189,10 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (!TextUtils.isEmpty(s))
+                if ("true".equals(s))
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
-            }
-
-            @Override
-            protected void onError(int errorCode) {
-                AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_1st), true);
+                else
+                    AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_1st), true);
             }
         });
     }
