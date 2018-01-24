@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ViewFlipper;
 
 import net.wrappy.im.R;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.util.PopupUtils;
 
@@ -63,12 +62,6 @@ public class LauncherActivity extends BaseActivity {
                     PopupUtils.showCustomDialog(LauncherActivity.this, getString(R.string.warning), getString(R.string.error_empty_username)
                             , R.string.yes, null, false);
                 } else {
-                    String username = mEditUsername.getText().toString().trim();
-                    if (AppFuncs.detectSpecialCharacters(username)) {
-                        PopupUtils.showCustomDialog(LauncherActivity.this, getString(R.string.warning), getString(R.string.error_special_characters)
-                                , R.string.yes, null, false);
-                         return;
-                    }
                     Store.putStringData(getApplicationContext(), Store.USERNAME, mEditUsername.getText().toString().trim());
                     showLogin();
                 }
