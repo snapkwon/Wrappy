@@ -2,14 +2,14 @@
 {
   "servers":[
     {
-      "domain": "im.proteusiondev.com",
-      "server": "im.proteusiondev.com",
+      "domain": "im.wrappy.network",
+      "server": "im.wrappy.network",
       "address": "10.11.5.12",
       "port": 5222,
       "certificate": "",
       "logoUrl": "https://s3....",
       "country": "ch",
-      "muc": "conference.im.proteusiondev.com"
+      "muc": "conference.im.wrappy.network"
     },
     {
       "domain": "blah.im",

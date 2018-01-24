@@ -105,7 +105,6 @@ public class AddContactActivity extends BaseActivity {
         TextView label = (TextView) findViewById(R.id.input_contact_label);
 
         mNewAddress = (EditText) findViewById(R.id.email);
-        mNewAddress.setText("w2qqu70f@im.proteusiondev.com");
         mNewAddress.addTextChangedListener(mTextWatcher);
 
         mNewAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
