@@ -401,7 +401,7 @@
     <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Your keystore is corrupted. Please re-install Wrappy or \'clear data\' for the app</string>
     <string name="swipe_hint">&lt; swipe left and right for more options &gt;</string>
 
-    <string name="no_convos">Time to start Wrappy!</string>
+    <string name="no_convos">Time to start using Wrappy</string>
 
     <string name="title_more">Discover</string>
     <string name="title_me">Me</string>
