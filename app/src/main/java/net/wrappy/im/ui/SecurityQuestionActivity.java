@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.util.PopupUtils;
 
 /**
@@ -73,30 +74,33 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
                 try {
                     JsonArray jsonArray = AppFuncs.convertToJson(data).getAsJsonArray();
                     jsonObject.add("kMemberSecurityQuestionDtoList", jsonArray);
-                    RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.PUT_CHANGE_SECURITY_QUESTION, new RestAPIListenner() {
+                    RestAPIListener listener = new RestAPIListener(this) {
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
-                            if (RestAPI.checkHttpCode(httpCode)) {
-                                isFinish = true;
-                                ImageView view = new ImageView(SecurityQuestionActivity.this);
-                                view.setImageResource(R.drawable.waiting_success);
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                params.gravity = Gravity.CENTER;
-                                view.setLayoutParams(params);
-                                PopupUtils.showCustomViewDialog(SecurityQuestionActivity.this,view,getString(R.string.success), getString(R.string.secu_success_description),-1,-1,null,null);
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                    }
-                                },2000);
-                            } else {
-                                AppFuncs.alert(getApplicationContext(), getString(R.string.fail), true);
-                                finish();
-                            }
+                            isFinish = true;
+                            ImageView view = new ImageView(SecurityQuestionActivity.this);
+                            view.setImageResource(R.drawable.waiting_success);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            params.gravity = Gravity.CENTER;
+                            view.setLayoutParams(params);
+                            PopupUtils.showCustomViewDialog(SecurityQuestionActivity.this, view, getString(R.string.success), getString(R.string.secu_success_description), -1, -1, null, null);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                }
+                            }, 2000);
+                        }
+
+                    };
+                    listener.setOnListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
                         }
                     });
-                }catch (Exception ex){
+                    RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.PUT_CHANGE_SECURITY_QUESTION, listener);
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 break;

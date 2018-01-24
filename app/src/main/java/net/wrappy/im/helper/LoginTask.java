@@ -7,6 +7,7 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -54,6 +55,14 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
                 keyMan.storeKeyPair(jabberId, keyPair);
             }
 
+            XmppConnection t = new XmppConnection(ImApp.sImApp);
+            int status = t.check_login(registrationAccount.getPassword(), result.accountId, result.providerId);
+            if (status == 200) {
+                ImApp.sImApp.setDefaultAccount(result.providerId, result.accountId);
+            } else {
+                return null;
+            }
+
             return result;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
@@ -70,8 +79,6 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
             listenner.OnComplete(false, null);
             return;
         }
-        ImApp mApp = (ImApp) activity.getApplication();
-        mApp.setDefaultAccount(account.providerId, account.accountId);
 
         SignInHelper signInHelper = new SignInHelper(activity, mHandler);
         signInHelper.setSignInListener(new SignInHelper.SignInListener() {

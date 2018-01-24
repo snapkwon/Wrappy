@@ -63,9 +63,9 @@ public class AppFuncs {
         return _ins;
     }
 
-    ProgressDialog dialog;
+    private static ProgressDialog dialog;
 
-    public void showProgressWaiting(Activity activity) {
+    public static void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setMessage(activity.getString(R.string.waiting_dialog));
@@ -74,7 +74,7 @@ public class AppFuncs {
         }
     }
 
-    public void dismissProgressWaiting() {
+    public static void dismissProgressWaiting() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -318,7 +318,8 @@ public class AppFuncs {
             View view = activity.getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                if (imm.isAcceptingText())
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -375,7 +376,7 @@ public class AppFuncs {
     }
 
     public static void getSyncUserInfo(final long accountId) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);
@@ -390,16 +391,15 @@ public class AppFuncs {
     }
 
     public static void sendRequestInviteFriend(final Activity activity) {
-        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListenner() {
+        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListener(activity) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (RestAPI.checkHttpCode(httpCode)) {
                         Gson gson = new Gson();
-                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>(){}.getType());
-                        AppFuncs.shareApp(activity,promotionSetting.getContent());
-                    }
-                }catch (Exception ex) {
+                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
+                        }.getType());
+                        AppFuncs.shareApp(activity, promotionSetting.getContent());
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }

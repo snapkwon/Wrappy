@@ -29,6 +29,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -38,7 +39,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.Contact;
@@ -971,11 +972,11 @@ public class ContactListManagerAdapter extends
             mResolver.update(uri, values, null, null);
         } else {
             //Do load info from Server and insert into database client
-            RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), new RestAPIListenner() {
+            RestAPIListener listener = new RestAPIListener() {
 
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
-                    if (RestAPI.checkHttpCode(httpCode) && !TextUtils.isEmpty(s)) {
+                    if (!TextUtils.isEmpty(s)) {
                         try {
                             ContentValues values = new ContentValues(6);
                             values.put(Imps.Contacts.USERNAME, username);
@@ -994,7 +995,14 @@ public class ContactListManagerAdapter extends
                         ImApp.removeContact(mResolver, username, mConn);
                     }
                 }
+            };
+            listener.setOnListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ImApp.removeContact(mResolver, username, mConn);
+                }
             });
+            RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), listener);
         }
         cursor.close();
     }
@@ -1328,7 +1336,7 @@ public class ContactListManagerAdapter extends
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subStatus);
 
         final Uri uri = mResolver.insert(mContactUrl, values);
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPIListenner() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 Debug.d(s);

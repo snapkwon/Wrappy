@@ -100,7 +100,7 @@ import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
@@ -1261,7 +1261,7 @@ public class ConversationView implements OnHandleMessage {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("message", mComposeMessage.getText().toString());
 
-        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPIListenner() {
+        RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPIListener(mActivity) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 AppFuncs.log(s);
@@ -3068,7 +3068,7 @@ public class ConversationView implements OnHandleMessage {
 
         }
 
-        public void sendReportMessage(String reporter, String member, String messageId,
+        private void sendReportMessage(String reporter, String member, String messageId,
                                       String reference, String type) {
 
             JsonObject reporterObject = new JsonObject();
@@ -3084,7 +3084,7 @@ public class ConversationView implements OnHandleMessage {
             jsonObject.addProperty("screenShot", reference);
             jsonObject.addProperty("type", type);
 
-            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPIListenner() {
+            RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPIListener(mActivity) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.e(s);
@@ -3098,7 +3098,7 @@ public class ConversationView implements OnHandleMessage {
          *
          * @param view
          */
-        public Bitmap captureView(View view) {
+        private Bitmap captureView(View view) {
             // create a bitmap with the same dimensions
             Bitmap image = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.RGB_565);
             // draw the view inside the Bitmap

@@ -39,7 +39,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.service.IImConnection;
@@ -48,6 +48,7 @@ import net.wrappy.im.ui.adapters.ContactAdapter;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Debug;
+import net.wrappy.im.util.PopupUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -113,7 +114,7 @@ public class AddContactNewActivity extends BaseActivity {
 
     private void searchUsername(String s) {
         if (!TextUtils.isEmpty(s)) {
-            RestAPI.GetDataWrappy(this, String.format(RestAPI.GET_SEARCH_USERNAME, s), new RestAPIListenner() {
+            RestAPI.GetDataWrappy(this, String.format(RestAPI.GET_SEARCH_USERNAME, s), new RestAPIListener(this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     Debug.d(s);
@@ -126,7 +127,8 @@ public class AddContactNewActivity extends BaseActivity {
                     }
                 }
             });
-        }
+        } else
+            PopupUtils.showOKDialog(this, getString(R.string.error), getString(R.string.error_empty_username));
     }
 
     @Override

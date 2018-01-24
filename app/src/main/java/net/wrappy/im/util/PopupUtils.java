@@ -57,6 +57,10 @@ public class PopupUtils {
         builder.show();
     }
 
+    public static void showOKDialog(Context context, String title, String message) {
+        showCustomDialog(context, title, message, R.string.ok, -1, null, null, true);
+    }
+
     public static void showOKDialog(Context context, String title, String message, View.OnClickListener onOkListener) {
         showCustomDialog(context, title, message, R.string.ok, -1, onOkListener, null, true);
     }
@@ -79,16 +83,20 @@ public class PopupUtils {
 
     public static void showCustomDialog(Context context, String title, String message, int resOK, int resCancel, View.OnClickListener onOkListener, View.OnClickListener onCancelListener, boolean isCancelable) {
         dismissDialog();
-        View dialogView = getView(context, R.layout.custom_alert_dialog);
-        AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
+        try {
+            View dialogView = getView(context, R.layout.custom_alert_dialog);
+            AlertDialog.Builder builder = getBuilderDialog(context, dialogView, isCancelable);
 
-        dialog = builder.show();
-        handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
-        handleTexts(dialogView, title, message);
+            dialog = builder.show();
+            handleButtons(dialog, dialogView, resOK, resCancel, onOkListener, onCancelListener);
+            handleTexts(dialogView, title, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void dismissDialog(){
-        if(dialog != null && dialog.isShowing())
+    private static void dismissDialog() {
+        if (dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
 
@@ -216,11 +224,11 @@ public class PopupUtils {
 
     public static BottomSheetDialog createBottomSheet(Activity activity, ArrayList<BottomSheetCell> sheetCells, final BottomSheetListener sheetListener) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(activity);
-        final View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_dialog,null);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_dialog, null);
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.bottomSheetContainer);
-        for (int i=0; i < sheetCells.size(); i++) {
+        for (int i = 0; i < sheetCells.size(); i++) {
             final int index = sheetCells.get(i).getIndex();
-            linearLayout.addView(createBottomSheetCell(activity,sheetCells.get(i).getResId(), sheetCells.get(i).getTitle(), new View.OnClickListener() {
+            linearLayout.addView(createBottomSheetCell(activity, sheetCells.get(i).getResId(), sheetCells.get(i).getTitle(), new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     sheetListener.onSelectBottomSheetCell(index);
@@ -240,8 +248,8 @@ public class PopupUtils {
     }
 
     private static View createBottomSheetCell(Activity activity, int resId, String tite, View.OnClickListener listener) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_cell,null);
-        if (resId!=0) {
+        View view = LayoutInflater.from(activity).inflate(R.layout.bottom_sheet_cell, null);
+        if (resId != 0) {
             ImageView imageView = (ImageView) view.findViewById(R.id.bottomSheetIcon);
             imageView.setImageResource(resId);
         }

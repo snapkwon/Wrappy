@@ -20,7 +20,6 @@ import com.koushikdutta.ion.builder.Builders;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.model.BaseObject;
-import net.wrappy.im.model.T;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.model.translate.DetectLanguageResponse;
 import net.wrappy.im.model.translate.TranslateLanguageResponse;
@@ -49,40 +48,40 @@ import javax.net.ssl.X509TrustManager;
 
 public class RestAPI {
 
-    private static int TIME_OUT = 120000;
+    private static final int TIME_OUT = 120000;
 
-    public static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
+    private static String root_url = "https://webserv-ci.proteusiondev.com:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
-    public static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
+    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
     public static String POST_ADD_CONTACT = root_url + "chat/roster/%s";// account
     public static String DELETE_CONTACT = root_url + "chat/roster/%s";// account
     public static String GET_QUESTIONS_SECURITY = root_url + "master/security";
-    public static String POST_REFRESH_TOKEN = root_url + "oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
+    private static String POST_REFRESH_TOKEN = root_url + "oauth/token?grant_type=refresh_token&refresh_token=%s&scope=all";
     public static String POST_REGISTER = root_url + "member/registration";
     public static String POST_REGISTER_DEV = root_url + "member/registration";
-    public static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
+    private static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     public static String POST_CREATE_GROUP = root_url + "chat/group";
-    public static String POST_PHOTO = root_url + "kernal/asset/retain/";
-    public static String GET_PHOTO = root_url + "kernal/asset/";
+    private static String POST_PHOTO = root_url + "kernal/asset/retain/";
+    private static String GET_PHOTO = root_url + "kernal/asset/";
     public static String PHOTO_REFERENCE = "reference";
     public static String PHOTO_AVATAR = "AVATAR";
     public static String PHOTO_BRAND = "BRAND";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
-    public static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
-    public static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
+    private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
+    private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
     public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
-    public static String GET_FORGET_PASS_SEND_EMAIL = root_url + "member/%s/%s/password/mail";
+    private static String GET_FORGET_PASS_SEND_EMAIL = root_url + "member/%s/%s/password/mail";
     public static String GET_COUNTRY_CODES = root_url + "master/country";
     public static String GET_TYPE_ROSTER = root_url + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url + "chat/roster/group/add";
-    public static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
+    private static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
     public static String POST_CHANGE_QUESTION_CHECK = root_url + "member/security/check";
     public static String PUT_CHANGE_SECURITY_QUESTION = root_url + "member/security/";
-    public static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
+    private static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
     public static String POST_CHECK_OBJECTIONABLE = root_url + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url + "chat/report";
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
@@ -91,9 +90,9 @@ public class RestAPI {
     public static String DELETE_BANNER = root_url + "member/banner";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
     public static String CHAT_GROUP = root_url + "chat/group";
-    public static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
+    private static String POST_VERIFY_CODE = root_url + "member/sms/active/%s/%s";
     private static String POST_VERIFY_CODE_CHANGE_PHONE = root_url + "member/mobile/update/%s/%s/%s";
-    public static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
+    private static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
     public static String GET_PROMOTION_BALANCE = root_url + "member/promotion/invitation/bonus_balance";
@@ -109,7 +108,7 @@ public class RestAPI {
     private static int DELETE_METHOD = 1;
     private static int GET_METHOD = 2;
 
-    public static int NUMBER_REQUEST_TOKEN = 3;
+    private static int NUMBER_REQUEST_TOKEN = 3;
 
     public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
         return String.format(POST_VERIFY_CODE_CHANGE_PHONE, user, oldPhone, newPhone);
@@ -143,7 +142,7 @@ public class RestAPI {
         return String.format(POST_FORGET_PASS_CHECK_QUESTIONS, username);
     }
 
-    public static String refreshTokenUrl(Context context) {
+    private static String refreshTokenUrl(Context context) {
         String refreshToken = Store.getStringData(context, WpkToken.STORE_REFRESH_TOKEN);
         return String.format(POST_REFRESH_TOKEN, refreshToken);
     }
@@ -202,11 +201,11 @@ public class RestAPI {
     }
 
 
-    public static boolean checkHttpCode(int code) {
+    private static boolean checkHttpCode(int code) {
         return (code == 200) || (code == 201);
     }
 
-    public static TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
+    private static TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
 
         public void checkClientTrusted(
                 java.security.cert.X509Certificate[] certs, String authType) {
@@ -305,7 +304,7 @@ public class RestAPI {
     }
 
 
-    public static void PostDataWrappyArray(final Context context, final JsonArray jsonObject, final String url, final RestAPIListenner listenner) {
+    public static void PostDataWrappyArray(final Context context, final JsonArray jsonObject, final String url, final RestAPIListener listenner) {
         apiPOSTArray(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -315,19 +314,20 @@ public class RestAPI {
                             refreshTokenHttps(context, jsonObject, null, url, listenner, POST_METHOD);
                         }
 
+                    } else if (checkHttpCode(result.getHeaders().code())) {
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.OnComplete((result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     listenner.OnComplete(0, null, null);
                 }
-
             }
         });
     }
 
-    public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
+    public static void PostDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListener listenner) {
         apiPOST(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -337,20 +337,21 @@ public class RestAPI {
                         if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
-
-                    } else {
+                    } else if (checkHttpCode(result.getHeaders().code())) {
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    } else {
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(0, null, null);
+                    listenner.onError(0);
                 }
 
             }
         });
     }
 
-    public static void PutDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
+    public static void PutDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListener listenner) {
         apiPUT(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -360,20 +361,21 @@ public class RestAPI {
                         if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
-
-                    } else {
+                    } else if (checkHttpCode(result.getHeaders().code())) {
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    } else {
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(0, null, null);
+                    listenner.onError(0);
                 }
 
             }
         });
     }
 
-    public static void DeleteDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListenner listenner) {
+    public static void DeleteDataWrappy(final Context context, final JsonObject jsonObject, final String url, final RestAPIListener listenner) {
         apiDELETE(context, url, jsonObject).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -382,46 +384,43 @@ public class RestAPI {
                         if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, DELETE_METHOD);
                         }
-
-                    } else {
+                    } else if (checkHttpCode(result.getHeaders().code())) {
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    } else {
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    listenner.onError(0);
                 }
 
             }
         });
     }
 
-    public static void GetDataWrappy(final Context context, final String url, final RestAPIListenner listenner) {
+    public static void GetDataWrappy(final Context context, final String url, final RestAPIListener listenner) {
         apiGET(context, url).setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
-                if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
-                    if (checkExpiredToken(result.getResult())) {
-                        refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
+                try {
+                    if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
+                        if (checkExpiredToken(result.getResult())) {
+                            refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
+                        }
+                    } else if (checkHttpCode(result.getHeaders().code())) {
+                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                    } else {
+                        listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
                     }
-
-                } else {
-                    listenner.OnComplete((result != null && result.getHeaders() != null) ? result.getHeaders().code() : 0, (e != null) ? e.getLocalizedMessage() : null, (result != null) ? result.getResult() : null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    listenner.onError(0);
                 }
             }
         });
     }
 
-    public static void GetDataWrappy(Context context, String url) {
-        String header = getHeaderHttps(context, url);
-        Ion.with(context).load(url).setTimeout(120000).addHeader("Authorization", header).as(new TypeToken<T>() {
-        }).withResponse().setCallback(new FutureCallback<Response<T>>() {
-            @Override
-            public void onCompleted(Exception e, Response<T> result) {
-
-            }
-        });
-    }
-
-//    public static void UploadFile(Context context, String url, String type, File file, final RestAPIListenner listenner) {
+//    public static void UploadFile(Context context, String url, String type, File file, final RestAPIListener listenner) {
 //        String header = getHeaderHttps(context,url);
 //        Ion.with(context)
 //                .load(url)
@@ -449,8 +448,7 @@ public class RestAPI {
 
     private static int numberRefreshToken = 0;
 
-
-    public static void refreshTokenHttps(final Context context, final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListenner listenner, final int method) {
+    private static void refreshTokenHttps(final Context context, final JsonArray jsonarray, final JsonObject json, final String url, final RestAPIListener listenner, final int method) {
         Ion.with(context).load("POST", refreshTokenUrl(context)).addHeader("Authorization", "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
@@ -493,9 +491,9 @@ public class RestAPI {
                     } else if (method == GET_METHOD) {
                         GetDataWrappy(context, url, listenner);
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    listenner.onError(0);
                 }
             }
         });
@@ -512,5 +510,10 @@ public class RestAPI {
         Type type = new TypeToken<HashMap<String, String>>() {
         }.getType();
         return gson.fromJson(object, type);
+    }
+
+    public static int getErrorCodeFromResponse(String response) {
+        JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
+        return jsonObject.get("code").getAsInt();
     }
 }
