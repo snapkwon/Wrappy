@@ -10,9 +10,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.util.PopupUtils;
 
@@ -23,8 +25,11 @@ public class LauncherActivity extends BaseActivity {
     private EditText mEditUsername;
     private Button mBtnLogin;
     private Button mBtnregister;
+    LinearLayout lnLoginFrame;
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
+
+    boolean isFlag;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, LauncherActivity.class);
@@ -50,7 +55,7 @@ public class LauncherActivity extends BaseActivity {
         getSupportActionBar().setTitle("");
 
         mViewFlipper.setDisplayedChild(0);
-
+        lnLoginFrame = (LinearLayout) viewSplash.findViewById(R.id.lnLoginFrame);
         mEditUsername = (EditText) viewSplash.findViewById(R.id.edtUserMame);
         mBtnLogin = (Button) viewSplash.findViewById(R.id.btnShowLogin);
         mBtnregister = (Button) viewSplash.findViewById(R.id.btnShowRegister);
@@ -75,7 +80,16 @@ public class LauncherActivity extends BaseActivity {
             }
         });
 
-
+        lnLoginFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFlag) {
+                    return;
+                } isFlag = true;
+                AppFuncs.dismissKeyboard(LauncherActivity.this);
+                isFlag = false;
+            }
+        });
     }
 
     @Override
