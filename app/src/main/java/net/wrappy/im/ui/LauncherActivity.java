@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -57,7 +58,7 @@ public class LauncherActivity extends BaseActivity {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEditUsername.getText().toString().isEmpty()) {
+                if (TextUtils.isEmpty(mEditUsername.getText().toString().trim())) {
                     PopupUtils.showCustomDialog(LauncherActivity.this, getString(R.string.warning), getString(R.string.error_empty_username)
                             , R.string.yes, null, false);
                 } else {
