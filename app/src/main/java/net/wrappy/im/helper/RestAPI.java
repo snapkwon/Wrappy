@@ -49,10 +49,10 @@ import javax.net.ssl.X509TrustManager;
 public class RestAPI {
 
     private static final int TIME_OUT = 120000;
-    
+
     private static String root_url = "http://webserv-ci.wrappy.network:8080/8EF640C4836D96CE990B71F60E0EA1DB/";
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
-    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
+//    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
@@ -85,7 +85,7 @@ public class RestAPI {
     public static String POST_CHECK_OBJECTIONABLE = root_url + "chat/check-objectionable";
     public static String POST_REPORT_MESSAGE = root_url + "chat/report";
     public static String GET_POPUP_NOTICE = root_url + "kernal/notice";
-    public static String GET_LIST_CONTACT = root_url_dev + "chat/roster";
+    public static String GET_LIST_CONTACT = root_url + "chat/roster";
     public static String DELETE_AVATAR = root_url + "member/avatar";
     public static String DELETE_BANNER = root_url + "member/banner";
     public static String GET_GROUP_BY_XMPP_ID = root_url + "chat/group/%s/by-xmpp-group-id";
@@ -102,7 +102,7 @@ public class RestAPI {
     public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
     public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
     public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
-    public static String REFERRAL = root_url_dev + "member/inviter/%s";
+    public static String REFERRAL = root_url + "member/inviter/%s";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
