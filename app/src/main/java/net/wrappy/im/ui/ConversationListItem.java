@@ -27,9 +27,13 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -211,7 +215,13 @@ public class ConversationListItem extends FrameLayout {
 //                            }
 
 //                            setThumbnail(getContext().getContentResolver(), holder, Uri.parse(vPath));
-                            holder.mLine2.setText(R.string.incoming_attachment);
+                            Drawable drawable = ContextCompat.getDrawable(ImApp.sImApp, R.drawable.ic_picture);
+                            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                            ImageSpan imageSpan = new ImageSpan(drawable, DynamicDrawableSpan.ALIGN_BASELINE);
+                            SpannableStringBuilder builder = new SpannableStringBuilder();
+                            builder.append("  ").append(" Picture message");
+                            builder.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            holder.mLine2.setText(builder);
 //                            holder.mLine2.setVisibility(View.GONE);
 
                         }
