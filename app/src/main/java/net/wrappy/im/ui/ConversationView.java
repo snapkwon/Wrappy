@@ -51,8 +51,10 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
@@ -1219,6 +1221,24 @@ public class ConversationView implements OnHandleMessage {
                 }
                 sendMessageAsync();
                 return true;
+            }
+        });
+
+        mComposeMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                sendTypingStatus(true);
+                onOffMenuChat(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
 
