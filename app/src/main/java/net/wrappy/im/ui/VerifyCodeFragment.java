@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.alimuzaffar.lib.pin.PinEntryEditText;
+import com.goodiebag.pinview.Pinview;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -50,7 +50,7 @@ public class VerifyCodeFragment extends Fragment {
     Registration registration;
 
     @BindView(R.id.txt_pin_entry)
-    PinEntryEditText txtPin;
+    Pinview txtPin;
     @BindView(R.id.edVerifyPhone)
     EditText edVerifyPhone;
     @BindView(R.id.btnVerifyChangePhone)
@@ -64,7 +64,9 @@ public class VerifyCodeFragment extends Fragment {
 
     public static VerifyCodeFragment newInstance(Bundle bundle) {
         VerifyCodeFragment verifyCodeFragment = new VerifyCodeFragment();
-        verifyCodeFragment.setArguments(bundle);
+        if (bundle!=null) {
+            verifyCodeFragment.setArguments(bundle);
+        }
         return verifyCodeFragment;
     }
 
@@ -74,7 +76,8 @@ public class VerifyCodeFragment extends Fragment {
         mainView = inflater.inflate(R.layout.verify_code_fragment, null);
         ButterKnife.bind(this, mainView);
         appFuncs = AppFuncs.getInstance();
-        data = getArguments().getString("data", "");
+        if (getArguments()!=null)
+            data = getArguments().getString("data", "");
         if (!TextUtils.isEmpty(data)) {
             Gson gson = new Gson();
             registration = gson.fromJson(data, Registration.class);
@@ -127,7 +130,7 @@ public class VerifyCodeFragment extends Fragment {
     @OnClick({R.id.btnVerifyCheck, R.id.btnVerifyChangePhone, R.id.btnSendCodeAgain})
     public void onClick(View v) {
         if (v.getId() == R.id.btnVerifyCheck) {
-            String pin = txtPin.getText().toString().trim();
+            String pin = txtPin.getValue();
             if (!isValidPassCode(pin)) {
                 return;
             }
