@@ -10,6 +10,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/lnLoginFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -44,7 +45,8 @@
             android:gravity="left"
             android:hint="@string/id_or_username"
             android:imeOptions="actionDone"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
             android:padding="5dp"
             android:textColor="@android:color/black"
             android:textStyle="bold" />

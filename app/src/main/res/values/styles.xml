@@ -26,56 +26,6 @@
         <item name="colorPrimaryDark">#444344</item>
     </style>
 
-    <style name="Theme.ChatSwitcher" parent="android:style/Theme.Dialog">
-        <item name="android:windowBackground">@drawable/dialog_im_switch_chats_strip</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="SupportApp" parent="Theme.AppCompat.Light">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">false</item>
-        <item name="android:actionBarStyle">@style/SupportApp.MyActionBar</item>
-        <item name="colorPrimary">@color/wrappy_primary</item>
-
-        <!-- colorPrimaryDark is used for the status bar -->
-        <item name="colorPrimaryDark">@color/menu_text_active</item>
-        <item name="colorAccent">@color/wrappy_primary</item>
-
-    </style>
-
-    <style name="SupportApp.MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/wrappy_primary</item>
-        <item name="android:color">@android:color/white</item>
-        <item name="android:logo">@android:color/transparent</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_ab_arrow_back</item>
-        <item name="android:titleTextStyle">@style/SupportApp.MyActionBar.Text</item>
-    </style>
-
-    <style name="SupportApp.MyActionBar.Text" parent="@android:style/TextAppearance">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="btn_white">
-        <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#fff</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="btn_gray">
-        <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#b6b</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="btn_black">
-        <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#fff</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
 
     <!-- the following can be used to style the overflow menu button
          only do this if you have an *extremely* good reason to!! -->
@@ -84,17 +34,6 @@
         <item name="android:background">@drawable/action_button_background</item>
     </style>-->
 
-
-    <style name="ChatSwitcherDialogTheme">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:background">@null</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.7</item>
-    </style>
 
     <style name="InviteDialog" parent="Base.Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
@@ -187,16 +126,6 @@
         <item name="attachIcon">@drawable/content_new_attachment</item>
     </style>
 
-    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:layout_height">8dp</item>
-    </style>
-
-    <style name="Toolbar.SubtitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textSize">14sp</item>
-        <item name="android:layout_height">8dp</item>
-    </style>
-
 
     <!--
     
@@ -213,11 +142,6 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawablePadding">4dp</item>
         <item name="android:autoLink">none</item>
-    </style>
-
-    <style name="AppText01">
-        <item name="android:textColor">#b9b1a3</item>
-        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="AppText_Default_Light">
@@ -260,11 +184,6 @@
 
     <style name="match_parent">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
-    <style name="match_height">
-        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
     </style>
 
