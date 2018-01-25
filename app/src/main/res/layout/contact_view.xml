@@ -44,12 +44,12 @@
             android:layout_height="match_parent"
             android:foregroundGravity="center|top">
 
-            <TextView
+            <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/image_section"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_gravity="center|top"
-                android:textSize="21sp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#bbb9b9"/>
         </FrameLayout>
 
@@ -71,17 +71,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif-bold"
                 android:gravity="left"
                 android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?contactTextPrimary" />
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line2"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?contactTextSecondary"
                 android:visibility="visible"
 
@@ -143,7 +143,7 @@
             android:id="@+id/avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="left|top"
+            android:layout_gravity="left|center"
             android:background="@drawable/rounded_shape_white"
             android:scaleType="centerCrop"
             android:visibility="gone" />
@@ -152,7 +152,7 @@
             android:id="@+id/avatarCheck"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="left|top"
+            android:layout_gravity="left|center"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"

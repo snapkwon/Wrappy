@@ -90,7 +90,7 @@ public class ContactAdapter
 
         public void bind(final WpKMemberDto wpKMemberDto, int position) {
             line1.setText(wpKMemberDto.getIdentifier());
-            line2.setText(wpKMemberDto.getEmail());
+            //line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
             if (wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
