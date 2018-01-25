@@ -23,39 +23,71 @@
     android:layout_height="wrap_content"
     android:padding="3dp">
 
-
+    <FrameLayout
+        android:id="@+id/linesection"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#bbb9b9">
+    </FrameLayout>
     <LinearLayout
-        android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="62dp"
-        android:orientation="vertical"
-        android:padding="0dp">
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp">
 
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/line1"
+        <FrameLayout
             android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:foregroundGravity="center|top">
+
+            <TextView
+                android:id="@+id/image_section"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center|top"
+                android:textSize="21sp"
+                android:textColor="#bbb9b9"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/message_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:fontFamily="sans-serif-light"
-            android:gravity="left"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?contactTextPrimary" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="62dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="0dp">
 
-        <net.ironrabbit.type.CustomTypefaceTextView
-            android:id="@+id/line2"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:visibility="gone"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?contactTextSecondary"
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/line1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:fontFamily="sans-serif-light"
+                android:gravity="left"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="?contactTextPrimary" />
 
-            />
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/line2"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="?contactTextSecondary"
+                android:visibility="visible"
 
-        <!--
+                />
+
+            <!--
              CustomTypefaceTextViewView
                     android:id="@+id/line3"
                     android:layout_width="wrap_content"
@@ -67,69 +99,70 @@
                     />
         -->
 
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/subscriptionBox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            android:visibility="gone"
+
+            >
+
+            <net.ironrabbit.type.CustomTypefaceButton
+                android:id="@+id/btnApproveSubscription"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/btnDeclineSubscription"
+                android:layout_toStartOf="@+id/btnDeclineSubscription"
+                android:background="@color/holo_green_dark"
+                android:text="✔"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/white" />
+
+            <net.ironrabbit.type.CustomTypefaceButton
+                android:id="@+id/btnDeclineSubscription"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@color/holo_red_dark"
+                android:text="✖"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left|top"
+            android:background="@drawable/rounded_shape_white"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/avatarCheck"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="left|top"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/check_view_background"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_check_white_24dp"
+            android:tint="@android:color/white"
+            android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/subscriptionBox"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:orientation="horizontal"
-        android:padding="0dp"
-        android:visibility="gone"
-
-        >
-
-        <net.ironrabbit.type.CustomTypefaceButton
-            android:id="@+id/btnApproveSubscription"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/btnDeclineSubscription"
-            android:layout_toStartOf="@+id/btnDeclineSubscription"
-            android:background="@color/holo_green_dark"
-            android:text="✔"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-
-        <net.ironrabbit.type.CustomTypefaceButton
-            android:id="@+id/btnDeclineSubscription"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/holo_red_dark"
-            android:text="✖"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
-
-
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="left|top"
-        android:background="@drawable/rounded_shape_white"
-        android:scaleType="centerCrop"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/avatarCheck"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="left|top"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/check_view_background"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_check_white_24dp"
-        android:tint="@android:color/white"
-        android:visibility="gone" />
 
 </view>

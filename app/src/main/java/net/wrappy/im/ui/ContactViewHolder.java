@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,9 @@ import net.wrappy.im.model.SelectedContact;
 public class ContactViewHolder extends RecyclerView.ViewHolder {
     public ContactViewHolder(View view) {
         super(view);
+
+        textsection = (TextView) view.findViewById(R.id.image_section);
+
         mLine1 = (TextView) view.findViewById(R.id.line1);
         mLine2 = (TextView) view.findViewById(R.id.line2);
         mAvatar = (ImageView) view.findViewById(R.id.avatar);
@@ -24,6 +28,8 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         mSubBox = view.findViewById(R.id.subscriptionBox);
         mButtonSubApprove = (Button) view.findViewById(R.id.btnApproveSubscription);
         mButtonSubDecline = (Button) view.findViewById(R.id.btnDeclineSubscription);
+
+        linesection = (FrameLayout) view.findViewById(R.id.linesection);
 
         //holder.mStatusIcon = (ImageView)view.findViewById(R.id.statusIcon);
         //holder.mStatusText = (TextView)view.findViewById(R.id.statusText);
@@ -36,6 +42,9 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     public String mNickname;
     public String email;
     public int mType;
+
+    public TextView textsection;
+    public FrameLayout linesection;
 
     public long mProviderId;
     public long mAccountId;
