@@ -83,7 +83,7 @@
                 android:layout_height="20dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?contactTextSecondary"
-                android:visibility="visible"
+                android:visibility="gone"
 
                 />
 
