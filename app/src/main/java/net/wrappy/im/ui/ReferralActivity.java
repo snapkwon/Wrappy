@@ -40,12 +40,6 @@ public class ReferralActivity extends BaseActivity {
         initActionBarDefault(true,R.string.Referral);
     }
 
-    @Override
-    public void onClickActionBar(int resId) {
-        super.onClickActionBar(resId);
-        onBackPressed();
-    }
-
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
         String referral = edReferralCode.getText().toString().trim();

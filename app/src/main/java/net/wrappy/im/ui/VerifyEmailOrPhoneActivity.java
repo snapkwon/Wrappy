@@ -34,12 +34,6 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     }
 
     @Override
-    public void onClickActionBar(int resId) {
-        super.onClickActionBar(resId);
-        onBackPressed();
-    }
-
-    @Override
     public void onChangeInApp(int id, String data) {
 
     }

@@ -135,12 +135,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         preferenceView();
     }
 
-    @Override
-    public void onClickActionBar(int resId) {
-        super.onClickActionBar(resId);
-        onBackPressed();
-    }
-
     private void getSecurityQuestions() {
         registrationData = new Registration();
         WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());

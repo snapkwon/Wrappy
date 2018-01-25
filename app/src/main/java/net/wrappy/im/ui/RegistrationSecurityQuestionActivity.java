@@ -34,14 +34,6 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
     }
 
     @Override
-    public void onClickActionBar(int resId) {
-        super.onClickActionBar(resId);
-        if (resId == R.drawable.ic_chat_call) {
-            onBackPressed();
-        }
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         finish();

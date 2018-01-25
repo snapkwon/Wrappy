@@ -104,7 +104,11 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickActionBar(int resId) {}
+    public void onClickActionBar(int resId) {
+        if (resId == -1) {
+            onBackPressed();
+        }
+    }
 
     public void applyStyleForToolbar() {
 
