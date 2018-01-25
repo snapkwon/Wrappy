@@ -269,8 +269,6 @@ public class RestAPI {
 
     private static Builders.Any.B getIon(Context context, String url, String method) {
         String header = getHeaderHttps(context, url);
-        new TypeToken<String>() {
-        }.getType();
         return Ion.with(context).load(method, url).setTimeout(TIME_OUT).addHeader("Authorization", header);
     }
 
@@ -316,6 +314,7 @@ public class RestAPI {
                         }
 
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -339,6 +338,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -363,6 +363,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -386,6 +387,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, DELETE_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -409,6 +411,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
