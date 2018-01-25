@@ -16,9 +16,19 @@
  * limitations under the License.
  */
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+        app:layout_collapseMode="pin"></android.support.v7.widget.Toolbar>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -64,13 +74,12 @@
                 android:padding="3dp">
 
                 <net.wrappy.im.ui.CircleColorImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:layout_margin="3dp"
-                    android:padding="6dp"
+                    android:layout_margin="5dp"
                     android:src="@drawable/ic_group_add_white_36dp"
-                    app:circleColor="@android:color/holo_green_light" />
+                  />
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:layout_width="match_parent"
@@ -86,6 +95,14 @@
                     />
             </LinearLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="60dp"
+                android:background="#bcbbc1">
+
+            </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/btnAddFriend"
                 android:layout_width="match_parent"
@@ -94,13 +111,11 @@
                 android:padding="3dp">
 
                 <net.wrappy.im.ui.CircleColorImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:layout_margin="3dp"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_person_add_white_36dp"
-                    app:circleColor="@color/wrappy_primary" />
+                    android:layout_margin="5dp"
+                    android:src="@drawable/ic_person_add_36dp" />
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:layout_width="match_parent"
@@ -115,6 +130,20 @@
 
                     />
             </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#efefef">
+
+                <net.ironrabbit.type.CustomTypefaceTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/contactswrappy"
+                    android:textColor="#000000"/>
+
+            </FrameLayout>
 
         </LinearLayout>
 
@@ -141,4 +170,4 @@
         android:id="@+id/containerGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</FrameLayout>
+</LinearLayout>

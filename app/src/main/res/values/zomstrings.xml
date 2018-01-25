@@ -162,4 +162,6 @@
   <string name="confirm_leave_group">Are you sure you want to leave the group?</string>
   <string name="confirm_delete_and_leave_group">Are you sure you want to delete the group?</string>
   <string name="confirm_remove_member_group">Are you sure you want to remove this member?</string>
+
+  <string name="contactswrappy">Contacts Wrappy</string>
 </resources>
