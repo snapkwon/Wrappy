@@ -14,7 +14,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.layout.AppTextView;
-import net.wrappy.im.ui.legacy.SettingActivity;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.PopupUtils;
 
@@ -67,8 +66,8 @@ public class MainMenuFragment extends BaseFragmentV4 {
                 AppFuncs.alert(getActivity(), "Developing", true);
                 break;
             case R.id.lnMainMenuSettings:
-                Intent sintent = new Intent(getActivity(), SettingActivity.class);
-                getActivity().startActivityForResult(sintent, MainActivity.REQUEST_CHANGE_SETTINGS);
+//                Intent sintent = new Intent(getActivity(), SettingActivity.class);
+//                getActivity().startActivityForResult(sintent, MainActivity.REQUEST_CHANGE_SETTINGS);
                 break;
             case R.id.lnMainMenuAboutUs:
 

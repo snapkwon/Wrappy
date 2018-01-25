@@ -78,6 +78,7 @@
         <LinearLayout
             android:id="@+id/lnMainMenuSettings"
             style="@style/match_width"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -94,7 +95,7 @@
 
         </LinearLayout>
 
-        <View style="@style/dividerMainMenu" />
+        <View style="@style/dividerMainMenu" android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/lnMainMenuAboutUs"
