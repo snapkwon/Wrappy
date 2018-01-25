@@ -14,6 +14,7 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.util.PopupUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -55,5 +56,15 @@ public class ReferralActivity extends BaseActivity {
         } else {
             MainActivity.start();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.ok, R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.start();
+            }
+        },null);
     }
 }

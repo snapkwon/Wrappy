@@ -10,10 +10,13 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ConferenceCall;
 import net.wrappy.im.model.ConferenceMessage;
@@ -40,6 +43,8 @@ import butterknife.OnClick;
 public class ConferencePopupActivity extends Activity {
     @BindView(R.id.name)
     TextView tvNameOfContact;
+    @BindView(R.id.callerAvatar)
+    ImageView callerAvatar;
 
     String name;
     String message;
@@ -102,7 +107,9 @@ public class ConferencePopupActivity extends Activity {
             messageUri = intent.getParcelableExtra(BundleKeyConstant.MESSAGE_URI_KEY);
             chatUri = intent.getParcelableExtra(BundleKeyConstant.CHAT_URI_KEY);
             tvNameOfContact.setText(name);
+            String avatar = Imps.Avatars.getAvatar(getContentResolver(), mRemoteAddress);
             conference = new ConferenceMessage(message);
+            GlideHelper.loadBitmapToCircleImageDefault(this, callerAvatar, RestAPI.getAvatarUrl(avatar), name);
         } else {
             finish();
         }

@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -93,6 +94,11 @@ public class BaseActivity extends AppCompatActivity {
         });
         view.setImageResource(resId);
         linearLayout.addView(view);
+    }
+
+    public void addCustomViewToActionBar(View view) {
+        FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
+        frameLayout.addView(view);
     }
 
     public void setTitle(int resStringId) {
