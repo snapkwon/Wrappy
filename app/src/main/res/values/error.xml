@@ -30,7 +30,7 @@
     <string name="error_8005">Member already activated</string>
     <string name="error_8006">Member not activated</string>
     <string name="error_8007">Member invalid email address</string>
-    <string name="error_8009">Verification code expiry or invalid</string>
+    <string name="error_8009">Verification code expired or invalid</string>
     <string name="error_8010">Asset not exists</string>
     <string name="error_8011">Asset retain failure file empty</string>
     <string name="error_8013">Asset fetch failure file unavailable</string>

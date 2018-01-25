@@ -3,11 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
@@ -31,35 +27,15 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.verify_email_or_phone_activity);
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setCustomView(R.layout.actionbar_verification);
-        ((TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title)).setText(getString(R.string.page_verify));
-        ((ImageButton) getSupportActionBar().getCustomView().findViewById(R.id.verify_actionBarHelp)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initActionBarDefault(true,R.string.page_verify);
         if (getIntent().getExtras() != null) {
             getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
         }
     }
 
-
     @Override
     public void onChangeInApp(int id, String data) {
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        }
-        return false;
     }
 
     @Override

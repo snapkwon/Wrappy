@@ -37,12 +37,13 @@ public class ReferralActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle(getString(R.string.Referral));
+        initActionBarDefault(true,R.string.Referral);
     }
 
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
         String referral = edReferralCode.getText().toString().trim();
+        AppFuncs.dismissKeyboard(this);
         if (!TextUtils.isEmpty(referral)) {
             AppFuncs.showProgressWaiting(this);
             RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListener(this) {

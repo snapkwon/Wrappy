@@ -184,7 +184,7 @@ import static net.wrappy.im.util.Constant.OMEMO_ENABLED;
 public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
-    final static String TAG = "ZomXMPP";
+    final static String TAG = "WrappyXMPP";
     private final static boolean PING_ENABLED = true;
 
     private XmppContactListManager mContactListManager;
