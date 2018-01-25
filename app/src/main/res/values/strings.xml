@@ -580,6 +580,7 @@
 
     <string name="location_message">Location Message</string>
     <string name="you_sent_sticker">You sent a sticker</string>
+    <string name="message_sticker">Sticker message</string>
     <string name="user_sent_sticker">%1$s sent a sticker</string>
     <string name="tab_menu_menu">Menu</string>
     <string name="tab_menu_conversation">Chat</string>
