@@ -117,7 +117,7 @@
                 android:name="info.guardianproject.otr.app.im.signup_url"
                 android:value="http://xmpp.org/services/" />
         </service>
-        <service android:name=".GethService.GethLightService" />
+        <!--<service android:name=".GethService.GethLightService" />-->
 
         <!--
         <service android:name=".plugin.loopback.LoopbackImPlugin">
@@ -276,9 +276,9 @@
             android:name=".ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.qr.QrScanActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <!--<activity-->
+            <!--android:name=".ui.qr.QrScanActivity"-->
+            <!--android:configChanges="keyboardHidden|orientation|screenSize" />-->
         <activity
             android:name=".ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -288,7 +288,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name="net.hockeyapp.android.UpdateActivity" />
         <activity
             android:name=".ui.legacy.DummyActivity"
             android:allowTaskReparenting="true"
@@ -441,17 +440,17 @@
             android:name=".ui.ConferenceActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.Wallet_Complete_Activity"
-            android:label="@string/title_activity_wallet__complete_" />
+        <!--<activity-->
+            <!--android:name=".ui.Wallet_Complete_Activity"-->
+            <!--android:label="@string/title_activity_wallet__complete_" />-->
         <activity android:name="me.ydcool.lib.qrmodule.activity.QrScannerActivity" />
-        <activity android:name=".ui.TransactionTab" />
-        <activity android:name=".ui.Send_Ethereum_Activity" />
-        <activity android:name=".ui.WalletQrCodeDetailActivity" />
-        <activity android:name=".ui.PackupWalletAccount" />
-        <activity android:name=".ui.ChangePasswordAccount" />
+        <!--<activity android:name=".ui.TransactionTab" />-->
+        <!--<activity android:name=".ui.Send_Ethereum_Activity" />-->
+        <!--<activity android:name=".ui.WalletQrCodeDetailActivity" />-->
+        <!--<activity android:name=".ui.PackupWalletAccount" />-->
+        <!--<activity android:name=".ui.ChangePasswordAccount" />-->
         <activity android:name=".ui.TransactionDetailActivity" />
-        <activity android:name=".ui.Create_New_Wallet" />
+        <!--<activity android:name=".ui.Create_New_Wallet" />-->
         <activity android:name=".ui.VerifyEmailOrPhoneActivity" android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
