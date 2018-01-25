@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="right"
     android:padding="5dp"
-    android:background="@color/finestWhite">
+    android:background="@drawable/border_shadow">
 
     <TextView
         android:id="@+id/text_menu_settings_language"
