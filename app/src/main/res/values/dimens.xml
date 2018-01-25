@@ -20,4 +20,10 @@
     <dimen name="detail_view_padding">8dp</dimen>
     <dimen name="title_size_swipe_menu">1sp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
+
+
+    <!--Conference Styles-->
+    <dimen name="button_medium_size">68dp</dimen>
+    <dimen name="avatar_large_size">106dp</dimen>
+    <dimen name="material_margin">16dp</dimen>
     </resources>

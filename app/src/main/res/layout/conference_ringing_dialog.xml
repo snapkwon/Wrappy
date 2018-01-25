@@ -26,19 +26,13 @@
             android:layout_height="1dp"
             android:background="@color/background_med" />
 
-        <net.wrappy.im.helper.layout.AppTextView
-            android:id="@+id/title"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
+
+        <ImageView
+            android:id="@+id/callerAvatar"
+            android:layout_width="@dimen/avatar_large_size"
+            android:layout_height="@dimen/avatar_large_size"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:lines="1"
-            android:singleLine="true"
-            android:text="@string/ringing"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            app:font_type="bold" />
+            android:layout_margin="@dimen/material_margin" />
 
         <net.wrappy.im.helper.layout.AppTextView
             android:id="@+id/name"
@@ -49,10 +43,23 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:gravity="center_horizontal"
-            android:lines="2"
-            android:maxLines="3"
+            android:maxLines="2"
             android:textColor="@android:color/black"
-            android:textSize="14sp" />
+            android:textSize="24sp" />
+
+        <net.wrappy.im.helper.layout.AppTextView
+            android:id="@+id/title"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:lines="1"
+            android:singleLine="true"
+            android:text="@string/ringing"
+            android:textColor="#979797"
+            android:textSize="20sp"
+            app:font_type="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,21 +70,17 @@
 
             <net.ironrabbit.type.CustomTypefaceButton
                 android:id="@+id/btnDecline"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/btn_cancel_dialog"
-                android:padding="10dp"
-                android:text="@string/decline_invitation" />
+                android:layout_width="@dimen/button_medium_size"
+                android:layout_height="@dimen/button_medium_size"
+                android:layout_margin="@dimen/material_margin"
+                android:background="@drawable/ic_cancel" />
 
             <net.ironrabbit.type.CustomTypefaceButton
                 android:id="@+id/btnAccept"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/btn_ok_dialog"
-                android:padding="10dp"
-                android:text="@string/accept_invitation"
+                android:layout_width="@dimen/button_medium_size"
+                android:layout_height="@dimen/button_medium_size"
+                android:layout_margin="@dimen/material_margin"
+                android:background="@drawable/ic_call"
                 android:textColor="@color/finestWhite" />
         </LinearLayout>
     </LinearLayout>
