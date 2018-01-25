@@ -1146,7 +1146,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        Languages.setLanguage(this, Preferences.getLanguage(), true);
+//        Languages.setLanguage(this, Preferences.getLanguage(), true);
 
     }
 

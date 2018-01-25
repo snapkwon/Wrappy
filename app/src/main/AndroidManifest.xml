@@ -277,8 +277,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" />
         <!--<activity-->
-            <!--android:name=".ui.qr.QrScanActivity"-->
-            <!--android:configChanges="keyboardHidden|orientation|screenSize" />-->
+        <!--android:name=".ui.qr.QrScanActivity"-->
+        <!--android:configChanges="keyboardHidden|orientation|screenSize" />-->
         <activity
             android:name=".ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -299,16 +299,18 @@
             android:noHistory="true"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoDisplay" />
-        <activity android:name=".ui.widgets.ImageViewActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.widgets.ImageViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.widgets.SecureCameraActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction">
+            android:configChanges="orientation|keyboardHidden|locale"
+            android:theme="@style/AppThemeNoAction"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -336,9 +338,9 @@
             android:name=".ui.ConversationDetailActivity"
             android:exported="false"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:screenOrientation="portrait">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
         </activity>
 
@@ -371,8 +373,8 @@
         <activity android:name=".ui.GroupDisplayActivity" />
 
         <!--<meta-data-->
-            <!--android:name="io.fabric.ApiKey"-->
-            <!--android:value="9ebe0e16d1080723d689921d921604890f1a06c2" />-->
+        <!--android:name="io.fabric.ApiKey"-->
+        <!--android:value="9ebe0e16d1080723d689921d921604890f1a06c2" />-->
 
         <meta-data
             android:name="net.wrappy.im.tasks.GlideVFSModule"
@@ -391,12 +393,12 @@
         <activity
             android:name=".ui.LauncherActivity"
             android:label="@string/title_activity_launcher"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.IntroActivity"
             android:label="@string/title_activity_launcher"
-            android:theme="@style/NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.ProfileActivity"
             android:theme="@style/NoActionBar" />
@@ -441,8 +443,8 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <!--<activity-->
-            <!--android:name=".ui.Wallet_Complete_Activity"-->
-            <!--android:label="@string/title_activity_wallet__complete_" />-->
+        <!--android:name=".ui.Wallet_Complete_Activity"-->
+        <!--android:label="@string/title_activity_wallet__complete_" />-->
         <activity android:name="me.ydcool.lib.qrmodule.activity.QrScannerActivity" />
         <!--<activity android:name=".ui.TransactionTab" />-->
         <!--<activity android:name=".ui.Send_Ethereum_Activity" />-->
@@ -451,16 +453,19 @@
         <!--<activity android:name=".ui.ChangePasswordAccount" />-->
         <activity android:name=".ui.TransactionDetailActivity" />
         <!--<activity android:name=".ui.Create_New_Wallet" />-->
-        <activity android:name=".ui.VerifyEmailOrPhoneActivity" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.VerifyEmailOrPhoneActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
-        <activity android:name=".ui.SettingConversationActivity"
+        <activity
+            android:name=".ui.SettingConversationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.conference.ConferencePopupActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
@@ -470,11 +475,11 @@
         <activity
             android:name=".ui.WebViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.ReferralActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

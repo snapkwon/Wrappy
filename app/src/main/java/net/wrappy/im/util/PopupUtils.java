@@ -96,8 +96,11 @@ public class PopupUtils {
     }
 
     private static void dismissDialog() {
-        if (dialog != null && dialog.isShowing())
-            dialog.dismiss();
+        try {
+            if (dialog != null && dialog.isShowing())
+                dialog.dismiss();
+        } catch (Exception e) {
+        }
     }
 
     private static void handleTexts(View dialogView, String title, String message) {
