@@ -340,6 +340,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void setGroupMode(boolean groupMode) {
         setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
+        mToolbar.setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
         mLayoutContactSelect.setVisibility(groupMode ? View.GONE : View.VISIBLE);
         mLayoutGroupSelect.setVisibility(groupMode ? View.VISIBLE : View.GONE);
         int newChoiceMode = (groupMode ? ListView.CHOICE_MODE_MULTIPLE : ListView.CHOICE_MODE_SINGLE);
