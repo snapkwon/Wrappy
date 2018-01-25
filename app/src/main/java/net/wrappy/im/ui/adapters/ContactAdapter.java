@@ -34,7 +34,7 @@ public class ContactAdapter
 
     private ArrayList<WpKMemberDto> wpKMemberDtos;
     private Context mContext;
-    private String charSection = "";
+
     public ContactAdapter(Context context, ArrayList<WpKMemberDto> wpKMemberDtos) {
         this.wpKMemberDtos = wpKMemberDtos;
         mContext = context;
@@ -76,11 +76,9 @@ public class ContactAdapter
         @BindView(R.id.message_container)
         View container;
 
-        @BindView(R.id.linesection)
-        FrameLayout linesection;
-
         @BindView(R.id.image_section)
-        TextView textsection;
+        TextView imagesection;
+
 
 
         public ViewHolder(View itemView) {
@@ -90,7 +88,7 @@ public class ContactAdapter
 
         public void bind(final WpKMemberDto wpKMemberDto, int position) {
             line1.setText(wpKMemberDto.getIdentifier());
-            line2.setText(wpKMemberDto.getEmail());
+            //line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
             if (wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
@@ -100,25 +98,7 @@ public class ContactAdapter
                 mAvatar.setImageDrawable(lavatar);
             }
 
-            if(charSection.equalsIgnoreCase( String.valueOf(wpKMemberDto.getIdentifier().charAt(0))))
-            {
-                linesection.setVisibility(View.INVISIBLE);
-                textsection.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
-                charSection =  String.valueOf(wpKMemberDto.getIdentifier().charAt(0)).toUpperCase();
-                textsection.setVisibility(View.VISIBLE);
-                if(position > 0) {
-                    linesection.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    linesection.setVisibility(View.GONE);
-                }
-                textsection.setText(charSection);
-            }
-
+            imagesection.setVisibility(View.GONE);
 
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
