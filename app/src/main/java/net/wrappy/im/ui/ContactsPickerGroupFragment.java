@@ -284,6 +284,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
             }
 
             v.bind(holder, cursor, "", false);
+            holder.linesection.setVisibility(View.GONE);
             holder.mAvatarCheck.setVisibility(View.VISIBLE);
             holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
         }

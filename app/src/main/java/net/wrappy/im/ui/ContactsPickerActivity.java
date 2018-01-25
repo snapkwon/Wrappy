@@ -829,17 +829,16 @@ public class ContactsPickerActivity extends BaseActivity {
                 v.setViewHolder(holder);
             }
 
-
             v.bind(holder, cursor, mSearchString, false);
             int index = cursor.getPosition();
             long itemId = getItemId(index);
             holder.mAvatarCheck.setVisibility(isSelected(itemId) ? View.VISIBLE : View.GONE);
             String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
-            String status = cursor.getString(ContactListItem.COLUMN_CONTACT_PRESENCE_STATUS);
+            int status = cursor.getInt(ContactListItem.COLUMN_CONTACT_PRESENCE_STATUS);
             if (excludedContacts != null && excludedContacts.contains(userName)) {
                 holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
                 holder.mLine1.setText(getString(R.string.is_already_in_your_group, holder.mLine1.getText()));
-                holder.mLine2.setText(status);
+             //   holder.mLine2.setText(status);
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
@@ -860,6 +859,26 @@ public class ContactsPickerActivity extends BaseActivity {
                     holder.linesection.setVisibility(View.GONE);
                 }
                 holder.textsection.setText(charSection);
+            }
+
+            if (Imps.Contacts.TYPE_GROUP != cursor.getInt(ContactListItem.COLUMN_CONTACT_TYPE)) {
+                holder.mAvatarCheck.setVisibility(View.VISIBLE);
+
+                switch (status) {
+                    case Imps.Presence.AVAILABLE:
+                        holder.mAvatarCheck.setImageResource(R.drawable.status_active);
+                        break;
+                    case Imps.Presence.AWAY:
+                    case Imps.Presence.IDLE:
+                        holder.mAvatarCheck.setImageResource(R.drawable.status_aw);
+                        break;
+                    case Imps.Presence.OFFLINE:
+                    case Imps.Presence.INVISIBLE:
+                        holder.mAvatarCheck.setImageResource(R.drawable.status_disable);
+                        break;
+                    default:
+                        break;
+                }
             }
 
         }
