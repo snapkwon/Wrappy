@@ -14,10 +14,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -104,6 +106,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     AppTextView txtProfileMobile;
     @BindView(R.id.txtProfileUser)
     AppTextView txtProfileUser;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
 
     ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
@@ -152,6 +156,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         txtProfileMobile.setText(txtProfileMobile.getText().toString().trim() + " *");
         txtProfileUser.setText(txtProfileUser.getText().toString().trim() + " *");
         locale = getResources().getConfiguration().locale.getCountry();
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (isFlag) {
+                    return;
+                }
+                isFlag = true;
+                AppFuncs.dismissKeyboard(UpdateProfileActivity.this);
+                isFlag = false;
+            }
+        });
     }
 
     private void getCountryCodesFromServer() {
@@ -366,6 +381,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             public void OnComplete(int httpCode, String error, String s) {
                 Bundle bundle = new Bundle();
                 bundle.putString("data", dataJson.toString());
+                bundle.putString("country" , wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix());
                 Store.putStringData(getApplicationContext(), Store.USERNAME, user);
                 VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
                 finish();
