@@ -452,7 +452,7 @@ public class XmppConnection extends ImConnection {
 
                     debug(TAG, "found avatar image in vcard for: " + bareJid.toString());
                     debug(TAG, "start avatar length: " + avatarBytes.length);
-                    //Convert base64 String to UUID reference which was recieved from server
+                    //Convert base64 String to UUID reference which was received from server
                     String reference = DatabaseUtils.convertByteArrayToUUID(avatarBytes);
                     DatabaseUtils.insertAvatarHash(resolver, Imps.Avatars.CONTENT_URI, mProviderId, mAccountId, reference, avatarHash, bareJid.toString());
 
@@ -2015,7 +2015,6 @@ public class XmppConnection extends ImConnection {
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
         mConnection = new XMPPTCPConnection(mConfig.build());
-
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
@@ -3618,7 +3617,7 @@ public class XmppConnection extends ImConnection {
 
     @Override
     protected void setState(int state, ImErrorInfo error) {
-        debug(TAG, "setState to " + state);
+        debug(TAG, "oldState : " + getState() + "setState to " + state);
         super.setState(state, error);
 
         if (state == LOGGED_IN) {
@@ -3633,9 +3632,9 @@ public class XmppConnection extends ImConnection {
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-        if (Debug.DEBUG_ENABLED) {
+//        if (Debug.DEBUG_ENABLED) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
-        }
+//        }
     }
 
     public void debug(String tag, String msg, Exception e) {
