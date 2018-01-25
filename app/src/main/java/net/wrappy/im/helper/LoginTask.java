@@ -7,7 +7,6 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.RegistrationAccount;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -33,36 +32,47 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
     }
 
     public LoginTask(Activity activity, EventListenner listenner) {
-        this.activity = activity;
         this.listenner = listenner;
         mHandler = new SimpleAlertHandler(activity);
         weakReference = new WeakReference<>(activity);
     }
 
+    public Activity getActivity() {
+        if (weakReference != null) {
+            activity = weakReference.get();
+        }
+        return activity;
+    }
 
     @Override
     protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
         try {
 
-            OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(activity);
+            OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
             KeyPair keyPair = keyMan.generateLocalKeyPair();
 
             registrationAccount = accounts[0];
-            OnboardingAccount result = OnboardingManager.addExistingAccount(activity, mHandler, registrationAccount);
+            final OnboardingAccount result = OnboardingManager.addExistingAccount(getActivity(), mHandler, registrationAccount);
 
             if (result != null) {
                 String jabberId = result.username + '@' + result.domain;
                 keyMan.storeKeyPair(jabberId, keyPair);
-            }
+                SignInHelper signInHelper = new SignInHelper(activity, mHandler);
+                signInHelper.setSignInListener(new SignInHelper.SignInListener() {
+                    @Override
+                    public void connectedToService() {
+                        if (listenner != null) {
+                            listenner.OnComplete(true, result);
+                        }
+                    }
 
-            XmppConnection t = new XmppConnection(ImApp.sImApp);
-            int status = t.check_login(registrationAccount.getPassword(), result.accountId, result.providerId);
-            if (status == 200) {
-                ImApp.sImApp.setDefaultAccount(result.providerId, result.accountId);
-            } else {
-                return null;
+                    @Override
+                    public void stateChanged(int state, long accountId) {
+                    }
+                });
+                signInHelper.activateAccount(result.providerId, result.accountId);
+                signInHelper.signIn(result.password, result.providerId, result.accountId, true);
             }
-
             return result;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
@@ -80,20 +90,6 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
             return;
         }
 
-        SignInHelper signInHelper = new SignInHelper(activity, mHandler);
-        signInHelper.setSignInListener(new SignInHelper.SignInListener() {
-            @Override
-            public void connectedToService() {
-                if (listenner != null) {
-                    listenner.OnComplete(true, account);
-                }
-            }
 
-            @Override
-            public void stateChanged(int state, long accountId) {
-            }
-        });
-        signInHelper.activateAccount(account.providerId, account.accountId);
-        signInHelper.signIn(account.password, account.providerId, account.accountId, true);
     }
 }

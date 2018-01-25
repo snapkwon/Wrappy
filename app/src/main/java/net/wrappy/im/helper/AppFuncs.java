@@ -67,7 +67,7 @@ public class AppFuncs {
 
     public static void showProgressWaiting(Activity activity) {
         dialog = new ProgressDialog(activity);
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.setMessage(activity.getString(R.string.waiting_dialog));
         if (!activity.isFinishing()) {
             dialog.show();

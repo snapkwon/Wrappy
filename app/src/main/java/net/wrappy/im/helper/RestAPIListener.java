@@ -32,8 +32,8 @@ public abstract class RestAPIListener {
     }
 
     protected void onError(int errorCode) {
+        AppFuncs.dismissProgressWaiting();
         if (mContext != null) {
-            AppFuncs.dismissProgressWaiting();
             int resId = getResId("error_" + errorCode);
             if (resId > 0) {
                 PopupUtils.showOKDialog(mContext, mContext.getString(R.string.error), mContext.getString(resId), onOkListener);

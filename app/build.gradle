@@ -11,7 +11,7 @@ android {
         applicationId 'net.wrappy.im'
         versionCode 13
         versionName "1.0.0"
-        archivesBaseName = "Wrappy-0.9.3"
+        archivesBaseName = "Wrappy-1.0.0"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'net.wrappy.im.test'
@@ -112,7 +112,7 @@ def getProps(String propName) {
 repositories {
     jcenter()
     maven { url 'https://github.com/jitsi/jitsi-maven-repository/raw/master/releases' }
-    maven { url 'https://maven.fabric.io/public' }
+//    maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://jitpack.io' }
 }
 
@@ -175,15 +175,15 @@ dependencies {
     compile 'com.thefinestartist:finestwebview:1.2.7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.koushikdutta.ion:ion:2.2.1'
-    implementation project(':geth')
+//    implementation project(':geth')
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.facebook.react:react-native:0.49.5'
     compile 'com.google.android.gms:play-services-places:11.6.2'
     implementation project(':qrmodule')
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
-        transitive = true;
-    }
+//    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+//        transitive = true;
+//    }
     compile 'com.github.yalantis:ucrop:2.2.1'
     compile 'com.baoyz.swipemenulistview:library:1.3.0'
     compile 'com.github.GoodieBag:Pinview:v1.3'
