@@ -56,6 +56,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="5dp"
+                android:icon="@drawable/ic_chat_menu_search"
+                android:iconifiedByDefault="false"
+                android:searchIcon="@null"
+                android:background="@drawable/background_search_view"
                 app:showAsAction="always|collapseActionView" />
 
 
@@ -123,6 +127,7 @@
                 android:scrollbars="vertical"
                 android:stackFromBottom="true"
                 android:transcriptMode="normal"
+                android:background="#f2f2f2"
                 app:layout_behavior="net.wrappy.im.ui.widgets.PatchedScrollingViewBehavior" />
 
             <LinearLayout
@@ -239,16 +244,27 @@
                     android:textColor="?messageTextPrimary"
                     android:visibility="gone" />
 
+
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff">
+
+                    <net.ironrabbit.type.CustomTypefaceTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="dsdsdsdsdsdsd"
+                        />
 
                     <LinearLayout
                         android:id="@+id/searchlayout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="right"
                         android:orientation="horizontal">
+
+
 
                         <ImageButton
                             android:id="@+id/btnArrowup"
