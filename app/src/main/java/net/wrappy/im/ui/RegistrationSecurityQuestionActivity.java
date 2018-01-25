@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.SecurityQuestions;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.util.PopupUtils;
@@ -30,17 +29,16 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity_security_question);
-        initActionBarDefault(true,R.string.registration);
-        getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion,SecurityQuestionCreateFragment.newsIntance(0)).commit();
+        initActionBarDefault(true, R.string.registration);
+        getFragmentManager().beginTransaction().replace(R.id.frRegistrationSecurityQuestion, SecurityQuestionCreateFragment.newsIntance(0)).commit();
     }
 
     @Override
     public void onClickActionBar(int resId) {
         super.onClickActionBar(resId);
         if (resId == R.drawable.ic_chat_call) {
-            AppFuncs.alert(this,"Chat",true);
+            onBackPressed();
         }
-        //onBackPressed();
     }
 
     @Override
@@ -51,7 +49,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
         return true;
@@ -64,7 +62,7 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
             public void onClick(View view) {
                 LauncherActivity.start(RegistrationSecurityQuestionActivity.this);
             }
-        },null);
+        }, null);
     }
 
     @Override
@@ -72,15 +70,16 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
         try {
             if (id == AppDelegate.ACTION_FROM_CREATE_NEW && !data.isEmpty()) {
                 Gson gson = new Gson();
-                ArrayList<SecurityQuestions> securityQuestions = gson.fromJson(data, new TypeToken<List<SecurityQuestions>>(){}.getType());
+                ArrayList<SecurityQuestions> securityQuestions = gson.fromJson(data, new TypeToken<List<SecurityQuestions>>() {
+                }.getType());
                 WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
 
-                Intent intent = new Intent(RegistrationSecurityQuestionActivity.this,UpdateProfileActivity.class);
-                intent.putExtra(WpKAuthDto.class.getName(),wpKAuthDto);
-                intent.putParcelableArrayListExtra(SecurityQuestions.class.getName(),securityQuestions);
+                Intent intent = new Intent(RegistrationSecurityQuestionActivity.this, UpdateProfileActivity.class);
+                intent.putExtra(WpKAuthDto.class.getName(), wpKAuthDto);
+                intent.putParcelableArrayListExtra(SecurityQuestions.class.getName(), securityQuestions);
                 startActivity(intent);
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
