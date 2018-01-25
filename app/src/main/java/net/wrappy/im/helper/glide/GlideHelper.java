@@ -62,8 +62,11 @@ public class GlideHelper {
         try {
             int padding = 24;
             LetterAvatar lavatar = new LetterAvatar(context, nickname, padding);
-            imageView.setImageDrawable(lavatar);
-            imageView.setVisibility(View.VISIBLE);
+            if (lavatar!=null) {
+                imageView.setImageDrawable(lavatar);
+                imageView.setVisibility(View.VISIBLE);
+            }
+
         } catch (OutOfMemoryError ome) {
             //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
         }

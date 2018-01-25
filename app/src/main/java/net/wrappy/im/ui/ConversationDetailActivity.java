@@ -62,10 +62,12 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -90,6 +92,7 @@ import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.CircleTransform;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -406,6 +409,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         Intent intent = getIntent();
         processIntent(intent);
 
+        setCustomActionBar();
+
         collapseToolbar();
 
        /* getWindow().setSoftInputMode(
@@ -465,6 +470,18 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startVideoConference();
                 break;
         }
+    }
+
+    private void setCustomActionBar() {
+        View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
+
+        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
+        GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
+
+        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
+        txt.setText(mNickname);
+
+        addCustomViewToActionBar(view);
     }
 
     public void updateLastSeen(Date lastSeen) {
