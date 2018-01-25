@@ -21,13 +21,17 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -37,6 +41,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +51,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -59,11 +66,13 @@ import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
+import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -72,6 +81,7 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
+import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Utils;
 
@@ -117,6 +127,9 @@ public class ContactsPickerActivity extends BaseActivity {
     WpKChatGroupDto groupDto;
     ArrayList<String> groupmember;
 
+    //private AppBarLayout appBarLayout;
+    private Toolbar mToolbar;
+
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
 
@@ -130,12 +143,66 @@ public class ContactsPickerActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((ImApp) getApplication()).setAppTheme(this);
+
+    //    ((ImApp) getApplication()).setAppTheme(this);
 
         setContentView(R.layout.contacts_picker_activity);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mToolbar.setPadding(0, 0, 0, 0);//for tab otherwise give space in tab
+        mToolbar.setContentInsetsAbsolute(0, 0);
+
+        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+
+        if (typeface != null) {
+            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                View view = mToolbar.getChildAt(i);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+                    tv.setTypeface(typeface);
+                    break;
+                }
+            }
+        }
+
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorText = settings.getInt("themeColorText", -1);
+        int themeColorBg = settings.getInt("themeColorBg", -1);
+
+        if (themeColorHeader != -1) {
+
+            if (themeColorText == -1)
+                themeColorText = Utils.getContrastColor(themeColorHeader);
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(themeColorHeader);
+                getWindow().setStatusBarColor(themeColorHeader);
+                getWindow().setTitleColor(themeColorText);
+            }
+
+            //      appBarLayout.setBackgroundColor(themeColorHeader);
+            //   collapsingToolbar.setBackgroundColor(themeColorHeader);
+            mToolbar.setBackgroundColor(themeColorHeader);
+            mToolbar.setTitleTextColor(themeColorText);
+
+        }
+        else
+        {
+            mToolbar.setBackgroundColor(getResources().getColor(R.color.wrappy_primary));
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.message_background_light));
+        }
+
+        if (themeColorBg != -1) {
+            getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
+
+        }
+
+        setSupportActionBar(mToolbar);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (getIntent().getData() != null) {
             mUri = getIntent().getData();
@@ -433,7 +500,11 @@ public class ContactsPickerActivity extends BaseActivity {
 
         if (mSearchView != null) {
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            mSearchView.setIconifiedByDefault(false);
+            mSearchView.setBackground( getResources().getDrawable(R.drawable.background_search_view));
+            EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            searchEditText.setTextColor(getResources().getColor(R.color.message_background_light));
+            searchEditText.setHintTextColor(getResources().getColor(R.color.message_background_light));
+            mSearchView.setPadding(0,0,0,0);
 
             SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
                 public boolean onQueryTextChange(String newText) {
@@ -718,6 +789,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         private Context mContext;
         private ArrayList<String> groupmember;
+        private String charSection = "";
 
         public ContactAdapter(Context context, int view) {
             super(context, view, null, 0);
@@ -734,6 +806,7 @@ public class ContactsPickerActivity extends BaseActivity {
             return true;
         }
 
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -744,6 +817,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+
             ContactListItem v = (ContactListItem) view;
 
             ContactViewHolder holder = v.getViewHolder();
@@ -760,12 +834,33 @@ public class ContactsPickerActivity extends BaseActivity {
             long itemId = getItemId(index);
             holder.mAvatarCheck.setVisibility(isSelected(itemId) ? View.VISIBLE : View.GONE);
             String userName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+            String status = cursor.getString(ContactListItem.COLUMN_CONTACT_PRESENCE_STATUS);
             if (excludedContacts != null && excludedContacts.contains(userName)) {
                 holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
                 holder.mLine1.setText(getString(R.string.is_already_in_your_group, holder.mLine1.getText()));
+                holder.mLine2.setText(status);
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
+            if(charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
+            {
+                holder.linesection.setVisibility(View.INVISIBLE);
+                holder.textsection.setVisibility(View.INVISIBLE);
+            }
+            else
+            {
+                charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
+                holder.textsection.setVisibility(View.VISIBLE);
+                if(index > 0) {
+                    holder.linesection.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    holder.linesection.setVisibility(View.GONE);
+                }
+                holder.textsection.setText(charSection);
+            }
+
         }
     }
 
