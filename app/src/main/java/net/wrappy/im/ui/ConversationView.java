@@ -1321,10 +1321,7 @@ public class ConversationView implements OnHandleMessage {
 
     private boolean inViewInBounds(View view, int x, int y) {
         Rect outRect = new Rect();
-        int[] location = new int[2];
-
-        view.getHitRect(outRect);
-
+        view.getDrawingRect(outRect);
         return outRect.contains(x, y);
     }
 
@@ -3089,7 +3086,7 @@ public class ConversationView implements OnHandleMessage {
         }
 
         private void sendReportMessage(String reporter, String member, String messageId,
-                                      String reference, String type) {
+                                       String reference, String type) {
 
             JsonObject reporterObject = new JsonObject();
             reporterObject.addProperty("identifier", reporter);
