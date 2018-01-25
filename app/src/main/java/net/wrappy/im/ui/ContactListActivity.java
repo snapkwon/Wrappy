@@ -95,7 +95,7 @@ public class ContactListActivity extends AppCompatActivity {
                         //parse each string and if they are for a new user then add the user
                         OnboardingManager.DecodedInviteLink diLink = OnboardingManager.decodeInviteLink(resultScan);
 
-                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId(), mApp).execute(diLink.username, diLink.fingerprint, diLink.nickname);
+                        new AddContactAsyncTask(mApp.getDefaultProviderId(),mApp.getDefaultAccountId()).execute(diLink.username, diLink.fingerprint, diLink.nickname);
 
                         //if they are for a group chat, then add the group
                     }

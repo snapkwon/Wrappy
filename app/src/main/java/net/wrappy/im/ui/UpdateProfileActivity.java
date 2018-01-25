@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,7 +30,7 @@ import com.yalantis.ucrop.UCrop;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -42,7 +41,6 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
-import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkCountry;
@@ -50,6 +48,7 @@ import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.util.PopupUtils;
+import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -118,16 +117,28 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.update_profile_activity);
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle("Update Profile");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initActionBarDefault(true,R.string.update_profile);
+
+        ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         appFuncs = AppFuncs.getInstance();
         btnCameraAvatar.setVisibility(View.VISIBLE);
         btnCameraHeader.setVisibility(View.VISIBLE);
         getSecurityQuestions();
         mHandler = new SimpleAlertHandler(this);
         preferenceView();
+    }
+
+    @Override
+    public void onClickActionBar(int resId) {
+        super.onClickActionBar(resId);
+        onBackPressed();
     }
 
     private void getSecurityQuestions() {
@@ -150,7 +161,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     }
 
     private void getCountryCodesFromServer() {
-        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPIListenner() {
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
@@ -209,7 +220,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             if (!isFileFail) {
                 postDataToServer();
             } else {
-                AppFuncs.log("update success");
                 AppFuncs.alert(getApplicationContext(), "Upload File Fail", true);
             }
         }
@@ -321,12 +331,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
                     AppFuncs.log("Upload " + reference);
-                    if (result != null) {
-                        if (type == RestAPI.PHOTO_AVATAR) {
-                            avatarReference = reference;
-                        } else {
-                            bannerReference = reference;
-                        }
+                    if (type.equals(RestAPI.PHOTO_AVATAR)) {
+                        avatarReference = reference;
+                    } else {
+                        bannerReference = reference;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -359,29 +367,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         Gson gson = new Gson();
         final JsonObject dataJson = gson.toJsonTree(registrationData).getAsJsonObject();
         AppFuncs.log(dataJson.toString());
-        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, new RestAPIListenner() {
+        RestAPIListener listener = new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (!RestAPI.checkHttpCode(httpCode)) {
-                    if (!TextUtils.isEmpty(s)) {
-                        AppFuncs.log("UpdateProfileActivity: " + s);
-                        String er = WpErrors.getErrorMessage(s);
-                        if (!TextUtils.isEmpty(er)) {
-                            AppFuncs.alert(getApplicationContext(), er, true);
-                        } else {
-                            AppFuncs.alert(getApplicationContext(), getString(R.string.error_registration), true);
-                        }
-                    }
-                    appFuncs.dismissProgressWaiting();
-                    return;
-                }
                 Bundle bundle = new Bundle();
                 bundle.putString("data", dataJson.toString());
                 Store.putStringData(getApplicationContext(), Store.USERNAME, user);
                 VerifyEmailOrPhoneActivity.start(UpdateProfileActivity.this, bundle, VERIFY_CODE);
                 finish();
             }
-        });
+        };
+        RestAPI.PostDataWrappy(getApplicationContext(), dataJson, RestAPI.POST_REGISTER, listener);
     }
 
     private String validateData() {
@@ -405,11 +401,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 error = getString(R.string.error_invalid_characters);
             } else if (TextUtils.isEmpty(phone)) {
                 error = getString(R.string.error_empty_phone);
-            } else if (!TextUtils.isEmpty(email) && !AppFuncs.isEmailValid(email)) {
-                error = getString(R.string.error_invalid_email);
-            } else if (TextUtils.isEmpty(email)) {
-                error = getString(R.string.error_empty_email);;
+            } else if (!TextUtils.isEmpty(Utils.isValidEmail(this, email))) {
+                error = Utils.isValidEmail(this, email);
             }
+
             if (wpkCountry != null) {
                 String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
                 phone = countryName + phone;
@@ -424,9 +419,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            return error;
         }
+        return error;
     }
 
     //ExistingAccountTask mExistingAccountTask;
@@ -507,7 +501,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 //
 //                    String url = RestAPI.loginUrl(user, password);
 //                    AppFuncs.log(url);
-//                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListenner() {
+//                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListener() {
 //
 //                        @Override
 //                        public void OnComplete(int httpCode, String error, String s) {

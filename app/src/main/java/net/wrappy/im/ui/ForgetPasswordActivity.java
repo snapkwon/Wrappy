@@ -21,9 +21,8 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
     public static final String FORGET_PASSWORD = "forgetpassword";
 
 
-
     public static void start(Activity activity) {
-        Intent intent = new Intent(activity,ForgetPasswordActivity.class);
+        Intent intent = new Intent(activity, ForgetPasswordActivity.class);
         activity.startActivity(intent);
     }
 
@@ -34,7 +33,7 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
         setContentView(R.layout.forget_password_question_activity);
         ButterKnife.bind(this);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
-        getSupportActionBar().setTitle("Forget Password");
+        getSupportActionBar().setTitle(R.string.forget_password);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         goToQuestionFragment();
 
@@ -42,7 +41,7 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             LauncherActivity.start(ForgetPasswordActivity.this);
             finish();
         }
@@ -50,11 +49,11 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
     }
 
     private void goToQuestionFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordQuestionFragment.newInstance(0)).commit();
+        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer, ForgetPasswordQuestionFragment.newInstance(0)).commit();
     }
 
     private void goToResetEmailFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer,ForgetPasswordResetEmailFragment.newInstance()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.forgetPasswordContainer, ForgetPasswordResetEmailFragment.newInstance()).commit();
     }
 
 
@@ -65,13 +64,13 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
                 if (data.isEmpty()) {
                     goToResetEmailFragment();
                 } else {
-                    data = data.replaceAll("\"","");
+                    data = data.replaceAll("\"", "");
                     if (data.length() > 10) {
-                        Intent intent= PatternActivity.getStartIntent(this);
+                        Intent intent = PatternActivity.getStartIntent(this);
                         Bundle arg = new Bundle();
-                        arg.putInt("type",LauncherActivity.REQUEST_CODE_REGISTER);
-                        arg.putString("username" , "");
-                        arg.putString(FORGET_PASSWORD,data);
+                        arg.putInt("type", LauncherActivity.REQUEST_CODE_REGISTER);
+                        arg.putString("username", "");
+                        arg.putString(FORGET_PASSWORD, data);
                         intent.putExtras(arg);
                         startActivity(intent);
                         finish();

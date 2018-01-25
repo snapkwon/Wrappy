@@ -27,7 +27,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.ContactsLoaderCallbacks;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
@@ -47,13 +47,20 @@ import butterknife.OnClick;
 
 public class ContactsPickerRosterCreateActivity extends BaseActivity {
 
-    @BindView(R.id.flSelectedContacts) FlowLayout mSelectedContacts;
-    @BindView(R.id.headerbarDone) ImageButton headerbarDone;
-    @BindView(R.id.headerbarTitleLeft) AppTextView headerbarTitle;
-    @BindView(R.id.contactsList) ListView mListView = null;
-    @BindView(R.id.imgPhotoAvatar) CircleImageView imgPhotoAvatar;
-    @BindView(R.id.spnRosterType) AppCompatSpinner spnRosterType;
-    @BindView(R.id.txtRosterName) AppEditTextView txtRosterName;
+    @BindView(R.id.flSelectedContacts)
+    FlowLayout mSelectedContacts;
+    @BindView(R.id.headerbarDone)
+    ImageButton headerbarDone;
+    @BindView(R.id.headerbarTitleLeft)
+    AppTextView headerbarTitle;
+    @BindView(R.id.contactsList)
+    ListView mListView = null;
+    @BindView(R.id.imgPhotoAvatar)
+    CircleImageView imgPhotoAvatar;
+    @BindView(R.id.spnRosterType)
+    AppCompatSpinner spnRosterType;
+    @BindView(R.id.txtRosterName)
+    AppEditTextView txtRosterName;
     private ImApp mApp;
     private ContactAdapter mAdapter;
     String mSearchString;
@@ -67,7 +74,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     String rostername;
 
     public static void start(Activity activity) {
-        Intent intent = new Intent(activity,ContactsPickerRosterCreateActivity.class);
+        Intent intent = new Intent(activity, ContactsPickerRosterCreateActivity.class);
         activity.startActivity(intent);
     }
 
@@ -99,25 +106,23 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
             }
 
         });
-        arrAdapterType = new ArrayAdapter<String>(getApplicationContext(),R.layout.update_profile_textview,arrType);
+        arrAdapterType = new ArrayAdapter<String>(getApplicationContext(), R.layout.update_profile_textview, arrType);
         spnRosterType.setAdapter(arrAdapterType);
         getTypeRoster();
         doFilterAsync("");
     }
 
-    void getTypeRoster() {
-        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPIListenner() {
+    private void getTypeRoster() {
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (RestAPI.checkHttpCode(httpCode)) {
-                        JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
-                        for (JsonElement element: jsonArray) {
-                            arrType.add(element.getAsString());
-                        }
-                        arrAdapterType.notifyDataSetChanged();
+                    JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
+                    for (JsonElement element : jsonArray) {
+                        arrType.add(element.getAsString());
                     }
-                }catch (Exception ex) {
+                    arrAdapterType.notifyDataSetChanged();
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -141,7 +146,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
             mLoaderCallbacks = new ContactsLoaderCallbacks(getApplicationContext(), mSearchString, false, new ContactsLoaderCallbacks.ContactsLoaderDelegate() {
                 @Override
                 public void onCompleteContactsLoader(Cursor newCursor) {
-                    if (newCursor!=null) {
+                    if (newCursor != null) {
                         mAdapter.swapCursor(newCursor);
                     }
                 }
@@ -159,7 +164,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
             SelectedContact contact = new SelectedContact(id,
                     userName,
                     (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT),
-                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER),cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
+                    (int) cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER), cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME));
             mSelection.put(id, contact);
             createTagView(index, contact);
             mAdapter.notifyDataSetChanged();
@@ -263,7 +268,8 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     public void onClick(View v) {
         if (isFlag) {
             return;
-        } isFlag = true;
+        }
+        isFlag = true;
         try {
             switch (v.getId()) {
                 case R.id.headerbarBack:
@@ -273,10 +279,10 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
                     postDataToServer("adas");
                     break;
                 case R.id.btnPhotoCameraAvatar:
-                    AppFuncs.getImageFromDevice(this,100);
+                    AppFuncs.getImageFromDevice(this, 100);
                     break;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             isFlag = false;
@@ -287,8 +293,8 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (data!=null && requestCode==100){
-            photo = AppFuncs.getBitmapFromIntentResult(getApplicationContext(),data);
+        if (data != null && requestCode == 100) {
+            photo = AppFuncs.getBitmapFromIntentResult(getApplicationContext(), data);
             imgPhotoAvatar.setImageBitmap(photo);
 
         }
@@ -296,8 +302,8 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
 
     private void postDataToServer(String referenceImage) {
         ArrayList<String> listUsernames = new ArrayList<>();
-        for (int i=0; i < mSelection.size(); i++) {
-            if (mSelection.valueAt(i)!=null) {
+        for (int i = 0; i < mSelection.size(); i++) {
+            if (mSelection.valueAt(i) != null) {
                 SelectedContact selectedContact = mSelection.valueAt(i);
                 listUsernames.add(selectedContact.getUsername());
             }
@@ -312,10 +318,10 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
         wpkRoster.setListUsername(listUsernames);
 
 
-        Imps.Roster.insert(getContentResolver(),wpkRoster);
+        Imps.Roster.insert(getContentResolver(), wpkRoster);
 
         ArrayList<WpkRoster> wpkRosters = Imps.Roster.getListRoster(getContentResolver());
 
-        Log.i("LTH",wpkRosters.get(0).getName());
+        Log.i("LTH", wpkRosters.get(0).getName());
     }
 }

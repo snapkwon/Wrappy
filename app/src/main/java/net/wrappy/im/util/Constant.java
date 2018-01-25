@@ -5,8 +5,8 @@ package net.wrappy.im.util;
  */
 
 public class Constant {
-    public static String EMAIL_DOMAIN = "@im.proteusiondev.com";
-    public final static String DEFAULT_CONFERENCE_SERVER = "conference.im.proteusiondev.com";
+    public final static String EMAIL_DOMAIN = "@im.wrappy.network";
+    public final static String DEFAULT_CONFERENCE_SERVER = "conference." + EMAIL_DOMAIN;
     public final static boolean OMEMO_ENABLED = false;
     public final static long TIME_DELETE_MESSAGE = 30;//Days to delete message in local database
     public static final long MISSED_CALL_TIME = 60000L;//Time to set the call was missed

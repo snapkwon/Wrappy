@@ -439,6 +439,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
     private boolean autoLogin() {
+        Log.d("ZomXMPP", "autoLogin");
         ContentResolver resolver = getContentResolver();
 
         String where = "";//Imps.Account.KEEP_SIGNED_IN + "=1 AND " + Imps.Account.ACTIVE + "=1";
@@ -456,6 +457,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             long providerId = cursor.getLong(ACCOUNT_PROVIDER_COLUMN);
             int isActive = cursor.getInt(ACCOUNT_ACTIVE);
             int isKeepSignedIn = cursor.getInt(ACCOUNT_KEEP_SIGNED_IN);
+            String password = cursor.getString(ACCOUNT_PASSOWRD_COLUMN);
 
             if (isActive == 1 && isKeepSignedIn == 1) {
                 IImConnection conn = mConnections.get(providerId + "." + accountId);
@@ -466,7 +468,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                 try {
                     if (conn.getState() != ImConnection.LOGGED_IN) {
                         try {
-                            conn.login(null, true, true);
+                            conn.login(password, true, true);
                         } catch (RemoteException e) {
                         }
                     }
@@ -855,7 +857,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
     public void sessionStatusChanged(SessionID sessionID) {
 
         //this method does nothing!
-        // Log.d(TAG,"OTR session status changed: " + sessionID.getRemoteUserId());
+        Log.d(TAG, "OTR session status changed: " + sessionID.getRemoteUserId());
 
 
     }

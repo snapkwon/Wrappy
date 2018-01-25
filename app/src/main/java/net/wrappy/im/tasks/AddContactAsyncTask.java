@@ -8,7 +8,6 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
-import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.service.IContactList;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
@@ -20,17 +19,13 @@ import java.util.List;
  */
 public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
-    long mProviderId;
-    long mAccountId;
-    ImApp mApp;
-    AddContactCallback listenner;
+    private long mProviderId;
+    private long mAccountId;
+    private AddContactCallback listenner;
 
-    public AddContactAsyncTask(long providerId, long accountId, ImApp app)
-    {
+    public AddContactAsyncTask(long providerId, long accountId) {
         mProviderId = providerId;
         mAccountId = accountId;
-
-        mApp = app;
     }
 
     public AddContactAsyncTask setCallback(AddContactCallback listenner) {
@@ -59,27 +54,26 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
         }
     }
 
-    private int addToContactList (String address, String otrFingperint, String nickname)
-    {
+    private int addToContactList(String address, String otrFingperint, String nickname) {
         int res = -1;
 
         try {
-            IImConnection conn = mApp.getConnection(mProviderId,mAccountId);
+            IImConnection conn = ImApp.getConnection(mProviderId, mAccountId);
             if (conn == null)
-               conn = mApp.createConnection(mProviderId,mAccountId);
+                conn = ImApp.createConnection(mProviderId, mAccountId);
 
             IContactList list = getContactList(conn);
 
             if (list != null) {
 
-                    res = list.addContact(address, nickname);
-                    if (res != ImErrorInfo.NO_ERROR) {
-
-                        //what to do here?
-                    }
+                res = list.addContact(address, nickname);
+//                if (res != ImErrorInfo.NO_ERROR) {
+//
+//                    //what to do here?
+//                }
 
                 if (!TextUtils.isEmpty(otrFingperint)) {
-                    OtrAndroidKeyManagerImpl.getInstance(mApp).verifyUser(address, otrFingperint);
+                    OtrAndroidKeyManagerImpl.getInstance(ImApp.sImApp).verifyUser(address, otrFingperint);
                 }
 
             }

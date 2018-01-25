@@ -14,13 +14,10 @@
   <string name="invite_share">Share</string>
   <string name="invite_scan_qr">Scan</string>
   <string name="sign_in_message">Sign into an existing account</string>
-  <string name="invite_action">Invite</string>
-  <string name="friends">Friends</string>
-  <string name="add_friends">Add Friends</string>
+    <string name="add_friends">Add Friends</string>
   <string name="search_by_id">Search by ID</string>
   <string name="invite_accepted">You are now friends on &appName;</string>
-  <string name="chats">Chats</string>
-  <string name="choose_friend">Choose a Friend</string>
+    <string name="choose_friend">Choose a Friend</string>
   <string name="send_message">Send a message</string>
   <string name="push_to_talk">Push to talk</string>
   <string name="recording_release">Recording… Release to send</string>
@@ -28,32 +25,21 @@
   <string name="swipe_up_delete">Swipe up to delete</string>
   <string name="create_group">Create a Group</string>
   <string name="members">Members</string>
-  <string name="group_name">Group Name</string>
-  <string name="search_history">Search History</string>
-  <string name="photo_gallery">Photo Stream</string>
-  <string name="me_title">Me</string>
-  <string name="accounts">My Accounts</string>
-  <string name="select_avatar">Select or Create an Avatar</string>
+    <string name="photo_gallery">Photo Stream</string>
+    <string name="select_avatar">Select or Create an Avatar</string>
   <string name="delete_account">Delete Account</string>
-  <string name="add_account_action">Add Account</string>
-  <string name="choose_photos">Choose from Photos</string>
+    <string name="choose_photos">Choose from Photos</string>
   <string name="choose_language">Switch Language</string>
-  <string name="welcome_to_zom">WELCOME TO &appName;</string>
-  <string name="onboarding_generate">Create a &appName; ID and we will generate a secure password for you.</string>
+    <string name="onboarding_generate">Create a &appName; ID and we will generate a secure password for you.</string>
   <string name="grant_perms_camera">You must grant permission for &appName; to use the camera</string>
   <string name="grant_perms_pick_file">You must grant permission for &appName; to select file</string>
   <!--<string name="grant_perms_pick_image">You must grant permission for &appName; to select image</string>-->
   <string name="grant_perms_audio">You must grant permission for &appName; to record audio</string>
 
-  <string name="menu_refresh">Refresh Session</string>
-
-  <string name="action_archived">Archived</string>
+    <string name="action_archived">Archived</string>
   <string name="action_verified">Verified</string>
 
-  <string name="action_theme">Change Theme</string>
-  <string name="action_stickers">Sticker Share</string>
-
-  <string name="pref_block_screenshots_title">Block Screenshots</string>
+    <string name="pref_block_screenshots_title">Block Screenshots</string>
   <string name="pref_block_screenshots_summary">Block attempts for other apps to take screenshots of this app</string>
 
   <string name="pref_enable_tibetan_dictionary_title">Enable Tibetan Dictionary</string>
@@ -73,31 +59,17 @@
   <string name="color_bg_title">Background Color</string>
   <string name="color_bg_summary">Color of chat backgrounds and lists</string>
 
-  <string name="menu_approve_friend">Approve Friend?</string>
-
-  <string name="header_got_invited">GOT INVITED?</string>
+    <string name="header_got_invited">GOT INVITED?</string>
   <string name="action_tap_invite">Tap the &appName; invite link from your friend or scan their QR code now</string>
 
-  <string name="action_invite_new_friends">Send an invite link to your friends via SMS or SHARE through any app</string>
+    <string name="security_code">Secure Identity</string>
 
-  <string name="not_verified">Please verify your friend\'s Secure Identity to be safe!</string>
-
-  <string name="security_code">Secure Identity</string>
-
-  <string name="reset_passphrase">Reset Lock</string>
-
-  <string name="action_services">&appName; Services</string>
-
-  <string name="migrate_menu">Migrate Account</string>
+    <string name="migrate_menu">Migrate Account</string>
   <string name="migrate_message">"I’ve upgraded my account. &appName; me at </string>
-
-  <string name="migrate_notification">Your account is expiring soon. Open the app to upgrade.</string>
 
     <string name="action_undo">Undo</string>
 
     <string name="message_upgrade">We need to upgrade your &appName; account to a new server. We can automatically upgrade you to provide the best performance.</string>
-
-    <string name="message_upgrade_more">We need to upgrade your &appName; account to a new server. We can automatically upgrade you to provide the best performance. If you are an advanced user, you can also choose your own server.</string>
 
     <string name="upgrade_desc">We\'re making improvements around here.\nGet your free upgrade!</string>
 
@@ -116,24 +88,10 @@
   <string name="contact_migration_action">Chat Now</string>
 
 
-<string name="upgrade_old_chats">Your old chats from before you upgraded are stored here</string>
-
-<string name="message_waiting_for_friend">Waiting for %s to accept your friend request.</string>
+    <string name="message_waiting_for_friend">Waiting for %s to accept your friend request.</string>
 
 
-  <string name="message_archive">Some of your &appName; friends are upgrading their accounts. Expired accounts will be stored here.</string>
-
-
-  <string name="one_moment_please_privacy">One moment please! We’re preparing your private &appName;.</string>
-
-
-
-  <string name="action_got_it">Got it</string>
-
-
-  <string name="action_inbox">Inbox</string>
-
-  <string name="action_active">Active</string>
+    <string name="action_active">Active</string>
 
   <string name="action_archive">Archive</string>
 
@@ -141,15 +99,7 @@
   <string name="title_pending">Pending Approval</string>
 
 
-  <string name="title_advanced">Advanced</string>
-
-  <string name="action_upgrade_now">Upgrade now</string>
-
-
-  <string name="action_chat_now">Chat now</string>
-
-
-  <string name="action_add_buddy">Add friend</string>
+    <string name="action_add_buddy">Add friend</string>
   <string name="action_leave">Leave</string>
   <string name="action_delete_group">Delete</string>
   <string name="action_remove_member_group">Remove member</string>

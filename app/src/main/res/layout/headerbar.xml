@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/fab_margin"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_arrow_left"/>
+        android:src="@drawable/ic_ab_arrow_back"/>
 
     <net.wrappy.im.helper.layout.AppTextView
         android:id="@+id/headerbarTitle"

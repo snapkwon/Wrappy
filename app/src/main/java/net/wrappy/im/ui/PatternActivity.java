@@ -11,9 +11,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -24,9 +25,8 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.RegistrationAccount;
-import net.wrappy.im.model.WpErrors;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.provider.Store;
@@ -56,7 +56,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     int type_request;
     AppFuncs appFuncs;
 
-//    public static final int STATUS_SUCCESS = 1;
+    //    public static final int STATUS_SUCCESS = 1;
 //
 //    private SimpleAlertHandler mHandler;
 //
@@ -73,6 +73,17 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         ActionBar actionbar = getSupportActionBar();
         actionbar.setHomeButtonEnabled(true);
         actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionbar.setCustomView(R.layout.actionbar_register);
+        TextView title = (TextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
+        ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         appFuncs = AppFuncs.getInstance();
         //mHandler = new SimpleAlertHandler(this);
 
@@ -93,15 +104,15 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         if (type_request == REQUEST_CODE_LOGIN) {
             this.setTypePattern(TYPE_NOCONFIRM);
-            actionbar.setTitle(R.string.login);
+            title.setText(R.string.login);
 
         } else {
             this.setTypePattern(TYPE_CONFIRM);
 
             if (hashResetPassword.isEmpty()) {
-                actionbar.setTitle(R.string.registration);
+                title.setText(R.string.registration);
             } else {
-                actionbar.setTitle(R.string.forget_password);
+                title.setText(R.string.forget_password);
             }
         }
 
@@ -142,7 +153,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 //
 //    private void getUserInfo(final long accountId) {
 //        mExistingAccountTask = null;
-//        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListenner() {
+//        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPI.RestAPIListener() {
 //            @Override
 //            public void OnComplete(int httpCode, String error, String s) {
 //                Debug.d(s);
@@ -184,42 +195,33 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         } else {
             resetPassword(pass);
         }
-
-
     }
 
     private void resetPassword(final String pass) {
-        String url = RestAPI.resetPasswordUrl(hashResetPassword,pass);
-        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, new RestAPIListenner() {
+        String url = RestAPI.resetPasswordUrl(hashResetPassword, pass);
+        RestAPIListener listener = new RestAPIListener() {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                if (RestAPI.checkHttpCode(httpCode)) {
-                    login(pass);
-                } else {
-                    Log.i(TAG,WpErrors.getErrorMessage(s));
-                    AppFuncs.alert(getApplicationContext(), getString(R.string.error_reset_password),true);
-                    finish();
-                }
+                login(pass);
+            }
+        };
+        listener.setOnListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
+        RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, listener);
     }
 
     private void login(String pass) {
-        appFuncs.showProgressWaiting(this);
+        AppFuncs.showProgressWaiting(this);
         String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME), pass);
-        RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPIListenner() {
+        RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPIListener(this) {
 
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                    if (!RestAPI.checkHttpCode(httpCode)) {
-                        appFuncs.dismissProgressWaiting();
-                        PopupUtils.showCustomDialog(PatternActivity.this, getString(R.string.error), getString(R.string.error_username_or_password), R.string.yes, null, false);
-                        mPatternView.clearPattern();
-                        //AppFuncs.alert(getApplicationContext(),s,true);
-
-                        return;
-                    }
                     AppFuncs.log("PatternActivity: " + s);
                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                     Gson gson = new Gson();
@@ -227,10 +229,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     wpkToken.saveToken(getApplicationContext());
                     doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
                 } catch (Exception ex) {
-                    appFuncs.dismissProgressWaiting();
+                    AppFuncs.dismissProgressWaiting();
                     ex.printStackTrace();
                 }
-
             }
         });
     }
@@ -240,7 +241,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     private void doExistingAccountRegister(String username, String password, String accountName) {
-        RegistrationAccount account = new RegistrationAccount(username,password);
+        RegistrationAccount account = new RegistrationAccount(username, password);
         account.setNickname(accountName);
 //        if (mExistingAccountTask == null) {
 //            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
@@ -249,7 +250,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         new LoginTask(this, new LoginTask.EventListenner() {
             @Override
             public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
-                appFuncs.dismissProgressWaiting();
+                AppFuncs.dismissProgressWaiting();
                 if (!isSuccess) {
                     onLoginFailed();
                 } else {

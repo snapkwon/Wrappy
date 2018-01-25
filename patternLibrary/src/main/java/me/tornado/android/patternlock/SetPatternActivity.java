@@ -247,7 +247,8 @@ public class SetPatternActivity extends BasePatternActivity
         mStage = newStage;
 
         if (mStage == Stage.DrawTooShort) {
-            mMessageText.setText(getString(mStage.messageId, mMinPatternSize));
+            mMessageTextError.setVisibility(View.VISIBLE);
+            mMessageTextError.setText(getString(R.string.pl_error_pattern_too_short));
         } else {
             mMessageText.setText(mStage.messageId);
         }

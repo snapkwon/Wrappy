@@ -47,6 +47,12 @@ public class StickerManager {
                     "stickers/bunny",
                     "Bunny"},
             {
+                    "stickers/duck",
+                    "Duck"},
+            {
+                    "stickers/funny",
+                    "Funny"},
+            {
                     "stickers/sticker",
                     "sticker"}};/*,
             {

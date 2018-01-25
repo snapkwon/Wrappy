@@ -23,6 +23,7 @@ public class BasePatternActivity extends AppCompatActivity {
     protected Button mRightButton;
     protected TextView bottomText;
     protected View view;
+    protected TextView mMessageTextError;
 
     private final Runnable clearPatternRunnable = new Runnable() {
         public void run() {
@@ -37,6 +38,7 @@ public class BasePatternActivity extends AppCompatActivity {
 
         setContentView(R.layout.pl_base_pattern_activity);
         mMessageText = (TextView) findViewById(R.id.pl_message_text);
+        mMessageTextError = (TextView) findViewById(R.id.pl_message_text_error);
         mPatternView = (PatternView) findViewById(R.id.pl_pattern);
         mButtonContainer = (LinearLayout) findViewById(R.id.pl_button_container);
         mLeftButton = (Button) findViewById(R.id.pl_left_button);

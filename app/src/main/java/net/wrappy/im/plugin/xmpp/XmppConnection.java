@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
@@ -183,7 +184,7 @@ import static net.wrappy.im.util.Constant.OMEMO_ENABLED;
 public class XmppConnection extends ImConnection {
 
     private static final String DISCO_FEATURE = "http://jabber.org/protocol/disco#info";
-    final static String TAG = "ZomXMPP";
+    final static String TAG = "WrappyXMPP";
     private final static boolean PING_ENABLED = true;
 
     private XmppContactListManager mContactListManager;
@@ -1608,7 +1609,7 @@ public class XmppConnection extends ImConnection {
         //disable compression based on statement by Ge0rg
         // mConfig.setCompressionEnabled(false);
 
-        if (mConnection.isConnected() /*&& mConnection.isSecureConnection()*/) {
+        if (mConnection.isConnected() && mConnection.isSecureConnection()) {
 
             mResource = providerSettings.getXmppResource();
 
@@ -1783,7 +1784,8 @@ public class XmppConnection extends ImConnection {
             if (setAvatar) {
                 String avatar = DatabaseUtils.getAvatarFromAddress(mContext.getContentResolver(), mUser.getAddress().getBareAddress());
                 if (!TextUtils.isEmpty(avatar)) {
-                    vCard.setAvatar(avatar, "image/jpeg");
+                    String encodedAvatar = Base64.encodeToString(avatar.getBytes(), Base64.NO_WRAP);
+                    vCard.setAvatar(encodedAvatar, "image/jpeg");
                 }
             }
 
@@ -2003,7 +2005,7 @@ public class XmppConnection extends ImConnection {
         }
 
         mConfig.setCustomSSLContext(sslContext);
-        mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+        mConfig.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
         mConfig.setHostnameVerifier(
                 mMemTrust.wrapHostnameVerifier(new org.apache.http.conn.ssl.StrictHostnameVerifier()));
 
@@ -4004,7 +4006,7 @@ public class XmppConnection extends ImConnection {
 
         initConnection(providerSettings, username);
 
-        if (mConnection != null && mConnection.isConnected() /*&& mConnection.isSecureConnection()*/) {
+        if (mConnection != null && mConnection.isConnected() && mConnection.isSecureConnection()) {
             org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
 
             if (aMgr.supportsAccountCreation()) {
@@ -4029,7 +4031,7 @@ public class XmppConnection extends ImConnection {
 
             if (mConnection != null &&
                     mConnection.isConnected()
-                    /*&& mConnection.isSecureConnection()*/
+                    && mConnection.isSecureConnection()
                     && mConnection.isAuthenticated()) {
                 org.jivesoftware.smackx.iqregister.AccountManager aMgr = org.jivesoftware.smackx.iqregister.AccountManager.getInstance(mConnection);
                 aMgr.changePassword(newPassword);

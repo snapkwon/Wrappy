@@ -40,9 +40,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
-import java.nio.ByteBuffer;
 import java.util.Map;
-import java.util.UUID;
 
 public class DatabaseUtils {
 
@@ -407,13 +405,8 @@ public class DatabaseUtils {
 
     public static String convertByteArrayToUUID(byte[] bytes) {
         String encodedAvatar = Base64.encodeToString(bytes);
-        byte[] data = new byte[0];
-        try {
-            data = Hex.decodeHex(encodedAvatar.toCharArray());
-        } catch (DecoderException e) {
-            e.printStackTrace();
-        }
-        return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong()).toString();
+        String result = new String(android.util.Base64.decode(encodedAvatar, android.util.Base64.NO_WRAP));
+        return result;
     }
 
     public static String generateHashFromAvatar(String avatar) {

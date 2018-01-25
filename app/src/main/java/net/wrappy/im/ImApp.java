@@ -44,7 +44,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import net.ironrabbit.type.CustomTypefaceManager;
@@ -52,7 +51,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.wrappy.im.GethService.db.WalletDBHelper;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.helper.RestAPI;
-import net.wrappy.im.helper.RestAPIListenner;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -100,7 +99,6 @@ import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import io.fabric.sdk.android.Fabric;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
@@ -225,9 +223,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         Languages.setLanguage(this, Preferences.getLanguage(), false);
 
         sImApp = this;
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-        }
+//        if (!BuildConfig.DEBUG) {
+//            Fabric.with(this, new Crashlytics());
+//        }
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -1148,7 +1146,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        Languages.setLanguage(this, Preferences.getLanguage(), true);
+//        Languages.setLanguage(this, Preferences.getLanguage(), true);
 
     }
 
@@ -1189,8 +1187,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public boolean doUpgrade(Activity activity, String newDomain, MigrateAccountTask.MigrateAccountListener listener) {
-
-        boolean result = false;
 
         long lastAccountId = settings.getLong("defaultAccountId", -1);
 
@@ -1238,8 +1234,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
         mNeedsAccountUpgrade = false;
 
-        return result;
-
+        return false;
     }
 
     /*
@@ -1259,23 +1254,20 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                             IContactListManager manager = mConn.getContactListManager();
                             manager.approveSubscription(contact);
                         } else {
-                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListenner() {
+                            RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListener() {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
-                                    if (RestAPI.checkHttpCode(httpCode)) {
-                                        try {
-                                            IContactListManager manager = null;
-                                            manager = mConn.getContactListManager();
-                                            if (TextUtils.isEmpty(s)) {
-                                                //Remove contact not exist in DB
-                                                ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
-                                            } else {
-                                                ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
-                                                manager.approveSubscription(contact);
-                                            }
-                                        } catch (RemoteException e1) {
-                                            e1.printStackTrace();
+                                    try {
+                                        IContactListManager manager = mConn.getContactListManager();
+                                        if (TextUtils.isEmpty(s)) {
+                                            //Remove contact not exist in DB
+                                            ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
+                                        } else {
+                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
+                                            manager.approveSubscription(contact);
                                         }
+                                    } catch (RemoteException e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
                             });

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +13,25 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/upgrade_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_margin="0dp"
-        android:id="@+id/upgrade_view"
         android:background="?colorPrimary"
-        android:visibility="gone"
-        >
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
         <ImageView
+            android:id="@+id/upgrade_view_image"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:src="@drawable/olo_yay"
-            android:id="@+id/upgrade_view_image"
 
             />
 
@@ -42,54 +39,54 @@
             android:id="@+id/upgrade_view_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/upgrade_desc"
-            android:textColor="@android:color/white"
             android:layout_marginTop="5dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-            />
+            android:text="@string/upgrade_desc"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
         <net.ironrabbit.type.CustomTypefaceButton
+            android:id='@+id/upgrade_action'
             android:layout_width="200dp"
             android:layout_height="40dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_rect_golden"
             android:gravity="center"
             android:text="@string/upgrade_action"
-            android:textColor="?colorPrimary"
-            android:background="@drawable/rounded_rect_golden"
-            android:layout_margin="20dp"
-            android:id='@+id/upgrade_action'
-            />
-        </LinearLayout>
-<android.support.v7.widget.RecyclerView
+            android:textColor="?colorPrimary" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-    android:visibility="visible"
+        android:visibility="visible"
 
-    />
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_margin="20dp"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
 
-        >
-    <ImageView
-        android:id="@+id/empty_view_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/olo_welcome_white"
-        android:visibility="gone"
-        />
-    <net.ironrabbit.type.CustomTypefaceTextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone"
-        android:text="@string/no_convos"
-        />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/empty_view_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_character"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
 
-</LinearLayout>
+        <net.ironrabbit.type.CustomTypefaceTextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:gravity="center"
+            android:text="@string/no_convos"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</RelativeLayout>
