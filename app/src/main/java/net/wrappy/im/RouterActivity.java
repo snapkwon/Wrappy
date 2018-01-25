@@ -122,7 +122,6 @@ public class RouterActivity extends Activity implements ICacheWordSubscriber {
             }
         }, 2000);
 
-
         // if we have an incoming contact, send it to the right place
         String scheme = intent.getScheme();
         if (TextUtils.equals(scheme, "xmpp")) {

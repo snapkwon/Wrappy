@@ -29,6 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:hint="@string/referral_hint"
+            style="@style/AppText02"
+            android:background="@drawable/bg_edittext"
             android:paddingLeft="36dp"/>
         <ImageView
             android:layout_width="wrap_content"
