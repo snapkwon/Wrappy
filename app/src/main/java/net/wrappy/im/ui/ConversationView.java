@@ -855,9 +855,9 @@ public class ConversationView implements OnHandleMessage {
         llm.setStackFromEnd(true);
         mHistory.setLayoutManager(llm);
 
-        searchView = (SearchView) mActivity.findViewById(R.id.searchtext);
+//        searchView = (SearchView) mActivity.findViewById(R.id.searchtext);
 
-        searchView.setVisibility(View.GONE);
+//        searchView.setVisibility(View.GONE);
 
         inputlayout = (LinearLayout) mActivity.findViewById(R.id.inputLayout);
 
@@ -884,25 +884,25 @@ public class ConversationView implements OnHandleMessage {
         });
 
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mMessageAdapter.searchText(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                if (query.isEmpty()) {
-                    mMessageAdapter.searchText(query);
-                }
-
-                return true;
-
-            }
-
-        });
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                mMessageAdapter.searchText(query);
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String query) {
+//                if (query.isEmpty()) {
+//                    mMessageAdapter.searchText(query);
+//                }
+//
+//                return true;
+//
+//            }
+//
+//        });
         mComposeMessage = (EditText) mActivity.findViewById(R.id.composeMessage);
         mSendButton = (ImageButton) mActivity.findViewById(R.id.btnSend);
         mOnOffMenu = (ImageButton) mActivity.findViewById(R.id.btnOnOff);
