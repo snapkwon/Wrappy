@@ -33,6 +33,7 @@ public abstract class RestAPIListener {
 
     protected void onError(int errorCode) {
         if (mContext != null) {
+            AppFuncs.log("Error Code: " + errorCode);
             AppFuncs.dismissProgressWaiting();
             int resId = getResId("error_" + errorCode);
             if (resId > 0) {

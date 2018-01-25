@@ -263,6 +263,7 @@ public class RestAPI {
             header = "Basic d3JhcHB5X2FwcDp3cmFwcHlfYXBw";
         }
         AppFuncs.log("Header: " + header);
+        AppFuncs.log("Url: " + url);
         return header;
     }
 
