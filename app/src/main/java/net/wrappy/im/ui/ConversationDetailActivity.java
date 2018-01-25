@@ -478,10 +478,24 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
 
+        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+        setAvatarStatus(status);
+
         TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
         txt.setText(mNickname);
 
         addCustomViewToActionBar(view);
+    }
+
+    private void setAvatarStatus(ImageView imageView) {
+        if (mConvoView.getLastSeen() != null) {
+            imageView.setImageResource(R.drawable.status_active);
+        } else {
+            if (mConvoView.getRemotePresence() == Presence.AWAY)
+                imageView.setImageResource(R.drawable.status_aw);
+            else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                imageView.setImageResource(R.drawable.status_disable);
+        }
     }
 
     public void updateLastSeen(Date lastSeen) {
