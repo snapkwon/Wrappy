@@ -618,4 +618,5 @@
     <string name="request_send_email_success">Send successful! Please check email to change new password</string>
     <string name="remove_member_success">Remove %s in this group</string>
     <string name="error_special_characters">Username cannot contain special characters</string>
+    <string name="skip_referral">Cancel this step and go to Home screen?</string>
 </resources>
