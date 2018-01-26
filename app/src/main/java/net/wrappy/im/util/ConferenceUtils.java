@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 
+import net.wrappy.im.ImApp;
+import net.wrappy.im.R;
 import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 
@@ -19,7 +21,7 @@ public final class ConferenceUtils {
      */
     public static String convertConferenceMessage(String message) {
         ConferenceMessage conferenceMessage = new ConferenceMessage(message);
-        return conferenceMessage.getType().getType() + " chat " + conferenceMessage.getState().getState().toLowerCase() + ".";
+        return String.format(ImApp.sImApp.getString(R.string.chat_message_item), conferenceMessage.getType().getType(), conferenceMessage.getState().getState().toLowerCase());
     }
 
     public static SpannableStringBuilder getConferenceMessageInConversation(String message) {
