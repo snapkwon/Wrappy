@@ -21,7 +21,10 @@
     class="net.wrappy.im.ui.ContactListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
 
     <LinearLayout
@@ -63,7 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?contactTextSecondary" />
+            android:textColor="?contactTextSecondary"
+            android:visibility="gone"/>
 
         <!--
              CustomTypefaceTextViewView
@@ -76,9 +80,10 @@
 
                     />
         -->
-
+        <View
+            style="@style/divider"
+            android:layout_marginTop="10dp" />
     </LinearLayout>
-
 
     <ImageView
         android:id="@+id/avatar"
@@ -101,5 +106,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_crown"
         android:visibility="gone" />
+
+
 
 </view>

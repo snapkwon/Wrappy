@@ -44,7 +44,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Browser;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -1271,6 +1270,7 @@ public class ConversationView implements OnHandleMessage {
             mSendButton.setVisibility(View.GONE);
             mButtonTalk.setVisibility(View.GONE);
             mComposeMessage.setVisibility(View.VISIBLE);
+            mButtonVoice.setVisibility(View.VISIBLE);
             //  mButtonVoice.setVisibility(View.VISIBLE);
 
 
@@ -1403,22 +1403,8 @@ public class ConversationView implements OnHandleMessage {
                 if ((mSubscriptionType == Imps.Contacts.SUBSCRIPTION_TYPE_FROM
                         && mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING)) {
                     updateStatusAddContact();
-//                    mActivity.findViewById(R.id.waiting_view).setVisibility(View.VISIBLE);
-//                    mActivity.findViewById(R.id.waiting_refresh).setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            resendFriendRequest();
-//                        }
-//                    });
                 } else if (mSubscriptionStatus == Imps.Contacts.SUBSCRIPTION_STATUS_SUBSCRIBE_PENDING) {
-                    Snackbar sb = Snackbar.make(mHistory, mContext.getString(R.string.subscription_prompt, mRemoteNickname), Snackbar.LENGTH_INDEFINITE);
-                    sb.setAction(mActivity.getString(R.string.approve_subscription), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            approveSubscription();
-                        }
-                    });
-                    sb.show();
+                    approveSubscription();
                 }
             }
         });
@@ -3541,6 +3527,7 @@ public class ConversationView implements OnHandleMessage {
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
+        intent.putExtra("nickname", mRemoteNickname);
         intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }
