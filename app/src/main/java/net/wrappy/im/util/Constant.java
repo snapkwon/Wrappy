@@ -5,7 +5,7 @@ package net.wrappy.im.util;
  */
 
 public class Constant {
-    public final static String DOMAIN = "@im.wrappy.network";
+    public final static String DOMAIN = "im.wrappy.network";
     public final static String EMAIL_DOMAIN = "@" + DOMAIN;
     public final static String DEFAULT_CONFERENCE_SERVER = "conference." + DOMAIN;
     public final static boolean OMEMO_ENABLED = false;
