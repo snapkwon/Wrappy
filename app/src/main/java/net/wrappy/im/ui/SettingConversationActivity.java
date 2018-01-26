@@ -122,6 +122,7 @@ public class SettingConversationActivity extends BaseActivity {
     private String mAdminGroup;
 
     private final static int REQUEST_PICK_CONTACT = 100;
+    private final static int REQUEST_CAMERA = 101;
 
     public final static int PICKER_ADD_MEMBER = 1;
 
@@ -149,7 +150,7 @@ public class SettingConversationActivity extends BaseActivity {
             mLastChatId = getIntent().getLongExtra("chatId", -1);
             mContactType = getIntent().getIntExtra("isGroupChat", -1);
             groupid = getIntent().getParcelableExtra("groupid");
-            edGroupSubText.setText(String.format(getString(R.string.create_by),mName));
+
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
@@ -368,9 +369,9 @@ public class SettingConversationActivity extends BaseActivity {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
-                            AppFuncs.openCamera(SettingConversationActivity.this, 100);
+                            AppFuncs.openCamera(SettingConversationActivity.this, REQUEST_CAMERA);
                         } else {
-                            AppFuncs.openGallery(SettingConversationActivity.this, 100);
+                            AppFuncs.openGallery(SettingConversationActivity.this, REQUEST_CAMERA);
                         }
                     }
                 }).show();
@@ -445,7 +446,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                 }
 
-            } else if (requestCode == 100) {
+            } else if (requestCode == REQUEST_CAMERA) {
                 AppFuncs.cropImage(this, data, true);
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(data);

@@ -39,7 +39,7 @@
         <RelativeLayout
             android:id="@+id/layout_remove_member"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="58dp">
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/line1"
@@ -81,8 +81,7 @@
                     />
         -->
         <View
-            style="@style/divider"
-            android:layout_marginTop="10dp" />
+            style="@style/divider" />
     </LinearLayout>
 
     <ImageView

@@ -55,6 +55,7 @@
         <View style="@style/dividerMainMenu" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/lnMainMenuNewList"
             style="@style/match_width"
             android:orientation="horizontal">
@@ -73,7 +74,7 @@
 
         </LinearLayout>
 
-        <View style="@style/dividerMainMenu" />
+        <View style="@style/dividerMainMenu" android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/lnMainMenuSettings"

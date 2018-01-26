@@ -131,8 +131,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             } else {
                 if (isAdminGroup(member)) {
                     avatarCrown.setVisibility(View.VISIBLE);
+                    mDeleteMember.setVisibility(View.GONE);
                 }
-                mDeleteMember.setVisibility(View.GONE);
             }
         }
     }
