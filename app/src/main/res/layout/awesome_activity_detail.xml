@@ -127,7 +127,6 @@
                 android:scrollbars="vertical"
                 android:stackFromBottom="true"
                 android:transcriptMode="normal"
-                android:background="#f2f2f2"
                 app:layout_behavior="net.wrappy.im.ui.widgets.PatchedScrollingViewBehavior" />
 
             <LinearLayout
