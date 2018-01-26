@@ -66,8 +66,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -501,6 +503,43 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
                 imageView.setImageResource(R.drawable.status_disable);
         }
+    }
+
+    private void addSearchViewInActionBar() {
+        clearViewInActionBar();
+        View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
+
+        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
+        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+        avatar.setVisibility(View.GONE);
+        status.setVisibility(View.GONE);
+
+        final SearchView searchView = (SearchView) view.findViewById(R.id.searchtext);
+        searchView.setVisibility(View.VISIBLE);
+
+        searchView.setIconifiedByDefault(true);
+        searchView.setFocusable(true);
+        searchView.setIconified(false);
+        searchView.requestFocusFromTouch();
+        searchView.requestFocus();
+        searchView.onActionViewExpanded();
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                searchView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            }
+        });
+        mConvoView.searchText(searchView);
+//        mConvoView.activeSearchmode();
+        mConvoView.searchUpAndBottom();
+
+        addCustomViewToActionBar(view);
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -1065,10 +1104,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     Bundle extras = resultIntent.getExtras();
                     int type = extras.getInt("type");
                     if (type == TYPE_SEARCH) {
-                        mConvoView.activeSearchmode();
-                        for (int i = 0; i < 4; i++) {
-                            menuitem.getItem(i).setVisible(false);
-                        }
+                        addSearchViewInActionBar();
+//                        mConvoView.activeSearchmode();
+//                        for (int i = 0; i < 4; i++) {
+//                            menuitem.getItem(i).setVisible(false);
+//                        }
                     } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
                         String imagePath = extras.getString("imagePath");
 
@@ -1103,6 +1143,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         }
     }
+
+
 
     /**
      * loading bitmap to set background this screen

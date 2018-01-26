@@ -97,6 +97,14 @@ public class BaseActivity extends AppCompatActivity {
         linearLayout.addView(view);
     }
 
+    public void clearViewInActionBar() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(getResources().getIdentifier("actionBarContainer", "id", getPackageName()));
+        linearLayout.removeAllViews();
+
+        FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
+        frameLayout.removeAllViews();
+    }
+
     public void addCustomViewToActionBar(View view) {
         FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
         frameLayout.addView(view);

@@ -1258,6 +1258,51 @@ public class ConversationView implements OnHandleMessage {
         mHistory.setAdapter(mMessageAdapter);
     }
 
+    public void searchText(SearchView view) {
+        view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mMessageAdapter.searchText(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                if (query.isEmpty()) {
+                    mMessageAdapter.searchText(query);
+                }
+
+                return true;
+
+            }
+
+        });
+    }
+
+    public void searchUpAndBottom() {
+        searchlayout = (LinearLayout) mActivity.findViewById(R.id.searchlayout);
+
+        searchlayout.setVisibility(View.VISIBLE);
+
+        btnsearchup = (ImageButton) mActivity.findViewById(R.id.btnArrowup);
+
+        btnsearchbottom = (ImageButton) mActivity.findViewById(R.id.btnArrowbottom);
+
+        btnsearchup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMessageAdapter.searchUp();
+            }
+        });
+
+        btnsearchbottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMessageAdapter.searchBottom();
+            }
+        });
+    }
+
     private void sendMessageAsync() {
         if (mComposeMessage.getVisibility() == View.VISIBLE) {
             checkBeforeSubmit();
