@@ -255,20 +255,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
     }
 
-    private void checkUpgrade() {
-        ImApp app = ((ImApp) getApplication());
-
-        if (app.needsAccountUpgrade()) {
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
-
-            getStatusBarNotifier().notify(getString(R.string.upgrade_action),
-                    getString(R.string.upgrade_desc), getString(R.string.upgrade_desc), notificationIntent, false);
-        }
-
-
-    }
-
     private void connectToCacheWord() {
         if (mCacheWord == null) {
             mCacheWord = new CacheWordHandler(this, (ICacheWordSubscriber) this);
@@ -919,9 +905,6 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
             mNeedCheckAutoLogin = !autoLogin();
             ;
         }
-
-        checkUpgrade();
-
     }
 
     @Override

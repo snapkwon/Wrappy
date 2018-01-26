@@ -57,7 +57,6 @@
 		<CheckBoxPreference android:key="pref_security_do_dns_srv"
 			android:title="@string/do_srv_lookup"
 			android:enabled="true"
-			android:summary="@string/use_dns_srv_to_find_actual_xmpp_server_from_domain_name"
 			android:defaultValue="true" />
 		</PreferenceCategory>
 	<PreferenceCategory android:title="Proxy Settings">

@@ -37,9 +37,7 @@ import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.RouterActivity;
 import net.wrappy.im.model.Contact;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 
 import java.util.ArrayList;
 
@@ -72,13 +70,8 @@ public class StatusBarNotifier {
         }
 
         //msg = html2text(msg); // strip tags for html client inbound msgs
-        Bitmap avatar = null;
-
-
-        try { byte[] bdata = DatabaseUtils.getAvatarBytesFromAddress(mContext.getContentResolver(), XmppAddress.stripResource(username));
-            avatar = BitmapFactory.decodeByteArray(bdata, 0, bdata.length);
-        }
-        catch (Exception e){}
+        Bitmap avatar = BitmapFactory.decodeResource(mContext.getResources(),
+                R.mipmap.ic_launcher);
 
         String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
@@ -86,20 +79,21 @@ public class StatusBarNotifier {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.notify_wrappy, avatar);
     }
 
     public void notifyGroupChat(long providerId, long accountId, long chatId, String remoteAddress, String groupname,
             String nickname, String msg, boolean lightWeightNotify) {
 
-        Bitmap avatar = null;
+        Bitmap avatar = BitmapFactory.decodeResource(mContext.getResources(),
+                R.mipmap.ic_launcher);
 
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + groupname;// + ": " + msg;
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.ic_discuss, avatar);
+        notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.notify_wrappy, avatar);
     }
 
     public void notifyError(String username, String error) {
@@ -149,7 +143,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.notify_groupchat_label);
         String message = mContext.getString(R.string.group_chat_invite_notify_text, username);
-        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.group_chat);
+        notify(username, title, message, message, providerId, accountId, intent, false, R.drawable.notify_wrappy);
     }
 
     public void notifyLoggedIn(long providerId, long accountId) {
@@ -159,7 +153,7 @@ public class StatusBarNotifier {
 
         String title = mContext.getString(R.string.app_name);
         String message = mContext.getString(R.string.presence_available);
-        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.ic_discuss);
+        notify(message, title, message, message, providerId, accountId, intent, false, R.drawable.notify_wrappy);
     }
 
     public void notifyLocked() {
@@ -218,7 +212,7 @@ public class StatusBarNotifier {
             info.setInfo("", title, message, null, intent);
 
         mNotificationManager.notify(info.computeNotificationId(),
-                info.createNotification(tickerText, lightWeightNotify, R.drawable.ic_stat_status, null, intent));
+                info.createNotification(tickerText, lightWeightNotify, R.drawable.notify_wrappy, null, intent));
 
 
     }

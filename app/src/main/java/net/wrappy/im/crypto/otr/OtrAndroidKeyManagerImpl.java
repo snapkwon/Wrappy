@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Base64;
@@ -897,36 +896,36 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
         return store.export(password, otrKeystoreAES);
     }
 
-    public static boolean checkForKeyImport(Intent intent, Activity activity) {
-        boolean doKeyStoreImport = false;
-
-        // if otr_keystore.ofcaes is in the SDCard root, import it
-        File otrKeystoreAES = new File(Environment.getExternalStorageDirectory(),
-                "otr_keystore.ofcaes");
-        if (otrKeystoreAES.exists()) {
-            //Log.i(TAG, "found " + otrKeystoreAES + "to import");
-            doKeyStoreImport = true;
-            importOtrKeyStore(otrKeystoreAES, activity);
-        } else if (intent != null && intent.getData() != null) {
-            Uri uriData = intent.getData();
-            String path = null;
-
-            if (uriData.getScheme() != null && uriData.getScheme().equals("file")) {
-                path = uriData.toString().replace("file://", "");
-
-                File file = new File(path);
-
-                doKeyStoreImport = true;
-
-                importOtrKeyStore(file, activity);
-            }
-        } else {
-            AppFuncs.alert(activity, R.string.otr_keysync_warning_message, true);
-
-        }
-
-        return doKeyStoreImport;
-    }
+//    public static boolean checkForKeyImport(Intent intent, Activity activity) {
+//        boolean doKeyStoreImport = false;
+//
+//        // if otr_keystore.ofcaes is in the SDCard root, import it
+//        File otrKeystoreAES = new File(Environment.getExternalStorageDirectory(),
+//                "otr_keystore.ofcaes");
+//        if (otrKeystoreAES.exists()) {
+//            //Log.i(TAG, "found " + otrKeystoreAES + "to import");
+//            doKeyStoreImport = true;
+//            importOtrKeyStore(otrKeystoreAES, activity);
+//        } else if (intent != null && intent.getData() != null) {
+//            Uri uriData = intent.getData();
+//            String path = null;
+//
+//            if (uriData.getScheme() != null && uriData.getScheme().equals("file")) {
+//                path = uriData.toString().replace("file://", "");
+//
+//                File file = new File(path);
+//
+//                doKeyStoreImport = true;
+//
+//                importOtrKeyStore(file, activity);
+//            }
+//        } else {
+//            AppFuncs.alert(activity, R.string.otr_keysync_warning_message, true);
+//
+//        }
+//
+//        return doKeyStoreImport;
+//    }
 
 
     public static void importOtrKeyStore(final File fileOtrKeyStore, final Activity activity) {
