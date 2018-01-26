@@ -606,7 +606,7 @@
     <string name="secu_success_description">Your secret question change successful</string>
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
-    <string name="cancel_and_home">Cancel this step? Return to home screen?</string>
+    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
     <string name="invite_friends_text">Invite Friend</string>
     <string name="share_app_text">Let me recommend you this application</string>
     <string name="email_tile">Email *</string>
