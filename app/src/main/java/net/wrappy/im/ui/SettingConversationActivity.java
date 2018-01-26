@@ -135,6 +135,14 @@ public class SettingConversationActivity extends BaseActivity {
         @Override
         public void run() {
             memberGroupAdapter.setData(memberGroupDisplays);
+            if (memberGroupDisplays!=null && memberGroupDisplays.size() > 0) {
+                for (MemberGroupDisplay member : memberGroupDisplays) {
+                    if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
+                            member.getAffiliation().contentEquals("admin"))) {
+                        edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
+                    }
+                }
+            }
         }
     };
 

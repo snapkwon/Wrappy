@@ -480,14 +480,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             if (mSbStatus != null)
                 mSbStatus.dismiss();
 
-            if (mSbStatus != null)
-                mSbStatus.dismiss();
-
-            if (!isNetworkAvailable()) {
-                mSbStatus = Snackbar.make(mViewPager, "No Internet", Snackbar.LENGTH_INDEFINITE);
-                mSbStatus.show();
-                return false;
-            }
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
