@@ -35,6 +35,7 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
@@ -94,8 +95,8 @@ public class SettingConversationActivity extends BaseActivity {
     TextView mTxtDelete;
     @BindView(R.id.lnAvatarOfGroup)
     LinearLayout lnAvatarOfGroup;
-    @BindView(R.id.imgGroupPhoto)
-    CircleImageView imgGroupPhoto;
+    @BindView(R.id.edGroupSubText)
+    AppTextView edGroupSubText;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -103,6 +104,7 @@ public class SettingConversationActivity extends BaseActivity {
     private long mLastChatId = -1;
     private String mLocalAddress = null;
     private int mContactType = -1;
+    private String mName = "";
 
     private IImConnection mConn;
     private IChatSession mSession;
@@ -138,13 +140,14 @@ public class SettingConversationActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         if (intent != null) {
-//            mName = getIntent().getStringExtra("nickname");
+            mName = getIntent().getStringExtra("nickname");
             mAddress = getIntent().getStringExtra("address");
             mProviderId = getIntent().getLongExtra("provider", -1);
             mAccountId = getIntent().getLongExtra("account", -1);
             mLastChatId = getIntent().getLongExtra("chatId", -1);
             mContactType = getIntent().getIntExtra("isGroupChat", -1);
             groupid = getIntent().getParcelableExtra("groupid");
+            edGroupSubText.setText(String.format(getString(R.string.create_by),mName));
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
@@ -166,12 +169,10 @@ public class SettingConversationActivity extends BaseActivity {
                         mAdminGroup = mGroupOwner.getName();
                         if (!mIsOwner) {
                             btnEditGroupName.setVisibility(View.GONE);
-                            imgGroupPhoto.setVisibility(View.GONE);
                             btnGroupPhoto.setEnabled(false);
                         }
                     } else {
                         btnEditGroupName.setVisibility(View.GONE);
-                        imgGroupPhoto.setVisibility(View.GONE);
                         btnGroupPhoto.setEnabled(false);
                     }
                 }
