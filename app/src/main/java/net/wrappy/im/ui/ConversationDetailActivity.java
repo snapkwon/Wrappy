@@ -409,7 +409,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         Intent intent = getIntent();
         processIntent(intent);
 
-        setCustomActionBar();
+        setCustomActionBar(mConvoView.isGroupChat());
 
         collapseToolbar();
 
@@ -472,14 +472,19 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     }
 
-    private void setCustomActionBar() {
+    private void setCustomActionBar(boolean isGroupChat) {
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
-        GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
-
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        setAvatarStatus(status);
+
+        if (isGroupChat) {
+            avatar.setImageResource(R.drawable.chat_group);
+            status.setVisibility(View.GONE);
+        } else {
+            GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
+            setAvatarStatus(status);
+        }
 
         TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
         txt.setText(mNickname);
