@@ -340,7 +340,6 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="stateHidden|adjustResize">
 
         </activity>
