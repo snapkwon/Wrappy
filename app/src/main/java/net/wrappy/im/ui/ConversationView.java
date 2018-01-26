@@ -326,10 +326,10 @@ public class ConversationView implements OnHandleMessage {
         isSearchMode = true;
         inputlayout.setVisibility(View.GONE);
         searchlayout.setVisibility(View.VISIBLE);
-        searchView.setVisibility(View.VISIBLE);
+//        searchView.setVisibility(View.VISIBLE);
     }
 
-    public void focusSearchmode() {
+    public void focusSearchmode(final SearchView searchView) {
         if (isSearchMode) {
             searchView.setIconifiedByDefault(true);
             searchView.setFocusable(true);
@@ -1279,30 +1279,6 @@ public class ConversationView implements OnHandleMessage {
 
             }
 
-        });
-    }
-
-    public void searchUpAndBottom() {
-        searchlayout = (LinearLayout) mActivity.findViewById(R.id.searchlayout);
-
-        searchlayout.setVisibility(View.VISIBLE);
-
-        btnsearchup = (ImageButton) mActivity.findViewById(R.id.btnArrowup);
-
-        btnsearchbottom = (ImageButton) mActivity.findViewById(R.id.btnArrowbottom);
-
-        btnsearchup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMessageAdapter.searchUp();
-            }
-        });
-
-        btnsearchbottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMessageAdapter.searchBottom();
-            }
         });
     }
 

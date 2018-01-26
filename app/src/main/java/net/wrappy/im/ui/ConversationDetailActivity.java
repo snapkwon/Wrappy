@@ -67,6 +67,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -505,6 +506,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     }
 
+    SearchView searchView;
+
     private void addSearchViewInActionBar() {
         clearViewInActionBar();
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
@@ -514,30 +517,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         avatar.setVisibility(View.GONE);
         status.setVisibility(View.GONE);
 
-        final SearchView searchView = (SearchView) view.findViewById(R.id.searchtext);
+        searchView = (SearchView) view.findViewById(R.id.searchtext);
         searchView.setVisibility(View.VISIBLE);
 
-        searchView.setIconifiedByDefault(true);
-        searchView.setFocusable(true);
-        searchView.setIconified(false);
-        searchView.requestFocusFromTouch();
-        searchView.requestFocus();
-        searchView.onActionViewExpanded();
-        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                searchView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
-            }
-        });
+        mConvoView.activeSearchmode();
         mConvoView.searchText(searchView);
-//        mConvoView.activeSearchmode();
-        mConvoView.searchUpAndBottom();
 
         addCustomViewToActionBar(view);
     }
@@ -707,7 +691,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         regFilter.addAction(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
         registerReceiver(receiver, regFilter);
 
-        mConvoView.focusSearchmode();
+        mConvoView.focusSearchmode(searchView);
 
 
         /**
