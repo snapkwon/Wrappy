@@ -3062,7 +3062,7 @@ public class ConversationView implements OnHandleMessage {
                     if (errCode != 0) {
                         messageView.bindErrorMessage(errCode);
                     } else {
-                        messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, false,
+                        messageView.bindOutgoingMessage(viewHolder, id, messageType, address, mimeType, body, date, false,
                                 deliveryState, encState, textsearch);
                     }
 
