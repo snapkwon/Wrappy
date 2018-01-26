@@ -36,9 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -50,7 +48,7 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-    private static String root_url = "http://webserv-ci.wrappy.network:8080/8EF640C4836D96CE990B71F60E0EA1DB/";
+    private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
 //    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
@@ -66,9 +64,6 @@ public class RestAPI {
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
-    public static String PHOTO_REFERENCE = "reference";
-    public static String PHOTO_AVATAR = "AVATAR";
-    public static String PHOTO_BRAND = "BRAND";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
     private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
@@ -96,13 +91,17 @@ public class RestAPI {
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
     public static String GET_PROMOTION_BALANCE = root_url + "member/promotion/invitation/bonus_balance";
+    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
+    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+    public static String REFERRAL = root_url + "member/inviter/%s";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
     public static String TRANSLATE_LANGUAGE_NO_SOURCE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&target=%2$s&q=%3$s";
-    public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
-    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
-    public static String REFERRAL = root_url + "member/inviter/%s";
+
+    public static String PHOTO_REFERENCE = "reference";
+    public static String PHOTO_AVATAR = "AVATAR";
+    public static String PHOTO_BRAND = "BRAND";
 
     private static int POST_METHOD = 0;
     private static int DELETE_METHOD = 1;
@@ -237,13 +236,13 @@ public class RestAPI {
         try {
             Ion.getDefault(context).configure().createSSLContext("TLS");
             Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setSSLContext(getSSLContextInst());
-            Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setTrustManagers(trustAllCerts);
-            Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String s, SSLSession sslSession) {
-                    return true;
-                }
-            });
+//            Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setTrustManagers(trustAllCerts);
+//            Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setHostnameVerifier(new HostnameVerifier() {
+//                @Override
+//                public boolean verify(String s, SSLSession sslSession) {
+//                    return true;
+//                }
+//            });
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -269,8 +268,6 @@ public class RestAPI {
 
     private static Builders.Any.B getIon(Context context, String url, String method) {
         String header = getHeaderHttps(context, url);
-        new TypeToken<String>() {
-        }.getType();
         return Ion.with(context).load(method, url).setTimeout(TIME_OUT).addHeader("Authorization", header);
     }
 
@@ -316,6 +313,7 @@ public class RestAPI {
                         }
 
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -339,6 +337,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -363,6 +362,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -386,6 +386,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, DELETE_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -409,6 +410,7 @@ public class RestAPI {
                             refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
+                        AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
                         listenner.onError(getErrorCodeFromResponse(result.getResult()), url);

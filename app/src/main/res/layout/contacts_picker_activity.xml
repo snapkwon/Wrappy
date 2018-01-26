@@ -30,6 +30,10 @@
         app:contentInsetStartWithNavigation="0dp"
         app:layout_collapseMode="pin"></android.support.v7.widget.Toolbar>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/llRoot"
@@ -71,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="3dp">
+                android:padding="8dp">
 
                 <net.wrappy.im.ui.CircleColorImageView
                     android:layout_width="40dp"
@@ -88,7 +92,7 @@
                     android:layout_marginLeft="8dp"
                     android:gravity="center_vertical"
                     android:text="@string/create_group"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
 
                     android:textColor="?contactTextSecondary"
 
@@ -108,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="3dp">
+                android:padding="8dp">
 
                 <net.wrappy.im.ui.CircleColorImageView
                     android:layout_width="40dp"
@@ -124,7 +128,7 @@
                     android:layout_marginLeft="8dp"
                     android:gravity="center_vertical"
                     android:text="@string/action_add_buddy"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
 
                     android:textColor="?contactTextSecondary"
 
@@ -133,13 +137,14 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="3dp"
                 android:background="#efefef">
 
                 <net.ironrabbit.type.CustomTypefaceTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/contactswrappy"
                     android:textColor="#000000"/>
 
@@ -166,8 +171,10 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/containerGroup"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <FrameLayout
+            android:id="@+id/containerGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
 </LinearLayout>

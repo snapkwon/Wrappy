@@ -42,13 +42,11 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.zxing.common.StringUtils;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
-import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -58,7 +56,6 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.DateUtils;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.SecureMediaStore;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -269,18 +266,6 @@ public class ConversationListItem extends FrameLayout {
                                 holder.mLine2.setTextColor(Color.RED);
                             }
                             holder.mLine2.setText(ConferenceUtils.getConferenceMessageInConversation(message));
-                        } else if (message.startsWith(ConferenceConstant.SEND_STICKER_BUNNY) ||
-                                message.startsWith(ConferenceConstant.SEND_STICKER_EMOJI) ||
-                                message.startsWith(ConferenceConstant.SEND_STICKER_ARTBOARD)) {
-
-                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
-                            String senderSticker = message.split(":")[2];
-
-                            if (senderSticker.startsWith(account)) {
-                                holder.mLine2.setText(getResources().getString(R.string.you_sent_sticker));
-                            } else {
-                                holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
-                            }
                         } else if (message.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                             holder.mLine2.setText(getResources().getString(R.string.location_message));
                         } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
@@ -311,6 +296,15 @@ public class ConversationListItem extends FrameLayout {
                                 }
                             } else {
                                 holder.mLine2.setText(member + " is removed by admin");
+                            }
+                        } else if (message.startsWith(ConferenceConstant.REGEX) && message.endsWith(ConferenceConstant.REGEX)) {
+                            String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
+                            String[] splitMsg = message.split(ConferenceConstant.REGEX);
+                            String senderSticker = splitMsg.length > 2 ? splitMsg[2] : "";
+                            if (TextUtils.isEmpty(senderSticker)) {
+                                holder.mLine2.setText(getResources().getString(R.string.message_sticker));
+                            } else {
+                                holder.mLine2.setText(getResources().getString(R.string.user_sent_sticker, senderSticker));
                             }
                         } else {
                             holder.mLine2.setText(resultMessage);

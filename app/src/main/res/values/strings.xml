@@ -580,6 +580,7 @@
 
     <string name="location_message">Location Message</string>
     <string name="you_sent_sticker">You sent a sticker</string>
+    <string name="message_sticker">Sticker message</string>
     <string name="user_sent_sticker">%1$s sent a sticker</string>
     <string name="tab_menu_menu">Menu</string>
     <string name="tab_menu_conversation">Chat</string>
@@ -618,4 +619,5 @@
     <string name="request_send_email_success">Send successful! Please check email to change new password</string>
     <string name="remove_member_success">Remove %s in this group</string>
     <string name="error_special_characters">Username cannot contain special characters</string>
+    <string name="skip_referral">Cancel this step and go to Home screen?</string>
 </resources>

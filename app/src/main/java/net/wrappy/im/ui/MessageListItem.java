@@ -396,6 +396,7 @@ public class MessageListItem extends FrameLayout {
         holder.mTextViewForMessages.setVisibility(View.GONE);
         holder.btntranslate.setVisibility(View.GONE);
 
+
         if (centerCrop)
             holder.mMediaThumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         else

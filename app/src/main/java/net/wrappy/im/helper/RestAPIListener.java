@@ -12,10 +12,16 @@ import net.wrappy.im.util.PopupUtils;
  */
 public abstract class RestAPIListener {
 
+    /**
+     * empty constructor do not show error message
+     */
     public RestAPIListener() {
 
     }
 
+    /**
+     * Constructor use activity to show error message
+     */
     public RestAPIListener(Context context) {
         this.mContext = context;
     }

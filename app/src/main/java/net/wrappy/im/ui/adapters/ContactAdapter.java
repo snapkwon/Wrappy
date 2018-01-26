@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.ui.ContactListItem;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -52,7 +54,7 @@ public class ContactAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(wpKMemberDtos.get(position));
+        holder.bind(wpKMemberDtos.get(position), position);
     }
 
     @Override
@@ -64,21 +66,29 @@ public class ContactAdapter
 
         @BindView(R.id.line1)
         TextView line1;
+
         @BindView(R.id.line2)
         TextView line2;
+
         @BindView(R.id.avatar)
         ImageView mAvatar;
+
         @BindView(R.id.message_container)
         View container;
+
+        @BindView(R.id.image_section)
+        TextView imagesection;
+
+
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(final WpKMemberDto wpKMemberDto) {
+        public void bind(final WpKMemberDto wpKMemberDto, int position) {
             line1.setText(wpKMemberDto.getIdentifier());
-            line2.setText(wpKMemberDto.getEmail());
+            //line2.setText(wpKMemberDto.getEmail());
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
             if (wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
@@ -87,6 +97,8 @@ public class ContactAdapter
                 LetterAvatar lavatar = new LetterAvatar(mContext, wpKMemberDto.getIdentifier(), padding);
                 mAvatar.setImageDrawable(lavatar);
             }
+
+            imagesection.setVisibility(View.GONE);
 
             container.setOnClickListener(new View.OnClickListener() {
                 @Override

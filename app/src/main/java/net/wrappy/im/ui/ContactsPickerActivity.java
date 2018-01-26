@@ -72,7 +72,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
-import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -81,7 +80,6 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Utils;
 
@@ -138,7 +136,6 @@ public class ContactsPickerActivity extends BaseActivity {
     public LongSparseArray<SelectedContact> getSelection() {
         return mSelection;
     }
-
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -340,6 +337,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void setGroupMode(boolean groupMode) {
         setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
+        mToolbar.setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
         mLayoutContactSelect.setVisibility(groupMode ? View.GONE : View.VISIBLE);
         mLayoutGroupSelect.setVisibility(groupMode ? View.VISIBLE : View.GONE);
         int newChoiceMode = (groupMode ? ListView.CHOICE_MODE_MULTIPLE : ListView.CHOICE_MODE_SINGLE);
