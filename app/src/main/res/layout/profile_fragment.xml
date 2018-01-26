@@ -81,8 +81,8 @@
                                 style="@style/AppText02"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:padding="10dp"
-                                android:hint="@string/username" />
+                                android:hint="@string/username"
+                                android:padding="10dp" />
 
                         </LinearLayout>
 
@@ -114,9 +114,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:inputType="phone"
+                                    android:hint="@string/mobile_phone"
                                     android:imeOptions="actionDone"
-                                    android:hint="@string/mobile_phone" />
+                                    android:inputType="phone" />
                             </RelativeLayout>
 
 
@@ -150,8 +150,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:inputType="textEmailAddress"
-                                    android:hint="@string/email" />
+                                    android:hint="@string/email"
+                                    android:inputType="textEmailAddress" />
                             </RelativeLayout>
 
 
@@ -176,7 +176,6 @@
                                     android:text="@string/gender" />
 
 
-
                             </RelativeLayout>
 
 
@@ -195,12 +194,13 @@
                                     android:layout_height="wrap_content"
                                     android:background="@null"
                                     android:text="@string/gender" />
+
                                 <android.support.v7.widget.AppCompatSpinner
                                     android:id="@+id/spnProfile"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_alignParentRight="true"/>
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true" />
                             </RelativeLayout>
 
 
@@ -338,7 +338,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="Change Security Question" />
+                            android:text="@string/security_question_change" />
 
                     </LinearLayout>
 
@@ -374,7 +374,7 @@
                         style="@style/divider"
                         android:layout_marginBottom="10dp"
                         android:layout_marginLeft="48dp"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="10dp" />
 
                     <LinearLayout
                         android:id="@+id/lnProfileLogout"
