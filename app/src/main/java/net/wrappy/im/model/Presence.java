@@ -35,10 +35,10 @@ import java.util.Map;
  * presence data won't be saved or sent to the server.
  */
 public final class Presence implements Parcelable {
-    
+
     public static final int MIN_PRESENCE = 0;
     public static final int OFFLINE = 0;
-    public static final int INVISIBLE = 1;    
+    public static final int INVISIBLE = 1;
     public static final int AWAY = 2;
     public static final int IDLE = 3;
     public static final int DO_NOT_DISTURB = 4;
@@ -47,15 +47,15 @@ public final class Presence implements Parcelable {
     public static final int MAX_PRESENCE = 5;
 
 
-    
+
     /**
-     * 
-        int OFFLINE = 0;
-        int INVISIBLE = 1;
-        int AWAY = 2;
-        int IDLE = 3;
-        int DO_NOT_DISTURB = 4;
-        int AVAILABLE = 5;
+     *
+     int OFFLINE = 0;
+     int INVISIBLE = 1;
+     int AWAY = 2;
+     int IDLE = 3;
+     int DO_NOT_DISTURB = 4;
+     int AVAILABLE = 5;
      */
 
     public static final int CLIENT_TYPE_DEFAULT = 0;
@@ -76,27 +76,27 @@ public final class Presence implements Parcelable {
     }
 
     /**
-    public Presence(Date lastSeen) {
-        this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
-    }**/
+     public Presence(Date lastSeen) {
+     this(Presence.OFFLINE, null, null, null, CLIENT_TYPE_DEFAULT, null, null);
+     }**/
 
     public Presence(int status, String statusText, int clientType) {
         this(status, statusText, null, null, clientType);
     }
 
     /**
-    public Presence(int status, String statusText, int clientType, Date lastSeen) {
-        this(status, statusText, null, null, clientType);
-        this.mLastSeen = lastSeen;
-    }**/
+     public Presence(int status, String statusText, int clientType, Date lastSeen) {
+     this(status, statusText, null, null, clientType);
+     this.mLastSeen = lastSeen;
+     }**/
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,
-            int clientType) {
+                    int clientType) {
         this(status, statusText, avatarData, avatarType, clientType, null, null);
     }
 
     public Presence(int status, String statusText, byte[] avatarData, String avatarType,
-            int clientType, Map<String, String> extendedInfo, String resource) {
+                    int clientType, Map<String, String> extendedInfo, String resource) {
         setStatus(status);
         mStatusText = statusText;
         setAvatar(avatarData, avatarType);
@@ -128,6 +128,10 @@ public final class Presence implements Parcelable {
             if (timeLastSeen != -1)
                 mLastSeen = new Date(timeLastSeen);
         }
+    }
+
+    public void setLastSeen(Date lastSeen) {
+        mLastSeen = lastSeen;
     }
 
     public Date getLastSeen ()
@@ -186,7 +190,7 @@ public final class Presence implements Parcelable {
         }
         mStatus = status;
 
-        if (mStatus == AVAILABLE || mStatus == AWAY)
+        if (mStatus == AVAILABLE)
             mLastSeen = new Date();
     }
 
@@ -224,8 +228,8 @@ public final class Presence implements Parcelable {
 
         if (mLastSeen != null)
             dest.writeLong(mLastSeen.getTime());
-        else
-            dest.writeLong(-1);
+        //    else
+        //      dest.writeLong(-1);
     }
 
     @Override
@@ -263,5 +267,5 @@ public final class Presence implements Parcelable {
         this.mPriority = mPriority;
     }
 
-    
+
 }
