@@ -107,7 +107,7 @@
 
         <View
             style="@style/divider"
-            android:layout_marginTop="13dp" />
+            android:layout_marginTop="18dp" />
 
     </LinearLayout>
 
@@ -123,8 +123,8 @@
 
     <ImageView
         android:id="@+id/avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="5dp"
         android:scaleType="centerCrop"
         android:visibility="gone" />
@@ -134,9 +134,9 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="left|top"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="32dp"
         android:padding="2dp"
         android:scaleType="fitCenter"
         android:src="@drawable/status_active"
