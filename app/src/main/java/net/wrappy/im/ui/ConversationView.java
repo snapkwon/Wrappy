@@ -1273,6 +1273,7 @@ public class ConversationView implements OnHandleMessage {
             mSendButton.setVisibility(View.GONE);
             mButtonTalk.setVisibility(View.GONE);
             mComposeMessage.setVisibility(View.VISIBLE);
+            mButtonVoice.setVisibility(View.VISIBLE);
             //  mButtonVoice.setVisibility(View.VISIBLE);
 
 

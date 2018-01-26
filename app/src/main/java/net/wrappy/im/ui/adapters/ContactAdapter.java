@@ -79,6 +79,8 @@ public class ContactAdapter
         @BindView(R.id.image_section)
         TextView imagesection;
 
+        @BindView(R.id.linesection)
+        FrameLayout linesection;
 
 
         public ViewHolder(View itemView) {
@@ -99,6 +101,8 @@ public class ContactAdapter
             }
 
             imagesection.setVisibility(View.GONE);
+
+            linesection.setVisibility(View.GONE);
 
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
