@@ -51,13 +51,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     View mainView;
     private final int IMAGE_AVARTA = 101;
     @BindView(R.id.btnGroupPhoto)
-    ImageButton btnGroupPhoto;
+    CircleImageView btnGroupPhoto;
 
     @BindView(R.id.edGroupName)
     AppEditTextView edGroupName;
-
-    @BindView(R.id.imgGroupPhoto)
-    CircleImageView imgGroupPhoto;
 
     @BindView(R.id.lstContacts)
     ListView lstContacts;
@@ -155,9 +152,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
                     resultUri = UCrop.getOutput(data);
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                    imgGroupPhoto.setLayoutParams(layoutParams);
-                    imgGroupPhoto.requestLayout();
-                    GlideHelper.loadBitmap(getActivity(), imgGroupPhoto, resultUri.toString(), true);
+                    GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
 //                    RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
 //                        @Override
 //                        public void onCompleted(Exception e, Response<String> result) {

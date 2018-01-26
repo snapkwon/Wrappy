@@ -246,7 +246,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         getActivity().finishAffinity();
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment, R.id.lnProfileBlockUser, R.id.lnProfileShareContact})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
 
@@ -368,6 +368,10 @@ public class ProfileFragment extends BaseFragmentV4 {
             AppFuncs.sendRequestInviteFriend(getActivity());
         } else if (view.getId() == R.id.lnProfileFragment) {
             AppFuncs.dismissKeyboard(getActivity());
+        } else if (view.getId() == R.id.lnProfileBlockUser) {
+            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
+        } else if (view.getId() == R.id.lnProfileShareContact) {
+            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
         }
     }
 
