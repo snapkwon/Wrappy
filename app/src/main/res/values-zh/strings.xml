@@ -74,7 +74,6 @@
 
     <!-- Views: Settings: Account -->
     <string name="do_srv_lookup">搜尋器</string>
-    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Use DNS SRV to find actual XMPP server from domain name</string>
     <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">允許用戶名和密碼以純文字格式發送</string>
     <string name="allow_plain_text_auth">允許純文字身份驗証</string>
     <string name="require_tls_ssl_connection">要求TLS連接</string>

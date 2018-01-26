@@ -71,7 +71,6 @@
 
     <!-- Views: Settings: Account -->
     <string name="do_srv_lookup">SRVルックアップを実行する</string>
-    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">DNS SRVを使用してドメイン名から実際のXMPPサーバーを検索する</string>
     <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">暗号化されていないトランスポートを使用する場合、ユーザー名とパスワードをプレーンテキストとして送信できるようにする</string>
     <string name="allow_plain_text_auth">プレーンテキスト認証を許可する</string>
     <string name="require_tls_ssl_connection">TLS接続が必要</string>
@@ -453,7 +452,6 @@
     <string name="complete">コンプリート</string>
     <string name="current_balance">経常収支</string>
     <string name="add_photo">写真を追加！</string>
-    <string name="error_group_name_empty">グループ名が空です</string>
     <string name="error_creating_group">グループの作成失敗</string>
     <string name="select_file_to_send">ファイルを選ぶ</string>
     <string name="google_play_services_not_available">Google Playサービスはご利用いただけません。</string>
@@ -470,7 +468,6 @@
     <string name="logout_device">このデバイスをログアウトする</string>
     <string name="message_remove_avatar_success">アバターの成功を取り除く</string>
     <string name="message_remove_banner_success">バナーの成功を取り除く</string>
-    <string name="error_invalid_email">メールフォーマットが無効です</string>
     <string name="hint_password">入力パスワード</string>
     <string name="error_reset_password">パスワードのリセットに失敗する</string>
     <string name="warning">警告</string>

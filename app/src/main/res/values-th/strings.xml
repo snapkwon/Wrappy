@@ -71,7 +71,6 @@
 
     <!-- Views: Settings: Account -->
     <string name="do_srv_lookup">ค้นหาชนิดเอสอาร์วี</string>
-    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">ใช้ DNS SRV เพื่อหาเซิร์ฟเวอร์ XMPP จากชื่อโดเมน</string>
     <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">อนุญาตให้ชื่อผู้ใช้และรหัสผ่านถูกส่งเป็นข้อความธรรมดาได้ เมื่อมีการใช้การส่งแบบไม่มีการเข้ารหัส</string>
     <string name="allow_plain_text_auth">อนุญาตสิทธิ์ข้อความธรรมดา</string>
     <string name="require_tls_ssl_connection">ต้องการการเชื่อมต่อ TLS</string>
@@ -449,8 +448,6 @@
     <string name="complete">สมบูรณ์</string>
     <string name="current_balance">สมดุลปัจจุบัน</string>
     <string name="add_photo">เพิ่มรูปภาพ!</string>
-    <string name="error_group_name_empty">ชื่อกลุ่มว่างเปล่า</string>
-    <string name="error_group_empty">ไม่มีสมาชิกในกลุ่ม</string>
     <string name="select_file_to_send">เลือกไฟล์</string>
     <string name="google_play_services_not_available">บริการกูเกิ้ลเพลย์ไม่สามารถใช้ได้</string>
     <string name="english">อังกฤษ</string>
@@ -466,7 +463,6 @@
     <string name="logout_device">ล็อคเอาต์อุปกรณ์นี้</string>
     <string name="message_remove_avatar_success">เอาภาพอวตารออกเสร็จแล้ว</string>
     <string name="message_remove_banner_success">เอาแบนเนอร์ออกเสร็จแล้ว</string>
-    <string name="error_invalid_email">รูปแบบอีเมล์ไม่ถูกต้อง</string>
     <string name="hint_password">กรอกรหัสผ่าน</string>
     <string name="error_reset_password">การตั้งค่ารหัสผ่านล้มเหลว</string>
     <string name="warning">คำเตือน</string>
