@@ -131,6 +131,13 @@ public class SettingConversationActivity extends BaseActivity {
 
     private List<WpKMemberDto> identifiers = new ArrayList<>();
 
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            memberGroupAdapter.setData(memberGroupDisplays);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
@@ -196,26 +203,6 @@ public class SettingConversationActivity extends BaseActivity {
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
             }
-            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
-                    try {
-                        Gson gson = new Gson();
-                        wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
-                        }.getType());
-                        memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
-                        identifiers = wpKChatGroup.getParticipators();
-
-                        edGroupName.setText(wpKChatGroup.getName());
-                        if (wpKChatGroup.getIcon() != null) {
-                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
-                            updateAvatar();
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
 
             edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
@@ -239,7 +226,27 @@ public class SettingConversationActivity extends BaseActivity {
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
-            updateMembers();
+            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
+                @Override
+                public void OnComplete(int httpCode, String error, String s) {
+                    try {
+                        Gson gson = new Gson();
+                        wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
+                        }.getType());
+                        memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        identifiers = wpKChatGroup.getParticipators();
+
+                        edGroupName.setText(wpKChatGroup.getName());
+                        if (wpKChatGroup.getIcon() != null) {
+                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                            updateAvatar();
+                        }
+                        updateMembers();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
         } else {
             lnAvatarOfGroup.setVisibility(View.GONE);
         }
@@ -305,7 +312,8 @@ public class SettingConversationActivity extends BaseActivity {
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
-                memberGroupAdapter.setData(memberGroupDisplays);
+                runOnUiThread(mRunnable);
+//                mHandler.post(mRunnable);
                /* if (!Thread.currentThread().isInterrupted()) {
                     runOnUiThread(new Runnable() {
                         @Override
