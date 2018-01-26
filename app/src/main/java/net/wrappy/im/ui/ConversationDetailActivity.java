@@ -630,6 +630,12 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        getWindow().setBackgroundDrawable(null);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
 
