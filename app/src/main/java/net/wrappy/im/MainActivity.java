@@ -22,12 +22,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -68,7 +71,6 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
-import net.wrappy.im.model.ConnectionListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
@@ -76,9 +78,9 @@ import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.service.IConnectionListener;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
@@ -129,7 +131,7 @@ import static net.wrappy.im.helper.RestAPI.POST_CREATE_GROUP;
 
 /**
  */
-public class MainActivity extends BaseActivity implements AppDelegate {
+public class MainActivity extends BaseActivity implements AppDelegate, IConnectionListener {
 
     private ImApp mApp;
 
@@ -167,8 +169,7 @@ public class MainActivity extends BaseActivity implements AppDelegate {
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
 
-    //XmppConnection listener
-    ConnectionListener connectionListener;
+    private IImConnection mConn;
 
     public static void start() {
         Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
@@ -426,11 +427,26 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         }
 
         handleIntent();
+        if (mApp.getDefaultAccountId() != -1) {
+            if (mConn == null) {
+                mConn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                if (mConn != null) {
+                    try {
+                        mConn.registerConnectionListener(this);
+                    } catch (Exception e) {
+                        Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
+                    }
+
+                }
+            }
+        }
         checkConnection();
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
             mLoadDataHandler = null;
@@ -441,34 +457,12 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             mLoadContactHandler = null;
             syncContactRunnable = null;
         }
-
-        super.onDestroy();
-    }
-
-
-    /*
-    * Register to liten event from the connection
-    * */
-    private void registerConnection(IImConnection connection) {
-        if (connectionListener == null) {
-            connectionListener = new ConnectionListener() {
-                @Override
-                public void onStateChanged(int state, ImErrorInfo error) {
-                    //update status connection from state
-                    checkConnection();
-                }
-
-                @Override
-                public void onUserPresenceUpdated() {
-
-                }
-
-                @Override
-                public void onUpdatePresenceError(ImErrorInfo error) {
-
-                }
-            };
-            ((XmppConnection) connection).addConnectionListener(connectionListener);
+        if (mConn != null) {
+            try {
+                mConn.unregisterConnectionListener(this);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -479,17 +473,29 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         mViewPager.setCurrentItem(3);
     }
 
+    private Snackbar mSbStatus;
     private boolean checkConnection() {
         try {
+
+            if (mSbStatus != null)
+                mSbStatus.dismiss();
+
+            if (mSbStatus != null)
+                mSbStatus.dismiss();
+
+            if (!isNetworkAvailable()) {
+                mSbStatus = Snackbar.make(mViewPager, "No Internet", Snackbar.LENGTH_INDEFINITE);
+                mSbStatus.show();
+                return false;
+            }
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
-                registerConnection(conn);
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
 
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_LONG);
+                    mSbStatus = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_INDEFINITE);
 //                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
 //                        @Override
 //                        public void onClick(View view) {
@@ -497,15 +503,15 @@ public class MainActivity extends BaseActivity implements AppDelegate {
 //                            startActivity(i);
 //                        }
 //                    });
-                    sb.show();
+                    mSbStatus.show();
 
                     return false;
                 } else if (conn.getState() == ImConnection.LOGGING_IN) {
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_LONG);
-                    sb.show();
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_INDEFINITE);
+                    mSbStatus.show();
                 } else if (conn.getState() == ImConnection.LOGGING_OUT) {
-                    Snackbar sb = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_LONG);
-                    sb.show();
+                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_INDEFINITE);
+                    mSbStatus.show();
                 } else if (conn.getState() == ImConnection.LOGGED_IN) {
                     rejoinGroupChat();
                 }
@@ -516,6 +522,13 @@ public class MainActivity extends BaseActivity implements AppDelegate {
             return false;
         }
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -816,6 +829,26 @@ public class MainActivity extends BaseActivity implements AppDelegate {
         if (id == UPDATE_PROFILE_COMPLETE) {
             btnHeaderEdit.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onStateChanged(IImConnection connection, int state, ImErrorInfo error) throws RemoteException {
+        checkConnection();
+    }
+
+    @Override
+    public void onUserPresenceUpdated(IImConnection connection) throws RemoteException {
+
+    }
+
+    @Override
+    public void onUpdatePresenceError(IImConnection connection, ImErrorInfo error) throws RemoteException {
+
+    }
+
+    @Override
+    public IBinder asBinder() {
+        return mConn.asBinder();
     }
 
     public class Adapter extends FragmentPagerAdapter {

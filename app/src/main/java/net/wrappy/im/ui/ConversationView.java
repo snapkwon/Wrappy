@@ -394,6 +394,9 @@ public class ConversationView implements OnHandleMessage {
                     if (!checkConnection())
                         return;
 
+                if (mConn == null)
+                    return;
+
                 IContactListManager manager = mConn.getContactListManager();
 
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
