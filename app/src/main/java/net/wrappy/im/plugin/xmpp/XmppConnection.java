@@ -83,6 +83,7 @@ import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
 import org.jivesoftware.smackx.httpfileupload.element.Slot;
 import org.jivesoftware.smackx.httpfileupload.element.SlotRequest_V0_2;
+import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.muc.Affiliate;
@@ -188,6 +189,7 @@ public class XmppConnection extends ImConnection {
     private final static boolean PING_ENABLED = true;
 
     private XmppContactListManager mContactListManager;
+    private LastActivityManager mLastActivityManager;
     private Contact mUser;
     private BareJid mUserJid;
 
@@ -1614,7 +1616,7 @@ public class XmppConnection extends ImConnection {
             mResource = providerSettings.getXmppResource();
 
             mRoster = Roster.getInstanceFor(mConnection);
-            mRoster.setRosterLoadedAtLogin(true);
+            mRoster.setRosterLoadedAtLogin(false);
             mRoster.setSubscriptionMode(subMode);
 
             mChatManager = ChatManager.getInstanceFor(mConnection);
@@ -2697,6 +2699,8 @@ public class XmppConnection extends ImConnection {
         public ChatSession createChatSession(ImEntity participant, boolean isNewSession) {
             ChatSession session = super.createChatSession(participant, isNewSession);
             mSessions.put(participant.getAddress().getAddress(), session);
+            if (participant instanceof Contact)
+                getLastSeen((Contact) participant);
             return session;
         }
 
@@ -2843,15 +2847,18 @@ public class XmppConnection extends ImConnection {
 
             //since we don't show lists anymore, let's just load all entries together
 
+            //since we don't show lists anymore, let's just load all entries together
+
             try {
-                mRoster.reloadAndWait();
+                if (!mRoster.isLoaded())
+                    mRoster.reloadAndWait();
             } catch (Exception e) {
                 debug(TAG, "error loading roaster", e);
                 return;
             }
 
-            // LastActivityManager lam = LastActivityManager.getInstanceFor(mConnection);
-            // long now = new Date().getTime();
+            mLastActivityManager = LastActivityManager.getInstanceFor(mConnection);
+            mLastActivityManager.enable();
 
             ContactList cl;
 
@@ -4134,6 +4141,24 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    private void getLastSeen(Contact contact) {
+        if (getState() == ImConnection.LOGGED_IN) {
+            try {
+                LastActivity activity = mLastActivityManager.getLastActivity(JidCreate.bareFrom(contact.getAddress().getBareAddress()));
+
+                if (activity != null) {
+                    Presence presence = new Presence();
+                    Date now = new Date();
+                    presence.setLastSeen(new Date(now.getTime() - (activity.getIdleTime() * 1000)));
+                    contact.setPresence(presence);
+                }
+
+            } catch (Exception e) {
+                debug("LastActivity", "error getting last activity for: " + contact.getAddress().getAddress());
+            }
+        }
+    }
+
     private Contact handlePresenceChanged(org.jivesoftware.smack.packet.Presence presence) {
 
         if (presence == null) //our presence isn't really valid
@@ -4216,8 +4241,9 @@ public class XmppConnection extends ImConnection {
         } else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.unsubscribed) {
             debug(TAG, "got unsubscribe request: " + presence.getFrom());
             try {
-                mContactListManager.getSubscriptionRequestListener().onSubscriptionDeclined(contact, mProviderId, mAccountId);
-
+                if (mContactListManager.getSubscriptionRequestListener() != null) {
+                    mContactListManager.getSubscriptionRequestListener().onSubscriptionDeclined(contact, mProviderId, mAccountId);
+                }
             } catch (RemoteException e) {
                 Log.e(TAG, "remote exception on subscription handling", e);
             }
@@ -4244,6 +4270,9 @@ public class XmppConnection extends ImConnection {
             } else
                 contact.setPresence(p);
 
+            if (contact.getPresence().getLastSeen() == null) {
+                getLastSeen(contact);
+            }
 
             ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
             if (packetExtension != null) {

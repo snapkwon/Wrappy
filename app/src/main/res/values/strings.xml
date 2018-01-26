@@ -60,7 +60,6 @@
     <!-- Views: Account list -->
     <!-- Views: Setup: Account -->
     <string name="sign_in">Sign in</string>
-    <string name="account_setup_example_email_address">user@domain</string>
     <string name="account_setup_new_username">new username</string>
     <string name="account_setup_password">password</string>
     <string name="account_setup_password_confirm">confirm password</string>
@@ -75,7 +74,6 @@
 
     <!-- Views: Settings: Account -->
     <string name="do_srv_lookup">Do SRV Lookup</string>
-    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Use DNS SRV to find actual XMPP server from domain name</string>
     <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">Allow the username and password to be sent as plain text when using an unencrypted transport</string>
     <string name="allow_plain_text_auth">Allow Plain Text Auth</string>
     <string name="require_tls_ssl_connection">Require TLS Connection</string>
@@ -224,7 +222,6 @@
     <string name="attention">Attention</string>
     <string name="error_prefix">Error: </string>
     <string name="general_error">Error code <xliff:g id="code">%1$d</xliff:g></string>
-    <string name="login_service_failed">Unable to sign in to the <xliff:g id="service">%1$s</xliff:g> service. Please try again later.\n(Detail: <xliff:g id="description">%2$s</xliff:g>)</string>
     <string name="add_list_failed">The list was not added.</string>
     <string name="block_contact_failed">Contact was not blocked.</string>
     <string name="unblock_contact_failed">Contact was not unblocked.</string>
@@ -257,7 +254,6 @@
     <string name="unsupported_incoming_data">Unsupported incoming data, cannot share!</string>
     <string name="swipe_alert">Wrappy detected that a request was made to remove its task.  Wrappy will likely crash.  Please use the Sign out all menu item from the account list screen instead.</string>
     <string name="there_is_no_viewer_available_for_this_file_format">There is no viewer available for this file format</string>
-    <string name="otr_keysync_warning_message">Please copy the \'otr_keystore.ofcaes\' file from the desktop OtrFileConverter tool to the root directory of your device storage</string>
     <string name="msg_sent_failed">This message could not be sent.</string>
     <string name="disconnected_warning">You are disconnected. Messages will be sent when you reconnect.</string>
     <string name="error_account_password_mismatch">Your passwords do not match</string>
@@ -313,87 +309,7 @@
     <string name="popup_take_photo">Take Photo</string>
     <string name="popup_choose_gallery">Choose from Gallery</string>
     <string name="popup_delete_photo">Delete Photo</string>
-    <!-- Other: Smileys -->
-    <string-array name="default_smiley_names">
-        <item>Happy</item>
-        <item>Sad</item>
-        <item>Winking</item>
-        <item>Tongue sticking out</item>
-        <item>Surprised</item>
-        <item>Kissing</item>
-        <item>Yelling</item>
-        <item>Cool</item>
-        <item>Money mouth</item>
-        <item>Foot in mouth</item>
-        <item>Embarrassed</item>
-        <item>Angel</item>
-        <item>Undecided</item>
-        <item>Crying</item>
-        <item>Lips are sealed</item>
-        <item>Laughing</item>
-        <item>Confused</item>
-    </string-array>
 
-    <!-- [Do not localize!] -->
-    <string-array name="default_smiley_texts" translatable="false">
-        <item>:-)</item>
-        <item>:-(</item>
-        <item>;-)</item>
-        <item>:-P</item>
-        <item>=-O</item>
-        <item>:-*</item>
-        <item>:O</item>
-        <item>B-)</item>
-        <item>:-$</item>
-        <item>:-!</item>
-        <item>:-[</item>
-        <item>O:-)</item>
-        <item>:-\\</item>
-        <item>:\'(</item>
-        <item>:-X</item>
-        <item>:-D</item>
-        <item>o_O</item>
-    </string-array>
-
-    <string-array name="smiley_names">
-        <item>Happy</item>
-        <item>Sad</item>
-        <item>Winking</item>
-        <item>Tongue sticking out</item>
-        <item>Surprised</item>
-        <item>Kissing</item>
-        <item>Yelling</item>
-        <item>Cool</item>
-        <item>Money mouth</item>
-        <item>Foot in mouth</item>
-        <item>Embarrassed</item>
-        <item>Angel</item>
-        <item>Undecided</item>
-        <item>Crying</item>
-        <item>Lips are sealed</item>
-        <item>Laughing</item>
-        <item>Confused</item>
-    </string-array>
-
-    <string-array name="smiley_texts">
-        <item>:-)</item>
-        <item>:-(</item>
-        <item>;-)</item>
-        <item>:-P</item>
-        <item>=-O</item>
-        <item>:-*</item>
-        <item>:O</item>
-        <item>B-)</item>
-        <item>:-$</item>
-        <item>:-!</item>
-        <item>:-[</item>
-        <item>O:-)</item>
-        <item>:-\\</item>
-        <item>:\'(</item>
-        <item>:-X</item>
-        <item>:-D</item>
-        <item>o_O</item>
-    </string-array>
     <string name="this_is_a_group_chat">Send a group message</string>
 
     <string name="unable_to_securely_share_this_file">Unable to securely share this file</string>
@@ -620,4 +536,5 @@
     <string name="remove_member_success">Remove %s in this group</string>
     <string name="error_special_characters">Username cannot contain special characters</string>
     <string name="skip_referral">Cancel this step and go to Home screen?</string>
+    <string name="create_by">Create by %s</string>
 </resources>

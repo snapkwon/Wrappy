@@ -49,9 +49,7 @@ import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.conversation.CustomBottomSheetDialogFragment;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
-import net.wrappy.im.util.Constant;
 
 public class ConversationListFragment extends BaseFragmentV4 {
 
@@ -455,53 +453,53 @@ public class ConversationListFragment extends BaseFragmentV4 {
 
     private synchronized void doUpgrade() {
 
-        if (mMigrateTaskListener == null) {
-
-            mMigrateTaskListener = new MigrateAccountTask.MigrateAccountListener() {
-                @Override
-                public void migrateComplete(OnboardingAccount account) {
-
-                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
-                    mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_light));
-                    mUpgradeAction.setTextColor(getResources().getColor(R.color.wrappy_primary));
-                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        }
-                    });
-                }
-
-                @Override
-                public void migrateFailed(long providerId, long accountId) {
-
-                    mUpgradeDesc.setText(getString(R.string.upgrade_failed));
-                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
-                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        }
-                    });
-                }
-            };
-
-            mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
-            mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_dark));
-            mUpgradeAction.setTextColor(getResources().getColor(R.color.message_background_light));
-
-            mUpgradeAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //do nothing
-
-                }
-            });
-
-            mUpgradeImage.setImageResource(R.drawable.olo_thinking);
-
-
-            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), Constant.EMAIL_DOMAIN, mMigrateTaskListener);
-
-        }
+//        if (mMigrateTaskListener == null) {
+//
+//            mMigrateTaskListener = new MigrateAccountTask.MigrateAccountListener() {
+//                @Override
+//                public void migrateComplete(OnboardingAccount account) {
+//
+//                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+//                    mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_light));
+//                    mUpgradeAction.setTextColor(getResources().getColor(R.color.wrappy_primary));
+//                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        }
+//                    });
+//                }
+//
+//                @Override
+//                public void migrateFailed(long providerId, long accountId) {
+//
+//                    mUpgradeDesc.setText(getString(R.string.upgrade_failed));
+//                    mUpgradeAction.setText(getString(R.string.upgrade_complete_action));
+//                    mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        }
+//                    });
+//                }
+//            };
+//
+//            mUpgradeAction.setText(getString(R.string.upgrade_progress_action));
+//            mUpgradeAction.setBackgroundColor(getResources().getColor(R.color.message_background_dark));
+//            mUpgradeAction.setTextColor(getResources().getColor(R.color.message_background_light));
+//
+//            mUpgradeAction.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    //do nothing
+//
+//                }
+//            });
+//
+//            mUpgradeImage.setImageResource(R.drawable.olo_thinking);
+//
+//
+//            ((ImApp) getActivity().getApplication()).doUpgrade(getActivity(), Constant.EMAIL_DOMAIN, mMigrateTaskListener);
+//
+//        }
     }
 
 }

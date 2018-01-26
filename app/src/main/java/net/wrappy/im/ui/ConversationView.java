@@ -394,6 +394,9 @@ public class ConversationView implements OnHandleMessage {
                     if (!checkConnection())
                         return;
 
+                if (mConn == null)
+                    return;
+
                 IContactListManager manager = mConn.getContactListManager();
 
                 Contact contact = manager.getContactByAddress(mRemoteAddress);
@@ -1416,6 +1419,10 @@ public class ConversationView implements OnHandleMessage {
         if (!isGroupChat())
             new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).execute(mRemoteAddress, null, null);
 
+    }
+
+    public void setRemoteNickname(String mRemoteNickname) {
+        this.mRemoteNickname = mRemoteNickname;
     }
 
     public String getTitle() {
@@ -3527,6 +3534,7 @@ public class ConversationView implements OnHandleMessage {
         intent.putExtra("address", mRemoteAddress);
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
+        intent.putExtra("nickname", mRemoteNickname);
         intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }

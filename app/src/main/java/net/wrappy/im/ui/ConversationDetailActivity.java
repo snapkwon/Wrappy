@@ -397,11 +397,12 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
 
-        applyStyleForToolbar();
+
 
         Intent intent = getIntent();
         processIntent(intent);
 
+        applyStyleForToolbar();
         collapseToolbar();
 
        /* getWindow().setSoftInputMode(
@@ -450,6 +451,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
+        String name = mConvoView.getTitle();
+        if (TextUtils.isEmpty(name) && !TextUtils.isEmpty(mNickname)) {
+            mConvoView.setRemoteNickname(mNickname);
+        }
         txtStatus.setText(String.format(getString(R.string.message_waiting_for_friend), mConvoView.getTitle()));
         mApp = ((ImApp) getApplicationContext());
         Drawable avatar = null;
