@@ -13,7 +13,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -194,14 +193,6 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             }
         });
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                if (edEmail.isEnabled()) {
-                    AppFuncs.dismissKeyboard(getActivity());
-                }
-            }
-        });
         getDataMember();
     }
 
@@ -258,7 +249,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         getActivity().finishAffinity();
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.scrollView})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
 
@@ -378,7 +369,8 @@ public class ProfileFragment extends BaseFragmentV4 {
 //            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
             AppFuncs.sendRequestInviteFriend(getActivity());
-
+        } else if (view.getId() == R.id.scrollView) {
+            AppFuncs.dismissKeyboard(getActivity());
         }
     }
 

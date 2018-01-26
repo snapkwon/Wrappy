@@ -620,4 +620,5 @@
     <string name="remove_member_success">Remove %s in this group</string>
     <string name="error_special_characters">Username cannot contain special characters</string>
     <string name="skip_referral">Cancel this step and go to Home screen?</string>
+    <string name="create_by">Create by %s</string>
 </resources>
