@@ -97,6 +97,8 @@ public class SettingConversationActivity extends BaseActivity {
     LinearLayout lnAvatarOfGroup;
     @BindView(R.id.edGroupSubText)
     AppTextView edGroupSubText;
+    @BindView(R.id.text_member_leave_group)
+    TextView textLeaveGroup;
 
     private String mAddress = null;
     private long mProviderId = -1;
@@ -188,6 +190,7 @@ public class SettingConversationActivity extends BaseActivity {
 
         // showing member group chat
         if (mContactType == Imps.Contacts.TYPE_GROUP) {
+            textLeaveGroup.setText(getString(R.string.setting_delete_and_leave_group));
             String groupXmppId = mAddress;
             if (mAddress.contains("@")) {
                 groupXmppId = mAddress.split("@")[0];
@@ -346,7 +349,11 @@ public class SettingConversationActivity extends BaseActivity {
                 confirmDeleteGroup();
                 break;
             case R.id.layout_member_leave_group:
-                confirmLeaveGroup();
+                if (mContactType == Imps.Contacts.TYPE_GROUP) {
+                    confirmLeaveGroup();
+                } else {
+                    clearHistory();
+                }
                 break;
             case R.id.layout_clean_setting:
                 clearHistory();
