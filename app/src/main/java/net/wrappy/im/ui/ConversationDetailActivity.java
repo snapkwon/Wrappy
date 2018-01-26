@@ -18,7 +18,6 @@ package net.wrappy.im.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
@@ -56,16 +55,22 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.bumptech.glide.BitmapTypeRequest;
@@ -90,6 +95,7 @@ import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.CircleTransform;
+import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -187,7 +193,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private ImApp mApp;
 
     //private AppBarLayout appBarLayout;
-    private Toolbar mToolbar;
+//    private Toolbar mToolbar;
 
     FrameLayout popupWindow;
 
@@ -225,7 +231,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
     private void handleMessage() {
-        if (mConvoView.getLastSeen() != null) {
+        /*if (mConvoView.getLastSeen() != null) {
             getSupportActionBar().setSubtitle(mPrettyTime.format(mConvoView.getLastSeen()));
         } else {
             if (mConvoView.getRemotePresence() == Presence.AWAY)
@@ -235,7 +241,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
                 getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
 
-        }
+        }*/
     }
 
 
@@ -298,7 +304,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                     Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, convertDpToPx(50), convertDpToPx(50), false));
-                    mToolbar.setLogo(d);
+//                    mToolbar.setLogo(d);
                 }
 
                 @Override
@@ -312,7 +318,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 //    int padding = 24;
                 //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
                 // if(isgroup) {
-                mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
+//                mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
             } else {
                 try {
                     if (getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY) != null) {
@@ -344,7 +350,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
                         d = new BitmapDrawable(getResources(), output);
 
-                        mToolbar.setLogo(d);
+//                        mToolbar.setLogo(d);
                     }
                 } catch (OutOfMemoryError ome) {
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
@@ -367,16 +373,20 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        initActionBarDefault(true, 0);
+        addIconActionBar(R.drawable.ic_camera);
+        addIconActionBar(R.drawable.ic_phone);
+        addIconActionBar(R.drawable.ic_tran);
+
         mApp = (ImApp) getApplication();
 
         mConvoView = new ConversationView(this);
         mHandler = new MyHandler(this);
         mHandler.setOnHandleMessage(this);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        mToolbar.setPadding(0, 0, 0, 0);//for tab otherwise give space in tab
-        mToolbar.setContentInsetsAbsolute(0, 0);
-
+//        mToolbar.setPadding(0, 0, 0, 0);//for tab otherwise give space in tab
+//        mToolbar.setContentInsetsAbsolute(0, 0);
         //  appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
 
 
@@ -392,17 +402,18 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        setSupportActionBar(mToolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
 
-
+//        applyStyleForToolbar();
 
         Intent intent = getIntent();
         processIntent(intent);
 
-        applyStyleForToolbar();
+        setCustomActionBar(mConvoView.isGroupChat());
+
         collapseToolbar();
 
        /* getWindow().setSoftInputMode(
@@ -441,7 +452,88 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         // set background for this screen
         loadBitmapPreferences();
 
-        updateStatusAvatar(mConvoView.isGroupChat());
+//        updateStatusAvatar(mConvoView.isGroupChat());
+    }
+
+    @Override
+    public void onClickActionBar(int resId) {
+        super.onClickActionBar(resId);
+        switch (resId) {
+            case R.drawable.ic_tran:
+                if (popupWindow.getVisibility() == View.GONE) {
+                    popupWindow.setVisibility(View.VISIBLE);
+                } else {
+                    popupWindow.setVisibility(View.GONE);
+                }
+                break;
+            case R.drawable.ic_phone:
+                mConvoView.startAudioConference();
+                break;
+            case R.drawable.ic_camera:
+                mConvoView.startVideoConference();
+                break;
+        }
+    }
+
+    private void setCustomActionBar(boolean isGroupChat) {
+        View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
+
+        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
+        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+
+        if (isGroupChat) {
+            avatar.setImageResource(R.drawable.chat_group);
+            status.setVisibility(View.GONE);
+        } else {
+            GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
+            setAvatarStatus(status);
+        }
+
+        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
+        txt.setText(mNickname);
+
+        addCustomViewToActionBar(view);
+    }
+
+    private void setAvatarStatus(ImageView imageView) {
+        if (mConvoView.getLastSeen() != null) {
+            imageView.setImageResource(R.drawable.status_active);
+        } else {
+            if (mConvoView.getRemotePresence() == Presence.AWAY)
+                imageView.setImageResource(R.drawable.status_aw);
+            else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
+                imageView.setImageResource(R.drawable.status_disable);
+        }
+    }
+
+    SearchView searchView;
+
+    private void addSearchViewInActionBar() {
+        clearViewInActionBar();
+        View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
+
+        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
+        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+        avatar.setVisibility(View.GONE);
+        status.setVisibility(View.GONE);
+
+        searchView = (SearchView) view.findViewById(R.id.searchtext);
+
+        searchView.setVisibility(View.VISIBLE);
+
+
+        int id = searchView.getContext()
+                .getResources()
+                .getIdentifier("android:id/search_src_text", null, null);
+        EditText searchEditText = (EditText) searchView.findViewById(id);
+
+        searchEditText.setTextColor(getResources().getColor(R.color.message_background_light));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.message_background_light));
+
+        mConvoView.activeSearchmode();
+        mConvoView.searchText(searchView);
+
+        addCustomViewToActionBar(view);
     }
 
     public void updateLastSeen(Date lastSeen) {
@@ -449,7 +541,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
 
-    public void applyStyleForToolbar() {
+    /*public void applyStyleForToolbar() {
         getSupportActionBar().setTitle(mConvoView.getTitle());
         String name = mConvoView.getTitle();
         if (TextUtils.isEmpty(name) && !TextUtils.isEmpty(mNickname)) {
@@ -481,18 +573,18 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
 
         //first set font
-        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
-
-        if (typeface != null) {
-            for (int i = 0; i < mToolbar.getChildCount(); i++) {
-                View view = mToolbar.getChildAt(i);
-                if (view instanceof TextView) {
-                    TextView tv = (TextView) view;
-                    tv.setTypeface(typeface);
-                    break;
-                }
-            }
-        }
+//        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
+//
+//        if (typeface != null) {
+//            for (int i = 0; i < mToolbar.getChildCount(); i++) {
+//                View view = mToolbar.getChildAt(i);
+//                if (view instanceof TextView) {
+//                    TextView tv = (TextView) view;
+//                    tv.setTypeface(typeface);
+//                    break;
+//                }
+//            }
+//        }
 
         //not set color
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -513,8 +605,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
             //      appBarLayout.setBackgroundColor(themeColorHeader);
             //   collapsingToolbar.setBackgroundColor(themeColorHeader);
-            mToolbar.setBackgroundColor(themeColorHeader);
-            mToolbar.setTitleTextColor(themeColorText);
+//            mToolbar.setBackgroundColor(themeColorHeader);
+//            mToolbar.setTitleTextColor(themeColorText);
 
         }
 
@@ -530,7 +622,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         }
 
-    }
+    }*/
 
     MyLoaderCallbacks loaderCallbacks;
 
@@ -584,7 +676,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private void startChatting() {
         mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
-        applyStyleForToolbar();
+//        applyStyleForToolbar();
     }
 
     public void collapseToolbar() {
@@ -609,7 +701,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         regFilter.addAction(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX);
         registerReceiver(receiver, regFilter);
 
-        mConvoView.focusSearchmode();
+        mConvoView.focusSearchmode(searchView);
 
 
         /**
@@ -682,7 +774,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             case R.id.menu_voice_call:
                 mConvoView.startAudioConference();
                 return true;
-            case R.id.menu_settings_language:
+//            case R.id.menu_settings_language:
                 //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
                     @Override
@@ -690,13 +782,13 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                         popupWindow.showAtLocation(mRootLayout, Gravity.NO_GRAVITY, OFFSET_X, OFFSET_Y);
                     }
                 });*/
-                if (popupWindow.getVisibility() == View.GONE) {
-                    popupWindow.setVisibility(View.VISIBLE);
-                } else {
-                    popupWindow.setVisibility(View.GONE);
-                }
+//                if (popupWindow.getVisibility() == View.GONE) {
+//                    popupWindow.setVisibility(View.VISIBLE);
+//                } else {
+//                    popupWindow.setVisibility(View.GONE);
+//                }
 
-                return true;
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -706,7 +798,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     public boolean onCreateOptionsMenu(Menu menu) {
         //Add Conference menu item
         menuitem = menu;
-        getMenuInflater().inflate(R.menu.menu_conference, menu);
+//        getMenuInflater().inflate(R.menu.menu_conference, menu);
         if (mConvoView.isGroupChat()) {
             getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
@@ -1010,10 +1102,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     Bundle extras = resultIntent.getExtras();
                     int type = extras.getInt("type");
                     if (type == TYPE_SEARCH) {
-                        mConvoView.activeSearchmode();
-                        for (int i = 0; i < 4; i++) {
-                            menuitem.getItem(i).setVisible(false);
-                        }
+                        addSearchViewInActionBar();
+//                        mConvoView.activeSearchmode();
+//                        for (int i = 0; i < 4; i++) {
+//                            menuitem.getItem(i).setVisible(false);
+//                        }
                     } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
                         String imagePath = extras.getString("imagePath");
 

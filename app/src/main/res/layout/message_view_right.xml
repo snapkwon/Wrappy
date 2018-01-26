@@ -37,7 +37,8 @@
             android:id="@+id/message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:minWidth="100dp">
 
             <LinearLayout
                 android:id="@+id/audio_container"
@@ -94,7 +95,7 @@
             <FrameLayout
                 android:id="@+id/media_thumbnail_container"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants"
                 android:padding="0dp"
                 android:visibility="gone">
@@ -102,7 +103,7 @@
                 <ImageView
                     android:id="@+id/media_thumbnail"
                     android:layout_width="100dp"
-                    android:layout_height="150dp"
+                    android:layout_height="100dp"
                     android:focusableInTouchMode="true"
                     android:scaleType="centerCrop" />
 
