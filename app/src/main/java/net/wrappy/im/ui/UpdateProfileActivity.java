@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -105,8 +104,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     AppTextView txtProfileMobile;
     @BindView(R.id.txtProfileUser)
     AppTextView txtProfileUser;
-    @BindView(R.id.scrollView)
-    ScrollView scrollView;
 
     ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
@@ -224,7 +221,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     };
 
     @Optional
-    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.scrollView})
+    @OnClick({R.id.btnProfileComplete, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnUpdateProfile})
     @Override
     public void onClick(View view) {
         if (isFlag) {
@@ -314,7 +311,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     }
                 }).show();
             }
-            if (view.getId()==R.id.scrollView) {
+            if (view.getId()==R.id.lnUpdateProfile) {
                 AppFuncs.dismissKeyboard(UpdateProfileActivity.this);
             }
         } catch (Exception ex) {

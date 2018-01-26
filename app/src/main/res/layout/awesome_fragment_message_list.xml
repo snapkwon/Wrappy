@@ -41,7 +41,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:text="@string/upgrade_desc"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -52,7 +51,6 @@
             android:layout_margin="20dp"
             android:background="@drawable/rounded_rect_golden"
             android:gravity="center"
-            android:text="@string/upgrade_action"
             android:textColor="?colorPrimary" />
     </LinearLayout>
 

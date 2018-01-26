@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -104,8 +103,6 @@ public class ProfileFragment extends BaseFragmentV4 {
     ImageButton btnProfileCameraHeader;
     @BindView(R.id.spnProfile)
     AppCompatSpinner spnProfile;
-    @BindView(R.id.scrollView)
-    ScrollView scrollView;
 
     ArrayAdapter adapterGender;
 
@@ -249,7 +246,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         getActivity().finishAffinity();
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.scrollView})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
 
@@ -369,7 +366,7 @@ public class ProfileFragment extends BaseFragmentV4 {
 //            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
             AppFuncs.sendRequestInviteFriend(getActivity());
-        } else if (view.getId() == R.id.scrollView) {
+        } else if (view.getId() == R.id.lnProfileFragment) {
             AppFuncs.dismissKeyboard(getActivity());
         }
     }

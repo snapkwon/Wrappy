@@ -17,7 +17,6 @@
 
 package net.wrappy.im.ui;
 
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,8 +39,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.ImServiceConstants;
-import net.wrappy.im.tasks.MigrateAccountTask;
-import net.wrappy.im.ui.onboarding.OnboardingAccount;
 import net.wrappy.im.util.PopupUtils;
 //import cn.pedant.SweetAlert.*;
 
@@ -114,46 +111,46 @@ public class AccountSettingsActivity extends PreferenceActivity implements
 
     private void migrateAccountConfirmed() {
 
-        if (!mIsMigrating) {
-
-            mIsMigrating = true;
-
-            String domain = "home.zom.im";
-            final ProgressDialog progress = new ProgressDialog(this);
-            progress.setIndeterminate(true);
-            progress.setTitle(R.string.upgrade_progress_action);
-            progress.show();
-
-            MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
-                @Override
-                public void migrateComplete(OnboardingAccount account) {
-                    mIsMigrating = false;
-                    progress.dismiss();
-                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_complete, false);
-                    finish();
-                }
-
-                @Override
-                public void migrateFailed(long providerId, long accountId) {
-                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_failed, false);
-                    mIsMigrating = false;
-                    progress.dismiss();
-
-                }
-            });
-            maTask.execute(domain);
-        }
+//        if (!mIsMigrating) {
+//
+//            mIsMigrating = true;
+//
+//            String domain = "home.zom.im";
+//            final ProgressDialog progress = new ProgressDialog(this);
+//            progress.setIndeterminate(true);
+//            progress.setTitle(R.string.upgrade_progress_action);
+//            progress.show();
+//
+//            MigrateAccountTask maTask = new MigrateAccountTask(this, (ImApp) getApplication(), mProviderId, mAccountId, new MigrateAccountTask.MigrateAccountListener() {
+//                @Override
+//                public void migrateComplete(OnboardingAccount account) {
+//                    mIsMigrating = false;
+//                    progress.dismiss();
+//                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_complete, false);
+//                    finish();
+//                }
+//
+//                @Override
+//                public void migrateFailed(long providerId, long accountId) {
+//                    AppFuncs.alert(AccountSettingsActivity.this, R.string.upgrade_failed, false);
+//                    mIsMigrating = false;
+//                    progress.dismiss();
+//
+//                }
+//            });
+//            maTask.execute(domain);
+//        }
 
     }
 
-    private void migrateAccount() {
-        PopupUtils.showCustomDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                migrateAccountConfirmed();
-            }
-        }, null, false);
-    }
+//    private void migrateAccount() {
+//        PopupUtils.showCustomDialog(this, getString(R.string.migrate_menu), getString(R.string.message_upgrade), R.string.yes, R.string.cancel, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                migrateAccountConfirmed();
+//            }
+//        }, null, false);
+//    }
 
     private void deleteAccount() {
         PopupUtils.showCustomDialog(this, getString(R.string.delete_account), getString(R.string.confirm), R.string.yes, R.string.cancel, new View.OnClickListener() {
@@ -315,7 +312,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements
                 } else if (arg0.getItemId() == R.id.menu_migrate) {
 
 
-                    migrateAccount();
+//                    migrateAccount();
 
 
                 }
