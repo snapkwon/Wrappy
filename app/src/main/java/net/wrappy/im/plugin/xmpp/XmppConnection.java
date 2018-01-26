@@ -4241,8 +4241,9 @@ public class XmppConnection extends ImConnection {
         } else if (presence.getType() == org.jivesoftware.smack.packet.Presence.Type.unsubscribed) {
             debug(TAG, "got unsubscribe request: " + presence.getFrom());
             try {
-                mContactListManager.getSubscriptionRequestListener().onSubscriptionDeclined(contact, mProviderId, mAccountId);
-
+                if (mContactListManager.getSubscriptionRequestListener() != null) {
+                    mContactListManager.getSubscriptionRequestListener().onSubscriptionDeclined(contact, mProviderId, mAccountId);
+                }
             } catch (RemoteException e) {
                 Log.e(TAG, "remote exception on subscription handling", e);
             }

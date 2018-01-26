@@ -1421,6 +1421,10 @@ public class ConversationView implements OnHandleMessage {
 
     }
 
+    public void setRemoteNickname(String mRemoteNickname) {
+        this.mRemoteNickname = mRemoteNickname;
+    }
+
     public String getTitle() {
         return mRemoteNickname;
 
