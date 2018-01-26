@@ -1,0 +1,532 @@
+<?xml version='1.0' encoding='UTF-8'?><!--
+/*
+ * Copyright (C) 2007-2008 Esmertec AG.
+ * Copyright (C) 2007-2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- General: Names -->
+    <string name="ic_launcher_name">Wrappy</string>
+    <string name="app_name">Wrappy</string>
+    <string name="im_label">Wrappy</string>
+    <string name="app_version">版本</string>
+    <!-- General: Permissions -->
+    <string name="ro_perm_label">閲讀即時信息</string>
+    <string name="ro_perm_desc">允許應用程式由IM內容供應商讀取資料</string>
+    <string name="wo_perm_label">填寫即時訊息</string>
+    <string name="wo_perm_desc">允許應用程式填寫資料至IM內容供應商</string>
+    <string name="perm_label">啟動IM項目</string>
+    <string name="perm_desc">允許應用程式通過IM服務(項目)</string>
+
+    <!-- General: Actions -->
+    <string name="confirm">確認</string>
+    <string name="ok">無問題</string>
+    <string name="cancel">取消</string>
+    <string name="yes">無問題</string>
+    <string name="no">取消</string>
+    <string name="connect">連接</string>
+    <!-- Views -->
+    <string name="title_activity_lock_screen">WRAPPY上鎖</string>
+    <string name="lock_screen_create_passphrase">設定密碼</string>
+    <string name="lock_screen_confirm_passphrase">確認密碼</string>
+    <string name="lock_screen_passphrase_hint">密碼</string>
+    <string name="lock_screen_passphrase_not_set_enter">請設置一個密碼來鎖定應用程式</string>
+    <string name="lock_screen_passphrase_not_set_confirm">確認新密碼</string>
+    <string name="lock_screen_passphrases_not_matching">密碼不符, 請重試</string>
+    <string name="lock_screen_skip">跳過</string>
+    <!-- Views: Setup -->
+    <string name="add_account">增 <xliff:g id="account">%1$s</xliff:g> 戶口</string>
+    <string name="menu_about">關於</string>
+
+    <string name="signed_out_prompt_with_error">You have been signed out of <xliff:g id="account">%1$s</xliff:g> because <xliff:g id="reason">%2$s</xliff:g></string>
+
+
+    <string name="pass_err_length">你的密碼不夠長</string>
+    <!-- Views: About: Welcome -->
+    <!-- Views: About: OTR -->
+    <!-- Views: About: Security -->
+    <!-- Views: Account list -->
+    <!-- Views: Setup: Account -->
+    <string name="sign_in">登錄</string>
+    <string name="account_setup_new_username">新用戶名</string>
+    <string name="account_setup_password">密碼</string>
+    <string name="account_setup_password_confirm">確認密碼</string>
+    <string name="btn_create_new_account">注册賬戶</string>
+
+    <string name="account_setup_pers_now_title">立即登錄</string>
+    <string name="select_domain_new_account">聊天區域</string>
+    <string name="registering_new_account_">注册新賬戶</string>
+
+    <string name="signing_in_wait">登錄</string>
+    <string name="signing_out_wait">登出</string>
+
+    <!-- Views: Settings: Account -->
+    <string name="do_srv_lookup">搜尋器</string>
+    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">Use DNS SRV to find actual XMPP server from domain name</string>
+    <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">允許用戶名和密碼以純文字格式發送</string>
+    <string name="allow_plain_text_auth">允許純文字身份驗証</string>
+    <string name="require_tls_ssl_connection">要求TLS連接</string>
+    <string name="transport_encryption">加密傳送</string>
+    <string name="how_encrypted_chats_are_started">如何開始加密聊天</string>
+    <string name="the_server_to_connect_to_if_needed">連接服務器, 如需要</string>
+    <string name="connect_server">連接服務器</string>
+    <string name="tcp_port_for_xmpp_server">TCP端口作XMPP服務器</string>
+    <string name="server_port">服務端口</string>
+    <string name="xmpp_resource">XMPP資源</string>
+    <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">區別由客戶的連接</string>
+    <string name="xmpp_resource_prio_title">XMPP資源優先</string>
+    <string name="xmpp_resource_prio_summary">訊息將被發送到多個客戶端</string>
+
+    <!-- Views: Contact list -->
+    <string name="title_chats">對話</string>
+    <string name="empty_account_message">你没有配置賬戶, 點擊這裡增加另一人</string>
+    <string name="menu_remove_contact">删除聮絡</string>
+    <string name="menu_contact_nickname">聮絡人暱稱</string>
+    <string name="menu_view_blocked">禁止</string>
+    <string name="nickname">暱稱</string>
+
+    <string name="confirm_delete_contact">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"將被删除</string>
+    <string name="confirm_block_contact">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"將被禁止</string>
+    <string name="add_contact_success">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"被增加</string>
+    <string name="delete_contact_success">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"被删除</string>
+    <string name="block_contact_success">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"被禁止</string>
+    <string name="unblock_contact_success">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"被解除</string>
+
+    <string name="menu_verify">驗証聯絡人</string>
+
+    <string name="empty_conversation_group">没有對話, 按下並展開交談</string>
+
+    <string name="search_label">聯絡</string>
+    <string name="search_hint">輸入聯絡人名字去聊天</string>
+    <string name="input_contact_label">輸入朋友的用戶名</string>
+    <!-- Views: Chat: Single -->
+    <string name="contact_online"><xliff:g id="user">%1$s</xliff:g> 在線</string>
+    <string name="contact_away"><xliff:g id="user">%1$s</xliff:g> 離開</string>
+    <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g> 忙碌</string>
+    <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> 離線</string>
+    <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> 加入</string>
+    <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> 已離開</string>
+
+    <string name="file_transfer">檔案傳輸</string>
+    <string name="accept_transfer_">接受傳送資料</string>
+    <string name="wants_to_send_you_the_file">想發送文件</string>
+    <string name="no_connection_for_sending">未有連線去發送你的分享</string>
+
+    <string name="compose_hint">發送訊息</string>
+    <string name="compose_hint_secure">發送私人訊息</string>
+    <string name="menu_end_conversation">結束聊天</string>
+    <string name="select_link_title">選擇連結</string>
+
+    <string name="delete">删除</string>
+    <string name="export_media">輸出媒體檔案</string>
+    <!-- Views: Chat: Group -->
+    <string name="invitation_prompt">已邀請你加入 <xliff:g id="user">%1$s</xliff:g> 群組</string>
+    <string name="accept_invitation">接受</string>
+    <string name="decline_invitation">否定</string>
+    <string name="connecting_to_group_chat_">連接到群組聊天</string>
+
+    <string name="empty_contact_list">未有聯絡人, 請邀請</string>
+
+    <string name="subscription_prompt">加入<xliff:g id="USER">%1$s</xliff:g>?</string>
+    <string name="approve_subscription">是的</string>
+    <string name="decline_subscription">否的</string>
+    <string name="approve_subscription_error">未能批核訂閱  <xliff:g id="user">%1$s</xliff:g>, 請日後再試</string>
+    <string name="decline_subscription_error">未能否定訂閱  <xliff:g id="user">%1$s</xliff:g>, 請日後再試</string>
+
+    <!-- Security: OTR -->
+    <string name="otr_session_status_finished">你的聯絡人已停止加密聊天</string>
+    <string name="otr_mode_force">強制/要求</string>
+    <string name="otr_mode_auto">自動嘗試</string>
+    <string name="otr_mode_requested">按要求</string>
+    <string name="otr_mode_disabled">停用/ 永不</string>
+
+    <!-- Security: OTR: Keyring -->
+    <string name="detected_Otr_keystore_import">我們檢測到要導入的OTR密鑰庫。 你想現在掃描QR密碼嗎？</string>
+    <!-- Security: OTR: Verification -->
+    <!-- Security: OTR: Verification: QA -->
+    <string name="smp_question_title">認證</string>
+    <string name="smp_question_summary">輸入一個問題發送給您的聯繫人，以及您期望他們提供的答案，以驗證他們是誰</string>
+    <string name="smp_question_hint">發問問題</string>
+    <string name="qmp_answer_hint">期待答案</string>
+    <string name="remote_verified_us">你的聯繫人已成功通過身份驗證。 現在詢問你自己的問題來驗證聯繫人。</string>
+    <string name="otr_qa_title">OTR問答驗証</string>
+    <string name="chat_encryption_title">聊天加密</string>
+    <string name="otr_qa_send">發送</string>
+    <string name="otr_qa_cancel">删除</string>
+
+    <!-- Views: VoIP -->
+    <!-- Views: Settings: General -->
+    <!-- Actions: Settings: General: Security and Privacy -->
+    <string name="pref_group_security_title">安全和私隱</string>
+    <string name="encryption_and_anonymity_title">網絡隱私</string>
+    <!-- Actions: Settings: General: User Interface -->
+    <string name="pref_linkify_on_tor_title">可點擊的鏈接</string>
+    <string name="pref_linkify_on_tor_summary">令聊天鏈可點擊（警告，可能的隱私洩露！）</string>
+    <string name="menu_locale">語言</string>
+    <string name="KEY_PREF_LANGUAGE_TITLE">語言</string>
+    <string name="use_system_default">使用原廠設定</string>
+
+    <string name="button_yes_accept_all">是的, 全部接受</string>
+    <string name="pref_delete_unsecured_media_title">删除不安全媒體檔案</string>
+    <string name="pref_delete_unsecured_media_summary">分享照片或文件後，自動將其從原始不安全的存儲中刪除</string>
+
+    <!-- Actions: Settings: General: Other Tuning -->
+    <string name="pref_group_tuning_title">其他調整</string>
+    <string name="start_on_boot">自動開始WRAPPY</string>
+    <string name="start_on_boot_summary">啟動並自動登錄以前的賬戶</string>
+    <string name="hide_offline_contacts">隱藏離線聯繫人</string>
+    <string name="foreground_service_title">前景優先</string>
+    <string name="foreground_service_summary">減少Android重新啟動連接服務的機會。 這將在通知區域發出通知。</string>
+    <string name="heartbeat_interval_title">心跳間隔</string>
+    <string name="heartbeat_interval_summary">使用較高的值（以分鐘為單位）來節省電量。 較高的值可能會導致連接關閉。</string>
+
+    <!-- Actions: Settings: General: Notifications -->
+    <string name="notification_group_title">通知設定</string>
+    <string name="notification_enabled_title">IM通知</string>
+    <string name="notification_enabled_summary">當IM到達,於狀態欄通知</string>
+    <string name="notification_vibrate_title">震動</string>
+    <string name="notification_vibrate_summary">震動當IM到達</string>
+    <string name="notification_sound_title">聲音</string>
+    <string name="notification_sound_summary">鈴聲響動當IM到達</string>
+    <string name="notification_ringtone_title">選擇傳統鈴聲</string>
+
+    <!-- Actions: Settings: General: Developer -->
+    <string name="pref_debug_title">啟用錯誤報告</string>
+    <string name="pref_debug_summary">將應用程序日誌數據輸出到標準out / logcat進行調試</string>
+
+    <!-- Alerts: Dialogs -->
+    <string name="bg_data_prompt_message">登錄應用程序需要網絡數據連接（包括背景數據）</string>
+    <string name="prompt_create_new_account_">新增賬戶</string>
+    <string name="allow_s_to_create_a_new_chat_account_for_s_">為用戶 \'%1$s\' 新增聊天賬戶</string>
+    <!-- Alerts: Notifications -->
+    <string name="subscription_notify_text">接受 <xliff:g id="user">%s</xliff:g> 的朋友邀請</string>
+    <string name="file_notify_text">新檔案由 <xliff:g id="filename">%1$s</xliff:g> 到 <xliff:g id="user">%2$s</xliff:g></string>
+    <string name="notify_groupchat_label">群組聊天邀請</string>
+    <string name="group_chat_invite_notify_text">由 <xliff:g id="user">%s</xliff:g> 邀請新群組聊天</string>
+    <string name="new_messages_notify">新訊息由</string>
+    <string name="starting_the_chatsecure_service_">開始WRAPPY服務</string>
+    <string name="app_unlocked">WRAPPY運行中</string>
+    <!-- Alerts: Exceptions -->
+    <string name="error">錯誤</string>
+    <string name="attention">注意</string>
+    <string name="error_prefix">錯誤</string>
+    <string name="general_error">錯誤碼 <xliff:g id="code">%1$d</xliff:g></string>
+    <string name="add_list_failed">表單未能加入</string>
+    <string name="block_contact_failed">聯絡人未能阻截</string>
+    <string name="unblock_contact_failed">聯絡人未能解除</string>
+    <string name="load_contact_list_failed">聯絡人表單未能加載</string>
+    <string name="cant_connect_to_server">未能連接伺服器, 請檢查網絡</string>
+    <string name="contact_already_exist">XXX已存在於你聯絡人表單內</string>
+    <string name="contact_blocked">聯絡人XXX已被禁止</string>
+    <string name="contact_not_loaded">請稍後, 你的聯絡人表單正上載中</string>
+    <string name="network_error">發生網絡錯誤</string>
+    <string name="wifi_not_connected_error">需要WIFI作網絡連接</string>
+    <string name="service_not_support">伺服器未能支援此功能</string>
+    <string name="invalid_password">你輸入的密碼未能生效</string>
+    <string name="internal_server_error">伺服器發生錯誤</string>
+    <string name="not_implemented">伺服器未能支援此功能</string>
+    <string name="service_unavaiable">伺服器暫時未能使用</string>
+    <string name="timeout">伺服器已超時</string>
+    <string name="version_not_supported">伺服器未能支援此版本</string>
+    <string name="message_queue_full">訊息列已滿</string>
+    <string name="domain_not_supported">伺務器不支持轉發到此區域</string>
+    <string name="unknown_user">輸入名稱未能確認</string>
+    <string name="recipient_blocked_the_user">不好意思, 你被其他用戶禁止</string>
+    <string name="session_expired">此節已過時, 請重新登入</string>
+    <string name="forced_logout">你已經從另一個客戶端登錄</string>
+    <string name="already_logged_in">你已經從另一個客戶端登錄</string>
+    <string name="msisdn_error">很抱歉，電話號碼無法從你的SIM卡中讀取。 請聯繫您你的運營商尋求幫助</string>
+    <string name="not_signed_in">你暫時未能登入</string>
+    <string name="account_setup_error_server">連接到聊天伺務器時發生錯誤 - 請檢查你的配置並重試</string>
+    <string name="error_suspended_connection">網絡離線</string>
+    <string name="unable_to_create_or_join_group_chat">未能新增或加入聊天群組</string>
+    <string name="unsupported_incoming_data">未能支援輸入的數據, 不能分享</string>
+    <string name="swipe_alert">Wrappy檢測到刪除請求。 Wrappy可能會有問題。 請於賬戶列表選項退出</string>
+    <string name="there_is_no_viewer_available_for_this_file_format">這個文件格式沒有可用的檢視器</string>
+    <string name="msg_sent_failed">這訊息未能送出</string>
+    <string name="disconnected_warning">連接斷開。 訊息將在您重新連接時發送</string>
+    <string name="error_account_password_mismatch">您的密碼不相配</string>
+    <string name="error_account_settings_priority">優先次序必須是范圍內的數字</string>
+    <string name="error_account_settings_port">端口號必須是一個數字</string>
+    <string name="error_welcome_database">主要錯誤：無法解鎖或加載應用程序數據庫。 請重新安裝應用程序或清除數據</string>
+    <string name="account_settings_title">賬戶設定</string>
+
+    <string name="pref_group_protect_data_title">保護我的數據</string>
+    <string name="panic_trigger_app">Panic 事故情況</string>
+    <string name="panic_trigger_app_summary">Panic 事故情況可以觸發Wrappy鎖定，發送消息，刪除數據等</string>
+    <string name="panic_setup">Panic 設定</string>
+    <string name="panic_setup_summary">設置Wrappy如何應對PANIC通知</string>
+    <string name="panic_app_none">没有</string>
+    <string name="panic_app_none_summary">没有事故情況, 請不要理會這情況</string>
+    <string name="panic_app_default">預設</string>
+    <string name="protect_data">保護我的檔案</string>
+    <string name="action_done">完成</string>
+    <string name="lock_app">鎖定程式</string>
+    <string name="clear_app_data">在系統上消除所有的數據</string>
+    <string name="uninstall_app">移除程式</string>
+    <string name="include_location">包括我的地點</string>
+    <!--  added 2011/09/01 -->
+    <string name="menu_view_groups">群組</string>
+
+    <string name="buddies">好朋友</string>
+
+    <string name="contacts">聯絡</string>
+
+
+    <string name="mtm_accept_cert">是否接受證書</string>
+    <string name="loading">系統操作中…</string>
+    <!-- Other -->
+
+    <!-- Other: Slide Menu -->
+    <string name="menu_all">全部</string>
+    <string name="menu_archive">檔案</string>
+
+    <string name="menu_settings">設定</string>
+    <string name="menu_sign_out">登出</string>
+    <!-- Other: Provider -->
+    <string name="provider_full_name_xmpp">Jabber (XMPP)</string>
+    <!-- Other: Development Strings [Do not localize!] -->
+    <!-- Other: Presence States -->
+    <string name="presence_available">線上</string>
+    <string name="presence_busy">忙碌中</string>
+    <string name="presence_away">離開</string>
+    <string name="presence_idle">閒</string>
+    <string name="presence_offline">離線</string>
+    <string name="presence_invisible">顯示為離線</string>
+    <string name="popup_take_photo">拍照功能</string>
+    <string name="popup_choose_gallery">從相薄中選擇</string>
+    <string name="popup_delete_photo">移除相片檔案</string>
+    <string name="this_is_a_group_chat">發送訊息在群組</string>
+    <string name="unable_to_securely_share_this_file">不能在非保安設定情況下分享檔案</string>
+    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">你所輸入的密鑰已損壞, 請重新安裝程式或消除數據再試</string>
+    <string name="swipe_hint">請按左面或右面展開功能表</string>
+    <string name="no_convos">立即使用WRAPPY</string>
+    <string name="title_more">發現</string>
+    <string name="title_me">我</string>
+    <string name="no_photos">在這裏可以分享和發送相片</string>
+    <string name="group_admin">管理</string>
+    <string name="group_you">你</string>
+    <string name="title_activity_launcher">昇上活動表</string>
+    <string name="Page1Titlenull"></string>
+    <string name="Page1Title">Wrappy</string>
+    <string name="Page2Title">免費</string>
+    <string name="Page3Title">雲端</string>
+    <string name="Page4Title">保安</string>
+    <string name="Page5Title">魔法</string>
+    <string name="Page6Title">強大</string>
+    <string name="Page7Title">快捷</string>
+    <string name="Page8Title">私隱</string>
+    <string name="Page9Title">生態</string>
+    <string name="Page10Title">没有界限</string>
+    <string name="Page11Title">革命</string>
+    <string name="Page1Message">証服全世界, 下一代的新技術:SNS 平台</string>
+    <string name="Page2Message">WRAPPY程式是免費平台可給用家使用, 功能包括訊息交流, 視頻, 電話等</string>
+    <string name="Page3Message">WRAPPY可讓你於不同平台讀取你的訊息</string>
+    <string name="Page4Message">Either every screen needs a full stop at the end of the sentence or none of them do.</string>
+    <string name="Page5Message">你可輕易地發送或接收貨幣給你的朋友或家人</string>
+    <string name="Page6Message">無限量地保存你的檔案和聊天訊息</string>
+    <string name="Page7Message">你可以立即傳送或接受訊息</string>
+    <string name="Page8Message">你可以永久地移除你的記錄</string>
+    <string name="Page9Message">這是一個簡單使用的電子貨幣系統</string>
+    <string name="Page10Message">貨幣可於不同地方不同國家使用</string>
+    <string name="Page11Message">這是一個先進及創新的意念</string>
+    <string name="StartMessaging">開始訊息</string>
+
+    <string name="id_or_username">用戶</string>
+    <string name="forget_password">忘記密碼</string>
+    <string name="login">登入</string>
+    <string name="waiting_dialog">等侯中…</string>
+    <string name="search_username">尋找用戶</string>
+    <string name="add_contact">加入聯絡人</string>
+    <string name="title_activity_wallet__complete_">電子錢包活動</string>
+
+    <string name="title_create_new_wallet">創建新錢包</string>
+    <string name="title_new_wallet_created">新錢包已創建</string>
+    <string name="title_wallet_address">錢包的地址</string>
+    <string name="title_backup_wallet">備份錢包</string>
+    <string name="title_change_password_wallet">更改密碼</string>
+    <string name="alert_password_wallet">這個密碼加密你的私鑰。 這不是生成密鑰的種子。 您將需要此密碼和您的私鑰來解鎖您的錢包。</string>
+    <string name="sub_title_wallet_dialog">請輸入你的密碼作為後備電子錢包</string>
+    <string name="btn_save_qr_wallet">保存QR碼作電子錢包</string>
+
+    <!--Translate in conversation-->
+    <string name="translate_to">翻譯中</string>
+    <string name="turn_off_translate">關閉</string>
+
+    <!-- Dialog bottom sheet conversation -->
+    <string name="pin_to_top">在畫面最佳位置鎖上</string>
+    <string name="unpin_from_top">解鎖</string>
+    <string name="delete_and_exit">移除及離開</string>
+    <string name="clean_history">消除歷史</string>
+
+    <!-- Settings conversation -->
+    <string name="setting_screen">設定</string>
+    <string name="setting_search">找尋</string>
+    <string name="setting_clear">消除歷史</string>
+    <string name="setting_delete_and_leave_group">移除及離開群組</string>
+    <string name="setting_leave_group">離開群組</string>
+    <string name="setting_delete_chat">移除對話</string>
+    <string name="setting_report_spam">報告有問題</string>
+    <string name="setting_notification">通知</string>
+    <string name="setting_change_background">變更背景畫面</string>
+    <string name="setting_add_member">加入朋友</string>
+    <string name="incoming_attachment">一個附件</string>
+
+    <string name="title_wallet">電子錢包</string>
+    <string name="ETH">以太幣</string>
+    <string name="PRO">Proteusion</string>
+    <string name="seetranslate">查看翻譯</string>
+    <string name="closetranslate">關閉翻譯</string>
+
+    <string name="menu_spam">垃圾郵件</string>
+    <string name="menu_violence">暴力</string>
+    <string name="menu_cancel">消除</string>
+    <string name="error_repeat_password">重覆密碼不正確</string>
+    <string name="message_enter_password">輸入密碼</string>
+    <string name="old_password_mismatch">原有密碼不正確</string>
+    <string name="message_change_password_success">更改密碼成功</string>
+    <string name="backup_success">備份成功</string>
+    <string name="delete_success">移除成功</string>
+    <string name="message_fail_import">上傳失敗, 請再試</string>
+    <string name="backup">備份</string>
+    <string name="title_member_group_setting">會員</string>
+    <string name="old_password_title">舊密碼</string>
+    <string name="new_password_title">新密碼</string>
+    <string name="repeat_password_title">重覆新密碼</string>
+    <string name="available_balance">現時剩餘金額</string>
+    <string name="to_address">現時剩餘金額</string>
+    <string name="amount">金額</string>
+    <string name="eth_unit">以太幣</string>
+    <string name="USD">美元</string>
+    <string name="description">描述</string>
+    <string name="date">日期</string>
+    <string name="confirmations">確認</string>
+    <string name="view_more">查看更多</string>
+    <string name="wallet_created_success">錢包建立成功</string>
+    <string name="warning_backup_wallet">我們建議閣下立即備份的密鑰</string>
+    <string name="backup_now_button">現在備份</string>
+    <string name="no_thanks">不需要</string>
+    <string name="copy_clipboard">複製到剪貼板</string>
+    <string name="backup_address">備份地址</string>
+    <string name="welcome_wallet_title">歡迎使用電子錢包</string>
+    <string name="import_keystore">輸入你的密鑰</string>
+    <string name="three_dots">…</string>
+    <string name="ringing">Calling………</string>
+    <string name="enter_group_name">輸入群組名字</string>
+    <string name="add_new_list">新增名單</string>
+    <string name="new_list">新名單</string>
+    <string name="key_manager">主經理</string>
+    <string name="add_another_account">加入更多的賬戶</string>
+    <string name="check_email_passcode">請輸入你的訊息及密碼</string>
+    <string name="vertify_title_noti">我們已發送訊息去</string>
+    <string name="send_again">重發密碼</string>
+    <string name="answer_secret_question">請回答你的提問(秘密)</string>
+    <string name="your_answer">你的答案</string>
+    <string name="btn_next">下一頁/ 下一項</string>
+    <string name="input_your_email">請輸入電郵</string>
+    <string name="hint_your_email">你的電郵</string>
+    <string name="reset_password">重置密碼</string>
+    <string name="new_group">新群組</string>
+    <string name="about_us">關於我們</string>
+    <string name="faq">問與答</string>
+    <string name="logout">登出</string>
+    <string name="remove">移除</string>
+    <string name="sent">發送</string>
+    <string name="received">收到</string>
+    <string name="all">所有</string>
+    <string name="username">用戶</string>
+    <string name="email">電郵</string>
+    <string name="mobile_phone">手提電話</string>
+    <string name="gender">性別</string>
+    <string name="referral">推薦</string>
+    <string name="referral_hint">電話號碼</string>
+    <string name="btn_submit">提交</string>
+    <string name="btn_update">更新</string>
+    <string name="hint_answer">答案</string>
+    <string name="choose_secret_question">請選擇你的提問(秘密)</string>
+    <string name="choose_new_secret_question">請選擇你的新提問(秘密)</string>
+    <string name="skip">跳過這一頁/項</string>
+    <string name="complete">完成</string>
+    <string name="current_balance">現時的剩餘金額</string>
+    <string name="add_photo">加入相片</string>
+    <string name="error_upload_photo">上傳群組相片失敗</string>
+    <string name="error_creating_group">加入群組失敗</string>
+    <string name="select_file_to_send">請選擇檔案</string>
+    <string name="google_play_services_not_available">谷歌服務失效</string>
+    <string name="english">英文</string>
+    <string name="copied_text">複製文字</string>
+    <string name="history">歷史</string>
+    <string name="activity">活動</string>
+    <string name="error_when_refresh_token">不能更新代幣記錄, 請再試</string>
+    <string name="registration">註册程序</string>
+    <string name="update_profile_success">更新成功</string>
+    <string name="update_profile_fail">更新失敗</string>
+    <string name="error_upload_image">更新失敗</string>
+    <string name="logout_all_devices">登出所有設備</string>
+    <string name="logout_device">登出這設備</string>
+    <string name="message_remove_avatar_success">移除個人頭像成功</string>
+    <string name="message_remove_banner_success">移除旗幟成功</string>
+    <string name="error_get_user_profile">不能錄取用家的檔案</string>
+    <string name="hint_password">輸入密碼</string>
+    <string name="error_reset_password">重啟密碼失敗</string>
+    <string name="warning">警告</string>
+    <string name="error_tranferring_file">傳送檔案出現錯誤</string>
+    <string name="message_download_attachment">請問是否需要保存檔案</string>
+
+    <string name="error_registration">註册失敗, 請再試</string>
+
+    <string name="location_message">Location Message</string>
+    <string name="you_sent_sticker">你發送一個標籤</string>
+    <string name="message_sticker">Sticker message</string>
+    <string name="user_sent_sticker">%1$s發送一個標籤</string>
+    <string name="tab_menu_menu">選項</string>
+    <string name="tab_menu_conversation">聊天</string>
+    <string name="tab_menu_promotion">宣傳</string>
+    <string name="tab_menu_my_page">我的頁面</string>
+    <string name="promotion_invite_friend">邀請朋友</string>
+    <string name="promotion_history">歷史記錄</string>
+    <string name="page_verify">賬戶核實</string>
+    <string name="message_edit">修改訊息</string>
+    <string name="message_delete">移除訊息</string>
+    <string name="message_spam">請報告</string>
+    <string name="invite_friend_earn">邀請更多朋友可得到更多的PTS COIN</string>
+    <string name="promotion_description">當你邀請其他朋友使用WRAPPY, 糸統會獎勵你</string>
+    <string name="promotion_invite_friends">邀請朋友</string>
+    <string name="verify_send_sms_fail">發送訊息失敗</string>
+    <string name="verify_send_sms_success">發送訊息成功</string>
+    <string name="verify_fail">核實測試失敗</string>
+    <string name="from">由</string>
+    <string name="security_question_change">請更改保安提問問題</string>
+    <string name="security_change_old_question">請回答你已設定的提問問題</string>
+    <string name="level">水平</string>
+    <string name="success">成功</string>
+    <string name="secu_success_description">你的問題(秘密)已更改</string>
+    <string name="fail">失敗</string>
+    <string name="upload_fail">Upload fail</string>
+    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
+    <string name="invite_friends_text">Invite Friend</string>
+    <string name="share_app_text">Let me recommend you this application</string>
+    <string name="email_tile">Email *</string>
+    <string name="logout_noti">Are you sure you want to logout this device?</string>
+    <string name="share_title">Choose sharing method</string>
+    <string name="referral_text">Enter your referral code (optional)</string>
+    <string name="Referral">Referral</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="question">Question %d</string>
+    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
+    <string name="remove_member_success">Remove %s in this group</string>
+    <string name="error_special_characters">Username cannot contain special characters</string>
+    <string name="skip_referral">Cancel this step and go to Home screen?</string>
+</resources>

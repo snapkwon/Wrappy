@@ -1,0 +1,524 @@
+<?xml version='1.0' encoding='UTF-8'?><!--
+/*
+ * Copyright (C) 2007-2008 Esmertec AG.
+ * Copyright (C) 2007-2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- General: Names -->
+    <string name="ic_launcher_name">Wrappy</string>
+    <string name="app_name">Wrappy</string>
+    <string name="im_label">Wrappy</string>
+    <string name="app_version">バージョン</string>
+    <!-- General: Permissions -->
+    <string name="ro_perm_label">インスタントメッセージを読む</string>
+    <string name="ro_perm_desc">アプリケーションがIMコンテンツプロバイダからデータを読み取ることを許可します。</string>
+    <string name="wo_perm_label">インスタントメッセージを書く</string>
+    <string name="wo_perm_desc">アプリケーションがIMコンテンツプロバイダにデータを書き込むことを許可します。</string>
+    <string name="perm_label">IMサービスを開始する</string>
+    <string name="perm_desc">アプリケーションがインテント経由でIMサービスを開始できるようにします。</string>
+
+    <!-- General: Actions -->
+    <string name="confirm">確認</string>
+    <string name="ok">[OK]</string>
+    <string name="cancel">キャンセル</string>
+    <string name="yes">[OK]</string>
+    <string name="no">キャンセル</string>
+    <string name="connect">接続する</string>
+    <!-- Views -->
+    <string name="title_activity_lock_screen">Wrappy Locked</string>
+    <string name="lock_screen_create_passphrase">パスワードを設定してください</string>
+    <string name="lock_screen_confirm_passphrase">パスワードを認証する</string>
+    <string name="lock_screen_passphrase_hint">パスワード</string>
+    <string name="lock_screen_passphrase_not_set_enter">アプリをロックするパスフレーズを設定してください</string>
+    <string name="lock_screen_passphrase_not_set_confirm">新しいパスワードを確認</string>
+    <string name="lock_screen_passphrases_not_matching">パスワードが一致しませんでした。もう一度お試しください</string>
+    <string name="lock_screen_skip">スキップ>></string>
+    <!-- Views: Setup -->
+    <string name="add_account"><xliff:g id="account">%1$s</xliff:g>アカウントを追加</string>
+    <string name="menu_about">約</string>
+    <string name="signed_out_prompt_with_error"><xliff:g id="reason">%2$s</xliff:g>のため、あなたは<xliff:g id="account">%1$s</xliff:g>からログアウトしました</string>
+    <string name="pass_err_length">あなたのパスフレーズが十分ではありませんでした</string>
+    <!-- Views: About: Welcome -->
+    <!-- Views: About: OTR -->
+    <!-- Views: About: Security -->
+    <!-- Views: Account list -->
+    <!-- Views: Setup: Account -->
+    <string name="sign_in">サインイン</string>
+    <string name="account_setup_new_username">新しいユーザーネーム</string>
+    <string name="account_setup_password">パスワード</string>
+    <string name="account_setup_password_confirm">パスワードを認証する</string>
+    <string name="btn_create_new_account">アカウント登録</string>
+
+    <string name="account_setup_pers_now_title">今すぐサインイン</string>
+    <string name="select_domain_new_account">チャットサービスドメイン</string>
+    <string name="registering_new_account_">新しいアカウントを登録しています\u2026</string>
+
+    <string name="signing_in_wait">ログインする\u2026</string>
+    <string name="signing_out_wait">ログアウトする\u2026</string>
+
+    <!-- Views: Settings: Account -->
+    <string name="do_srv_lookup">SRVルックアップを実行する</string>
+    <string name="use_dns_srv_to_find_actual_xmpp_server_from_domain_name">DNS SRVを使用してドメイン名から実際のXMPPサーバーを検索する</string>
+    <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">暗号化されていないトランスポートを使用する場合、ユーザー名とパスワードをプレーンテキストとして送信できるようにする</string>
+    <string name="allow_plain_text_auth">プレーンテキスト認証を許可する</string>
+    <string name="require_tls_ssl_connection">TLS接続が必要</string>
+    <string name="transport_encryption">トランスポート暗号化</string>
+    <string name="how_encrypted_chats_are_started">暗号化されたチャットの開始方法</string>
+    <string name="the_server_to_connect_to_if_needed">必要に応じて、接続先のサーバ</string>
+    <string name="connect_server">Connectサーバー</string>
+    <string name="tcp_port_for_xmpp_server">XMPPサーバーのTCPポート</string>
+    <string name="server_port">サーバポート</string>
+    <string name="xmpp_resource">XMPPリソース</string>
+    <string name="to_distinguish_this_connection_from_other_clients_that_are_also_logged_in">この接続をログインしている他のクライアントと区別するため</string>
+    <string name="xmpp_resource_prio_title">XMPPリソースの優先順位</string>
+    <string name="xmpp_resource_prio_summary">複数のアクティブなリソースを持つクライアントへのメッセージは、最も優先順位の高いリソースに送信されます</string>
+
+    <!-- Views: Contact list -->
+    <string name="title_chats">会話</string>
+    <string name="empty_account_message">設定されたアカウントがありません。 追加するにはここをクリック！</string>
+    <string name="menu_remove_contact">連絡先を削除</string>
+    <string name="menu_contact_nickname">連絡先ニックネーム</string>
+    <string name="menu_view_blocked">ブロックされた</string>
+    <string name="nickname">ニックネーム</string>
+    <string name="confirm_delete_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されます。</string>
+    <string name="confirm_block_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"はブロックされます。</string>
+    <string name="add_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が追加されました。</string>
+    <string name="delete_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されました。</string>
+    <string name="block_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"がブロックされました。</string>
+    <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\"にブロックされていません。</string>
+    <string name="menu_verify">連絡先を確認する</string>
+    <string name="empty_conversation_group">会話が開いていないチャットを開始するにはタップしてください！</string>
+    <string name="search_label">接触</string>
+    <string name="search_hint">チャットする連絡先の名前を入力してください</string>
+    <string name="input_contact_label">あなたの友人のフルネームを入力してください。（例：wrappyisfun.4x3f5g@wrappy.net）</string>
+    <!-- Views: Chat: Single -->
+    <string name="contact_online"><xliff:g id="user">%1$s</xliff:g>はオンラインです</string>
+    <string name="contact_away"><xliff:g id="user">%1$s</xliff:g>は離れています</string>
+    <string name="contact_busy"><xliff:g id="user">%1$s</xliff:g>はビジー状態です</string>
+    <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g>はオフラインです</string>
+    <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g>が参加しました</string>
+    <string name="contact_left"><xliff:g id="user">%1$s</xliff:g>は残っています</string>
+
+    <string name="file_transfer">ファイル転送</string>
+    <string name="accept_transfer_">転送を受け入れる？</string>
+    <string name="wants_to_send_you_the_file">あなたにファイルを送ろうとしています</string>
+    <string name="no_connection_for_sending">あなたのシェアを送るための接続はありません！</string>
+
+    <string name="compose_hint">メッセージを送ります</string>
+    <string name="compose_hint_secure">プライベートメッセージを送信する</string>
+    <string name="menu_end_conversation">チャットを終了</string>
+    <string name="select_link_title">リンクを選択</string>
+
+    <string name="delete">削除</string>
+    <string name="export_media">メディアファイルをエクスポートしますか？</string>
+    <!-- Views: Chat: Group -->
+    <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g>さんがあなたをグループチャットに招待しています。</string>
+    <string name="accept_invitation">同意する</string>
+    <string name="decline_invitation">低下</string>
+    <string name="connecting_to_group_chat_">グループチャットに接続しています...</string>
+
+    <string name="empty_contact_list">連絡先が見つかりません。 招待するにはタップします。</string>
+    <string name="subscription_prompt"><xliff:g id="USER">%1$s</xliff:g>を追加しますか？</string>
+    <string name="approve_subscription">はい</string>
+    <string name="decline_subscription">いいえ</string>
+    <string name="approve_subscription_error"><xliff:g id="user">%1$s</xliff:g>からの購読を承認できません。 後でもう一度お試しください。</string>
+    <string name="decline_subscription_error"><xliff:g id="user">%1$s</xliff:g>からの購読を拒否できません。 後でもう一度お試しください。</string>
+
+    <!-- Security: OTR -->
+    <string name="otr_session_status_finished">連絡先が暗号化されたチャットを停止しました。</string>
+    <string name="otr_mode_force">強制/要求</string>
+    <string name="otr_mode_auto">自動試行</string>
+    <string name="otr_mode_requested">要求通り</string>
+    <string name="otr_mode_disabled">無効/決してない</string>
+
+    <!-- Security: OTR: Keyring -->
+    <string name="detected_Otr_keystore_import">インポートするOTRキーストアが検出されました。 今すぐQRパスワードをスキャンしますか？</string>
+    <!-- Security: OTR: Verification -->
+    <!-- Security: OTR: Verification: QA -->
+    <string name="smp_question_title">認証</string>
+    <string name="smp_question_summary">自分の連絡先に送信する質問を入力し、回答が得られると思われる回答を入力して、自分が誰であるかを確認します。</string>
+    <string name="smp_question_hint">質問する質問</string>
+    <string name="qmp_answer_hint">期待される答え</string>
+    <string name="remote_verified_us">あなたの連絡先があなたを認証しました。 あなた自身の質問をして、あなたの連絡先を認証しましょう。</string>
+    <string name="otr_qa_title">OTRのQ＆A検証</string>
+    <string name="chat_encryption_title">チャット暗号化</string>
+    <string name="otr_qa_send">送信</string>
+    <string name="otr_qa_cancel">キャンセル</string>
+
+    <!-- Views: VoIP -->
+    <!-- Views: Settings: General -->
+    <!-- Actions: Settings: General: Security and Privacy -->
+    <string name="pref_group_security_title">セキュリティとプライバシー</string>
+    <string name="encryption_and_anonymity_title">ネットワークプライバシー</string>
+    <!-- Actions: Settings: General: User Interface -->
+    <string name="pref_linkify_on_tor_title">クリック可能なリンク</string>
+    <string name="pref_linkify_on_tor_summary">チャットのリンクをクリック可能にする（警告、可能なプライバシーリーク！）</string>
+    <string name="menu_locale">言語</string>
+    <string name="KEY_PREF_LANGUAGE_TITLE">言語</string>
+    <string name="use_system_default">システムデフォルトを使用する</string>
+
+    <string name="button_yes_accept_all">はい、すべて受け入れます</string>
+    <string name="pref_delete_unsecured_media_title">安全でないメディアを削除する</string>
+    <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後に元の安全でないストレージから自動的に削除します</string>
+
+    <!-- Actions: Settings: General: Other Tuning -->
+    <string name="pref_group_tuning_title">その他のチューニング</string>
+    <string name="start_on_boot">自動的にWrappyを開始する</string>
+    <string name="start_on_boot_summary">以前にログインしたアカウントを常に開始して自動的にログインする</string>
+    <string name="hide_offline_contacts">オフラインの連絡先を非表示</string>
+    <string name="foreground_service_title">フォアグラウンド優先度を使用する</string>
+    <string name="foreground_service_summary">Androidが接続サービスを再開する機会を減らす。 これにより、通知領域に通知が表示されます。</string>
+    <string name="heartbeat_interval_title">ハートビート間隔</string>
+    <string name="heartbeat_interval_summary">バッテリを節約するために、より高い値（分単位）を使用してください。 値が大きいと、非アクティブなためにプロバイダが接続を閉じる可能性があります。</string>
+
+    <!-- Actions: Settings: General: Notifications -->
+    <string name="notification_group_title">通知設定</string>
+    <string name="notification_enabled_title">IM通知</string>
+    <string name="notification_enabled_summary">IMが到着したときにステータスバーに通知する</string>
+    <string name="notification_vibrate_title">振動する</string>
+    <string name="notification_vibrate_summary">IMが到着したときにも振動する</string>
+    <string name="notification_sound_title">音</string>
+    <string name="notification_sound_summary">IM着信時にも着信音を鳴らす</string>
+    <string name="notification_ringtone_title">カスタム着信音を選択</string>
+
+    <!-- Actions: Settings: General: Developer -->
+    <string name="pref_debug_title">デバッグログを有効にする</string>
+    <string name="pref_debug_summary">デバッグのためにアプリのログデータを標準出力/ログに出力する</string>
+
+    <!-- Alerts: Dialogs -->
+    <string name="bg_data_prompt_message">アプリがログインするには、ネットワークデータ接続（バックグラウンドデータを含む）が必要です。</string>
+    <string name="prompt_create_new_account_">新しいアカウントを作成する？</string>
+    <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\'の新しいチャットアカウントを作成しますか？</string>
+    <!-- Alerts: Notifications -->
+    <string name="subscription_notify_text"><xliff:g id="user">%s</xliff:g>の新しい友だち招待状</string>
+    <string name="file_notify_text"><xliff:g id="user">%2$s</xliff:g>の新しいファイル<xliff:g id="filename">%1$s</xliff:g></string>
+    <string name="notify_groupchat_label">グループチャットの招待</string>
+    <string name="group_chat_invite_notify_text"><xliff:g id="user">%s</xliff:g>の新しいグループチャットの招待状</string>
+    <string name="new_messages_notify">からの新しいメッセージ</string>
+    <string name="starting_the_chatsecure_service_">Wrappyサービスを開始しています...</string>
+    <string name="app_unlocked">Wrappyが動作しています</string>
+    <!-- Alerts: Exceptions -->
+    <string name="error">エラー</string>
+    <string name="attention">注意</string>
+    <string name="error_prefix">エラー：</string>
+    <string name="general_error">エラーコード<xliff:g id="code">%1$d</xliff:g></string>
+    <string name="add_list_failed">リストは追加されませんでした。</string>
+    <string name="block_contact_failed">連絡先はブロックされていません。</string>
+    <string name="unblock_contact_failed">連絡先がブロックされていませんでした。</string>
+    <string name="load_contact_list_failed">連絡先リストが読み込まれませんでした。</string>
+    <string name="cant_connect_to_server">サーバーに接続できません。 接続を確認してください。</string>
+    <string name="contact_already_exist">%1$sはあなたの連絡先リストに既に存在しています。</string>
+    <string name="contact_blocked">連絡先 \"%1$s\"はブロックされています。</string>
+    <string name="contact_not_loaded">連絡先リストが読み込まれるまでお待ちください。</string>
+    <string name="network_error">ネットワークエラーが発生しました。</string>
+    <string name="wifi_not_connected_error">この接続にはWiFiが必要です。</string>
+    <string name="service_not_support">サーバーはこの機能をサポートしていません。</string>
+    <string name="invalid_password">あなたが入力したパスワードは有効ではありません。</string>
+    <string name="internal_server_error">サーバーでエラーが発生しました。</string>
+    <string name="not_implemented">サーバーはこの機能をサポートしていません。</string>
+    <string name="service_unavaiable">サーバーは現在使用できません。</string>
+    <string name="timeout">サーバーがタイムアウトしました。</string>
+    <string name="version_not_supported">サーバーは現在のバージョンをサポートしていません。</string>
+    <string name="message_queue_full">メッセージキューがいっぱいです。</string>
+    <string name="domain_not_supported">サーバーはドメインへの転送をサポートしていません。</string>
+    <string name="unknown_user">入力したユーザー名は認識されません。</string>
+    <string name="recipient_blocked_the_user">申し訳ありませんが、ユーザーによってブロックされています。</string>
+    <string name="session_expired">セッションの有効期限が切れました。もう一度サインインしてください。</string>
+    <string name="forced_logout">別のクライアントからサインインしました。</string>
+    <string name="already_logged_in">別のクライアントからサインインしました。</string>
+    <string name="msisdn_error">申し訳ありませんが、SIMカードから電話番号を読み取ることはできません。 オペレーターに相談してください。</string>
+    <string name="not_signed_in">あなたは現在サインインしていません。</string>
+    <string name="account_setup_error_server">チャットサーバーに接続中にエラーが発生しました - 設定を確認してから、もう一度お試しください。</string>
+    <string name="error_suspended_connection">ネットワークはオフラインです</string>
+    <string name="unable_to_create_or_join_group_chat">グループチャットを作成または参加できません</string>
+    <string name="unsupported_incoming_data">サポートされていない受信データです。共有できません。</string>
+    <string name="swipe_alert">Wrappyは、そのタスクを削除する要求が行われたことを検出しました。 Wrappyがクラッシュする可能性があります。 代わりに、アカウントリスト画面の[サインアウトすべて]メニュー項目を使用してください。</string>
+    <string name="there_is_no_viewer_available_for_this_file_format">このファイル形式に使用できるビューアがありません</string>
+    <string name="msg_sent_failed">このメッセージを送信できませんでした。</string>
+    <string name="disconnected_warning">あなたは切断されています。 メッセージは、再接続すると送信されます。</string>
+    <string name="error_account_password_mismatch">パスワードが一致しません</string>
+    <string name="error_account_settings_priority">優先度は[0 .. 127]の範囲の数値でなければなりません</string>
+    <string name="error_account_settings_port">ポート番号は数字でなければなりません</string>
+    <string name="error_welcome_database">メジャーエラー：アプリケーションデータベースをアンロックまたはロードできません。 アプリを再インストールするか、データを消去してください。</string>
+    <string name="account_settings_title">アカウント設定</string>
+
+    <string name="pref_group_protect_data_title">私のデータを保護する</string>
+    <string name="panic_trigger_app">パニックトリガーアプリケーション</string>
+    <string name="panic_trigger_app_summary">パニックアプリは、Wrappyをロックしたり、メッセージを送信したり、データを削除したりすることができます。</string>
+    <string name="panic_setup">パニックセットアップ</string>
+    <string name="panic_setup_summary">Wrappyがパニック通知にどのように反応するかを設定します。</string>
+    <string name="panic_app_none">なし</string>
+    <string name="panic_app_none_summary">パニックトリガーアプリケーションなし、パニックトリガーをすべて無視します。</string>
+    <string name="panic_app_default">デフォルト</string>
+    <string name="protect_data">私のデータを保護する</string>
+    <string name="action_done">完了</string>
+    <string name="lock_app">アプリをロックする</string>
+    <string name="clear_app_data">アプリ内のすべてのデータを消去する</string>
+    <string name="uninstall_app">アプリをアンインストールする</string>
+    <string name="include_location">私の場所を含める</string>
+    <!--  added 2011/09/01 -->
+    <string name="menu_view_groups">グループ</string>
+
+    <string name="buddies">友達</string>
+
+    <string name="contacts">連絡先</string>
+
+
+    <string name="mtm_accept_cert">サーバ証明書を受け入れますか？</string>
+    <string name="loading">読み込んでいます…</string>
+    <!-- Other -->
+
+    <!-- Other: Slide Menu -->
+    <string name="menu_all">すべて</string>
+    <string name="menu_archive">アーカイブ</string>
+
+    <string name="menu_settings">設定</string>
+    <string name="menu_sign_out">サインアウト</string>
+    <!-- Other: Provider -->
+    <string name="provider_full_name_xmpp">ジャバー（XMPP）</string>
+    <!-- Other: Development Strings [Do not localize!] -->
+    <!-- Other: Presence States -->
+    <string name="presence_available">オンライン</string>
+    <string name="presence_busy">忙しい</string>
+    <string name="presence_away">離れて</string>
+    <string name="presence_idle">アイドル</string>
+    <string name="presence_offline">オフライン</string>
+    <string name="presence_invisible">オフラインで表示</string>
+    <string name="popup_take_photo">写真を撮る</string>
+    <string name="popup_choose_gallery">ギャラリーから選択</string>
+    <string name="popup_delete_photo">写真を削除する</string>
+    <string name="this_is_a_group_chat">グループメッセージを送信する</string>
+    <string name="unable_to_securely_share_this_file">このファイルを安全に共有できません</string>
+    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。 Wrappyを再インストールするか、アプリの「データをクリア」してください</string>
+    <string name="swipe_hint">その他のオプションを表示するには左右にスワイプ</string>
+    <string name="no_convos">Wrappyを開始する時間！</string>
+    <string name="title_more">発見</string>
+    <string name="title_me">私</string>
+    <string name="no_photos">共有して受信した写真がここに表示されます</string>
+    <string name="group_admin">管理者</string>
+    <string name="group_you">君は</string>
+    <string name="title_activity_launcher">LauncherActivity</string>
+    <string name="Page1Titlenull"></string>
+    <string name="Page1Title">Wrappy</string>
+    <string name="Page2Title">無料</string>
+    <string name="Page3Title">雲</string>
+    <string name="Page4Title">安全な</string>
+    <string name="Page5Title">マジック</string>
+    <string name="Page6Title">強力</string>
+    <string name="Page7Title">速い</string>
+    <string name="Page8Title">プライバシー</string>
+    <string name="Page9Title">エコロジー</string>
+    <string name="Page10Title">フチ無し</string>
+    <string name="Page11Title">革命</string>
+    <string name="Page1Message">世界を平坦化する。 これは次世代のSNSプラットフォームです。</string>
+    <string name="Page2Message">Wrappyは自由に使用できます：音声通話、ビデオ通話、テレビ会議を含みます....</string>
+    <string name="Page3Message">Wrappyでは、複数のデバイスからメッセージにアクセスできます。</string>
+    <string name="Page4Message">いずれの画面でも、文末に完全停止する必要があります。</string>
+    <string name="Page5Message">あなたは簡単に友人や家族から通貨を送受信できます。</string>
+    <string name="Page6Message">あなたのメディアデータとチャットの記録に無制限のストレージ！</string>
+    <string name="Page7Message">すぐにメッセージを送受信できます。</string>
+    <string name="Page8Message">履歴はいつでも削除できます。</string>
+    <string name="Page9Message">シンプルな暗号化エコシステム。</string>
+    <string name="Page10Message">通貨は、どの国からでもどこでも使用できます。</string>
+    <string name="Page11Message">革新的かつ絶えず進化する時代のパイオニア。</string>
+    <string name="StartMessaging">メッセージングを開始する</string>
+
+    <string name="id_or_username">ID /ユーザー名</string>
+    <string name="forget_password">パスワードを忘れる</string>
+    <string name="login">ログイン</string>
+    <string name="waiting_dialog">待っている…</string>
+    <string name="search_username">ユーザー名の検索</string>
+    <string name="add_contact">連絡先を追加</string>
+    <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
+
+    <string name="title_create_new_wallet">新しいウォレットを作成する</string>
+    <string name="title_new_wallet_created">作成された新しいウォレット</string>
+    <string name="title_wallet_address">ウォレットアドレス</string>
+    <string name="title_backup_wallet">ウォレットをバックアップする</string>
+    <string name="title_change_password_wallet">パスワードを変更する</string>
+    <string name="alert_password_wallet">このパスワードは、秘密鍵を暗号化します。 これはあなたの鍵を生成するための種とはなりません。 ウォレットのロックを解除するには、このパスワードと秘密鍵が必要です。</string>
+    <string name="sub_title_wallet_dialog">バックアップ用のウォレットパスワードを入力してください</string>
+    <string name="btn_save_qr_wallet">QRウォレットを保存する</string>
+
+    <!--Translate in conversation-->
+    <string name="translate_to">翻訳する</string>
+    <string name="turn_off_translate">オフ</string>
+
+    <!-- Dialog bottom sheet conversation -->
+    <string name="pin_to_top">ピンから上へ</string>
+    <string name="unpin_from_top">上から固定解除する</string>
+    <string name="delete_and_exit">削除して終了する</string>
+    <string name="clean_history">クリーンヒストリー</string>
+
+    <!-- Settings conversation -->
+    <string name="setting_screen">設定</string>
+    <string name="setting_search">サーチ</string>
+    <string name="setting_clear">履歴をクリア</string>
+    <string name="setting_delete_and_leave_group">グループを削除して離れる</string>
+    <string name="setting_leave_group">グループを離れる</string>
+    <string name="setting_delete_chat">チャットの削除</string>
+    <string name="setting_report_spam">スパム報告</string>
+    <string name="setting_notification">通知</string>
+    <string name="setting_change_background">背景を変更する</string>
+    <string name="setting_add_member">友人を追加する</string>
+    <string name="incoming_attachment">1つの添付ファイル</string>
+
+    <string name="title_wallet">財布</string>
+    <string name="ETH">エテリアム</string>
+    <string name="PRO">産卵</string>
+    <string name="seetranslate">翻訳を見る</string>
+    <string name="closetranslate">翻訳を閉じる</string>
+
+    <string name="menu_spam">スパム</string>
+    <string name="menu_violence">暴力</string>
+    <string name="menu_cancel">キャンセル</string>
+    <string name="error_repeat_password">パスワードのミスマッチを繰り返す</string>
+    <string name="message_enter_password">パスワードを入力します</string>
+    <string name="old_password_mismatch">古いパスワードの不一致</string>
+    <string name="message_change_password_success">パスワードの変更に成功しました</string>
+    <string name="backup_success">バックアップが成功しました</string>
+    <string name="delete_success">削除が正常に終了しました</string>
+    <string name="message_fail_import">インポートに失敗しました。もう一度お試しください</string>
+    <string name="backup">バックアップ</string>
+    <string name="title_member_group_setting">メンバー</string>
+    <string name="old_password_title">以前のパスワード</string>
+    <string name="new_password_title">新しいパスワード</string>
+    <string name="repeat_password_title">新しいパスワードを繰り返します</string>
+    <string name="available_balance">利用可能残高</string>
+    <string name="to_address">利用可能残高</string>
+    <string name="amount">量</string>
+    <string name="eth_unit">ETH</string>
+    <string name="USD">米ドル</string>
+    <string name="description">説明</string>
+    <string name="date">日付</string>
+    <string name="confirmations">確認</string>
+    <string name="view_more">もっと見る</string>
+    <string name="wallet_created_success">ウォレットが成功した</string>
+    <string name="warning_backup_wallet">すぐにウォレットまたはキーストアをバックアップすることを強くお勧めします。</string>
+    <string name="backup_now_button">今すぐバックアップする</string>
+    <string name="no_thanks">結構です</string>
+    <string name="copy_clipboard">クリップボードにコピー</string>
+    <string name="backup_address">住所をバックアップする</string>
+    <string name="welcome_wallet_title">ウォールへようこそ</string>
+    <string name="import_keystore">キーストアのインポート</string>
+    <string name="three_dots">\u2026</string>
+    <string name="ringing">リンギング\u2026</string>
+    <string name="enter_group_name">グループ名を入力</string>
+    <string name="add_new_list">新しいリストを追加</string>
+    <string name="new_list">新しいリスト</string>
+    <string name="key_manager">キーマネージャー</string>
+    <string name="add_another_account">別のアカウントを追加する</string>
+    <string name="check_email_passcode">メッセージを確認してパスコードを入力してください</string>
+    <string name="vertify_title_noti">私たちは</string>
+    <string name="send_again">パスコードを再送信</string>
+    <string name="answer_secret_question">あなたの秘密の質問に答えてください</string>
+    <string name="your_answer">あなたの答え</string>
+    <string name="btn_next">次</string>
+    <string name="input_your_email">あなたの電子メールを入力</string>
+    <string name="hint_your_email">あなたのメールアドレス</string>
+    <string name="reset_password">パスワードを再設定する</string>
+    <string name="new_group">新しい集団</string>
+    <string name="about_us">私たちに関しては</string>
+    <string name="faq">よくある質問</string>
+    <string name="logout">ログアウト</string>
+    <string name="remove">削除する</string>
+    <string name="sent">送信済み</string>
+    <string name="received">受け取った</string>
+    <string name="all">すべて</string>
+    <string name="username">ユーザー名</string>
+    <string name="email">Eメール</string>
+    <string name="mobile_phone">携帯電話</string>
+    <string name="gender">性別</string>
+    <string name="referral">紹介</string>
+    <string name="referral_hint">電話番号</string>
+    <string name="btn_submit">提出する</string>
+    <string name="btn_update">更新</string>
+    <string name="hint_answer">回答</string>
+    <string name="choose_secret_question">秘密の質問を選んでください</string>
+    <string name="choose_new_secret_question">あなたの新しい秘密の質問を選んでください</string>
+    <string name="skip">スキップ</string>
+    <string name="complete">コンプリート</string>
+    <string name="current_balance">経常収支</string>
+    <string name="add_photo">写真を追加！</string>
+    <string name="error_group_name_empty">グループ名が空です</string>
+    <string name="error_creating_group">グループの作成失敗</string>
+    <string name="select_file_to_send">ファイルを選ぶ</string>
+    <string name="google_play_services_not_available">Google Playサービスはご利用いただけません。</string>
+    <string name="english">英語</string>
+    <string name="copied_text">コピーされたテキスト</string>
+    <string name="history">歴史</string>
+    <string name="activity">アクティビティ</string>
+    <string name="error_when_refresh_token">アクセストークンを更新できません：再試行してください！</string>
+    <string name="registration">登録</string>
+    <string name="update_profile_success">更新の成功</string>
+    <string name="update_profile_fail">更新が失敗する</string>
+    <string name="error_upload_image">アップロードに失敗しました</string>
+    <string name="logout_all_devices">すべてのデバイスをログアウトする</string>
+    <string name="logout_device">このデバイスをログアウトする</string>
+    <string name="message_remove_avatar_success">アバターの成功を取り除く</string>
+    <string name="message_remove_banner_success">バナーの成功を取り除く</string>
+    <string name="error_invalid_email">メールフォーマットが無効です</string>
+    <string name="hint_password">入力パスワード</string>
+    <string name="error_reset_password">パスワードのリセットに失敗する</string>
+    <string name="warning">警告</string>
+    <string name="error_tranferring_file">ファイル転送エラー：</string>
+    <string name="message_download_attachment">このファイルを保存しますか？</string>
+
+    <string name="error_registration">登録に失敗しました。 再試行する！</string>
+
+    <string name="location_message">Location Message</string>
+    <string name="you_sent_sticker">あなたがシールを送った</string>
+    <string name="message_sticker">Sticker message</string>
+    <string name="user_sent_sticker">％1 $ sがステッカーを送信しました</string>
+    <string name="tab_menu_menu">メニュー</string>
+    <string name="tab_menu_conversation">チャット</string>
+    <string name="tab_menu_promotion">プロモーション</string>
+    <string name="tab_menu_my_page">私のページ</string>
+    <string name="promotion_invite_friend">友人を招待</string>
+    <string name="promotion_history">歴史</string>
+    <string name="page_verify">アカウントの確認</string>
+    <string name="message_edit">メッセージの編集</string>
+    <string name="message_delete">メッセージを削除する</string>
+    <string name="message_spam">スパム報告</string>
+    <string name="invite_friend_earn">多くのPTSコインを獲得するためにもっと友達を招待する</string>
+    <string name="promotion_description">あなたがWrappyアプリをインストールする友人を招待するとあなたのための報酬の報酬</string>
+    <string name="promotion_invite_friends">友人を招待</string>
+    <string name="verify_send_sms_fail">SMSの送信に失敗する</string>
+    <string name="verify_send_sms_success">SMSの成功を送る</string>
+    <string name="verify_fail">検証失敗</string>
+    <string name="from">から</string>
+    <string name="security_question_change">セキュリティの質問を変更する</string>
+    <string name="security_change_old_question">あなたの古い秘密の質問に答える</string>
+    <string name="level">レベル</string>
+    <string name="success">成功！</string>
+    <string name="secu_success_description">秘密の質問が成功する</string>
+    <string name="fail">失敗します</string>
+    <string name="upload_fail">アップロードに失敗しました</string>
+    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
+    <string name="invite_friends_text">Invite Friend</string>
+    <string name="share_app_text">Let me recommend you this application</string>
+    <string name="email_tile">Email *</string>
+    <string name="logout_noti">Are you sure you want to logout this device?</string>
+    <string name="share_title">Choose sharing method</string>
+    <string name="referral_text">Enter your referral code (optional)</string>
+    <string name="Referral">Referral</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="question">Question %d</string>
+    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
+    <string name="remove_member_success">Remove %s in this group</string>
+    <string name="error_special_characters">Username cannot contain special characters</string>
+    <string name="skip_referral">Cancel this step and go to Home screen?</string>
+</resources>

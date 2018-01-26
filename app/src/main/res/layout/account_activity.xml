@@ -45,7 +45,6 @@
             android:layout_height="wrap_content"
             android:autoLink="none"
             android:cursorVisible="true"
-            android:hint="@string/account_setup_example_email_address"
             android:inputType="textEmailAddress"
             android:selectAllOnFocus="true" />
 

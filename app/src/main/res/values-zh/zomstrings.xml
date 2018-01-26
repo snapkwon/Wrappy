@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE resources [<!ENTITY appName "WRAPPY">]>
+<resources>
+    <string name="app_name_zom">&appName;</string>
+    <string name="create_an_account">登記</string>
+    <string name="create_id">新增&appName; 身份</string>
+    <string name="advanced">進階</string>
+    <string name="account_congrats">恭喜, 你可以使用&appName;了</string>
+    <string name="account_congrats_details">你可於個人資料頁找到密碼及戶口詳情</string>
+    <string name="invite_friends">加入朋友</string>
+    <string name="invite_sms">短訊</string>
+    <string name="invite_share">分享</string>
+    <string name="invite_scan_qr">掃瞄</string>
+    <string name="sign_in_message">登入現有賬戶</string>
+    <string name="add_friends">加入朋友</string>
+    <string name="search_by_id">以身份搜尋</string>
+    <string name="invite_accepted">你已成為&appName;的朋友</string>
+    <string name="choose_friend">選擇朋友</string>
+    <string name="send_message">發送訊息</string>
+    <string name="push_to_talk">提醒對話</string>
+    <string name="recording_release">記錄中.....開始發送</string>
+    <string name="recording_delete">記錄中.....開始删除</string>
+    <string name="swipe_up_delete">向上移動並删除</string>
+    <string name="create_group">新增群組</string>
+    <string name="members">會員們</string>
+    <string name="photo_gallery">相片串流</string>
+    <string name="select_avatar">選擇/新增頭像</string>
+    <string name="delete_account">删除賬戶</string>
+    <string name="choose_photos">由相片集中選擇</string>
+    <string name="choose_language">轉換語言</string>
+    <string name="onboarding_generate">新增&appName;身份, 然後我們會產生一個保安密碼給你</string>
+    <string name="grant_perms_camera">You must grant permission for &appName;
+        to use the camera</string>
+    <string name="grant_perms_pick_file">You must grant permission for &appName;
+        to select file</string>
+    <string name="grant_perms_audio">You must grant permission for &appName;
+        to record audio</string>
+
+    <string name="action_archived">存檔</string>
+    <string name="action_verified">驗証</string>
+    <string name="pref_block_screenshots_title">禁止截圖</string>
+    <string name="pref_block_screenshots_summary">禁止其他APP於本程式中截圖</string>
+
+    <string name="pref_enable_tibetan_dictionary_title">啟用藏文字典</string>
+    <string name="pref_enable_tibetan_dictionary_summary">如可行, 建議由Monlam藏文字典中選取相關藏文詞語</string>
+
+    <string name="color_category_title">自定顏色</string>
+    <string name="color_reset_title">重置顏色</string>
+    <string name="color_reset_summary">重置到內定顏色</string>
+
+    <string name="color_header_title">標題顏色</string>
+    <string name="color_header_summary">標題,動作列及工具列顏色</string>
+
+    <string name="color_text_title">文字顏色</string>
+    <string name="color_text_summary">訊息及表單的文字顏色</string>
+
+
+    <string name="color_bg_title">背景顏色</string>
+    <string name="color_bg_summary">交談背景及表單的顏色</string>
+
+    <string name="header_got_invited">接到邀請</string>
+    <string name="action_tap_invite">點擊從友人發送的&appName;邀請連結或掃瞄他們的QR碼</string>
+
+    <string name="security_code">安全身份</string>
+
+    <string name="migrate_menu">遷移賬戶</string>
+    <string name="migrate_message">我已更新賬戶, 請WRAPPY我</string>
+    <string name="action_undo">還原</string>
+    <string name="contact_migration_notice">你的朋友已更新, 請與他們對話</string>
+    <string name="contact_migration_action">立即對話</string>
+    <string name="message_waiting_for_friend">等侯%s你的朋友</string>
+    <string name="action_active">活躍</string>
+    <string name="action_archive">檔案</string>
+    <string name="title_pending">等侯批核</string>
+
+
+    <string name="action_add_buddy">加入朋友</string>
+    <string name="action_leave">離開</string>
+    <string name="add_people">加入人</string>
+    <string name="turn_notifications_on">打開通知</string>
+    <string name="turn_notifications_off">開閉通知</string>
+    <string name="num_member_group_chat">%1$s members</string>
+    <string name="confirm_leave_group">你想離開群組嗎</string>
+    <string name="confirm_delete_and_leave_group">Are you sure you want to delete the group?</string>
+    <string name="confirm_remove_member_group">Are you sure you want to remove this member?</string>
+    <string name="contactswrappy">Contacts</string>
+</resources>
