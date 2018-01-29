@@ -2895,8 +2895,6 @@ public class ConversationView implements OnHandleMessage {
             ;
             final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
-            final String avatar = Imps.Avatars.getAvatar(mActivity.getContentResolver(), address);
-
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -3073,7 +3071,7 @@ public class ConversationView implements OnHandleMessage {
 
             switch (messageType) {
                 case Imps.MessageType.INCOMING:
-                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, false, encState, isGroupChat(), mPresenceStatus, avatar, textsearch);
+                    messageView.bindIncomingMessage(viewHolder, id, messageType, address, nickname, mimeType, body, date, false, encState, isGroupChat(), mPresenceStatus, textsearch);
                     break;
 
                 case Imps.MessageType.OUTGOING:
@@ -3083,7 +3081,7 @@ public class ConversationView implements OnHandleMessage {
                     if (errCode != 0) {
                         messageView.bindErrorMessage(errCode);
                     } else {
-                        messageView.bindOutgoingMessage(viewHolder, id, messageType, null, mimeType, body, date, false,
+                        messageView.bindOutgoingMessage(viewHolder, id, messageType, ImApp.sImApp.getDefaultUsername(), mimeType, body, date, false,
                                 deliveryState, encState, textsearch);
                     }
 
