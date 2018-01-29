@@ -21,12 +21,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 
 public class DummyActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.w(ImApp.LOG_TAG, "DummyActivity launched by swipe");
         super.onCreate(savedInstanceState);
+        XmppConnection.removeTask();
         ((ImApp)getApplication()).maybeInit(this);
         finish();
     }
