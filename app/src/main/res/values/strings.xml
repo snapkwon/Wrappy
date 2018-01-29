@@ -227,7 +227,7 @@
     <string name="unblock_contact_failed">Contact was not unblocked.</string>
     <string name="load_contact_list_failed">Contact list did not load.</string>
     <string name="cant_connect_to_server">Cannot connect to server. Please check your connection.</string>
-    <string name="contact_already_exist">"<xliff:g id="user">%1$s</xliff:g>" already exists in your Contact list.</string>
+    <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" already exists in your Contact list.</string>
     <string name="contact_blocked">Contact \"<xliff:g id="user">%1$s</xliff:g>\" has been blocked.</string>
     <string name="contact_not_loaded">Please wait while your Contact list loads.</string>
     <string name="network_error">A network error occurred.</string>
@@ -533,10 +533,9 @@
     <string name="question">Question %d</string>
     <string name="request_send_email_success">Send successful! Please check email to change new password</string>
     <string name="remove_member_success">Remove %s in this group</string>
-    <string name="error_special_characters">Username cannot contain special characters</string>
     <string name="skip_referral">Cancel this step and go to Home screen?</string>
     <string name="create_by">Create by %s</string>
-    <string name="chat_message_item">%1$s chat %2$s .</string>
+    <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
 </resources>

@@ -127,7 +127,7 @@
     <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g>さんがあなたをグループチャットに招待しています。</string>
     <string name="accept_invitation">同意する</string>
     <string name="decline_invitation">低下</string>
-    <string name="connecting_to_group_chat_">グループチャットに接続しています...</string>
+    <string name="connecting_to_group_chat_">グループチャットに接続しています…</string>
 
     <string name="empty_contact_list">連絡先が見つかりません。 招待するにはタップします。</string>
     <string name="subscription_prompt"><xliff:g id="USER">%1$s</xliff:g>を追加しますか？</string>
@@ -207,7 +207,7 @@
     <string name="notify_groupchat_label">グループチャットの招待</string>
     <string name="group_chat_invite_notify_text"><xliff:g id="user">%s</xliff:g>の新しいグループチャットの招待状</string>
     <string name="new_messages_notify">からの新しいメッセージ</string>
-    <string name="starting_the_chatsecure_service_">Wrappyサービスを開始しています...</string>
+    <string name="starting_the_chatsecure_service_">Wrappyサービスを開始しています…</string>
     <string name="app_unlocked">Wrappyが動作しています</string>
     <!-- Alerts: Exceptions -->
     <string name="error">エラー</string>
@@ -219,8 +219,8 @@
     <string name="unblock_contact_failed">連絡先がブロックされていませんでした。</string>
     <string name="load_contact_list_failed">連絡先リストが読み込まれませんでした。</string>
     <string name="cant_connect_to_server">サーバーに接続できません。 接続を確認してください。</string>
-    <string name="contact_already_exist">%1$sはあなたの連絡先リストに既に存在しています。</string>
-    <string name="contact_blocked">連絡先 \"%1$s\"はブロックされています。</string>
+    <string name="contact_already_exist"><xliff:g id="user">%1$s</xliff:g>はあなたの連絡先リストに既に存在しています。</string>
+    <string name="contact_blocked">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"はブロックされています。</string>
     <string name="contact_not_loaded">連絡先リストが読み込まれるまでお待ちください。</string>
     <string name="network_error">ネットワークエラーが発生しました。</string>
     <string name="wifi_not_connected_error">この接続にはWiFiが必要です。</string>
@@ -325,7 +325,7 @@
     <string name="Page1Message">世界を平坦化する。 これは次世代のSNSプラットフォームです。</string>
     <string name="Page2Message">Wrappyは自由に使用できます：音声通話、ビデオ通話、テレビ会議を含みます....</string>
     <string name="Page3Message">Wrappyでは、複数のデバイスからメッセージにアクセスできます。</string>
-    <string name="Page4Message">いずれの画面でも、文末に完全停止する必要があります。</string>
+    <string name="Page4Message">メッセージは100％暗号化されており、自己破棄することができます</string>
     <string name="Page5Message">あなたは簡単に友人や家族から通貨を送受信できます。</string>
     <string name="Page6Message">あなたのメディアデータとチャットの記録に無制限のストレージ！</string>
     <string name="Page7Message">すぐにメッセージを送受信できます。</string>
@@ -477,9 +477,9 @@
 
     <string name="error_registration">登録に失敗しました。 再試行する！</string>
 
-    <string name="location_message">Location Message</string>
+    <string name="location_message">位置メッセージ</string>
     <string name="you_sent_sticker">あなたがシールを送った</string>
-    <string name="message_sticker">Sticker message</string>
+    <string name="message_sticker">ステッカーのメッセージ</string>
     <string name="user_sent_sticker">%1$sがステッカーを送信しました</string>
     <string name="tab_menu_menu">メニュー</string>
     <string name="tab_menu_conversation">チャット</string>
@@ -505,22 +505,20 @@
     <string name="secu_success_description">秘密の質問の変更が成功した</string>
     <string name="fail">失敗</string>
     <string name="upload_fail">アップロードが失敗しました</string>
-    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
-    <string name="invite_friends_text">Invite Friend</string>
-    <string name="share_app_text">Let me recommend you this application</string>
-    <string name="email_tile">Email *</string>
-    <string name="logout_noti">Do you want to logout of this device?</string>
-    <string name="share_title">Choose sharing method</string>
-    <string name="referral_text">Enter your referral code (optional)</string>
-    <string name="Referral">Referral</string>
-    <string name="update_profile">Update Profile</string>
-    <string name="question">Question %d</string>
-    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
-    <string name="remove_member_success">Remove %s in this group</string>
-    <string name="error_special_characters">Username cannot contain special characters</string>
-    <string name="skip_referral">Cancel this step and go to Home screen?</string>
-    <string name="create_by">Create by %s</string>
-    <string name="chat_message_item">%1$s chat %2$s .</string>
-    <string name="message_kicked_from_group">%s is removed by admin</string>
-    <string name="comming_soon">coming soon</string>
+    <string name="cancel_and_home">このステップをキャンセルして、ログイン画面に戻りますか？</string>
+    <string name="invite_friends_text">友人を招待</string>
+    <string name="email_tile">Eメール *</string>
+    <string name="logout_noti">あなたがこのデバイスからログアウトしたいですか？</string>
+    <string name="share_title">共有方法を選択します。</string>
+    <string name="referral_text">あなたの紹介コードを入力します（オプション）</string>
+    <string name="Referral">紹介</string>
+    <string name="update_profile">プロフィールを更新</string>
+    <string name="question">質問%d</string>
+    <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>
+    <string name="remove_member_success">このグループには%sの削除</string>
+    <string name="skip_referral">このステップをキャンセルして、ホーム画面に行きますか？</string>
+    <string name="create_by">%sで作成します。</string>
+    <string name="chat_message_item">%1$sチャット%2$s</string>
+    <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
+    <string name="comming_soon">近日公開</string>
 </resources>
