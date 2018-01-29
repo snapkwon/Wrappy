@@ -32,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingRight="48dp"
             android:layout_marginLeft="48dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingRight="48dp">
 
             <LinearLayout
                 android:id="@+id/message_container"
@@ -108,24 +108,17 @@
 
             </LinearLayout>
 
-            <LinearLayout
+
+            <net.ironrabbit.type.CustomTypefaceTextView
+                android:id="@+id/messagets"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <net.ironrabbit.type.CustomTypefaceTextView
-                    android:id="@+id/messagets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="22sp"
-                    android:layout_margin="3dp"
-                    android:color="?messageTextSecondary"
-                    android:gravity="center|right"
-                    android:textAlignment="gravity"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textSize="12sp"
-
-                    />
-
-            </LinearLayout>
+                android:layout_height="22sp"
+                android:layout_margin="3dp"
+                android:color="?messageTextSecondary"
+                android:gravity="center|right"
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -133,8 +126,8 @@
             android:id="@+id/avatar"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop" />
 
     </RelativeLayout>
 
