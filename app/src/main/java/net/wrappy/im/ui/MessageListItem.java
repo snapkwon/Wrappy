@@ -180,7 +180,7 @@ public class MessageListItem extends FrameLayout {
     }
 
     public void bindIncomingMessage(MessageViewHolder holder, int id, int messageType, String address, String nickname, final String mimeType, final String body, Date date,
-                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String mReference, String textsearch) {
+                                    boolean scrolling, EncryptionState encryption, boolean showContact, int presenceStatus, String textsearch) {
 
 
         mHolder = holder;
@@ -189,12 +189,12 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
 
-        if (nickname == null) {
+        if (TextUtils.isEmpty(nickname)) {
             nickname = ImApp.getNickname(address);
         }
 
         lastMessage = formatMessage(body);
-        showAvatar(address, nickname, true, mReference);
+        showAvatar(address, nickname);
 
         mHolder.resetOnClickListenerMediaThumbnail();
 
@@ -675,7 +675,8 @@ public class MessageListItem extends FrameLayout {
         mHolder.mAudioContainer.setVisibility(View.GONE);
         mHolder.mMediaContainer.setVisibility(View.GONE);
         mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
-        showAvatar(address, Store.getStringData(context,Store.USERNAME), true, "");
+
+        showAvatar(address, Store.getStringData(context,Store.USERNAME));
         mHolder.resetOnClickListenerMediaThumbnail();
 
         lastMessage = body;
@@ -781,10 +782,11 @@ public class MessageListItem extends FrameLayout {
         LinkifyHelper.addTorSafeLinks(mHolder.mTextViewForMessages);
     }
 
-    private void showAvatar(String address, String nickname, boolean isLeft, String reference) {
+    private void showAvatar(String address, String nickname) {
         if (mHolder.mAvatar == null)
             return;
 
+        String reference= Imps.Avatars.getAvatar(context.getContentResolver(), address);
         if (address != null) {
             mHolder.mAvatar.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(reference)) {
