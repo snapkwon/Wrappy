@@ -168,7 +168,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId));
+            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), null));
         }
     }
 

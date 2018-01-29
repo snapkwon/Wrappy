@@ -62,6 +62,7 @@ import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.plugin.ImPluginInfo;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.NetworkConnectivityReceiver.State;
 import net.wrappy.im.service.adapters.ImConnectionAdapter;
@@ -425,9 +426,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
 
 
     private boolean autoLogin() {
-        Log.d("ZomXMPP", "autoLogin");
         ContentResolver resolver = getContentResolver();
-
         String where = "";//Imps.Account.KEEP_SIGNED_IN + "=1 AND " + Imps.Account.ACTIVE + "=1";
         Cursor cursor = resolver.query(Imps.Account.CONTENT_URI, ACCOUNT_PROJECTION, where, null,
                 null);
@@ -452,7 +451,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     conn = do_createConnection(providerId, accountId);
 
                 try {
-                    if (conn.getState() != ImConnection.LOGGED_IN) {
+                    if (conn.getState() != ImConnection.LOGGED_IN && !XmppConnection.isSetup()) {
                         try {
                             conn.login(password, true, true);
                         } catch (RemoteException e) {
