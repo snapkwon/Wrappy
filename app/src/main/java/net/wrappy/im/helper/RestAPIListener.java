@@ -28,10 +28,6 @@ public abstract class RestAPIListener {
 
     protected abstract void OnComplete(int httpCode, String error, String s);
 
-    protected void onError(ErrorCode errorCode) {
-        onError(errorCode.getErrorCode());
-    }
-
     protected void onError(int errorCode, String url) {
         Debug.d(url);
         onError(errorCode);
