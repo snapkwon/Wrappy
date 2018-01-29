@@ -316,7 +316,10 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        if (result.getHeaders().code() == 0)
+                            listenner.onError(0, url);
+                        else
+                            listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -340,7 +343,10 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        if (result.getHeaders().code() == 0)
+                            listenner.onError(0, url);
+                        else
+                            listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -365,7 +371,10 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        if (result.getHeaders().code() == 0)
+                            listenner.onError(0, url);
+                        else
+                            listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -389,7 +398,10 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        if (result.getHeaders().code() == 0)
+                            listenner.onError(0, url);
+                        else
+                            listenner.onError(getErrorCodeFromResponse(result.getResult()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -413,7 +425,10 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
                     } else {
-                        listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
+                        if (result.getHeaders().code() == 0)
+                            listenner.onError(0);
+                        else
+                            listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

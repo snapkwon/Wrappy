@@ -336,7 +336,7 @@
     <string name="StartMessaging">メッセージングを開始する</string>
 
     <string name="id_or_username">ID /ユーザー名</string>
-    <string name="forget_password">パスワードを忘れる</string>
+    <string name="forget_password">パスワードを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>
     <string name="search_username">ユーザー名の検索</string>
@@ -385,7 +385,7 @@
     <string name="menu_violence">暴力</string>
     <string name="menu_cancel">キャンセル</string>
     <string name="error_repeat_password">パスワードのミスマッチを繰り返す</string>
-    <string name="message_enter_password">パスワードを入力します</string>
+    <string name="message_enter_password">パスワードを入力</string>
     <string name="old_password_mismatch">古いパスワードの不一致</string>
     <string name="message_change_password_success">パスワードの変更に成功しました</string>
     <string name="backup_success">バックアップが成功しました</string>
@@ -452,6 +452,7 @@
     <string name="complete">コンプリート</string>
     <string name="current_balance">経常収支</string>
     <string name="add_photo">写真を追加！</string>
+    <string name="error_upload_photo">グループ写真をアップロードできません！</string>
     <string name="error_creating_group">グループの作成失敗</string>
     <string name="select_file_to_send">ファイルを選ぶ</string>
     <string name="google_play_services_not_available">Google Playサービスはご利用いただけません。</string>
@@ -490,20 +491,20 @@
     <string name="message_edit">メッセージの編集</string>
     <string name="message_delete">メッセージを削除する</string>
     <string name="message_spam">スパム報告</string>
-    <string name="invite_friend_earn">多くのPTSコインを獲得するためにもっと友達を招待する</string>
-    <string name="promotion_description">あなたがWrappyアプリをインストールする友人を招待するとあなたのための報酬の報酬</string>
-    <string name="promotion_invite_friends">友人を招待</string>
-    <string name="verify_send_sms_fail">SMSの送信に失敗する</string>
-    <string name="verify_send_sms_success">SMSの成功を送る</string>
+    <string name="invite_friend_earn">多くのPTSコインを獲得するためにもっと友達を招待しましょう</string>
+    <string name="promotion_description">WRAPPYを使用するように他の友達を招待すると、あなたは報酬を受ける</string>
+    <string name="promotion_invite_friends">友達を招待</string>
+    <string name="verify_send_sms_fail">SMSの送信が失敗した。</string>
+    <string name="verify_send_sms_success">SMSの送信が成功した。</string>
     <string name="verify_fail">検証失敗</string>
     <string name="from">から</string>
     <string name="security_question_change">セキュリティの質問を変更する</string>
     <string name="security_change_old_question">あなたの古い秘密の質問に答える</string>
     <string name="level">レベル</string>
     <string name="success">成功！</string>
-    <string name="secu_success_description">秘密の質問が成功する</string>
-    <string name="fail">失敗します</string>
-    <string name="upload_fail">アップロードに失敗しました</string>
+    <string name="secu_success_description">秘密の質問の変更が成功した</string>
+    <string name="fail">失敗</string>
+    <string name="upload_fail">アップロードが失敗しました</string>
     <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
     <string name="invite_friends_text">Invite Friend</string>
     <string name="share_app_text">Let me recommend you this application</string>
@@ -518,6 +519,7 @@
     <string name="remove_member_success">Remove %s in this group</string>
     <string name="error_special_characters">Username cannot contain special characters</string>
     <string name="skip_referral">Cancel this step and go to Home screen?</string>
+    <string name="create_by">Create by %s</string>
     <string name="chat_message_item">%1$s chat %2$s .</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>

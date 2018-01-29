@@ -69,7 +69,7 @@
     <string name="select_domain_new_account">Chat service domain</string>
     <string name="registering_new_account_">Registering new account…</string>
 
-    <string name="signing_in_wait">The application is in sync. Please wait</string>
+    <string name="signing_in_wait">The application is syncing. Please wait</string>
     <string name="signing_out_wait">Signing out\u2026</string>
 
     <!-- Views: Settings: Account -->
@@ -485,7 +485,6 @@
     <string name="logout_device">Logout this device</string>
     <string name="message_remove_avatar_success">Remove Avatar Success</string>
     <string name="message_remove_banner_success">Remove Banner Success</string>
-    <string name="error_get_user_profile">Could note get user profile</string>
     <string name="hint_password"><small><i>Input Password</i></small></string>
     <string name="error_reset_password">Reset password fail</string>
     <string name="warning">Warning</string>
