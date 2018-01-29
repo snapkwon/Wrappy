@@ -337,6 +337,12 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void setGroupMode(boolean groupMode) {
         setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
+        if(mAdapter!=null)
+        {
+
+                mAdapter.enableAlphabet(groupMode);
+
+        }
         mToolbar.setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
         mLayoutContactSelect.setVisibility(groupMode ? View.GONE : View.VISIBLE);
         mLayoutGroupSelect.setVisibility(groupMode ? View.VISIBLE : View.GONE);
@@ -788,6 +794,7 @@ public class ContactsPickerActivity extends BaseActivity {
         private Context mContext;
         private ArrayList<String> groupmember;
         private String charSection = "";
+        private boolean isenablealphabet = false;
 
         public ContactAdapter(Context context, int view) {
             super(context, view, null, 0);
@@ -798,6 +805,10 @@ public class ContactsPickerActivity extends BaseActivity {
             this.groupmember = groupmember;
         }
 
+        public  void enableAlphabet(boolean check)
+        {
+            isenablealphabet = check;
+        }
 
         @Override
         public boolean hasStableIds() {
@@ -825,7 +836,6 @@ public class ContactsPickerActivity extends BaseActivity {
                 // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
-
             v.bind(holder, cursor, mSearchString, false);
             int index = cursor.getPosition();
             long itemId = getItemId(index);
@@ -839,23 +849,30 @@ public class ContactsPickerActivity extends BaseActivity {
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
-            if(charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
+            if(isenablealphabet == false)
             {
-                holder.linesection.setVisibility(View.INVISIBLE);
-                holder.textsection.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
-                charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
-                holder.textsection.setVisibility(View.VISIBLE);
-                if(index > 0) {
-                    holder.linesection.setVisibility(View.VISIBLE);
+                if(charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
+                {
+                    holder.linesection.setVisibility(View.INVISIBLE);
+                    holder.textsection.setVisibility(View.INVISIBLE);
                 }
                 else
                 {
-                    holder.linesection.setVisibility(View.GONE);
+                    charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
+                    holder.textsection.setVisibility(View.VISIBLE);
+                    if(index > 0) {
+                        holder.linesection.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        holder.linesection.setVisibility(View.GONE);
+                    }
+                    holder.textsection.setText(charSection);
                 }
-                holder.textsection.setText(charSection);
+            }
+            else
+            {
+                holder.textsection.setVisibility(View.GONE);
             }
 
             if (Imps.Contacts.TYPE_GROUP != cursor.getInt(ContactListItem.COLUMN_CONTACT_TYPE)) {

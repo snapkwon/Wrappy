@@ -236,6 +236,14 @@ public class SettingConversationActivity extends BaseActivity {
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
 
+            memberGroupAdapter.setOnItemClickListener(new MemberGroupAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+
+                }
+            });
+
+
             RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
