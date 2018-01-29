@@ -47,6 +47,16 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private WpKChatGroupDto mWpKChatGroupDto;
     private IChatSession session;
 
+    public interface OnItemClickListener {
+        public void onItemClick(int position);
+    }
+
+    private static OnItemClickListener mListener;
+
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
+        MemberGroupAdapter.mListener = clickListener;
+    }
+
     public void setmWpKChatGroupDto(WpKChatGroupDto mWpKChatGroupDto) {
         this.mWpKChatGroupDto = mWpKChatGroupDto;
     }
@@ -85,7 +95,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         return mMembers == null ? 0 : mMembers.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
         @BindView(R.id.line1)
         TextView line1;
@@ -103,6 +113,13 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View view) {
+            mListener.onItemClick(getAdapterPosition());
         }
 
         public void bind(final MemberGroupDisplay member) {
@@ -131,8 +148,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             } else {
                 if (isAdminGroup(member)) {
                     avatarCrown.setVisibility(View.VISIBLE);
-                    mDeleteMember.setVisibility(View.GONE);
                 }
+                mDeleteMember.setVisibility(View.GONE);
             }
         }
     }

@@ -882,7 +882,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     }
 
 
-    public void startChat(long providerId, long accountId, String username, boolean startCrypto, final boolean openChat) {
+    public void startChat(long providerId, long accountId, final String username, boolean startCrypto, final boolean openChat) {
 
         //startCrypto is not actually used anymore, as we move to OMEMO
 
@@ -892,7 +892,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
                 @Override
                 public void onFinishTask(Long chatId) {
                     if (chatId != -1 && openChat) {
-                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId));
+                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId, ImApp.getNickname(new XmppAddress(username).getBareAddress()), null));
                     }
                 }
             });
