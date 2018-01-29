@@ -62,7 +62,6 @@ import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.ImException;
 import net.wrappy.im.plugin.ImPluginInfo;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.NetworkConnectivityReceiver.State;
 import net.wrappy.im.service.adapters.ImConnectionAdapter;
@@ -451,7 +450,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
                     conn = do_createConnection(providerId, accountId);
 
                 try {
-                    if (conn.getState() != ImConnection.LOGGED_IN && !XmppConnection.isSetup()) {
+                    if (conn.getState() != ImConnection.LOGGED_IN) {
                         try {
                             conn.login(password, true, true);
                         } catch (RemoteException e) {
