@@ -432,7 +432,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     }
 
     private IImConnection initConn() {
-        if (mApp.getDefaultAccountId() != -1 && XmppConnection.getConnection() != null) {
+        if (mApp.getDefaultAccountId() != -1 && XmppConnection.isSetup()) {
             IImConnection connection = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             try {
                 if (connection != null && connection.getState() == XmppConnection.LOGGED_IN) {
@@ -467,6 +467,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
                 e.printStackTrace();
             }
         }
+
+        XmppConnection.removeTask();
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -489,7 +491,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             if (mSbStatus != null)
                 mSbStatus.dismiss();
 
-            if (mApp.getDefaultProviderId() != -1 && XmppConnection.getConnection() != null) {
+            if (mApp.getDefaultProviderId() != -1 && XmppConnection.isSetup()) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
                 if (conn.getState() == ImConnection.DISCONNECTED
