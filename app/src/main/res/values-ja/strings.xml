@@ -335,7 +335,7 @@
     <string name="Page11Message">革新的かつ絶えず進化する時代のパイオニア。</string>
     <string name="StartMessaging">メッセージングを開始する</string>
 
-    <string name="id_or_username">ID /ユーザー名</string>
+    <string name="id_or_username">ユーザー名の入力</string>
     <string name="forget_password">パスワードを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>

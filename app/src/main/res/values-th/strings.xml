@@ -331,7 +331,7 @@
     <string name="Page11Message">ผู้บุกเบิกในยุคแห่งนวัตกรรมและการพัฒนาอย่างต่อเนื่อง</string>
     <string name="StartMessaging">เริ่มต้นการส่งข้อความ</string>
 
-    <string name="id_or_username">รหัส/ชื่อผู้ใช้</string>
+    <string name="id_or_username">การป้อนชื่อผู้ใช้</string>
     <string name="forget_password">ยืมรหัสผ่าน</string>
     <string name="login">ล็อกอิน</string>
     <string name="waiting_dialog">กำลังรอ…</string>

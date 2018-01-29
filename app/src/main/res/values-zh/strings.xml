@@ -343,7 +343,7 @@
     <string name="Page11Message">這是一個先進及創新的意念</string>
     <string name="StartMessaging">開始訊息</string>
 
-    <string name="id_or_username">用戶</string>
+    <string name="id_or_username">輸入用戶名</string>
     <string name="forget_password">忘記密碼</string>
     <string name="login">登入</string>
     <string name="waiting_dialog">等侯中…</string>
