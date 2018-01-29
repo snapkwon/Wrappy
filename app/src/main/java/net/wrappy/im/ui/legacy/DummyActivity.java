@@ -16,15 +16,11 @@
  */
 package net.wrappy.im.ui.legacy;
 
-import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import net.wrappy.im.ImApp;
 
 public class DummyActivity extends Activity {
     @Override

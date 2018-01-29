@@ -58,6 +58,7 @@ import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.provider.Store;
@@ -935,6 +936,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void maybeInit(Activity activity) {
+        XmppConnection.removeTask();
         startImServiceIfNeed();
         setAppTheme(activity, null);
         ImPluginHelper.getInstance(this).loadAvailablePlugins();
@@ -1261,20 +1263,27 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                                         IContactListManager manager = mConn.getContactListManager();
                                         if (TextUtils.isEmpty(s)) {
                                             //Remove contact not exist in DB
-                                            ImApp.removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
+                                            removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
                                         } else {
-                                            ImApp.updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
+                                            updateContact(contact.getAddress().getBareAddress(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
                                             manager.approveSubscription(contact);
                                         }
                                     } catch (RemoteException e1) {
+                                        removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
                                         e1.printStackTrace();
                                     }
+                                }
+
+                                @Override
+                                protected void onError(int errorCode) {
+                                    removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
                                 }
                             });
                         }
                     }
                 } catch (RemoteException e) {
                     LogCleaner.error(ImApp.LOG_TAG, "approve sub error", e);
+                    removeContact(sImApp.getContentResolver(), contact.getAddress().getBareAddress(), mConn);
                 }
             }
         }

@@ -3566,7 +3566,7 @@ public class XmppConnection extends ImConnection {
         }
 
         //Update presence state when state changed
-        if (mUserPresence != null)
+        if (mUserPresence != null && mConnection != null && mConnection.isConnected())
             sendPresencePacket();
     }
 
@@ -4653,5 +4653,9 @@ public class XmppConnection extends ImConnection {
 
     public static XMPPTCPConnection getConnection() {
         return mConnection;
+    }
+
+    public static void removeTask() {
+        mConnection = null;
     }
 }
