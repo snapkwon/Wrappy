@@ -64,7 +64,7 @@
 
     <string name="account_setup_pers_now_title">ลงชื่อเข้าตอนนี้เลย</string>
     <string name="select_domain_new_account">โดเมนบริการพูดคุย</string>
-    <string name="registering_new_account_">กำลังลงทะเบียนบัญชีใหม่...</string>
+    <string name="registering_new_account_">กำลังลงทะเบียนบัญชีใหม่…</string>
 
     <string name="signing_in_wait">ลงชื่อเข้า\u2026</string>
     <string name="signing_out_wait">ลงชื่อออก\u2026</string>
@@ -125,7 +125,7 @@
     <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> ได้เชิญคุณเข้าร่วมการพูดคุยเป็นกลุ่ม</string>
     <string name="accept_invitation">ยอมรับ</string>
     <string name="decline_invitation">ปฏิเสธ</string>
-    <string name="connecting_to_group_chat_">กำลังเชื่อมต่อการพูดคุยกลุ่ม...</string>
+    <string name="connecting_to_group_chat_">กำลังเชื่อมต่อการพูดคุยกลุ่ม…</string>
     <string name="empty_contact_list">ไม่พบการต่อต่อ แตะเพื่อเชิญ</string>
     <string name="subscription_prompt">เพิ่ม <xliff:g id="USER">%1$s</xliff:g> ใช่ไหม</string>
     <string name="approve_subscription">ใช่</string>
@@ -203,7 +203,7 @@
     <string name="notify_groupchat_label">การเชิญพูดคุยเป็นกลุ่ม</string>
     <string name="group_chat_invite_notify_text">คำเชิญพูดคุยเป็นกลุ่มใหม่จาก <xliff:g id="user">%s</xliff:g></string>
     <string name="new_messages_notify">ข้อความใหม่จาก</string>
-    <string name="starting_the_chatsecure_service_">กำลังเริ่มต้นบริการ Wrappy...</string>
+    <string name="starting_the_chatsecure_service_">กำลังเริ่มต้นบริการ Wrappy…</string>
     <string name="app_unlocked">Wrappy กำลังทำงาน</string>
     <!-- Alerts: Exceptions -->
     <string name="error">ผิดพลาด</string>
@@ -273,7 +273,7 @@
 
 
     <string name="mtm_accept_cert">ยอมรับใบรับรองเซิร์ฟเวอร์</string>
-    <string name="loading">กำลังโหลด...</string>
+    <string name="loading">กำลังโหลด…</string>
     <!-- Other -->
 
     <!-- Other: Slide Menu -->
@@ -321,7 +321,7 @@
     <string name="Page1Message">ทำให้โลกมีความเท่าเทียมกัน นี่เป็นแพลตฟอร์มเอสเอ็นเอสในยุคถัดไป</string>
     <string name="Page2Message">Wrappy ใช้งานได้ฟรี: รวมทั้งวอยซ์คอลล์, วิดีโอคอลล์, การประชุมทางทีวี....</string>
     <string name="Page3Message">Wrappy อนุญาตให้คุณเข้าถึงข้อความของคุณจากหลายอุปกรณ์ได้</string>
-    <string name="Page4Message">ทุกๆ หน้าจอต้องการฟูลสต็อปที่ตอนท้ายของประโยค หรือไม่ก็ทุกประโยคไม่ต้องการสิ่งดังกล่าวเลย</string>
+    <string name="Page4Message">ข้อความของคุณได้รับการเข้ารหัส 100% และสามารถทำลายตัวเองได้</string>
     <string name="Page5Message">คุณสามารถส่งและรับสกุลเงิน จากเพื่อนและครอบครัวได้อย่างง่ายๆ</string>
     <string name="Page6Message">สตอเรจแบบไม่จำกัด สำหรับข้อมูลสื่อและบันทึกการพูดคุยของคุณ!</string>
     <string name="Page7Message">คุณสามารถส่งและรับข้อความได้ในทันที</string>
@@ -334,7 +334,7 @@
     <string name="id_or_username">รหัส/ชื่อผู้ใช้</string>
     <string name="forget_password">ยืมรหัสผ่าน</string>
     <string name="login">ล็อกอิน</string>
-    <string name="waiting_dialog">กำลังรอ...</string>
+    <string name="waiting_dialog">กำลังรอ…</string>
     <string name="search_username">ค้นหาชื่อผู้ใช้</string>
     <string name="add_contact">เพิ่มแหล่งติดต่อ</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
@@ -472,9 +472,9 @@
 
     <string name="error_registration">การลงทะเบียนล้มเหลว โปรดลองอีกครั้ง!</string>
 
-    <string name="location_message">Location Message</string>
+    <string name="location_message">ข้อความที่ตั้ง</string>
     <string name="you_sent_sticker">คุณส่งสติ๊กเกอร์</string>
-    <string name="message_sticker">Sticker message</string>
+    <string name="message_sticker">ข้อความสติ๊กเกอร์</string>
     <string name="user_sent_sticker">%1$s ส่งสติ๊กเกอร์</string>
     <string name="tab_menu_menu">เมนู</string>
     <string name="tab_menu_conversation">แชต</string>
@@ -500,21 +500,20 @@
     <string name="secu_success_description">เปลี่ยนคำถามเพื่อความปลอดภัยของคุณเสร็จแล้ว</string>
     <string name="fail">ล้มเหลว</string>
     <string name="upload_fail">อัพโหลดล้มเหลว</string>
-    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
-    <string name="invite_friends_text">Invite Friend</string>
-    <string name="share_app_text">Let me recommend you this application</string>
-    <string name="email_tile">Email *</string>
-    <string name="logout_noti">Do you want to logout of this device?</string>
-    <string name="share_title">Choose sharing method</string>
-    <string name="referral_text">Enter your referral code (optional)</string>
-    <string name="Referral">Referral</string>
-    <string name="update_profile">Update Profile</string>
-    <string name="question">Question %d</string>
-    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
-    <string name="remove_member_success">Remove %s in this group</string>
-    <string name="error_special_characters">Username cannot contain special characters</string>
-    <string name="skip_referral">Cancel this step and go to Home screen?</string>
-    <string name="chat_message_item">%1$s chat %2$s .</string>
-    <string name="message_kicked_from_group">%s is removed by admin</string>
-    <string name="comming_soon">coming soon</string>
+    <string name="cancel_and_home">ยกเลิกขั้นตอนนี้และกลับไปยังหน้าจอเข้าสู่ระบบ?</string>
+    <string name="invite_friends_text">เชิญเพื่อน</string>
+    <string name="email_tile">อีเมล์ *</string>
+    <string name="logout_noti">คุณต้องการที่จะออกจากระบบของอุปกรณ์นี้?</string>
+    <string name="share_title">เลือกวิธีการใช้งานร่วมกัน</string>
+    <string name="referral_text">ป้อนรหัสการแนะนำของคุณ (ถ้ามี)</string>
+    <string name="Referral">การอ้างอิง</string>
+    <string name="update_profile">ปรับปรุงรายละเอียด</string>
+    <string name="question">คำถาม %d</string>
+    <string name="request_send_email_success">ส่งเรียบร้อยแล้วโปรดตรวจสอบอีเมลของคุณเพื่อเปลี่ยนรหัสผ่านใหม่</string>
+    <string name="remove_member_success">ลบ% ในกลุ่มนี้</string>
+    <string name="skip_referral">ยกเลิกขั้นตอนนี้และไปที่หน้าจอที่บ้าน?</string>
+    <string name="create_by">สร้างโดย %s</string>
+    <string name="chat_message_item">แชท %1$s %1$s</string>
+    <string name="message_kicked_from_group">%s จะถูกลบออกโดยผู้ดูแลระบบ</string>
+    <string name="comming_soon">เร็ว ๆ นี้</string>
 </resources>

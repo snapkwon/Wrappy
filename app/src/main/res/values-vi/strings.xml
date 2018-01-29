@@ -47,10 +47,10 @@
     <string name="lock_screen_passphrases_not_matching">Mật khẩu không phù hợp, xin vui lòng thử lại</string>
     <string name="lock_screen_skip">Bỏ qua >></string>
     <!-- Views: Setup -->
-    <string name="add_account">Thêm tài khoản% 1 $ s</string>
+    <string name="add_account">Thêm tài khoản <xliff:g id="account">%1$s</xliff:g></string>
     <string name="menu_about">Trong khoảng</string>
 
-    <string name="signed_out_prompt_with_error">Bạn đã được đăng xuất khỏi% 1 $ s vì% 2 $ s</string>
+    <string name="signed_out_prompt_with_error">Bạn đã được đăng xuất khỏi <xliff:g id="account">%1$s</xliff:g> vì <xliff:g id="reason">%2$s</xliff:g></string>
 
 
     <string name="pass_err_length">Cụm từ mật khẩu của bạn là không đủ dài</string>
@@ -131,18 +131,18 @@
     <string name="delete">Xóa bỏ</string>
     <string name="export_media">Xuất media file?</string>
     <!-- Views: Chat: Group -->
-    <string name="invitation_prompt">% 1 $ s đã mời bạn tham gia một cuộc trò chuyện nhóm.</string>
+    <string name="invitation_prompt"><xliff:g id="user">%1$s</xliff:g> đã mời bạn tham gia một cuộc trò chuyện nhóm.</string>
     <string name="accept_invitation">Chấp nhận</string>
     <string name="decline_invitation">Từ chối</string>
     <string name="connecting_to_group_chat_">Kết nối để trò chuyện nhóm…</string>
 
     <string name="empty_contact_list">Không tìm thấy địa chỉ liên lạc. Bấm để mời.</string>
 
-    <string name="subscription_prompt">Thêm% 1 $ s?</string>
+    <string name="subscription_prompt">Thêm <xliff:g id="USER">%1$s</xliff:g>?</string>
     <string name="approve_subscription">Vâng</string>
     <string name="decline_subscription">Không</string>
-    <string name="approve_subscription_error">Không thể chấp thuận đăng ký từ% 1 $ s. Vui lòng thử lại sau.</string>
-    <string name="decline_subscription_error">Không thể chối đăng ký từ% 1 $ s. Vui lòng thử lại sau.</string>
+    <string name="approve_subscription_error">Không thể chấp thuận đăng ký từ <xliff:g id="user">%1$s</xliff:g>. Vui lòng thử lại sau.</string>
+    <string name="decline_subscription_error">Không thể chối đăng ký từ <xliff:g id="user">%1$s</xliff:g>. Vui lòng thử lại sau.</string>
 
     <!-- Security: OTR -->
     <string name="otr_session_status_finished">Liên lạc của bạn đã ngừng trò chuyện được mã hóa.</string>
@@ -210,10 +210,10 @@
     <string name="prompt_create_new_account_">Tạo tài khoản mới?</string>
     <string name="allow_s_to_create_a_new_chat_account_for_s_">Tạo một tài khoản chat mới cho username \'%1$s\'?</string>
     <!-- Alerts: Notifications -->
-    <string name="subscription_notify_text">Mời người bạn mới từ% s</string>
-    <string name="file_notify_text">Mới tập tin% 1 $ s từ% 2 $ s</string>
+    <string name="subscription_notify_text">Mời người bạn mới từ <xliff:g id="user">%s</xliff:g></string>
+    <string name="file_notify_text">Mới tập tin <xliff:g id="filename">%1$s</xliff:g> từ <xliff:g id="user">%2$s</xliff:g></string>
     <string name="notify_groupchat_label">Lời mời trò chuyện nhóm</string>
-    <string name="group_chat_invite_notify_text">New mời trò chuyện theo nhóm từ% s</string>
+    <string name="group_chat_invite_notify_text">New mời trò chuyện theo nhóm từ <xliff:g id="user">%s</xliff:g></string>
     <string name="new_messages_notify">Tin nhắn mới (s) từ</string>
     <string name="starting_the_chatsecure_service_">Bắt đầu dịch vụ wrappy…</string>
     <string name="app_unlocked">Wrappy đang chạy</string>
@@ -221,14 +221,14 @@
     <string name="error">Lỗi</string>
     <string name="attention">Chú ý</string>
     <string name="error_prefix">Lỗi:</string>
-    <string name="general_error">Mã lỗi% 1 $ d</string>
+    <string name="general_error">Mã lỗi <xliff:g id="code">%1$d</xliff:g></string>
     <string name="add_list_failed">Danh sách này được không được thêm vào.</string>
     <string name="block_contact_failed">Liên đã không bị chặn.</string>
     <string name="unblock_contact_failed">Liên hệ chưa được bỏ chặn.</string>
     <string name="load_contact_list_failed">Danh sách liên lạc không tải được.</string>
     <string name="cant_connect_to_server">Không thể kết nối tới máy chủ. Vui lòng kiểm tra kết nối của bạn.</string>
-    <string name="contact_already_exist">% 1 $ s đã tồn tại trong danh sách liên hệ của bạn.</string>
-    <string name="contact_blocked">Liên hệ với "% 1 $ s" đã bị chặn.</string>
+    <string name="contact_already_exist">\"<xliff:g id="user">%1$s</xliff:g>\" đã tồn tại trong danh sách liên hệ của bạn.</string>
+    <string name="contact_blocked">Liên hệ với \"<xliff:g id="user">%1$s</xliff:g>\" đã bị chặn.</string>
     <string name="contact_not_loaded">Xin vui lòng chờ trong khi danh sách liên lạc của bạn tải.</string>
     <string name="network_error">Xảy ra lỗi mạng.</string>
     <string name="wifi_not_connected_error">Wifi là cần thiết cho kết nối này.</string>
@@ -340,7 +340,7 @@
     <string name="Page1Message">Làm phẳng thế giới. Đây là thế hệ tiếp theo sns nền tảng.</string>
     <string name="Page2Message">Wrappy là miễn phí để sử dụng: bao gồm các cuộc gọi thoại, cuộc gọi video, hội nghị truyền hình ....</string>
     <string name="Page3Message">Wrappy cho phép bạn truy cập vào tin nhắn của bạn từ nhiều thiết bị.</string>
-    <string name="Page4Message">Hoặc mỗi màn hình cần có một dấu chấm ở cuối câu hoặc không ai trong số họ làm.</string>
+    <string name="Page4Message">Tin nhắn của bạn được mã hóa và có thể tự hủy</string>
     <string name="Page5Message">Bạn có thể dễ dàng gửi và nhận tiền từ bạn bè và gia đình.</string>
     <string name="Page6Message">Lưu trữ không giới hạn cho dữ liệu đa phương tiện và các hồ sơ trò chuyện!</string>
     <string name="Page7Message">Bạn có thể gửi và nhận tin nhắn ngay lập tức.</string>
@@ -494,8 +494,8 @@
 
     <string name="location_message">Tin nhắn vị trí</string>
     <string name="you_sent_sticker">Bạn đã gửi một ảnh dán</string>
-    <string name="message_sticker">Sticker</string>
-    <string name="user_sent_sticker">% 1 $ s đã gửi một sticker</string>
+    <string name="message_sticker">Tin nhắn Sticker</string>
+    <string name="user_sent_sticker">%1$s đã gửi một sticker</string>
     <string name="tab_menu_menu">Thực đơn</string>
     <string name="tab_menu_conversation">Trò chuyện</string>
     <string name="tab_menu_promotion">Xúc tiến</string>
@@ -520,22 +520,20 @@
     <string name="secu_success_description">Câu hỏi bí mật của bạn thay đổi thành công</string>
     <string name="fail">Thất ​​bại</string>
     <string name="upload_fail">Tải lên thất bại</string>
-    <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
-    <string name="invite_friends_text">Invite Friend</string>
-    <string name="share_app_text">Let me recommend you this application</string>
+    <string name="cancel_and_home">Hủy bỏ qua bước này và quay trở lại màn hình đăng nhập?</string>
+    <string name="invite_friends_text">Mời bạn bè</string>
     <string name="email_tile">Email *</string>
-    <string name="logout_noti">Do you want to logout of this device?</string>
-    <string name="share_title">Choose sharing method</string>
-    <string name="referral_text">Enter your referral code (optional)</string>
-    <string name="Referral">Referral</string>
-    <string name="update_profile">Update Profile</string>
-    <string name="question">Question %d</string>
-    <string name="request_send_email_success">Send successful! Please check email to change new password</string>
-    <string name="remove_member_success">Remove %s in this group</string>
-    <string name="error_special_characters">Username cannot contain special characters</string>
-    <string name="skip_referral">Cancel this step and go to Home screen?</string>
-    <string name="create_by">Create by %s</string>
-    <string name="chat_message_item">%1$s chat %2$s .</string>
-    <string name="message_kicked_from_group">%s is removed by admin</string>
-    <string name="comming_soon">coming soon</string>
+    <string name="logout_noti">Bạn có muốn đăng xuất</string>
+    <string name="share_title">Chọn phương pháp chia sẻ</string>
+    <string name="referral_text">Nhập mã giới thiệu (không bắt buộc)</string>
+    <string name="Referral">Giới thiệu</string>
+    <string name="update_profile">Cập nhật hồ sơ</string>
+    <string name="question">Câu hỏi %d</string>
+    <string name="request_send_email_success">Đã gửi thành công, Vui lòng kiểm tra email của bạn để thay đổi mật khẩu mới</string>
+    <string name="remove_member_success">Xóa %s khỏi nhóm này</string>
+    <string name="skip_referral">Hủy bỏ qua bước này và đi vào màn hình Home?</string>
+    <string name="create_by">Được tạo bởi %s</string>
+    <string name="chat_message_item">%1$s trò chuyện %2$s.</string>
+    <string name="message_kicked_from_group">%s được xóa bởi Admin</string>
+    <string name="comming_soon">Sắp có</string>
 </resources>
