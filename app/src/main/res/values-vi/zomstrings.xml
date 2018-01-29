@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE resources [<!ENTITY appName "Wrappy">]>
+<resources>
+    <string name="app_name_zom">&appName;</string>
+    <string name="create_an_account">Ghi danh</string>
+    <string name="create_id">Tạo một id &appName;</string>
+    <string name="advanced">Nâng cao</string>
+    <string name="account_congrats">Xin chúc mừng, bạn đã sẵn sàng để &appName;!</string>
+    <string name="account_congrats_details">Bạn có thể tìm mật khẩu và tài khoản chi tiết trên trang hồ sơ của bạn.</string>
+    <string name="invite_friends">Thêm bạn bè!</string>
+    <string name="invite_sms">Tin nhắn</string>
+    <string name="invite_share">Chia sẻ</string>
+    <string name="invite_scan_qr">Quét</string>
+    <string name="sign_in_message">Đăng nhập vào tài khoản hiện</string>
+    <string name="add_friends">Thêm bạn bè</string>
+    <string name="search_by_id">Tìm kiếm theo id</string>
+    <string name="invite_accepted">Bây giờ bạn bè trên &appName;</string>
+    <string name="choose_friend">Chọn một bạn</string>
+    <string name="send_message">Gửi tin nhắn</string>
+    <string name="push_to_talk">Ấn chuông nói chuyện</string>
+    <string name="recording_release">Ghi âm ... Phát hành để gửi</string>
+    <string name="recording_delete">Ghi âm ... Phát hành xóa</string>
+    <string name="swipe_up_delete">Vuốt lên để xóa</string>
+    <string name="create_group">Tạo một nhóm</string>
+    <string name="members">Các thành viên</string>
+    <string name="photo_gallery">Ảnh suối</string>
+    <string name="select_avatar">Chọn hoặc tạo avatar</string>
+    <string name="delete_account">Xóa tài khoản</string>
+    <string name="choose_photos">Chọn từ các bức ảnh</string>
+    <string name="choose_language">Chuyển đổi ngôn ngữ</string>
+    <string name="onboarding_generate">Tạo một id &appName; và chúng tôi sẽ tạo ra một mật khẩu an toàn cho bạn.</string>
+    <string name="grant_perms_camera">Bạn phải cấp quyền cho &appName; sử dụng máy ảnh</string>
+<string name="grant_perms_pick_file">Bạn phải cấp quyền cho &appName; để chọn tập tin</string>
+    <!--<string name="grant_perms_pick_image">You must grant permission for &appName; to select image</string>-->
+    <string name="grant_perms_audio">Bạn phải cấp quyền cho &appName; để ghi âm</string>
+    <string name="action_archived">Lưu trữ</string>
+    <string name="action_verified">Đã xác minh</string>
+
+    <string name="pref_block_screenshots_title">Khối ảnh chụp màn hình</string>
+    <string name="pref_block_screenshots_summary">Nỗ lực khối cho các ứng dụng khác để chụp ảnh màn hình của ứng dụng này</string>
+
+    <string name="pref_enable_tibetan_dictionary_title">Kích hoạt tính năng từ điển tây tạng</string>
+    <string name="pref_enable_tibetan_dictionary_summary">Nếu có, đề nghị từ tương tây tạng từ ứng dụng monlam điển tây tạng</string>
+
+    <string name="color_category_title">Màu sắc tùy chỉnh</string>
+    <string name="color_reset_title">Màu sắc reset</string>
+    <string name="color_reset_summary">Đặt lại màu sắc giá trị mặc định</string>
+
+    <string name="color_header_title">Màu sắc tiêu đề</string>
+    <string name="color_header_summary">Màu của tiêu đề, actionbars và thanh công cụ</string>
+
+    <string name="color_text_title">Văn bản màu</string>
+    <string name="color_text_summary">Màu sắc của văn bản trong các tin nhắn và danh sách</string>
+
+
+    <string name="color_bg_title">Màu nền</string>
+    <string name="color_bg_summary">Màu sắc của hình nền chat và danh sách</string>
+
+    <string name="header_got_invited">Đã nhận được mời?</string>
+    <string name="action_tap_invite">Bấm vào &appName; mời liên kết từ bạn bè của bạn hoặc quét mã qr của họ bây giờ</string>
+
+    <string name="security_code">Nhận dạng an toàn</string>
+
+    <string name="migrate_menu">Di chuyển tài khoản</string>
+    <string name="migrate_message">Tôi đã nâng cấp tài khoản của tôi. &appName; tôi tại</string>
+    <string name="action_undo">Hủy bỏ</string>
+    <string name="contact_migration_notice">Bạn của bạn đã được nâng cấp. Trò chuyện với họ tại</string>
+    <string name="contact_migration_action">Nói chuyện ngay</string>
+    <string name="message_waiting_for_friend">Chờ đợi cho bạn bè</string>
+    <string name="action_active">Tích cực</string>
+    <string name="action_archive">Lưu trữ</string>
+    <string name="title_pending">Chờ phê duyệt</string>
+
+
+    <string name="action_chat_now">Nói chuyện ngay</string>
+    <string name="action_add_buddy">Thêm bạn</string>
+    <string name="action_leave">Rời khỏi</string>
+    <string name="action_remove_member_group">Xóa thành viên</string>
+    <string name="add_people">Thêm người</string>
+    <string name="turn_notifications_on">Bật thông báo</string>
+    <string name="turn_notifications_off">Tắt tiếng thông báo</string>
+    <string name="num_member_group_chat">%1$s thành viên</string>
+    <string name="confirm_leave_group">Bạn có chắc chắn muốn rời khỏi nhóm?</string>
+    <string name="confirm_delete_and_leave_group">Bạn có chắc chắn muốn xóa nhóm?</string>
+    <string name="confirm_remove_member_group">Bạn có chắc chắn muốn xóa thành viên này?</string>
+    <string name="contactswrappy">Danh bạ</string>
+</resources>

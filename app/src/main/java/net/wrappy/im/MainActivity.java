@@ -77,6 +77,7 @@ import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKChatRoster;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
+import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IConnectionListener;
@@ -431,18 +432,16 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     }
 
     private IImConnection initConn() {
-        if (mApp.getDefaultAccountId() != -1) {
-            if (mConn == null) {
-                mConn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                if (mConn != null) {
-                    try {
+        if (mApp.getDefaultAccountId() != -1 && XmppConnection.getConnection() != null) {
+            IImConnection connection = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            try {
+                if (connection != null && connection.getState() == XmppConnection.LOGGED_IN) {
+                    mConn = connection;
                         mConn.registerConnectionListener(this);
-                    } catch (Exception e) {
-                        Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
-                    }
-
                 }
-            }
+            } catch (Exception e) {
+                Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
+                }
         }
         return mConn;
     }
@@ -490,7 +489,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             if (mSbStatus != null)
                 mSbStatus.dismiss();
 
-            if (mApp.getDefaultProviderId() != -1) {
+            if (mApp.getDefaultProviderId() != -1 && XmppConnection.getConnection() != null) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
                 if (conn.getState() == ImConnection.DISCONNECTED
@@ -891,7 +890,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
                 @Override
                 public void onFinishTask(Long chatId) {
                     if (chatId != -1 && openChat) {
-                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId, ImApp.getNickname(username), null));
+                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId, ImApp.getNickname(new XmppAddress(username).getBareAddress()), null));
                     }
                 }
             });

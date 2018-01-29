@@ -2,13 +2,13 @@
 <resources>
     <string name="error_question_duplicate">Your question have duplicated</string>
     <string name="error_empty_answer">Your answer of question %d is empty</string>
-    <string name="error_min_length_answer">Your answer of question %d must have at least 3 letter</string>
+    <string name="error_min_length_answer">Your answer of question %d must have at least 3 letters</string>
     <string name="error_duplicate_answer">Your answer have duplicated</string>
     <string name="error_invalid_text_length">ความยาวของชื่อผู้ใช้ต้องมากกว่า 6 ตัวอักษร</string>
     <string name="error_invalid_characters">ชื่อผู้ใช้มีตัวอักขระพิเศษ</string>
     <string name="error_empty_phone">โทรศัพท์ไม่สามารถปล่อยว่างได้</string>
     <string name="error_empty_email">Please input the email</string>
-    <string name="error_input_referral">Referral is not valid</string>
+    <!--<string name="error_input_referral">Referral is not valid</string>-->
     <string name="error_empty_passcode">Please input the passcode</string>
     <string name="error_invalid_passcode">Please check the passcode</string>
     <string name="error_invalid_email">รูปแบบอีเมล์ไม่ถูกต้อง</string>
@@ -21,7 +21,6 @@
 
     <!--error code from server-->
     <string name="error_0">Internet may not be available. Please check again</string>
-    <string name="error_400">The username or pattern is incorrect</string>
     <string name="error_8000">Version mismatch</string>
     <string name="error_8001">Access is denied</string>
     <string name="error_8002">Please try again later</string>

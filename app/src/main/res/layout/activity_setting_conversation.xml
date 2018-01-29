@@ -332,7 +332,7 @@
                     android:layout_alignLeft="@id/text_change_background"
                     android:layout_below="@id/text_change_background"
                     android:layout_marginTop="15dp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </RelativeLayout>
 
@@ -344,7 +344,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageView
                 style="@style/wrap_content"

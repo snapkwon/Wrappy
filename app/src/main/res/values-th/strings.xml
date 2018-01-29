@@ -448,6 +448,7 @@
     <string name="complete">สมบูรณ์</string>
     <string name="current_balance">สมดุลปัจจุบัน</string>
     <string name="add_photo">เพิ่มรูปภาพ!</string>
+    <string name="error_upload_photo">การอัพโหลดรูปภาพกลุ่มล้มเหลว!</string>
     <string name="select_file_to_send">เลือกไฟล์</string>
     <string name="google_play_services_not_available">บริการกูเกิ้ลเพลย์ไม่สามารถใช้ได้</string>
     <string name="english">อังกฤษ</string>

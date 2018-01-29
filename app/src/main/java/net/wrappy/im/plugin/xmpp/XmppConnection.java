@@ -195,7 +195,7 @@ public class XmppConnection extends ImConnection {
 
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
     // Synchronized by executor thread
-    private XMPPTCPConnection mConnection;
+    private static XMPPTCPConnection mConnection;
     private XmppStreamHandler mStreamHandler;
     private ChatManager mChatManager;
 
@@ -239,6 +239,8 @@ public class XmppConnection extends ImConnection {
 
     private int mGlobalId;
     private static int mGlobalCount;
+
+    private static XmppConnection instance;
 
     private SecureRandom rndForTorCircuits = null;
 
@@ -1364,83 +1366,6 @@ public class XmppConnection extends ImConnection {
 
     }
 
-    public int check_login(String passwordTemp, long accountId, long providerId) {
-
-        mAccountId = accountId;
-        mPassword = passwordTemp;
-        mProviderId = providerId;
-
-        ContentResolver contentResolver = mContext.getContentResolver();
-
-        Cursor cursor = contentResolver.query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
-
-        if (cursor == null)
-            return 404; //not going to work
-
-
-        Imps.ProviderSettings.QueryMap providerSettings = new Imps.ProviderSettings.QueryMap(
-                cursor, contentResolver, mProviderId, false, null);
-
-        mUser = makeUser(providerSettings, contentResolver);
-
-        providerSettings.close();
-
-        // providerSettings is closed in initConnection();
-        mUsername = Imps.Account.getUserName(contentResolver, mAccountId);
-
-        String defaultStatus = null;
-
-        mNeedReconnect = true;
-        setState(LOGGING_IN, null);
-
-        mUserPresence = new Presence(Presence.AVAILABLE, defaultStatus, Presence.CLIENT_TYPE_MOBILE);
-
-        try {
-            if (mUsername == null || mUsername.length() == 0)
-                throw new Exception("empty username not allowed");
-
-            initConnectionAndLogin(providerSettings, mUsername);
-
-            setState(LOGGED_IN, null);
-            getContactListManager();
-            getChatSessionManager();
-            getChatGroupManager();
-            debug(TAG, "logged in");
-            return 200;
-
-
-        } catch (XMPPException e) {
-            debug(TAG, "exception thrown on connection", e);
-
-            ImErrorInfo info = new ImErrorInfo(ImErrorInfo.CANT_CONNECT_TO_SERVER, e.getMessage());// our default behavior is to retry
-
-            if (mConnection != null && mConnection.isConnected()) {
-
-                setState(LOGGING_IN, info);
-                return 404;
-
-            } else {
-                //debug(TAG, "will not retry"); //WE MUST ALWAYS RETRY!
-                disconnect();
-                disconnected(info);
-            }
-
-
-        } catch (Exception e) {
-
-
-            ImErrorInfo info = new ImErrorInfo(ImErrorInfo.UNKNOWN_ERROR, "keymanagement exception");
-            setState(LOGGING_IN, info);
-            return 404;
-
-        } finally {
-
-            if (!cursor.isClosed())
-                cursor.close();
-        }
-        return 200;
-    }
-
     // Runs in executor thread
     private void do_login() {
 
@@ -1750,6 +1675,7 @@ public class XmppConnection extends ImConnection {
             debug(TAG, "error saving vcard", e);
         }
     }
+
     public void sendVCard(String migrateJabberId) {
 
         try {
@@ -1803,6 +1729,8 @@ public class XmppConnection extends ImConnection {
     // Runs in executor thread
     private void initConnection(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, NoSuchAlgorithmException, KeyManagementException, XMPPException, SmackException, IOException {
 
+        //Avoid create more than one instance for connection in wrappy app
+        if (mConnection != null) return;
         boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
         boolean requireTls = true;// providerSettings.getRequireTls(); //always!
         boolean doDnsSrv = false;
@@ -2158,7 +2086,7 @@ public class XmppConnection extends ImConnection {
             @Override
             public void connected(XMPPConnection connection) {
                 debug(TAG, "connected");
-
+                setState(LOGGED_IN, null);
                 try {
                     initOmemo((XMPPTCPConnection) connection);
                 } catch (Exception e) {
@@ -2427,6 +2355,7 @@ public class XmppConnection extends ImConnection {
         if (mConnection != null) {
             mConnection.removeAllStanzaAcknowledgedListeners();
             mConnection.removeAllStanzaIdAcknowledgedListeners();
+            mConnection = null;
         }
 
         mChatGroupManager = null;
@@ -3635,13 +3564,17 @@ public class XmppConnection extends ImConnection {
                 group.clearMembers(false);
             }
         }
+
+        //Update presence state when state changed
+        if (mUserPresence != null)
+            sendPresencePacket();
     }
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-//        if (Debug.DEBUG_ENABLED) {
+        if (Debug.DEBUG_ENABLED) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
-//        }
+        }
     }
 
     public void debug(String tag, String msg, Exception e) {
@@ -4716,5 +4649,9 @@ public class XmppConnection extends ImConnection {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static XMPPTCPConnection getConnection() {
+        return mConnection;
     }
 }
