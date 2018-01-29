@@ -174,7 +174,7 @@ public class SettingConversationActivity extends BaseActivity {
             return; //not going to work
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
-            if (mConn.getState() == ImConnection.LOGGED_IN) {
+            if (mConn != null && mConn.getState() == ImConnection.LOGGED_IN) {
                 mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
 
@@ -200,6 +200,8 @@ public class SettingConversationActivity extends BaseActivity {
             }
         } catch (RemoteException e) {
             AppFuncs.log(e.getLocalizedMessage());
+        } finally {
+            cursor.close();
         }
 
         switch_notification.setChecked(!isMuted());
@@ -249,7 +251,9 @@ public class SettingConversationActivity extends BaseActivity {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
                             updateAvatar();
                         }
-                        updateMembers();
+                        if (identifiers != null) {
+                            updateMembers();
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

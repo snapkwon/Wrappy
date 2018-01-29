@@ -1602,7 +1602,7 @@ public class XmppConnection extends ImConnection {
 
 
     private void initConnectionAndLogin(Imps.ProviderSettings.QueryMap providerSettings, String userName) throws InterruptedException, IOException, SmackException, XMPPException, KeyManagementException, NoSuchAlgorithmException, IllegalStateException, RuntimeException {
-        Roster.SubscriptionMode subMode = Roster.SubscriptionMode.manual;//Roster.SubscriptionMode.accept_all;//load this from a preference
+        Roster.SubscriptionMode subMode = Roster.SubscriptionMode.accept_all;//Roster.SubscriptionMode.accept_all;//load this from a preference
 
         Debug.onConnectionStart(); //only activates if Debug TRUE is set, so you can leave this in!
 
@@ -1805,7 +1805,7 @@ public class XmppConnection extends ImConnection {
 
         boolean allowPlainAuth = false;//never! // providerSettings.getAllowPlainAuth();
         boolean requireTls = true;// providerSettings.getRequireTls(); //always!
-        boolean doDnsSrv = providerSettings.getDoDnsSrv();
+        boolean doDnsSrv = false;
         // boolean tlsCertVerify = providerSettings.getTlsCertVerify();
 
         // boolean useSASL = true;//!allowPlainAuth;
