@@ -29,7 +29,6 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -995,13 +994,12 @@ public class ContactListManagerAdapter extends
                         ImApp.removeContact(mResolver, username, mConn);
                     }
                 }
-            };
-            listener.setOnListener(new View.OnClickListener() {
+
                 @Override
-                public void onClick(View v) {
+                protected void onError(int errorCode) {
                     ImApp.removeContact(mResolver, username, mConn);
                 }
-            });
+            };
             RestAPI.GetDataWrappy(mContext, RestAPI.getMemberByIdUrl(new XmppAddress(username).getUser()), listener);
         }
         cursor.close();
