@@ -8,7 +8,6 @@
     <string name="error_invalid_characters">Username cannot contain special characters</string>
     <string name="error_empty_phone">Please input the mobile phone number</string>
     <string name="error_empty_email">Please input email address</string>
-    <!--<string name="error_input_referral">Referral code is not valid</string>-->
     <string name="error_empty_passcode">Please input the passcode</string>
     <string name="error_invalid_passcode">Please check the passcode</string>
     <string name="error_invalid_email">Email address is not a valid format</string>
