@@ -35,13 +35,13 @@ public class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (settings.getBoolean("prefBlockScreenshots",false))
+        if (settings.getBoolean("prefBlockScreenshots", false))
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 
         //not set color
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorBg = settings.getInt("themeColorBg",-1);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorBg = settings.getInt("themeColorBg", -1);
 
         if (themeColorHeader != -1) {
             if (Build.VERSION.SDK_INT >= 21) {
@@ -54,37 +54,38 @@ public class BaseActivity extends AppCompatActivity {
         }
 
 
-        if (themeColorBg != -1)
-        {
+        if (themeColorBg != -1) {
             getWindow().getDecorView().setBackgroundColor(themeColorBg);
         }
     }
 
     public void initActionBarDefault(boolean isShowBackButton, int resStringId) {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.actionbar_register);
-        if (isShowBackButton) {
-            ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onClickActionBar(-1);
-                }
-            });
-        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            getSupportActionBar().setCustomView(R.layout.actionbar_register);
+            if (isShowBackButton) {
+                ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+                backButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClickActionBar(-1);
+                    }
+                });
+            }
 
-        if (resStringId!=0) {
-            AppTextView txt = (AppTextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
-            txt.setText(getString(resStringId));
+            if (resStringId != 0) {
+                AppTextView txt = (AppTextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
+                txt.setText(getString(resStringId));
+            }
         }
     }
 
     public void addIconActionBar(final int resId) {
         LinearLayout linearLayout = (LinearLayout) findViewById(getResources().getIdentifier("actionBarContainer", "id", getPackageName()));
         ImageView view = new ImageView(this);
-        int pad = (int) AppFuncs.convertDpToPixel(6,this);
-        view.setPadding(pad,pad,pad,pad);
+        int pad = (int) AppFuncs.convertDpToPixel(6, this);
+        view.setPadding(pad, pad, pad, pad);
         view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,15 +97,23 @@ public class BaseActivity extends AppCompatActivity {
         linearLayout.addView(view);
     }
 
+    public void clearViewInActionBar() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(getResources().getIdentifier("actionBarContainer", "id", getPackageName()));
+        linearLayout.removeAllViews();
+
+        FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
+        frameLayout.removeAllViews();
+    }
+
     public void addCustomViewToActionBar(View view) {
         FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
         frameLayout.addView(view);
     }
 
     public void setTitle(int resStringId) {
-        if (resStringId!=0) {
+        if (resStringId != 0) {
             AppTextView txt = (AppTextView) findViewById(getResources().getIdentifier("action_bar_title", "id", getPackageName()));
-            if (txt!=null) {
+            if (txt != null) {
                 txt.setText(getString(resStringId));
             }
         }
@@ -119,8 +128,8 @@ public class BaseActivity extends AppCompatActivity {
     public void applyStyleForToolbar() {
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int themeColorHeader = settings.getInt("themeColor",-1);
-        int themeColorText = settings.getInt("themeColorText",-1);
+        int themeColorHeader = settings.getInt("themeColor", -1);
+        int themeColorText = settings.getInt("themeColorText", -1);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -145,7 +154,6 @@ public class BaseActivity extends AppCompatActivity {
         }
 
     }
-
 
 
 }

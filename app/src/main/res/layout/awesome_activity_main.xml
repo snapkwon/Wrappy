@@ -46,6 +46,9 @@
             android:padding="16dp"
             android:textColor="#fff"
             android:textColorHint="@android:color/white"
+            android:background="@drawable/background_search_view"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:visibility="gone" />
 
         <ImageButton

@@ -183,7 +183,7 @@ public class SettingConversationActivity extends BaseActivity {
                 if (mSession != null) {
                     mGroupOwner = mSession.getGroupChatOwner();
                     if (mGroupOwner != null) {
-                        mIsOwner = mGroupOwner.getAddress().getBareAddress().equals(mLocalAddress);
+                        mIsOwner = mGroupOwner.getAddress().getUser().equals(mLocalAddress);
                         mAdminGroup = mGroupOwner.getName();
                         if (!mIsOwner) {
                             btnEditGroupName.setVisibility(View.GONE);

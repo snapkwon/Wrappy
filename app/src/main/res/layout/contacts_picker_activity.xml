@@ -100,10 +100,9 @@
             </LinearLayout>
 
             <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
+
                 android:layout_marginLeft="60dp"
-                android:background="#bcbbc1">
+                style="@style/divider">
 
             </FrameLayout>
 
