@@ -122,6 +122,7 @@ public class SettingConversationActivity extends BaseActivity {
     private String mAdminGroup;
 
     private final static int REQUEST_PICK_CONTACT = 100;
+    private final static int REQUEST_CAMERA = 101;
 
     public final static int PICKER_ADD_MEMBER = 1;
 
@@ -134,6 +135,14 @@ public class SettingConversationActivity extends BaseActivity {
         @Override
         public void run() {
             memberGroupAdapter.setData(memberGroupDisplays);
+            if (memberGroupDisplays!=null && memberGroupDisplays.size() > 0) {
+                for (MemberGroupDisplay member : memberGroupDisplays) {
+                    if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
+                            member.getAffiliation().contentEquals("admin"))) {
+                        edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
+                    }
+                }
+            }
         }
     };
 
@@ -156,7 +165,7 @@ public class SettingConversationActivity extends BaseActivity {
             mLastChatId = getIntent().getLongExtra("chatId", -1);
             mContactType = getIntent().getIntExtra("isGroupChat", -1);
             groupid = getIntent().getParcelableExtra("groupid");
-            edGroupSubText.setText(String.format(getString(R.string.create_by), mName));
+
         }
 
         Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
@@ -165,7 +174,7 @@ public class SettingConversationActivity extends BaseActivity {
             return; //not going to work
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
-            if (mConn.getState() == ImConnection.LOGGED_IN) {
+            if (mConn != null && mConn.getState() == ImConnection.LOGGED_IN) {
                 mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
 
 
@@ -191,6 +200,8 @@ public class SettingConversationActivity extends BaseActivity {
             }
         } catch (RemoteException e) {
             AppFuncs.log(e.getLocalizedMessage());
+        } finally {
+            cursor.close();
         }
 
         switch_notification.setChecked(!isMuted());
@@ -240,7 +251,9 @@ public class SettingConversationActivity extends BaseActivity {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
                             updateAvatar();
                         }
-                        updateMembers();
+                        if (identifiers != null) {
+                            updateMembers();
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -376,9 +389,9 @@ public class SettingConversationActivity extends BaseActivity {
                     @Override
                     public void onSelectBottomSheetCell(int index) {
                         if (index == 1) {
-                            AppFuncs.openCamera(SettingConversationActivity.this, 100);
+                            AppFuncs.openCamera(SettingConversationActivity.this, REQUEST_CAMERA);
                         } else {
-                            AppFuncs.openGallery(SettingConversationActivity.this, 100);
+                            AppFuncs.openGallery(SettingConversationActivity.this, REQUEST_CAMERA);
                         }
                     }
                 }).show();
@@ -453,7 +466,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                 }
 
-            } else if (requestCode == 100) {
+            } else if (requestCode == REQUEST_CAMERA) {
                 AppFuncs.cropImage(this, data, true);
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(data);

@@ -1214,18 +1214,18 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 // Due to the move to fragments, we could have listeners for ChatViews that are not visible on the screen.
                 // This is for fragments adjacent to the current one.  Therefore we can't use the existence of listeners
                 // as a filter on notifications.
-                if (!wasMessageSeen) {
-
+                String message = ConferenceUtils.getInfoMessage(mConnection.getContext(), body);
+                if (!wasMessageSeen && !TextUtils.isEmpty(message)) {
                     if (isGroupChatSession()) {
                         if (!isMuted()) {
                             ChatGroup group = (ChatGroup) ses.getParticipant();
                             mStatusBarNotifier.notifyGroupChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                    getId(), group.getAddress().getBareAddress(), group.getName(), nickname, body, false);
+                                    getId(), group.getAddress().getBareAddress(), group.getName(), nickname, message, false);
                         }
                     } else {
                         //reinstated body display here in the notification; perhaps add preferences to turn that off
                         mStatusBarNotifier.notifyChat(mConnection.getProviderId(), mConnection.getAccountId(),
-                                getId(), bareUsername, nickname, body, false);
+                                getId(), bareUsername, nickname, message, false);
                     }
                 }
             } else {

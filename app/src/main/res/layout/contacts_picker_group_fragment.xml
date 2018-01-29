@@ -12,24 +12,11 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <RelativeLayout
+        <net.wrappy.im.helper.layout.CircleImageView
+            android:id="@+id/btnGroupPhoto"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/rounded_shape">
-
-            <net.wrappy.im.helper.layout.CircleImageView
-                android:id="@+id/imgGroupPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_camera_profile" />
-
-            <ImageButton
-                android:id="@+id/btnGroupPhoto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent" />
-        </RelativeLayout>
+            android:src="@drawable/ic_avata_group" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

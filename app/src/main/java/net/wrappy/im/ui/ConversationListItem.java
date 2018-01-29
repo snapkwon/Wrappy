@@ -18,7 +18,6 @@
 package net.wrappy.im.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -295,7 +294,7 @@ public class ConversationListItem extends FrameLayout {
                                     session.leave();
                                 }
                             } else {
-                                holder.mLine2.setText(member + " is removed by admin");
+                                holder.mLine2.setText(String.format(getContext().getString(R.string.message_kicked_from_group), member));
                             }
                         } else if (message.startsWith(ConferenceConstant.REGEX) && message.endsWith(ConferenceConstant.REGEX)) {
                             String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
@@ -364,9 +363,7 @@ public class ConversationListItem extends FrameLayout {
 
         try {
 
-            ImApp app = ((ImApp) ((Activity) getContext()).getApplication());
-
-            IImConnection conn = app.getConnection(providerId, accountId);
+            IImConnection conn = ImApp.getConnection(providerId, accountId);
             if (conn == null || conn.getChatSessionManager() == null)
                 return;
 

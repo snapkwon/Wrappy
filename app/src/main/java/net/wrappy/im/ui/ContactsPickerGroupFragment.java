@@ -51,13 +51,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     View mainView;
     private final int IMAGE_AVARTA = 101;
     @BindView(R.id.btnGroupPhoto)
-    ImageButton btnGroupPhoto;
+    CircleImageView btnGroupPhoto;
 
     @BindView(R.id.edGroupName)
     AppEditTextView edGroupName;
-
-    @BindView(R.id.imgGroupPhoto)
-    CircleImageView imgGroupPhoto;
 
     @BindView(R.id.lstContacts)
     ListView lstContacts;
@@ -72,6 +69,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     Bitmap bmpThumbnail;
     public Cursor cursor;
     Uri resultUri;
+    String reference = "";
 
     public static ContactsPickerGroupFragment newsIntance() {
         return new ContactsPickerGroupFragment();
@@ -150,12 +148,24 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
                     }
 
                 } else if (requestCode == UCrop.REQUEST_CROP) {
+                    //AppFuncs.showProgressWaiting(getActivity());
                     resultUri = UCrop.getOutput(data);
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                    imgGroupPhoto.setLayoutParams(layoutParams);
-                    imgGroupPhoto.requestLayout();
-                    GlideHelper.loadBitmap(getActivity(), imgGroupPhoto, resultUri.toString(), true);
+                    GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
+//                    RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+//                        @Override
+//                        public void onCompleted(Exception e, Response<String> result) {
+//                            AppFuncs.dismissProgressWaiting();
+//                            if (result!=null && (result.getHeaders().code()==200 || result.getHeaders().code()==201)) {
+//                                reference = result.getResult();
+//
+//                            } else {
+//                                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.network_error),R.string.cancel,null);
+//                            }
+//                        }
+//                    });
+
                 }
             }
         } catch (Exception ex) {
@@ -165,6 +175,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
 
     public String getGroupName() {
         return edGroupName.getText().toString().trim();
+    }
+
+    public String getReference() {
+        return reference;
     }
 
     public ArrayList<String> getListUsername() {

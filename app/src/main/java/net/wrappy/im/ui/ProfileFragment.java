@@ -44,6 +44,7 @@ import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
@@ -164,6 +165,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         if (isSelf) {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
+            txtUsername.setText(Store.getStringData(getActivity(),Store.USERNAME));
         }
         final String[] arr = {"", ""};
         final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
@@ -246,7 +248,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         getActivity().finishAffinity();
     }
 
-    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment})
+    @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment, R.id.lnProfileBlockUser, R.id.lnProfileShareContact})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
 
@@ -368,6 +370,10 @@ public class ProfileFragment extends BaseFragmentV4 {
             AppFuncs.sendRequestInviteFriend(getActivity());
         } else if (view.getId() == R.id.lnProfileFragment) {
             AppFuncs.dismissKeyboard(getActivity());
+        } else if (view.getId() == R.id.lnProfileBlockUser) {
+            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
+        } else if (view.getId() == R.id.lnProfileShareContact) {
+            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
         }
     }
 

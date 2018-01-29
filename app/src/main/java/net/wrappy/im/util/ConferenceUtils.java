@@ -12,6 +12,7 @@ import android.text.style.ImageSpan;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.model.ConferenceMessage;
+import net.wrappy.im.provider.Imps;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 
 public final class ConferenceUtils {
@@ -69,5 +70,38 @@ public final class ConferenceUtils {
 
     public static void saveBitmapPreferences(String imagePath, String mNickname, Context context) {
         PreferenceUtils.putString(mNickname, imagePath, context);
+    }
+
+    public static String getInfoMessage(Context context, String message) {
+        if (message.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+            return (ConferenceUtils.getConferenceMessageInConversation(message).toString());
+        } else if (message.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
+            return (context.getResources().getString(R.string.location_message));
+        } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
+            String member = message.split(":")[2];
+            return String.format(context.getString(R.string.message_kicked_from_group), member);
+        } else if (message.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
+            String account = Imps.Account.getAccountName(context.getContentResolver(), ImApp.sImApp.getDefaultAccountId());
+            String member = message.split(":")[2];
+            if (member.startsWith(account)) {
+                return "";
+            } else {
+                return String.format(context.getString(R.string.message_kicked_from_group), member);
+            }
+        } else if (message.startsWith(ConferenceConstant.REGEX) && message.endsWith(ConferenceConstant.REGEX)) {
+            String[] splitMsg = message.split(ConferenceConstant.REGEX);
+            String senderSticker = splitMsg.length > 2 ? splitMsg[2] : "";
+            if (TextUtils.isEmpty(senderSticker)) {
+                return (context.getResources().getString(R.string.message_sticker));
+            } else {
+                return (context.getResources().getString(R.string.user_sent_sticker, senderSticker));
+            }
+        } else if (message.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
+            return (context.getResources().getString(R.string.location_message));
+        } else if (message.startsWith(ConferenceConstant.SEND_BACKGROUND_CHAT_PREFIX)) {
+            return "";
+        } else {
+            return message;
+        }
     }
 }

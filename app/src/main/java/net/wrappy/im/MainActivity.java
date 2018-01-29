@@ -22,8 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -34,6 +32,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -427,6 +426,11 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         }
 
         handleIntent();
+        initConn();
+        checkConnection();
+    }
+
+    private IImConnection initConn() {
         if (mApp.getDefaultAccountId() != -1) {
             if (mConn == null) {
                 mConn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
@@ -440,7 +444,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
                 }
             }
         }
-        checkConnection();
+        return mConn;
     }
 
     @Override
@@ -473,45 +477,31 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         mViewPager.setCurrentItem(3);
     }
 
+    //Init and show a snackbar on top on contain view
     private Snackbar mSbStatus;
+
+    private void showSnackBar(@StringRes int message) {
+        mSbStatus = Snackbar.make(mViewPager, message, Snackbar.LENGTH_INDEFINITE);
+        mSbStatus.show();
+    }
+
     private boolean checkConnection() {
         try {
-
             if (mSbStatus != null)
                 mSbStatus.dismiss();
 
-            if (mSbStatus != null)
-                mSbStatus.dismiss();
-
-            if (!isNetworkAvailable()) {
-                mSbStatus = Snackbar.make(mViewPager, "No Internet", Snackbar.LENGTH_INDEFINITE);
-                mSbStatus.show();
-                return false;
-            }
             if (mApp.getDefaultProviderId() != -1) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
 
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
-
-                    mSbStatus = Snackbar.make(mViewPager, R.string.error_suspended_connection, Snackbar.LENGTH_INDEFINITE);
-//                    sb.setAction(getString(R.string.connect), new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Intent i = new Intent(MainActivity.this, AccountsActivity.class);
-//                            startActivity(i);
-//                        }
-//                    });
-                    mSbStatus.show();
-
+                    showSnackBar(R.string.error_suspended_connection);
                     return false;
                 } else if (conn.getState() == ImConnection.LOGGING_IN) {
-                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_in_wait, Snackbar.LENGTH_INDEFINITE);
-                    mSbStatus.show();
+                    showSnackBar(R.string.signing_in_wait);
                 } else if (conn.getState() == ImConnection.LOGGING_OUT) {
-                    mSbStatus = Snackbar.make(mViewPager, R.string.signing_out_wait, Snackbar.LENGTH_INDEFINITE);
-                    mSbStatus.show();
+                    showSnackBar(R.string.signing_out_wait);
                 } else if (conn.getState() == ImConnection.LOGGED_IN) {
                     rejoinGroupChat();
                 }
@@ -521,14 +511,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         } catch (Exception e) {
             return false;
         }
-
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
