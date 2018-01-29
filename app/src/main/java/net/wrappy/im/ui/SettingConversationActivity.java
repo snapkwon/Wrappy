@@ -186,11 +186,9 @@ public class SettingConversationActivity extends BaseActivity {
                         mIsOwner = mGroupOwner.getAddress().getUser().equals(mLocalAddress);
                         mAdminGroup = mGroupOwner.getName();
                         if (!mIsOwner) {
-                            btnEditGroupName.setVisibility(View.GONE);
                             btnGroupPhoto.setEnabled(false);
                         }
                     } else {
-                        btnEditGroupName.setVisibility(View.GONE);
                         btnGroupPhoto.setEnabled(false);
                     }
                 }
@@ -219,8 +217,6 @@ public class SettingConversationActivity extends BaseActivity {
             mMemberGroupsLayout.setVisibility(View.VISIBLE);
 
             if (mIsOwner) {
-                mAddMemberLayout.setVisibility(View.VISIBLE);
-                mViewDivider.setVisibility(View.VISIBLE);
                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
                 mMemberLeaveGroup.setVisibility(View.GONE);
             }
