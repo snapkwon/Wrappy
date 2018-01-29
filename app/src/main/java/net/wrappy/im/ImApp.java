@@ -58,7 +58,6 @@ import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
-import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.provider.Store;
@@ -936,7 +935,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void maybeInit(Activity activity) {
-        XmppConnection.removeTask();
         startImServiceIfNeed();
         setAppTheme(activity, null);
         ImPluginHelper.getInstance(this).loadAvailablePlugins();
