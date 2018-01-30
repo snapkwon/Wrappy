@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_question_duplicate">คุณไม่สามารถเลือกคำถามรักษาความปลอดภัยเดียวกัน</string>
-    <string name="error_empty_answer">คำตอบของคำถามที่ 1 เป็นที่ว่างเปล่า</string>
+    <string name="error_empty_answer">คำตอบของคำถามที่ %d เป็นที่ว่างเปล่า</string>
     <string name="error_min_length_answer">คำตอบของคุณของคำถาม %d ต้องมีอย่างน้อย 3 ตัวอักษร</string>
     <string name="error_duplicate_answer">你的回答必須是不同的</string>
     <string name="error_invalid_text_length">用戶名必須至少為6個字符</string>

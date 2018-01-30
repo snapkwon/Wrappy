@@ -61,7 +61,6 @@ public class RestAPI {
     public static String POST_REGISTER = root_url + "member/registration";
     public static String POST_REGISTER_DEV = root_url + "member/registration";
     private static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
-    public static String POST_CREATE_GROUP = root_url + "chat/group";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
@@ -318,8 +317,10 @@ public class RestAPI {
                     } else {
                         if (result.getHeaders().code() == 0)
                             listenner.onError(0, url);
-                        else
+                        else {
+                            AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -345,8 +346,11 @@ public class RestAPI {
                     } else {
                         if (result.getHeaders().code() == 0)
                             listenner.onError(0, url);
-                        else
+                        else {
+                            AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        }
+
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -373,8 +377,10 @@ public class RestAPI {
                     } else {
                         if (result.getHeaders().code() == 0)
                             listenner.onError(0, url);
-                        else
+                        else {
+                            AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -400,8 +406,10 @@ public class RestAPI {
                     } else {
                         if (result.getHeaders().code() == 0)
                             listenner.onError(0, url);
-                        else
+                        else {
+                            AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -427,8 +435,10 @@ public class RestAPI {
                     } else {
                         if (result.getHeaders().code() == 0)
                             listenner.onError(0);
-                        else
+                        else {
+                            AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

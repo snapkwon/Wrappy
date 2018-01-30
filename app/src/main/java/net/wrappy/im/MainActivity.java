@@ -127,7 +127,6 @@ import info.guardianproject.iocipher.VirtualFileSystem;
 import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
 import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
-import static net.wrappy.im.helper.RestAPI.POST_CREATE_GROUP;
 
 /**
  */
@@ -1073,7 +1072,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             sessionTasks.clear();
             Imps.Chats.reset(getContentResolver());
             Imps.Contacts.reset(getContentResolver());
-            RestAPI.GetDataWrappy(this, POST_CREATE_GROUP, new RestAPIListener() {
+            RestAPI.GetDataWrappy(this, RestAPI.CHAT_GROUP, new RestAPIListener() {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     try {
