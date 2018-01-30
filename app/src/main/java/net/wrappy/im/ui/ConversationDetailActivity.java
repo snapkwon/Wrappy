@@ -462,7 +462,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.waiting_develop),R.string.ok,null);
+                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.comming_soon),R.string.ok,null);
                 //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
