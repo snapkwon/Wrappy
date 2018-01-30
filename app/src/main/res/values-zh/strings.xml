@@ -513,7 +513,7 @@
     <string name="success">成功</string>
     <string name="secu_success_description">你的問題(秘密)已更改</string>
     <string name="fail">失敗</string>
-    <string name="upload_fail">Upload fail</string>
+    <string name="upload_fail">上傳失敗</string>
     <string name="cancel_and_home">取消這一步驟，並返回到登錄屏幕？</string>
     <string name="invite_friends_text">邀請朋友</string>
     <string name="email_tile">郵件*</string>
