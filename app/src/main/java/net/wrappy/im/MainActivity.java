@@ -102,6 +102,7 @@ import net.wrappy.im.ui.promotion.MainPromotionFragment;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -532,8 +533,10 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             Uri data = intent.getData();
             String type = intent.getType();
             if (data != null && Imps.Chats.CONTENT_ITEM_TYPE.equals(type)) {
+                String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
+                String title = intent.getStringExtra("title");
                 long chatId = ContentUris.parseId(data);
-                startActivity(ConversationDetailActivity.getStartIntent(this, chatId));
+                startActivity(ConversationDetailActivity.getStartIntent(this, chatId, title, null, username));
             } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());
                 long accountId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_ACCOUNT_ID, mApp.getDefaultAccountId());

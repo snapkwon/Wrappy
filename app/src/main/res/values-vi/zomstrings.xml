@@ -17,8 +17,8 @@
     <string name="choose_friend">Chọn bạn</string>
     <string name="send_message">Gửi tin nhắn</string>
     <string name="push_to_talk">Nhấn để ghi âm</string>
-    <string name="recording_release">Ghi âm ...Thả ra để gửi</string>
-    <string name="recording_delete">Ghi âm ...Thả ra để xóa</string>
+    <string name="recording_release">Ghi âm… Thả ra để gửi</string>
+    <string name="recording_delete">Ghi âm… Thả ra để xóa</string>
     <string name="swipe_up_delete">Vuốt lên để xóa</string>
     <string name="create_group">Tạo nhóm</string>
     <string name="members">Các thành viên</string>

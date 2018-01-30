@@ -410,8 +410,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
+        String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
 
-        if (!address.isEmpty()) {
+        if (address.isEmpty()) {
             String[] separated = address.split("@");
 
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
@@ -461,7 +462,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.waiting_develop),R.string.ok,null);
+                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.comming_soon),R.string.ok,null);
                 //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
