@@ -3562,16 +3562,16 @@ public class XmppConnection extends ImConnection {
             }
         }
 
-//        //Update presence state when state changed
+        //Update presence state when state changed
 //        if (mUserPresence != null && mConnection != null && mConnection.isConnected())
 //            sendPresencePacket();
     }
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-//        if (Debug.DEBUG_ENABLED) {
+        if (Debug.DEBUG_ENABLED) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
-//        }
+        }
     }
 
     public void debug(String tag, String msg, Exception e) {
