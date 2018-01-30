@@ -204,8 +204,11 @@ public class SettingConversationActivity extends BaseActivity {
 
         switch_notification.setChecked(!isMuted());
 
+        boolean isGroup = mContactType == Imps.Contacts.TYPE_GROUP;
         // showing member group chat
-        if (mContactType == Imps.Contacts.TYPE_GROUP) {
+        mAddMemberLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+        mMemberGroupsLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+        if (isGroup) {
             textLeaveGroup.setText(getString(R.string.setting_delete_and_leave_group));
             String groupXmppId = mAddress;
             if (mAddress.contains("@")) {
@@ -216,13 +219,11 @@ public class SettingConversationActivity extends BaseActivity {
             String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
             GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
             edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
-            mMemberGroupsLayout.setVisibility(View.VISIBLE);
 
             if (mIsOwner) {
                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
                 mMemberLeaveGroup.setVisibility(View.GONE);
             }
-            mAddMemberLayout.setVisibility(View.VISIBLE);
 
             memberGroupDisplays = new ArrayList<>();
 
