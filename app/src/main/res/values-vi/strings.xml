@@ -350,7 +350,7 @@
     <string name="Page11Message">Một người tiên phong trong một kỷ nguyên sáng tạo &amp; không ngừng phát triển.</string>
     <string name="StartMessaging">Bắt đầu tin nhắn</string>
 
-    <string name="id_or_username">Id / tên đăng nhập</string>
+    <string name="id_or_username">Nhập username</string>
     <string name="forget_password">Quên mật khẩu</string>
     <string name="login">Đăng nhập</string>
     <string name="waiting_dialog">Đang chờ đợi…</string>

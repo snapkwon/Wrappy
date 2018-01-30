@@ -2892,7 +2892,6 @@ public class ConversationView implements OnHandleMessage {
 
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
-            ;
             final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
