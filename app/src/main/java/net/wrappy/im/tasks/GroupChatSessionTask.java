@@ -7,6 +7,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
@@ -74,10 +75,12 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     }
 
     private void updateInfoInGroup() throws RemoteException {
+        AppFuncs.log("updateInfoInGroup");
         if (group != null) {
             //update list member for group
             for (WpKMemberDto member : group.getParticipators()) {
                 String address = member.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                AppFuncs.log(address);
                 Imps.GroupMembers.updateNicknameFromGroup(getActivity().getContentResolver(), address, member.getIdentifier());
             }
 
@@ -95,8 +98,8 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     protected String doInBackground(String... params) {
         String subject = group.getName();
         String chatRoom = group.getXmppGroup();
-        String server = params[0];
-
+        //String server = params[0];
+        String server = Constant.DEFAULT_CONFERENCE_SERVER;
         try {
             IChatSessionManager manager = mLastConnGroup.getChatSessionManager();
 

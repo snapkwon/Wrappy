@@ -12,6 +12,7 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -2164,10 +2165,10 @@ public class XmppConnection extends ImConnection {
     }
 
     private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo) {
-        handleMessage(smackMessage, isOmemo, new Date());
+        handleMessage(smackMessage, isOmemo, new Date(), false);
     }
 
-    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date) {
+    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date, boolean isLoadOld) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -2227,7 +2228,7 @@ public class XmppConnection extends ImConnection {
 
                             //rec.setType(Imps.MessageType.OUTGOING);
                             Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(JidCreate.entityFullFrom(rec.getFrom().getAddress()));
-                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()) && !isLoadOld)
                                 return; //do nothing if it is from us
 
                         } catch (Exception e) {
@@ -4622,9 +4623,13 @@ public class XmppConnection extends ImConnection {
     }
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
+        AppFuncs.log("loadOldMessages");
+        AppFuncs.log(muc.getRoom().asEntityBareJidString());
+        AppFuncs.log(muc.toString());
         org.jivesoftware.smack.packet.Message oldMessage = null;
         if (findOrCreateSession(muc.getRoom().asEntityBareJidString(), true) != null) {
             while ((oldMessage = muc.nextMessage(2000)) != null) {
+                AppFuncs.log(oldMessage.getBody().toString());
                 DelayInformation inf = null;
                 Date date = new Date();
                 try {
@@ -4635,7 +4640,7 @@ public class XmppConnection extends ImConnection {
                     }
                 } catch (Exception e) {
                 }
-                handleMessage(oldMessage, false, date);
+                handleMessage(oldMessage, false, date, true);
             }
         }
     }
