@@ -2145,7 +2145,8 @@ public class XmppConnection extends ImConnection {
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
-        mConnection.connect();
+        if (!mConnection.isConnected())
+            mConnection.connect();
 
         try {
             Thread.sleep(2000);
@@ -4665,6 +4666,7 @@ public class XmppConnection extends ImConnection {
 
     public static void removeTask() {
         isSetup = false;
+        mConnection = null;
     }
 
     public static boolean isAuthenticated() {
