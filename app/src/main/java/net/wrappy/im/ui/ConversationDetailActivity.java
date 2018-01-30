@@ -805,7 +805,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         if (mConvoView.isGroupChat()) {
             //getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
-            getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
+            //getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
         }
         return true;
     }
