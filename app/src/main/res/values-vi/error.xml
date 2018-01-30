@@ -48,5 +48,6 @@
     <string name="error_8031">Người dùng không tồn tại</string>
     <string name="error_8032">Tạo người dùng trên xmpp thất bại</string>
     <string name="error_8033">Rất tiếc! Bạn đã trả lời câu hỏi bảo mật sai</string>
+    <string name="error_8034">Tên người dùng hoặc mô hình là không chính xác</string>
 
 </resources>
