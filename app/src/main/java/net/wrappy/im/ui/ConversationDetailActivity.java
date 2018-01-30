@@ -410,8 +410,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
+        String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
 
-        if (!address.isEmpty()) {
+        if (address.isEmpty()) {
             String[] separated = address.split("@");
 
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
