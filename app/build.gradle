@@ -93,7 +93,7 @@ android {
 }
 
 ext {
-    smackVersion = "4.2.2"
+    smackVersion = "4.2.0"
 }
 
 def getProps(String propName) {

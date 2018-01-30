@@ -131,7 +131,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private AddContactAsyncTask task;
 
     private WpKChatGroupDto chatGroupDto;
-    private static String address = "";
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -146,7 +145,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
-        address = maddress;
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, maddress);
         return intent;
     }
 
@@ -410,9 +409,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
-        String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
+        String address = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
 
-        if (address.isEmpty()) {
+        if (!address.isEmpty()) {
             String[] separated = address.split("@");
 
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
@@ -477,7 +476,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),address);
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
         }
