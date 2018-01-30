@@ -125,6 +125,8 @@ public class ContactsPickerActivity extends BaseActivity {
     WpKChatGroupDto groupDto;
     ArrayList<String> groupmember;
 
+    boolean isGroupOnlyMode;
+
     //private AppBarLayout appBarLayout;
     private Toolbar mToolbar;
 
@@ -225,7 +227,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
         });
 
-        boolean isGroupOnlyMode = isGroupOnlyMode();
+        isGroupOnlyMode = isGroupOnlyMode();
         excludedContacts = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS);
         mShowGroups = getIntent().getBooleanExtra(BundleKeyConstant.EXTRA_SHOW_GROUPS, false);
 
@@ -851,10 +853,13 @@ public class ContactsPickerActivity extends BaseActivity {
             }
             if(isenablealphabet == false)
             {
-                if(charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
+                if( index > 0 && charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
                 {
+
                     holder.linesection.setVisibility(View.INVISIBLE);
                     holder.textsection.setVisibility(View.INVISIBLE);
+
+
                 }
                 else
                 {
@@ -960,7 +965,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-            mAdapter.swapCursor(newCursor);
+            mAdapter.changeCursor(newCursor);
+
         }
 
         @Override
