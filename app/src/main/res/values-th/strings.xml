@@ -510,7 +510,7 @@
     <string name="update_profile">ปรับปรุงรายละเอียด</string>
     <string name="question">คำถาม %d</string>
     <string name="request_send_email_success">ส่งเรียบร้อยแล้วโปรดตรวจสอบอีเมลของคุณเพื่อเปลี่ยนรหัสผ่านใหม่</string>
-    <string name="remove_member_success">ลบ% ในกลุ่มนี้</string>
+    <string name="remove_member_success">ลบ %s ในกลุ่มนี้</string>
     <string name="skip_referral">ยกเลิกขั้นตอนนี้และไปที่หน้าจอที่บ้าน?</string>
     <string name="create_by">สร้างโดย %s</string>
     <string name="chat_message_item">แชท %1$s %1$s</string>
