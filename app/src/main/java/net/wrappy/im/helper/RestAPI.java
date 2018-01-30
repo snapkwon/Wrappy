@@ -64,7 +64,7 @@ public class RestAPI {
     public static String POST_CREATE_GROUP = root_url + "chat/group";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
-    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s";
+    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s/";
     private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
@@ -73,7 +73,7 @@ public class RestAPI {
     public static String GET_COUNTRY_CODES = root_url + "master/country";
     public static String GET_TYPE_ROSTER = root_url + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url + "chat/roster/group/add";
-    private static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s";
+    private static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s/";
     public static String POST_CHANGE_QUESTION_CHECK = root_url + "member/security/check";
     public static String PUT_CHANGE_SECURITY_QUESTION = root_url + "member/security/";
     private static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
