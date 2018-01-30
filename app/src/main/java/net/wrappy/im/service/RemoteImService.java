@@ -48,9 +48,9 @@ import net.java.otr4j.OtrKeyManagerListener;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionID;
 import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
+import net.wrappy.im.RouterActivity;
 import net.wrappy.im.crypto.IOtrKeyManager;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
@@ -287,7 +287,7 @@ public class RemoteImService extends Service implements OtrEngineListener, ImSer
         mNotifyBuilder.setOngoing(true);
         mNotifyBuilder.setWhen(System.currentTimeMillis());
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, RouterActivity.class);
         PendingIntent launchIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(launchIntent);

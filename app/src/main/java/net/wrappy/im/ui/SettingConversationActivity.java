@@ -222,6 +222,7 @@ public class SettingConversationActivity extends BaseActivity {
                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
                 mMemberLeaveGroup.setVisibility(View.GONE);
             }
+            mAddMemberLayout.setVisibility(View.VISIBLE);
 
             memberGroupDisplays = new ArrayList<>();
 

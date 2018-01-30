@@ -123,6 +123,8 @@ public class ContactsPickerActivity extends BaseActivity {
     WpKChatGroupDto groupDto;
     ArrayList<String> groupmember;
 
+    boolean isGroupOnlyMode;
+
     //private AppBarLayout appBarLayout;
     private Toolbar mToolbar;
 
@@ -221,7 +223,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
         });
 
-        boolean isGroupOnlyMode = isGroupOnlyMode();
+        isGroupOnlyMode = isGroupOnlyMode();
         excludedContacts = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS);
         mShowGroups = getIntent().getBooleanExtra(BundleKeyConstant.EXTRA_SHOW_GROUPS, false);
 
@@ -831,12 +833,19 @@ public class ContactsPickerActivity extends BaseActivity {
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
-            if (isenablealphabet == false) {
-                if (charSection.equalsIgnoreCase(String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)))) {
+            if(isenablealphabet == false)
+            {
+                if( index > 0 && charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
+                {
+
                     holder.linesection.setVisibility(View.INVISIBLE);
                     holder.textsection.setVisibility(View.INVISIBLE);
-                } else {
-                    charSection = String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
+
+
+                }
+                else
+                {
+                    charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
                     holder.textsection.setVisibility(View.VISIBLE);
                     if (index > 0) {
                         holder.linesection.setVisibility(View.VISIBLE);
@@ -934,7 +943,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-            mAdapter.swapCursor(newCursor);
+            mAdapter.changeCursor(newCursor);
+
         }
 
         @Override
