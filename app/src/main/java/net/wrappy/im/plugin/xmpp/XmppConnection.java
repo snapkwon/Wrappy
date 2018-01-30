@@ -36,11 +36,11 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
@@ -196,7 +196,7 @@ public class XmppConnection extends ImConnection {
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
     // Synchronized by executor thread
     private static boolean isSetup;
-    private XMPPTCPConnection mConnection;
+    private static XMPPTCPConnection mConnection;
     private XmppStreamHandler mStreamHandler;
     private ChatManager mChatManager;
 
@@ -1944,7 +1944,9 @@ public class XmppConnection extends ImConnection {
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
-        mConnection = new XMPPTCPConnection(mConfig.build());
+        if (mConnection == null) {
+            mConnection = new XMPPTCPConnection(mConfig.build());
+        }
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
@@ -2142,9 +2144,13 @@ public class XmppConnection extends ImConnection {
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
-        Exception xmppConnectException = null;
-        AbstractXMPPConnection conn = mConnection.connect();
+        mConnection.connect();
 
+        try {
+            Thread.sleep(2000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         /**
          ChatMarkersManager chatMarkersManager = ChatMarkersManager.getInstanceFor(mConnection);
          if (chatMarkersManager.isSupportedByServer())
@@ -2152,10 +2158,8 @@ public class XmppConnection extends ImConnection {
 
          }**/
 
-        //    ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-        //   manager.enableAutomaticReconnection();
-        //  manager.setEnabledPerDefault(true);
-        //  manager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+        manager.enableAutomaticReconnection();
 
     }
 
@@ -3389,6 +3393,7 @@ public class XmppConnection extends ImConnection {
         try {
 
             mPingSuccess = mPingManager.pingMyServer();
+            debug(TAG, "sendPing :" + mPingSuccess);
             ;
         } catch (Exception e) {
             mPingSuccess = false;
@@ -3568,9 +3573,9 @@ public class XmppConnection extends ImConnection {
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-//        if (Debug.DEBUG_ENABLED) {
+        if (Debug.DEBUG_ENABLED) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
-//        }
+        }
     }
 
     public void debug(String tag, String msg, Exception e) {
@@ -3683,8 +3688,11 @@ public class XmppConnection extends ImConnection {
 
         sdm.addFeature(HttpFileUploadManager.NAMESPACE);
 
-        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
-        DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
+//        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).autoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
+        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
 
     }
 
@@ -4652,5 +4660,9 @@ public class XmppConnection extends ImConnection {
 
     public static void removeTask() {
         isSetup = false;
+    }
+
+    public static boolean isAuthenticated() {
+        return mConnection != null && mConnection.isAuthenticated();
     }
 }
