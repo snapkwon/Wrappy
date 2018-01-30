@@ -105,6 +105,16 @@ public class BaseActivity extends AppCompatActivity {
         frameLayout.removeAllViews();
     }
 
+    public void clearViewLeftInActionBar() {
+        FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
+        frameLayout.removeAllViews();
+    }
+
+    public void clearViewRightInActionBar() {
+        FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("actionBarContainer", "id", getPackageName()));
+        frameLayout.removeAllViews();
+    }
+
     public void addCustomViewToActionBar(View view) {
         FrameLayout frameLayout = (FrameLayout) findViewById(getResources().getIdentifier("frActionBarContainer", "id", getPackageName()));
         frameLayout.addView(view);

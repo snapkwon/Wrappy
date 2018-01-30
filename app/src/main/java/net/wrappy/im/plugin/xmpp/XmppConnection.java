@@ -12,6 +12,7 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -36,11 +37,11 @@ import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PresenceListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
@@ -196,7 +197,7 @@ public class XmppConnection extends ImConnection {
     // watch out, this is a different XMPPConnection class than XmppConnection! ;)
     // Synchronized by executor thread
     private static boolean isSetup;
-    private XMPPTCPConnection mConnection;
+    private static XMPPTCPConnection mConnection;
     private XmppStreamHandler mStreamHandler;
     private ChatManager mChatManager;
 
@@ -1944,7 +1945,9 @@ public class XmppConnection extends ImConnection {
 
         XMPPTCPConnection.setUseStreamManagementDefault(true);
 
-        mConnection = new XMPPTCPConnection(mConfig.build());
+        if (mConnection == null) {
+            mConnection = new XMPPTCPConnection(mConfig.build());
+        }
 
         //debug(TAG,"is secure connection? " + mConnection.isSecureConnection());
         //debug(TAG,"is using TLS? " + mConnection.isUsingTLS());
@@ -2142,9 +2145,14 @@ public class XmppConnection extends ImConnection {
 
         mConnection.addConnectionListener(connectionListener);
         mStreamHandler = new XmppStreamHandler(mConnection, connectionListener);
-        Exception xmppConnectException = null;
-        AbstractXMPPConnection conn = mConnection.connect();
+        if (!mConnection.isConnected())
+            mConnection.connect();
 
+        try {
+            Thread.sleep(2000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         /**
          ChatMarkersManager chatMarkersManager = ChatMarkersManager.getInstanceFor(mConnection);
          if (chatMarkersManager.isSupportedByServer())
@@ -2152,18 +2160,16 @@ public class XmppConnection extends ImConnection {
 
          }**/
 
-        //    ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
-        //   manager.enableAutomaticReconnection();
-        //  manager.setEnabledPerDefault(true);
-        //  manager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+        ReconnectionManager manager = ReconnectionManager.getInstanceFor(mConnection);
+        manager.enableAutomaticReconnection();
 
     }
 
     private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo) {
-        handleMessage(smackMessage, isOmemo, new Date());
+        handleMessage(smackMessage, isOmemo, new Date(), false);
     }
 
-    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date) {
+    private void handleMessage(org.jivesoftware.smack.packet.Message smackMessage, boolean isOmemo, Date date, boolean isLoadOld) {
 
         String body = smackMessage.getBody();
         boolean isGroupMessage = smackMessage.getType() == org.jivesoftware.smack.packet.Message.Type.groupchat;
@@ -2223,7 +2229,7 @@ public class XmppConnection extends ImConnection {
 
                             //rec.setType(Imps.MessageType.OUTGOING);
                             Occupant oc = mChatGroupManager.getMultiUserChat(rec.getFrom().getBareAddress()).getOccupant(JidCreate.entityFullFrom(rec.getFrom().getAddress()));
-                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()))
+                            if (oc != null && oc.getJid().equals(mUser.getAddress().getAddress()) && !isLoadOld)
                                 return; //do nothing if it is from us
 
                         } catch (Exception e) {
@@ -3389,6 +3395,7 @@ public class XmppConnection extends ImConnection {
         try {
 
             mPingSuccess = mPingManager.pingMyServer();
+            debug(TAG, "sendPing :" + mPingSuccess);
             ;
         } catch (Exception e) {
             mPingSuccess = false;
@@ -3568,9 +3575,9 @@ public class XmppConnection extends ImConnection {
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-//        if (Debug.DEBUG_ENABLED) {
+        if (Debug.DEBUG_ENABLED) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
-//        }
+        }
     }
 
     public void debug(String tag, String msg, Exception e) {
@@ -3683,8 +3690,11 @@ public class XmppConnection extends ImConnection {
 
         sdm.addFeature(HttpFileUploadManager.NAMESPACE);
 
-        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
-        DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
+//        DeliveryReceiptManager.getInstanceFor(mConnection).dontAutoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).autoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager.getInstanceFor(mConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
+        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
 
     }
 
@@ -4614,9 +4624,13 @@ public class XmppConnection extends ImConnection {
     }
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
+        AppFuncs.log("loadOldMessages");
+        AppFuncs.log(muc.getRoom().asEntityBareJidString());
+        AppFuncs.log(muc.toString());
         org.jivesoftware.smack.packet.Message oldMessage = null;
         if (findOrCreateSession(muc.getRoom().asEntityBareJidString(), true) != null) {
             while ((oldMessage = muc.nextMessage(2000)) != null) {
+                AppFuncs.log(oldMessage.getBody().toString());
                 DelayInformation inf = null;
                 Date date = new Date();
                 try {
@@ -4627,7 +4641,7 @@ public class XmppConnection extends ImConnection {
                     }
                 } catch (Exception e) {
                 }
-                handleMessage(oldMessage, false, date);
+                handleMessage(oldMessage, false, date, true);
             }
         }
     }
@@ -4652,5 +4666,10 @@ public class XmppConnection extends ImConnection {
 
     public static void removeTask() {
         isSetup = false;
+        mConnection = null;
+    }
+
+    public static boolean isAuthenticated() {
+        return mConnection != null && mConnection.isAuthenticated();
     }
 }

@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -36,9 +35,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -49,7 +46,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -57,7 +53,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -66,7 +61,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -86,7 +80,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.gson.Gson;
 
-import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
@@ -104,17 +97,15 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
-import net.wrappy.im.util.Utils;
 
-import org.apache.commons.codec.DecoderException;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
@@ -377,7 +368,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         addIconActionBar(R.drawable.ic_camera);
         addIconActionBar(R.drawable.ic_phone);
         addIconActionBar(R.drawable.ic_tran);
-
+        addIconActionBar(R.drawable.ic_info_outline_white_24dp);
         mApp = (ImApp) getApplication();
 
         mConvoView = new ConversationView(this);
@@ -412,7 +403,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         Intent intent = getIntent();
         processIntent(intent);
 
-        setCustomActionBar(mConvoView.isGroupChat());
+
 
         collapseToolbar();
 
@@ -471,19 +462,32 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                mConvoView.startVideoConference();
+                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.waiting_develop),R.string.ok,null);
+                //mConvoView.startVideoConference();
+                break;
+            case R.drawable.ic_info_outline_white_24dp:
+                mConvoView.startSettingScreen();
                 break;
         }
     }
 
     private void setCustomActionBar(boolean isGroupChat) {
+        clearViewLeftInActionBar();
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),address);
+        if (!TextUtils.isEmpty(avarImg)) {
+            mReference = avarImg;
+        }
         if (isGroupChat) {
-            avatar.setImageResource(R.drawable.chat_group);
+            if (TextUtils.isEmpty(mReference)) {
+                avatar.setImageResource(R.drawable.chat_group);
+            } else {
+                GlideHelper.loadBitmapToCircleImage(this,avatar,getAvatarUrl(mReference));
+            }
+
             status.setVisibility(View.GONE);
         } else {
             GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
@@ -693,7 +697,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onResume() {
         super.onResume();
-
+        setCustomActionBar(mConvoView.isGroupChat());
         mConvoView.setSelected(true);
 
         IntentFilter regFilter = new IntentFilter();
@@ -703,7 +707,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         registerReceiver(receiver, regFilter);
 
         mConvoView.focusSearchmode(searchView);
-
 
         /**
          if (mConvoView.getOtrSessionStatus() == SessionStatus.ENCRYPTED
@@ -801,7 +804,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         menuitem = menu;
 //        getMenuInflater().inflate(R.menu.menu_conference, menu);
         if (mConvoView.isGroupChat()) {
-            getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
+            //getMenuInflater().inflate(R.menu.menu_conversation_detail_group, menu);
         } else {
             getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
         }

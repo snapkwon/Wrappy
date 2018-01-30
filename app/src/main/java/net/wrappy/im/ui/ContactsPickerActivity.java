@@ -17,7 +17,6 @@
 
 package net.wrappy.im.ui;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -116,7 +115,6 @@ public class ContactsPickerActivity extends BaseActivity {
     SwipeMenuListView mListView = null;
     private MenuItem mMenuStartGroupChat, mMenuContactsList, mMenuContactsAdd;
     private boolean isClickedMenu;
-    ProgressDialog dialog;
     // The loader's unique id. Loader ids are specific to the Activity or
     // Fragment in which they reside.
     public static final int LOADER_ID = 1;
@@ -144,7 +142,7 @@ public class ContactsPickerActivity extends BaseActivity {
         super.onCreate(icicle);
 
 
-    //    ((ImApp) getApplication()).setAppTheme(this);
+        //    ((ImApp) getApplication()).setAppTheme(this);
 
         setContentView(R.layout.contacts_picker_activity);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -186,9 +184,7 @@ public class ContactsPickerActivity extends BaseActivity {
             mToolbar.setBackgroundColor(themeColorHeader);
             mToolbar.setTitleTextColor(themeColorText);
 
-        }
-        else
-        {
+        } else {
             mToolbar.setBackgroundColor(getResources().getColor(R.color.wrappy_primary));
             mToolbar.setTitleTextColor(getResources().getColor(R.color.message_background_light));
         }
@@ -339,10 +335,9 @@ public class ContactsPickerActivity extends BaseActivity {
 
     private void setGroupMode(boolean groupMode) {
         setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
-        if(mAdapter!=null)
-        {
+        if (mAdapter != null) {
 
-                mAdapter.enableAlphabet(groupMode);
+            mAdapter.enableAlphabet(groupMode);
 
         }
         mToolbar.setTitle(groupMode ? R.string.add_people : R.string.choose_friend);
@@ -369,7 +364,7 @@ public class ContactsPickerActivity extends BaseActivity {
             }
 
             if (error.isEmpty()) {
-                showWaitinDialog();
+                AppFuncs.showProgressWaiting(this);
                 isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
@@ -391,7 +386,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                 JsonObject json = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                                 createGroupXMPP(groupName, reference, json);
                             } catch (Exception ex) {
-                                dismissWaitinDialog();
+                                AppFuncs.dismissProgressWaiting();
                                 AppFuncs.alert(getApplicationContext(), getString(R.string.error_upload_photo), true);
                             }
                         }
@@ -407,7 +402,7 @@ public class ContactsPickerActivity extends BaseActivity {
                         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                         createGroupXMPP(groupName, "", jsonObject);
                     } catch (Exception ex) {
-                        dismissWaitinDialog();
+                        AppFuncs.dismissProgressWaiting();
                         AppFuncs.alert(getApplicationContext(), getString(R.string.error_upload_photo), true);
                     }
                 }
@@ -418,23 +413,11 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
-    private void showWaitinDialog() {
-        dialog = new ProgressDialog(this);
-        dialog.setMessage(getString(R.string.waiting_dialog));
-        dialog.show();
-    }
-
-    private void dismissWaitinDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
-    }
-
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
         RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
-                dismissWaitinDialog();
+                AppFuncs.dismissProgressWaiting();
                 ArrayList<String> users = new ArrayList<>();
                 ArrayList<Integer> providers = new ArrayList<>();
                 ArrayList<Integer> accounts = new ArrayList<>();
@@ -506,11 +489,11 @@ public class ContactsPickerActivity extends BaseActivity {
 
         if (mSearchView != null) {
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            mSearchView.setBackground( getResources().getDrawable(R.drawable.background_search_view));
+            mSearchView.setBackground(getResources().getDrawable(R.drawable.background_search_view));
             EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
             searchEditText.setTextColor(getResources().getColor(R.color.message_background_light));
             searchEditText.setHintTextColor(getResources().getColor(R.color.message_background_light));
-            mSearchView.setPadding(0,0,0,0);
+            mSearchView.setPadding(0, 0, 0, 0);
 
             SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
                 public boolean onQueryTextChange(String newText) {
@@ -807,8 +790,7 @@ public class ContactsPickerActivity extends BaseActivity {
             this.groupmember = groupmember;
         }
 
-        public  void enableAlphabet(boolean check)
-        {
+        public void enableAlphabet(boolean check) {
             isenablealphabet = check;
         }
 
@@ -847,7 +829,7 @@ public class ContactsPickerActivity extends BaseActivity {
             if (excludedContacts != null && excludedContacts.contains(userName)) {
                 holder.mLine1.setTextColor((holder.mLine1.getCurrentTextColor() & 0x00ffffff) | 0x80000000);
                 holder.mLine1.setText(getString(R.string.is_already_in_your_group, holder.mLine1.getText()));
-             //   holder.mLine2.setText(status);
+                //   holder.mLine2.setText(status);
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
@@ -865,18 +847,14 @@ public class ContactsPickerActivity extends BaseActivity {
                 {
                     charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
                     holder.textsection.setVisibility(View.VISIBLE);
-                    if(index > 0) {
+                    if (index > 0) {
                         holder.linesection.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
+                    } else {
                         holder.linesection.setVisibility(View.GONE);
                     }
                     holder.textsection.setText(charSection);
                 }
-            }
-            else
-            {
+            } else {
                 holder.textsection.setVisibility(View.GONE);
             }
 

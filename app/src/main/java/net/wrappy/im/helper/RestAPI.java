@@ -3,6 +3,7 @@ package net.wrappy.im.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -336,6 +337,9 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 Debug.d(result != null ? result.getResult() : "");
                 try {
+                    if (e!=null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
+                        AppFuncs.log(e.getLocalizedMessage());
+                    }
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null, jsonObject, url, listenner, POST_METHOD);
@@ -425,6 +429,9 @@ public class RestAPI {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
+                    if (e!=null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
+                        AppFuncs.log(e.getLocalizedMessage());
+                    }
                     if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
                         if (checkExpiredToken(result.getResult())) {
                             refreshTokenHttps(context, null, null, url, listenner, GET_METHOD);

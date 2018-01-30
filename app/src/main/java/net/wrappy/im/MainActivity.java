@@ -1184,7 +1184,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
                 SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
                 if (handler != null) {
                     handler.removeCallbacks(runable);
-                    if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                    if (conn != null && conn.getState() == ImConnection.LOGGED_IN && XmppConnection.isAuthenticated()) {
                         if (syncDataListener != null) {
                             syncDataListener.processing(data);
 
