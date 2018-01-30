@@ -14,7 +14,7 @@
         android:layout_height="400dp"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:background="@drawable/ic_launcher" />
+        android:background="@mipmap/ic_launcher" />
 
     <net.ironrabbit.type.CustomTypefaceButton
         android:id="@+id/btnsaveQRwallet"
