@@ -101,6 +101,7 @@ import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
@@ -402,7 +403,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         Intent intent = getIntent();
         processIntent(intent);
 
-        setCustomActionBar(mConvoView.isGroupChat());
+
 
         collapseToolbar();
 
@@ -460,7 +461,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                mConvoView.startVideoConference();
+                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.waiting_develop),R.string.ok,null);
+                //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
                 mConvoView.startSettingScreen();
@@ -469,10 +471,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
     private void setCustomActionBar(boolean isGroupChat) {
+        clearViewLeftInActionBar();
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),address);
+        if (!TextUtils.isEmpty(avarImg)) {
+            mReference = avarImg;
+        }
         if (isGroupChat) {
             if (TextUtils.isEmpty(mReference)) {
                 avatar.setImageResource(R.drawable.chat_group);
@@ -689,7 +696,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onResume() {
         super.onResume();
-
+        setCustomActionBar(mConvoView.isGroupChat());
         mConvoView.setSelected(true);
 
         IntentFilter regFilter = new IntentFilter();
