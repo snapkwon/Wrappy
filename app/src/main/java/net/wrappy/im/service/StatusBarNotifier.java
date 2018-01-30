@@ -94,7 +94,8 @@ public class StatusBarNotifier {
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
-//        intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, groupname);
+       intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, remoteAddress);
+        intent.putExtra("title", groupname);
         intent.addCategory(ImApp.IMPS_CATEGORY);
         notify(remoteAddress, groupname, snippet, nickname + ": " + msg, providerId, accountId, intent, lightWeightNotify, R.drawable.notify_wrappy, avatar);
     }
