@@ -110,6 +110,7 @@ import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
 import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
 import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
+import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
@@ -1548,11 +1549,19 @@ public class XmppConnection extends ImConnection {
             mChatManager = ChatManager.getInstanceFor(mConnection);
 
             mPingManager = PingManager.getInstanceFor(mConnection);
+            mPingManager.registerPingFailedListener(new PingFailedListener() {
+                @Override
+                public void pingFailed() {
+                    debug(TAG, "pingFailed");
+                    force_reconnect();
+                }
+            });
 
             if (mUser == null)
                 mUser = makeUser(providerSettings, mContext.getContentResolver());
 
             mConnection.login(mUsername, mPassword, Resourcepart.from(mResource));
+            mConnection.setReplyTimeout(30000);
 
             mStreamHandler.notifyInitialLogin();
             initServiceDiscovery();
@@ -3368,7 +3377,8 @@ public class XmppConnection extends ImConnection {
                 if (!mPingSuccess) {
                     debug(TAG, "reconnect on ping failed: " + mUser.getAddress().getAddress());
                     setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network timeout"));
-                    maybe_reconnect();
+                    force_reconnect();
+//                    maybe_reconnect();
                 } else {
                     // Send pings only at intervals configured by the user
                     if (heartbeatSequence >= heartbeatInterval) {

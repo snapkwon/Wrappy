@@ -16,7 +16,6 @@ import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
-import org.jivesoftware.smackx.pubsub.PubSubAssertionError;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.whispersystems.libsignal.IdentityKey;
@@ -164,34 +163,29 @@ public class Omemo {
 
     public boolean resourceSupportsOmemo(final Jid jid)
     {
-       try
-       {
-           if (jid.hasResource())
-           {
-               return mOmemoManager.resourceSupportsOmemo(jid.asFullJidIfPossible());
-           }
-           else
-           {
-               return getFingerprints(jid.asBareJid(),true).size() > 0;
-           }
-       }
-       catch (Exception e) {
-           Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints");
-           ;
+        try {
+            if (mOmemoManager.contactSupportsOmemo(jid.asBareJid())) {
+                try {
+                    mOmemoManager.buildSessionsWith(jid.asBareJid());
+                    return true;
+                } catch (CannotEstablishOmemoSessionException e) {
+                    debug(TAG, "couldn't establish omemo session: " + e);
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "error checking if resource supports omemo, will check for local fingerprints");
 
-           try {
-               mOmemoManager.requestDeviceListUpdateFor(jid.asBareJid());
+            try {
+                mOmemoManager.requestDeviceListUpdateFor(jid.asBareJid());
 
-               //let's just check fingerprints instead
-               return getFingerprints(jid.asBareJid(), false).size() > 0;
-           }
-           catch (Exception e2)
-           {
-               debug(TAG, "error checking if resource supports omemo: " + jid + ": " + e2.toString());
-           }
-       }
+                //let's just check fingerprints instead
+                return getFingerprints(jid.asBareJid(), false).size() > 0;
+            } catch (Exception e2) {
+                debug(TAG, "error checking if resource supports omemo: " + jid + ": " + e2.toString());
+            }
+        }
 
-       return false;
+        return false;
     }
 
     public void loadDeviceList (BareJid jid)
@@ -200,11 +194,6 @@ public class Omemo {
 
             mOmemoManager.requestDeviceListUpdateFor(jid);
 
-
-        }
-        catch (PubSubAssertionError error)
-        {
-            Log.e(TAG, "error fetching device list",error);
 
         }
         catch (Exception e)

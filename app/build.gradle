@@ -93,7 +93,7 @@ android {
 }
 
 ext {
-    smackVersion = "4.2.1-beta1"
+    smackVersion = "4.2.2"
 }
 
 def getProps(String propName) {
@@ -157,17 +157,19 @@ dependencies {
     compile 'com.github.javiersantos:AppUpdater:2.5.2'
     compile 'com.github.QuadFlask:colorpicker:0.0.10'
     compile project(':patternLibrary')
-    /**
+
      compile "org.igniterealtime.smack:smack-android:$smackVersion"
      compile "org.igniterealtime.smack:smack-android-extensions:$smackVersion"
-     compile "org.igniterealtime.smack:smack-omemo-signal:$smackVersion"
+//     compile "org.igniterealtime.smack:smack-omemo-signal:$smackVersion"
      compile "org.igniterealtime.smack:smack-resolver-minidns:$smackVersion"
      compile "org.igniterealtime.smack:smack-tcp:$smackVersion"
      compile "org.igniterealtime.smack:smack-core:$smackVersion"
      compile "org.igniterealtime.smack:smack-extensions:$smackVersion"
-     compile "org.igniterealtime.smack:smack-experimental:$smackVersion"{exclude "org.jivesoftw"}compile "org.igniterealtime.smack:smack-im:$smackVersion"
+     compile "org.igniterealtime.smack:smack-experimental:$smackVersion"
      compile "org.igniterealtime.smack:smack-sasl-provided:$smackVersion"
-     **/
+
+
+//    compile "org.igniterealtime.smack:smack-extensions:$smackVersion"
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:8.8.1'
