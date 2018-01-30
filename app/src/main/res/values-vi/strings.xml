@@ -32,9 +32,9 @@
 
     <!-- General: Actions -->
     <string name="confirm">Xác nhận</string>
-    <string name="ok">Được</string>
+    <string name="ok">Đồng ý</string>
     <string name="cancel">Hủy bỏ</string>
-    <string name="yes">Được</string>
+    <string name="yes">Đồng ý</string>
     <string name="no">Hủy bỏ</string>
     <string name="connect">Kết nối</string>
     <!-- Views -->
@@ -53,7 +53,7 @@
     <string name="signed_out_prompt_with_error">Bạn đã được đăng xuất khỏi <xliff:g id="account">%1$s</xliff:g> vì <xliff:g id="reason">%2$s</xliff:g></string>
 
 
-    <string name="pass_err_length">Cụm từ mật khẩu của bạn là không đủ dài</string>
+    <string name="pass_err_length">Mật khẩu của bạn không đủ dài</string>
     <!-- Views: About: Welcome -->
     <!-- Views: About: OTR -->
     <!-- Views: About: Security -->
@@ -107,7 +107,7 @@
 
     <string name="empty_conversation_group">Không nói chuyện cởi mở bấm để bắt đầu trò chuyện!</string>
 
-    <string name="search_label">Tiếp xúc</string>
+    <string name="search_label">Danh bạ</string>
     <string name="search_hint">Gõ tên của một số liên lạc để trò chuyện với</string>
     <string name="input_contact_label">Nhập tên người dùng đầy đủ của bạn bè (tức là wrappyisfun.4x3f5g@wrappy.net.) Ở đây:</string>
     <!-- Views: Chat: Single -->
@@ -119,9 +119,9 @@
     <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> đã để lại</string>
 
     <string name="file_transfer">Chuyển tập tin</string>
-    <string name="accept_transfer_">Chấp nhận chuyển nhượng?</string>
-    <string name="wants_to_send_you_the_file">Muốn gửi cho bạn các tập tin</string>
-    <string name="no_connection_for_sending">Không có kết nối sẵn để gửi chia sẻ của bạn!</string>
+    <string name="accept_transfer_">Chấp nhận chuyển file?</string>
+    <string name="wants_to_send_you_the_file">Muốn gửi cho bạn tập tin</string>
+    <string name="no_connection_for_sending">Không có kết nối để chia sẻ!</string>
 
     <string name="compose_hint">Gửi tin nhắn</string>
     <string name="compose_hint_secure">Gửi tin nhắn</string>
@@ -161,15 +161,15 @@
     <string name="qmp_answer_hint">Câu trả lời mong đợi</string>
     <string name="remote_verified_us">Liên lạc của bạn đã thành công được chứng thực bạn. Bây giờ xác thực liên lạc của bạn bằng cách hỏi câu hỏi của riêng bạn.</string>
     <string name="otr_qa_title">Otr Q&amp;A mã xác nhận</string>
-    <string name="chat_encryption_title">Encryption trò chuyện</string>
-    <string name="otr_qa_send">Gởi</string>
+    <string name="chat_encryption_title">Trò chuyện mã hóa</string>
+    <string name="otr_qa_send">Gửi</string>
     <string name="otr_qa_cancel">Hủy bỏ</string>
 
     <!-- Views: VoIP -->
     <!-- Views: Settings: General -->
     <!-- Actions: Settings: General: Security and Privacy -->
     <string name="pref_group_security_title">An ninh và sự riêng tư</string>
-    <string name="encryption_and_anonymity_title">Privacy mạng</string>
+    <string name="encryption_and_anonymity_title">Mạng riêng tư</string>
     <!-- Actions: Settings: General: User Interface -->
     <string name="pref_linkify_on_tor_title">Liên kết có thể click</string>
     <string name="pref_linkify_on_tor_summary">Tận dụng các liên kết trong cuộc trò chuyện có thể click (chú ý, có thể rò rỉ riêng tư!)</string>
@@ -193,13 +193,13 @@
 
     <!-- Actions: Settings: General: Notifications -->
     <string name="notification_group_title">Thiết lập thông báo</string>
-    <string name="notification_enabled_title">Thông báo im</string>
-    <string name="notification_enabled_summary">Thông báo trong thanh trạng thái khi im đến</string>
+    <string name="notification_enabled_title">Thông báo</string>
+    <string name="notification_enabled_summary">Bật thông báo</string>
     <string name="notification_vibrate_title">Rung</string>
-    <string name="notification_vibrate_summary">Cũng rung khi tin nhắn tức thì</string>
-    <string name="notification_sound_title">Âm thanh</string>
-    <string name="notification_sound_summary">Cũng phát nhạc chuông khi có im</string>
-    <string name="notification_ringtone_title">Chọn custom ringtone</string>
+    <string name="notification_vibrate_summary">Rung khi có thông báo</string>
+    <string name="notification_sound_title">Âm thanh thông báo</string>
+    <string name="notification_sound_summary">Nhạc khi có thông báo</string>
+    <string name="notification_ringtone_title">Điều chỉnh nhạc chuông</string>
 
     <!-- Actions: Settings: General: Developer -->
     <string name="pref_debug_title">Kích hoạt tính năng nhật ký gỡ lỗi</string>
@@ -307,7 +307,7 @@
     <string name="presence_offline">Ẩn</string>
     <string name="presence_invisible">Đang offline</string>
     <string name="popup_take_photo">Chụp hình</string>
-    <string name="popup_choose_gallery">Chọn từ phòng trưng bày</string>
+    <string name="popup_choose_gallery">Chọn từ thư viện ảnh</string>
     <string name="popup_delete_photo">Xóa ảnh</string>
 
     <string name="this_is_a_group_chat">Gửi tin nhắn theo nhóm</string>
@@ -316,7 +316,7 @@
 
     <string name="swipe_hint">swipe trái và phải cho các tùy chọn thêm</string>
 
-    <string name="no_convos">Thời gian để bắt đầu wrappy!</string>
+    <string name="no_convos">Bắt đầu trò chuyện với Wrappy!</string>
 
     <string name="title_more">Khám phá</string>
     <string name="title_me">Tôi</string>
@@ -373,56 +373,56 @@
 
     <!-- Dialog bottom sheet conversation -->
     <string name="pin_to_top">Ghim đầu trang</string>
-    <string name="unpin_from_top">Bỏ ghim khỏi đầu</string>
+    <string name="unpin_from_top">Bỏ ghim đầu trang</string>
     <string name="delete_and_exit">Xóa và thoát</string>
-    <string name="clean_history">Dọn dẹp history</string>
+    <string name="clean_history">Xoá lịch sử trò chuyện</string>
 
     <!-- Settings conversation -->
     <string name="setting_screen">Cài đặt</string>
     <string name="setting_search">Tìm kiếm</string>
     <string name="setting_clear">Xóa lịch sử</string>
     <string name="setting_delete_and_leave_group">Xóa và rời khỏi nhóm</string>
-    <string name="setting_leave_group">Nhóm nghỉ</string>
+    <string name="setting_leave_group">Rời khỏi nhóm</string>
     <string name="setting_delete_chat">Xóa cuộc trò chuyện</string>
     <string name="setting_report_spam">Báo cáo thư rác</string>
     <string name="setting_notification">Thông báo</string>
     <string name="setting_change_background">Thay đổi hình nền</string>
-    <string name="setting_add_member">Thêm bạn</string>
+    <string name="setting_add_member">Thêm thành viên</string>
     <string name="incoming_attachment">1 tập tin đính kèm</string>
 
     <string name="title_wallet">Ví</string>
     <string name="ETH">Ethereum</string>
     <string name="PRO">Proteusion</string>
-    <string name="seetranslate">Xem dịch</string>
-    <string name="closetranslate">Đóng dịch</string>
+    <string name="seetranslate">Hiện bản dịch</string>
+    <string name="closetranslate">Ẩn bản dịch</string>
 
-    <string name="menu_spam">Rac</string>
+    <string name="menu_spam">Rác</string>
     <string name="menu_violence">Bạo lực</string>
     <string name="menu_cancel">Hủy bỏ</string>
-    <string name="error_repeat_password">Nhập lại mật khẩu không phù hợp</string>
-    <string name="message_enter_password">Gõ mật khẩu</string>
-    <string name="old_password_mismatch">Mật khẩu cũ không phù hợp</string>
+    <string name="error_repeat_password">Mật khẩu nhập lại không khớp</string>
+    <string name="message_enter_password">Nhập mật khẩu</string>
+    <string name="old_password_mismatch">Mật khẩu cũ không đúng</string>
     <string name="message_change_password_success">Thay đổi mật khẩu thành công</string>
     <string name="backup_success">Sao lưu thành công</string>
     <string name="delete_success">Xóa thành công</string>
     <string name="message_fail_import">Thất bại trong việc nhập khẩu, hãy thử lại</string>
     <string name="backup">Sao lưu</string>
-    <string name="title_member_group_setting">Hội viên</string>
+    <string name="title_member_group_setting">Thành viên</string>
     <string name="old_password_title">Mật khẩu cũ</string>
     <string name="new_password_title">Mật khẩu mới</string>
     <string name="repeat_password_title">Lặp lại mật khẩu mới</string>
-    <string name="available_balance">Balance có sẵn</string>
+    <string name="available_balance">Số dư sẵn có</string>
     <string name="to_address">Available_balance</string>
     <string name="amount">Số tiền</string>
-    <string name="eth_unit">Eth</string>
-    <string name="USD">Đô la mỹ</string>
-    <string name="description">Sự miêu tả</string>
+    <string name="eth_unit">ETH</string>
+    <string name="USD">USD</string>
+    <string name="description">Mô tả</string>
     <string name="date">Ngày</string>
     <string name="confirmations">Xác nhận</string>
     <string name="view_more">Xem thêm</string>
-    <string name="wallet_created_success">Ví tạo thành công</string>
+    <string name="wallet_created_success">Tạo ví thành công</string>
     <string name="warning_backup_wallet">Chúng tôi khuyên bạn sao lưu wallet hoặc keystore ngay lập tức.</string>
-    <string name="backup_now_button">Backup với doanh nghiệp</string>
+    <string name="backup_now_button">Sao lưu ngay</string>
     <string name="no_thanks">Không, cám ơn</string>
     <string name="copy_clipboard">Sao chép vào clipboard</string>
     <string name="backup_address">Sao lưu địa chỉ</string>
@@ -435,28 +435,28 @@
     <string name="new_list">Danh sách mới</string>
     <string name="key_manager">Quản lý chủ chốt</string>
     <string name="add_another_account">Thêm tài khoản khác</string>
-    <string name="check_email_passcode">Vui lòng kiểm tra tin nhắn của bạn và nhập mật mã</string>
-    <string name="vertify_title_noti">Chúng tôi đã gửi một thông điệp tới</string>
-    <string name="send_again">Gửi lại mật mã</string>
+    <string name="check_email_passcode">Vui lòng kiểm tra tin nhắn và nhập mã xác nhận</string>
+    <string name="vertify_title_noti">Chúng tôi đã gửi một thông báo</string>
+    <string name="send_again">Gửi lại mã xác nhận</string>
     <string name="answer_secret_question">Trả lời câu hỏi bí mật của bạn</string>
     <string name="your_answer">Câu trả lời của bạn</string>
     <string name="btn_next">Kế tiếp</string>
     <string name="input_your_email">Nhập email của bạn</string>
     <string name="hint_your_email">Email của bạn</string>
     <string name="reset_password">Đặt lại mật khẩu</string>
-    <string name="new_group">Nhóm mới</string>
+    <string name="new_group">Tạo nhóm mới</string>
     <string name="about_us">Về chúng tôi</string>
     <string name="faq">Hỏi đáp</string>
     <string name="logout">Đăng xuất</string>
-    <string name="remove">Tẩy</string>
-    <string name="sent">Gởi</string>
+    <string name="remove">Xóa</string>
+    <string name="sent">Gửi</string>
     <string name="received">Nhận</string>
-    <string name="all">Tất cả các</string>
+    <string name="all">Tất cả</string>
     <string name="username">Tên đăng nhập</string>
     <string name="email">E-mail</string>
     <string name="mobile_phone">Điện thoại di động</string>
-    <string name="gender">Tính</string>
-    <string name="referral">Giới thiệu</string>
+    <string name="gender">Giới tính</string>
+    <string name="referral">Người giới thiệu</string>
     <string name="referral_hint">Số điện thoại</string>
     <string name="btn_submit">Gửi đi</string>
     <string name="btn_update">Cập nhật</string>
@@ -465,52 +465,52 @@
     <string name="choose_new_secret_question">Chọn câu hỏi bí mật mới của bạn</string>
     <string name="skip">Bỏ qua</string>
     <string name="complete">Hoàn thành</string>
-    <string name="current_balance">Số dư hiện</string>
-    <string name="add_photo">Thêm ảnh!</string>
-    <string name="error_upload_photo">Nhóm upload ảnh thất bại!</string>
-    <string name="error_creating_group">Tạo nhóm fail</string>
+    <string name="current_balance">Số dư hiện tại</string>
+    <string name="add_photo">Thêm ảnh</string>
+    <string name="error_upload_photo">Tải ảnh lên thất bại.</string>
+    <string name="error_creating_group">Không tạo được nhóm</string>
     <string name="select_file_to_send">Chọn tập tin</string>
-    <string name="google_play_services_not_available">Dịch vụ google play là không có sẵn.</string>
+    <string name="google_play_services_not_available">Dịch vụ của google play không có sẵn.</string>
     <string name="english">Anh</string>
     <string name="copied_text">Tiêu đề sao chép</string>
     <string name="history">Lịch sử</string>
     <string name="activity">Hoạt động</string>
-    <string name="error_when_refresh_token">Không thể làm mới thẻ truy cập: vui lòng thử lại!</string>
+    <string name="error_when_refresh_token">Không thể làm mới được token, hãy thử lại!</string>
     <string name="registration">Đăng ký</string>
     <string name="update_profile_success">Cập nhật thành công</string>
     <string name="update_profile_fail">Cập nhật thất bại</string>
     <string name="error_upload_image">Tải lên thất bại</string>
-    <string name="logout_all_devices">Đăng xuất tất cả các thiết bị</string>
-    <string name="logout_device">Đăng xuất thiết bị này</string>
-    <string name="message_remove_avatar_success">Di avatar thành công</string>
-    <string name="message_remove_banner_success">Di banner success</string>
+    <string name="logout_all_devices">Đăng xuất khỏi tất cả các thiết bị</string>
+    <string name="logout_device">Đăng xuất khỏi thiết bị này</string>
+    <string name="message_remove_avatar_success">Xoá avatar thành công</string>
+    <string name="message_remove_banner_success">Xoá banner thành công</string>
     <string name="hint_password">Nhập mật khẩu</string>
     <string name="error_reset_password">Đặt lại mật khẩu thất bại</string>
     <string name="warning">Cảnh báo</string>
-    <string name="error_tranferring_file">Lỗi tập tin chuyển giao:</string>
+    <string name="error_tranferring_file">Lỗi chuyển tập tin:</string>
     <string name="message_download_attachment">Bạn có muốn lưu tập tin này?</string>
 
-    <string name="error_registration">Đăng ký doanh nghiệp thất bại. Thử lại!</string>
+    <string name="error_registration">Đăng ký thất bại. Thử lại!</string>
 
-    <string name="location_message">Tin nhắn vị trí</string>
-    <string name="you_sent_sticker">Bạn đã gửi một ảnh dán</string>
+    <string name="location_message">Tin nhắn gửi vị trí</string>
+    <string name="you_sent_sticker">Bạn đã gửi một nhãn dán</string>
     <string name="message_sticker">Tin nhắn Sticker</string>
     <string name="user_sent_sticker">%1$s đã gửi một sticker</string>
-    <string name="tab_menu_menu">Thực đơn</string>
+    <string name="tab_menu_menu">Danh mục</string>
     <string name="tab_menu_conversation">Trò chuyện</string>
-    <string name="tab_menu_promotion">Xúc tiến</string>
-    <string name="tab_menu_my_page">Trang của tôi</string>
+    <string name="tab_menu_promotion">Khuyến mãi</string>
+    <string name="tab_menu_my_page">Cá nhân</string>
     <string name="promotion_invite_friend">Mời bạn bè</string>
     <string name="promotion_history">Lịch sử</string>
-    <string name="page_verify">Xác minh tài khoản</string>
-    <string name="message_edit">Chỉnh sửa tin nhắn</string>
+    <string name="page_verify">Xác nhận tài khoản</string>
+    <string name="message_edit">Chỉnh sửa</string>
     <string name="message_delete">Xóa tin nhắn</string>
     <string name="message_spam">Báo cáo thư rác</string>
-    <string name="invite_friend_earn">Mời thêm bạn bè để kiếm thêm pts đồng xu</string>
-    <string name="promotion_description">Thưởng wrappy cho bạn khi bạn mời bạn bè cài đặt ứng dụng wrappy</string>
+    <string name="invite_friend_earn">Mời bạn bè cùng tham gia để kiếm thêm đồng PTS</string>
+    <string name="promotion_description">Wrappy tặng thưởng cho bạn khi bạn mời bạn bè cài đặt ứng dụng Wrappy</string>
     <string name="promotion_invite_friends">Mời bạn bè</string>
-    <string name="verify_send_sms_fail">Gửi sms thất bại</string>
-    <string name="verify_send_sms_success">Gửi thành công sms</string>
+    <string name="verify_send_sms_fail">Gửi tin nhắn thất bại</string>
+    <string name="verify_send_sms_success">Gửi tin nhắn thành công</string>
     <string name="verify_fail">Xác nhận thất bại</string>
     <string name="from">Từ</string>
     <string name="security_question_change">Thay đổi câu hỏi bảo mật</string>
@@ -520,18 +520,18 @@
     <string name="secu_success_description">Câu hỏi bí mật của bạn thay đổi thành công</string>
     <string name="fail">Thất ​​bại</string>
     <string name="upload_fail">Tải lên thất bại</string>
-    <string name="cancel_and_home">Hủy bỏ qua bước này và quay trở lại màn hình đăng nhập?</string>
+    <string name="cancel_and_home">Bỏ qua bước này và quay trở lại màn hình đăng nhập?</string>
     <string name="invite_friends_text">Mời bạn bè</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Bạn có muốn đăng xuất</string>
-    <string name="share_title">Chọn phương pháp chia sẻ</string>
+    <string name="share_title">Chia sẻ với bạn bè</string>
     <string name="referral_text">Nhập mã giới thiệu (không bắt buộc)</string>
-    <string name="Referral">Giới thiệu</string>
+    <string name="Referral">Người giới thiệu</string>
     <string name="update_profile">Cập nhật hồ sơ</string>
     <string name="question">Câu hỏi %d</string>
     <string name="request_send_email_success">Đã gửi thành công, Vui lòng kiểm tra email của bạn để thay đổi mật khẩu mới</string>
-    <string name="remove_member_success">Xóa %s khỏi nhóm này</string>
-    <string name="skip_referral">Hủy bỏ qua bước này và đi vào màn hình Home?</string>
+    <string name="remove_member_success">Đã xóa %s khỏi nhóm</string>
+    <string name="skip_referral">Bỏ qua bước này và đi vào màn hình Home?</string>
     <string name="create_by">Được tạo bởi %s</string>
     <string name="chat_message_item">%1$s trò chuyện %2$s.</string>
     <string name="message_kicked_from_group">%s được xóa bởi Admin</string>
