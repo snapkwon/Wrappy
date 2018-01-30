@@ -3563,8 +3563,8 @@ public class XmppConnection extends ImConnection {
         }
 
         //Update presence state when state changed
-//        if (mUserPresence != null && mConnection != null && mConnection.isConnected())
-//            sendPresencePacket();
+        if (mUserPresence != null && mConnection != null && mConnection.isConnected())
+            sendPresencePacket();
     }
 
     public void debug(String tag, String msg) {
