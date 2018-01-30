@@ -427,23 +427,31 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         }
 
         handleIntent();
-        initConn();
         checkConnection();
     }
 
-    private IImConnection initConn() {
-        if (mApp.getDefaultAccountId() != -1 && XmppConnection.isSetup()) {
-            IImConnection connection = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-            try {
-                if (connection != null && connection.getState() == XmppConnection.LOGGED_IN) {
-                    mConn = connection;
-                        mConn.registerConnectionListener(this);
-                }
-            } catch (Exception e) {
-                Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
-                }
+    private IImConnection registerConnection(IImConnection connection) {
+        try {
+            if (mConn != null && !connection.equals(mConn)) {
+                unRegisterConnection();
+            } else {
+                mConn = connection;
+                mConn.registerConnectionListener(this);
+            }
+        } catch (Exception e) {
+            Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
         }
         return mConn;
+    }
+
+    private void unRegisterConnection() {
+        if (mConn != null) {
+            try {
+                mConn.unregisterConnectionListener(this);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -460,13 +468,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             mLoadContactHandler = null;
             syncContactRunnable = null;
         }
-        if (mConn != null) {
-            try {
-                mConn.unregisterConnectionListener(this);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+        unRegisterConnection();
 
         XmppConnection.removeTask();
     }
@@ -493,7 +495,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
 
             if (mApp.getDefaultProviderId() != -1 && XmppConnection.isSetup()) {
                 IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-
+                registerConnection(conn);
                 if (conn.getState() == ImConnection.DISCONNECTED
                         || conn.getState() == ImConnection.SUSPENDED
                         || conn.getState() == ImConnection.SUSPENDING) {
