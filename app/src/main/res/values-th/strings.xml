@@ -513,7 +513,7 @@
     <string name="remove_member_success">ลบ %s ในกลุ่มนี้</string>
     <string name="skip_referral">ยกเลิกขั้นตอนนี้และไปที่หน้าจอที่บ้าน?</string>
     <string name="create_by">สร้างโดย %s</string>
-    <string name="chat_message_item">แชท %1$s %1$s</string>
+    <string name="chat_message_item">แชท %1$s %2$s</string>
     <string name="message_kicked_from_group">%s จะถูกลบออกโดยผู้ดูแลระบบ</string>
     <string name="comming_soon">เร็ว ๆ นี้</string>
 </resources>
