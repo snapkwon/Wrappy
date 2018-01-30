@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:gravity="center"
+            android:minWidth="100dp"
             android:textColor="#007aff"
             android:textSize="16sp" />
 

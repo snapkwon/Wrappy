@@ -113,6 +113,7 @@ public class VerifyCodeFragment extends Fragment {
             phone = phone.substring(countryCode.length(),phone.length());
             edVerifyPhone.setText(phone);
         }
+
         btnVerifyChangePhone.setSelected(false);
         getCountryCodesFromServer();
         spnProfileCountryCodes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
