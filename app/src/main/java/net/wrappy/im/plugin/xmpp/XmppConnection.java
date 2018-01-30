@@ -2359,7 +2359,6 @@ public class XmppConnection extends ImConnection {
             } catch (Throwable th) {
                 // ignore
             }
-            mConnection = null;
         }
         removeTask();
     }
