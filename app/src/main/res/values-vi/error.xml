@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="error_question_duplicate">Bạn không thể chọn câu hỏi bảo mật tương tự</string>
-    <string name="error_empty_answer">Câu trả lời của câu hỏi %d là rỗng</string>
-    <string name="error_min_length_answer">Câu trả lời của bạn về câu hỏi %d phải có ít nhất 3 chữ cái</string>
-    <string name="error_duplicate_answer">Câu trả lời của bạn phải khác</string>
+    <string name="error_question_duplicate">Câu hỏi bí mật bị trùng, bạn hãy chọn câu khác</string>
+    <string name="error_empty_answer">Câu trả lời của câu hỏi %d không được để trống</string>
+    <string name="error_min_length_answer">Câu trả lời cần có ít nhất 3 chữ cái</string>
+    <string name="error_duplicate_answer">Câu trả lời của bạn phải khác nhau</string>
     <string name="error_invalid_text_length">Tên truy cập phải có ít nhất 6 ký tự</string>
     <string name="error_invalid_characters">Tên người dùng không thể chứa ký tự đặc biệt</string>
     <string name="error_empty_phone">Vui lòng nhập số điện thoại di động của bạn</string>
@@ -18,8 +18,8 @@
     <string name="error_wrong_answer_2nd">Trả lời sai! Vui lòng thử bằng email</string>
 
 
-    <!--error code from server-->
-    <string name="error_0">Internet có thể không có sẵn. Vui lòng thử lại</string>
+<!--error code from server-->
+    <string name="error_0">Mất kết nối Internet. Vui lòng thử lại</string>
     <string name="error_8000">Phiên bản không phù hợp</string>
     <string name="error_8001">Truy cập bị từ chối</string>
     <string name="error_8002">Vui lòng thử lại sau</string>
@@ -27,17 +27,17 @@
     <string name="error_8004">Thành viên không tồn tại</string>
     <string name="error_8005">Thành viên đã được kích hoạt</string>
     <string name="error_8006">Thành viên chưa kích hoạt</string>
-    <string name="error_8007">Thành viên nhập địa chỉ email không hợp lệ</string>
-    <string name="error_8009">Mã xác minh đã hết hạn hoặc không hợp lệ</string>
+    <string name="error_8007">Địa chỉ email không hợp lệ</string>
+    <string name="error_8009">Mã xác nhận đã hết hạn hoặc không hợp lệ</string>
     <string name="error_8010">Hình ảnh không tồn tại</string>
-    <string name="error_8011">Hình ảnh giữ lại tập tin thất bại là có sản phẩm nào</string>
+    <string name="error_8011">Hình ảnh giữ tập tin lỗi bị trống</string>
     <string name="error_8013">Hình ảnh lấy tập tin thất bại là không có sẵn</string>
     <string name="error_8016">Loại tài sản không xác định</string>
     <string name="error_8017">Đăng ký doanh nghiệp không tồn tại</string>
     <string name="error_8020">Không thể gửi thư điện tử</string>
-    <string name="error_8021">Sms có giới hạn ký tự vượt quá</string>
+    <string name="error_8021">SMS vượt quá số ký tự cho phép</string>
     <string name="error_8022">Tên này đã có người dùng</string>
-    <string name="error_8023">Số điện thoại di động đã tồn tại</string>
+    <string name="error_8023">Số điện thoại đã tồn tại</string>
     <string name="error_8024">Email đã tồn tại</string>
     <string name="error_8025">Tài nguyên không tồn tại</string>
     <string name="error_8026">Không tìm thấy câu hỏi bảo mật của thành viên này</string>
@@ -48,6 +48,6 @@
     <string name="error_8031">Người dùng không tồn tại</string>
     <string name="error_8032">Tạo người dùng trên xmpp thất bại</string>
     <string name="error_8033">Rất tiếc! Bạn đã trả lời câu hỏi bảo mật sai</string>
-    <string name="error_8034">Tên người dùng hoặc mô hình là không chính xác</string>
+    <string name="error_8034">Tên người dùng hoặc mật khẩu là không chính xác</string>
 
 </resources>
