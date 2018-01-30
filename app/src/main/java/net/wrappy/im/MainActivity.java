@@ -1176,21 +1176,25 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     private <T> void syncData(Handler handler, T[] data, SyncDataListener<T> syncDataListener, int type) {
 
         try {
-            if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
-                IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
-                if (handler != null) {
-                    handler.removeCallbacks(runable);
-                    if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
-                        if (syncDataListener != null) {
-                            syncDataListener.processing(data);
-
+            AppFuncs.log("syncData");
+            if (data!=null && data.length > 0) {
+                if (mApp.getDefaultProviderId() != -1 && mApp.getDefaultAccountId() != -1) {
+                    AppFuncs.log("getDefaultProviderId-getDefaultAccountId");
+                    IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                    SyncDataRunnable runable = type == 0 ? syncGroupChatRunnable : syncContactRunnable;
+                    if (handler != null) {
+                        handler.removeCallbacks(runable);
+                        AppFuncs.log("syncData ImConnection.LOGGED_IN");
+                        if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
+                            if (syncDataListener != null) {
+                                syncDataListener.processing(data);
+                            }
+                        } else {
+                            if (runable == null) {
+                                runable = initRunnable(data, syncDataListener, type);
+                            }
+                            handler.postDelayed(runable, 2000);
                         }
-                    } else {
-                        if (runable == null) {
-                            runable = initRunnable(data, syncDataListener, type);
-                        }
-                        handler.postDelayed(runable, 2000);
                     }
                 }
             }
