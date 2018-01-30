@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_question_duplicate">คุณไม่สามารถเลือกคำถามรักษาความปลอดภัยเดียวกัน</string>
-    <string name="error_empty_answer">คำตอบของคำถามที่ 1 เป็นที่ว่างเปล่า</string>
+    <string name="error_empty_answer">คำตอบของคำถามที่ %d เป็นที่ว่างเปล่า</string>
     <string name="error_min_length_answer">คำตอบของคุณของคำถาม %d ต้องมีอย่างน้อย 3 ตัวอักษร</string>
     <string name="error_duplicate_answer">你的回答必須是不同的</string>
     <string name="error_invalid_text_length">用戶名必須至少為6個字符</string>
@@ -48,5 +48,6 @@
     <string name="error_8031">รหัสอ้างอิงไม่ได้อยู่</string>
     <string name="error_8032">สร้างผู้ใช้ XMPP ล้มเหลว</string>
     <string name="error_8033">อ๊ะ! คุณตอบคำถามการรักษาความปลอดภัยที่ไม่ถูกต้อง</string>
+    <string name="error_8034">ชื่อผู้ใช้หรือรูปแบบไม่ถูกต้อง</string>
 
 </resources>

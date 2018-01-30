@@ -48,5 +48,6 @@
     <string name="error_8031">推薦代碼不存在</string>
     <string name="error_8032">在失敗XMPP創建用戶</string>
     <string name="error_8033">哎呀！你回答錯了安全問題</string>
+    <string name="error_8034">的用戶名或圖案是不正確</string>
 
 </resources>
