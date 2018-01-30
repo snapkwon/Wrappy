@@ -75,11 +75,12 @@ public class ContactsListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(
-                R.layout.awesome_fragment_contacts_list, container, false);
+        View view = inflater.inflate(R.layout.awesome_fragment_contacts_list, container, false);
 
         mRecView = (RecyclerView)view.findViewById(R.id.recyclerview);
+
         mEmptyView = view.findViewById(R.id.empty_view);
+
         mEmptyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,8 +90,6 @@ public class ContactsListFragment extends Fragment {
         });
 
         setupRecyclerView(mRecView);
-
-
 
         return view;
     }
@@ -547,7 +546,7 @@ public class ContactsListFragment extends Fragment {
             }
             
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, Imps.Contacts.SUB_AND_ALPHA_SORT_ORDER);
+                    buf == null ? null : buf.toString(), null, null);
 
             return loader;
         }

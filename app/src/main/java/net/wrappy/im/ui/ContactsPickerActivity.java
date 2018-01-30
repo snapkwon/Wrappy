@@ -431,7 +431,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
-        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.POST_CREATE_GROUP, new RestAPIListener(this) {
+        RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 dismissWaitinDialog();

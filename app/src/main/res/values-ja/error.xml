@@ -48,5 +48,6 @@
     <string name="error_8031">紹介コードは存在しません。</string>
     <string name="error_8032">失敗したXMPPにユーザーを作成します。</string>
     <string name="error_8033">おっとっと！あなたは間違ったセキュリティの質問に答え</string>
+    <string name="error_8034">ユーザー名またはパターンが正しくありません</string>
 
 </resources>

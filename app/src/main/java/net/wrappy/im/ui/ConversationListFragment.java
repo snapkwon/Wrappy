@@ -43,6 +43,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
+import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -144,7 +145,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
         mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
         Cursor cursor = null;
-        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor, mManager);
+        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor, mManager, mConnection);
     }
 
     public boolean getArchiveFilter() {
@@ -214,14 +215,16 @@ public class ConversationListFragment extends BaseFragmentV4 {
         private Context mContext;
         private CustomBottomSheetDialogFragment mBottomSheet = null;
         private IChatSessionManager manager;
+        private IImConnection mConnection;
 
 
-        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor, IChatSessionManager manager) {
+        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor, IChatSessionManager manager, IImConnection connection) {
             super(context, cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
             this.manager = manager;
+            this.mConnection = connection;
 
             setHasStableIds(true);
         }
@@ -294,7 +297,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
                 clItem.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        showBottomSheetDialog(address, chatId, chatFavorite);
+                        showBottomSheetDialog(mConnection, address, chatId, chatFavorite, type, providerId, accountId);
                         return false;
                     }
                 });
@@ -323,9 +326,10 @@ public class ConversationListFragment extends BaseFragmentV4 {
             }
         }
 
-        private void showBottomSheetDialog(String address, long chatId, int chatFavorite) {
+        private void showBottomSheetDialog(IImConnection connection, String address, long chatId, int chatFavorite, int type, long providerId, long accountId) {
             String account = address.split("@")[0].split("\\.")[0];
-            mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account);
+            mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account, type, providerId, accountId, address);
+            mBottomSheet.getConnection(connection);
             mBottomSheet.show(((FragmentActivity) mContext).getSupportFragmentManager(), "Dialog");
         }
 

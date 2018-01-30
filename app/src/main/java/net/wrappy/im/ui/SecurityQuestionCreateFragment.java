@@ -86,7 +86,7 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
     private void getListQuestion() {
 
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, new RestAPIListener(getActivity()) {
+        RestAPIListener listener = new RestAPIListener(getActivity()) {
 
 
             @Override
@@ -132,7 +132,17 @@ public class SecurityQuestionCreateFragment extends Fragment {
                     ex.printStackTrace();
                 }
             }
+
+        };
+
+        listener.setOnListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LauncherActivity.start(getActivity());
+            }
         });
+
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_QUESTIONS_SECURITY, listener);
 
     }
 

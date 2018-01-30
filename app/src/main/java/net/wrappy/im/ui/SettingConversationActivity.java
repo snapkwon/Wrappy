@@ -295,7 +295,7 @@ public class SettingConversationActivity extends BaseActivity {
                     while (c.moveToNext()) {
                         MemberGroupDisplay member = new MemberGroupDisplay();
                         member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-                        member.setNickname(c.getString(colNickname));
+//                        member.setNickname(c.getString(colNickname));
                         member.setRole(c.getString(colRole));
                         member.setEmail(ImApp.getEmail(member.getUsername()));
                         member.setAffiliation(c.getString(colAffiliation));
@@ -311,7 +311,7 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
-                        if (member.getNickname() == null || member.getUsername().contains(member.getNickname())) {
+                        if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
                             for (WpKMemberDto memberDto : identifiers) {
                                 String account = memberDto.getXMPPAuthDto().getAccount();
                                 if (member.getUsername().contains(account)) {
