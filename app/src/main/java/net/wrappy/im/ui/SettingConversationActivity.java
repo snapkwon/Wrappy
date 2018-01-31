@@ -135,11 +135,11 @@ public class SettingConversationActivity extends BaseActivity {
         @Override
         public void run() {
             memberGroupAdapter.setData(memberGroupDisplays);
-            if (memberGroupDisplays!=null && memberGroupDisplays.size() > 0) {
+            if (memberGroupDisplays != null && memberGroupDisplays.size() > 0) {
                 for (MemberGroupDisplay member : memberGroupDisplays) {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
-                        edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
+                        edGroupSubText.setText(String.format(getString(R.string.create_by), member.getNickname()));
                     }
                 }
             }
@@ -312,17 +312,20 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
+                        Boolean isExist = false;
                         if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
                             for (WpKMemberDto memberDto : identifiers) {
                                 String account = memberDto.getXMPPAuthDto().getAccount();
                                 if (member.getUsername().contains(account)) {
                                     member.setNickname(memberDto.getIdentifier());
                                     Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                                    isExist = true;
                                     break;
                                 }
                             }
                         }
-                        members.add(member);
+                        if (isExist)
+                            members.add(member);
 
                     }
                     c.close();
