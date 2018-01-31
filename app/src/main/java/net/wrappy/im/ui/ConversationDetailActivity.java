@@ -85,6 +85,8 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
+import net.wrappy.im.helper.NotificationCenter;
+import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.CircleTransform;
@@ -126,12 +128,14 @@ import static net.wrappy.im.helper.RestAPI.getAvatarUrl;
 
 //import com.bumptech.glide.Glide;
 
-public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage {
+public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage, NotificationCenterDelegate {
 
     private AddContactAsyncTask task;
 
     private WpKChatGroupDto chatGroupDto;
     private static String address = "";
+
+    boolean isRegisterNotificationCenter;
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -197,6 +201,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     public void onHandle(Message msg) {
         handleMessage();
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == NotificationCenter.changeAvatarGroupFromSetting) {
+            setCustomActionBar(mConvoView.isGroupChat());
+        } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
+
+        }
     }
 
     private static class MyHandler extends Handler {
@@ -441,7 +454,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         // set background for this screen
         loadBitmapPreferences();
-
+        setCustomActionBar(mConvoView.isGroupChat());
 //        updateStatusAvatar(mConvoView.isGroupChat());
     }
 
@@ -695,7 +708,12 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onResume() {
         super.onResume();
-        setCustomActionBar(mConvoView.isGroupChat());
+        if (!isRegisterNotificationCenter) {
+            isRegisterNotificationCenter = true;
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+        }
+
         mConvoView.setSelected(true);
 
         IntentFilter regFilter = new IntentFilter();
@@ -1363,6 +1381,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (isRegisterNotificationCenter) {
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+        }
         mConvoView.stopListening();
         if (task != null)
             task.setCallback(null);
