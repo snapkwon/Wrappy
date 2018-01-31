@@ -61,6 +61,7 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
