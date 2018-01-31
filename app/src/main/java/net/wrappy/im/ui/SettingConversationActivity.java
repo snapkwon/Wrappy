@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -43,6 +44,7 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
+import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
@@ -127,10 +129,10 @@ public class SettingConversationActivity extends BaseActivity {
 
     public final static int PICKER_ADD_MEMBER = 1;
 
-    private WpKChatGroupDto groupid;
     ImApp imApp;
 
     private List<WpKMemberDto> identifiers = new ArrayList<>();
+    long idMemberOwner = -1;
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -140,7 +142,19 @@ public class SettingConversationActivity extends BaseActivity {
                 for (MemberGroupDisplay member : memberGroupDisplays) {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
-                        edGroupSubText.setText(String.format(getString(R.string.create_by), member.getNickname()));
+                        String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
+                        if(currentUser.equals(member.getNickname()))
+                        {
+                                mAdminDeleteGroup.setVisibility(View.VISIBLE);
+                                mMemberLeaveGroup.setVisibility(View.GONE);
+                                mAddMemberLayout.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                                mAddMemberLayout.setVisibility(View.GONE);
+                        }
+                        memberGroupAdapter.setAdmin(member.getNickname());
+                        edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
                     }
                 }
             }
@@ -165,7 +179,6 @@ public class SettingConversationActivity extends BaseActivity {
             mAccountId = getIntent().getLongExtra("account", -1);
             mLastChatId = getIntent().getLongExtra("chatId", -1);
             mContactType = getIntent().getIntExtra("isGroupChat", -1);
-            groupid = getIntent().getParcelableExtra("groupid");
 
         }
 
@@ -207,6 +220,7 @@ public class SettingConversationActivity extends BaseActivity {
 
         boolean isGroup = mContactType == Imps.Contacts.TYPE_GROUP;
         // showing member group chat
+
         mAddMemberLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         mMemberGroupsLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         if (isGroup) {
@@ -251,6 +265,8 @@ public class SettingConversationActivity extends BaseActivity {
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        idMemberOwner = wpKChatGroup.getIdentifier();
+
                         identifiers = wpKChatGroup.getParticipators();
 
                         edGroupName.setText(wpKChatGroup.getName());
@@ -319,6 +335,14 @@ public class SettingConversationActivity extends BaseActivity {
                                 String account = memberDto.getXMPPAuthDto().getAccount();
                                 if (member.getUsername().contains(account)) {
                                     member.setNickname(memberDto.getIdentifier());
+                                    if(memberDto.getId() ==idMemberOwner )
+                                    {
+                                        member.setAffiliation("owner");
+                                    }
+                                    else
+                                    {
+                                        member.setAffiliation("member");
+                                    }
                                     Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
                                     isExist = true;
                                     break;
@@ -372,7 +396,7 @@ public class SettingConversationActivity extends BaseActivity {
             case R.id.layout_search_setting:
                 NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
                 finish();
-                //searchActive();
+//                searchActive();
                 break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
@@ -441,9 +465,10 @@ public class SettingConversationActivity extends BaseActivity {
                     usernames.add(member.getNickname());
                 }
                 intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
-                intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, groupid);
+                intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, wpKChatGroup);
                 intent.putExtra("type", PICKER_ADD_MEMBER);
                 intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, true);
+                intent.putExtra(BundleKeyConstant.EXTRA_CHAT_ID, mLastChatId);
 
                 startActivityForResult(intent, REQUEST_PICK_CONTACT);
                 break;
@@ -453,7 +478,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         String chatServer = ""; //use the default
         String nickname = imApp.getDefaultUsername().split("@")[0];
-        new GroupChatSessionTask(this, group, invitees, conn).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
+        new GroupChatSessionTask(this, group, invitees, conn,false).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
     }
 
 
@@ -467,6 +492,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                 if (users != null) {
                     //start group and do invite hereartGrou
+                    //finish();
                     try {
                         IImConnection conn = ImApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
                         if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {

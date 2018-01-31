@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import net.ironrabbit.type.CustomTypefaceTextView;
 import net.wrappy.im.ImApp;
@@ -20,6 +22,7 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.tasks.ChatSessionTask;
 import net.wrappy.im.ui.ConversationListFragment;
@@ -46,6 +49,9 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
     private ConversationListFragment mConversationListFragment;
 
     private String mAddress = null;
+    private String groupXmppId = null;
+
+    WpKChatGroupDto wpKChatGroupDto;
 
     public static CustomBottomSheetDialogFragment getInstance(long chatId, int chatFavorite, String account, int type, long providerId, long accountId, String address) {
         CustomBottomSheetDialogFragment dialogFragment = new CustomBottomSheetDialogFragment();
@@ -82,6 +88,19 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
         if (getArguments() != null) {
 
             mAddress = getArguments().getString("address");
+            groupXmppId = mAddress;
+            if (mAddress.contains("@")) {
+                groupXmppId = groupXmppId.split("@")[0];
+            }
+
+            RestAPI.GetDataWrappy(getContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener() {
+                @Override
+                protected void OnComplete(int httpCode, String error, String s) {
+                    Gson gson = new Gson();
+                    wpKChatGroupDto = gson.fromJson(s, new TypeToken<WpKChatGroupDto>(){
+                    }.getType());
+                }
+            });
 
             int chatFavorite = getArguments().getInt("chatFavorite");
             int type = getArguments().getInt("type");
@@ -143,7 +162,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
                 dismiss();
                 break;
             case R.id.layout_delete_and_exit:
-                confirmLeaveGroup((int) chatId);
+                confirmLeaveGroup();
                 dismiss();
                 break;
             case R.id.layout_clean_history:
@@ -159,12 +178,12 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
         Imps.Chats.insertOrUpdateChat(getContext().getContentResolver(), chatURI, "", false);
     }
 
-    private void confirmLeaveGroup(int chatId) {
-        leaveGroup(chatId);
+    private void confirmLeaveGroup() {
+        leaveGroup(wpKChatGroupDto.getId());
     }
 
-    private void leaveGroup(int chatId) {
-        RestAPI.DeleteDataWrappy(getContext(), new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, chatId,
+    private void leaveGroup(int groupXmppId) {
+        RestAPI.DeleteDataWrappy(getContext(), new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, groupXmppId,
                 Imps.Account.getAccountName(getContext().getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(getContext()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {

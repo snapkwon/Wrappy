@@ -494,6 +494,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                 String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
                 String title = intent.getStringExtra("title");
                 long chatId = ContentUris.parseId(data);
+
                 startActivity(ConversationDetailActivity.getStartIntent(this, chatId, title, null, username));
             } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());

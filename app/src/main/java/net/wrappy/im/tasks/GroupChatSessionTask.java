@@ -33,6 +33,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
     private WpKChatGroupDto group;
     boolean needToStartChat = true;
     OnTaskFinish callback;
+    boolean isCreateNewChat = true;
 
     public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         super();
@@ -40,6 +41,15 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         mLastConnGroup = conn;
         this.invitees = invitees;
         this.group = group;
+    }
+
+    public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn ,boolean iscreatenewchat) {
+        super();
+        weakReference = new WeakReference<>(activity);
+        mLastConnGroup = conn;
+        this.invitees = invitees;
+        this.group = group;
+        this.isCreateNewChat = iscreatenewchat;
     }
 
     public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, IImConnection conn) {
@@ -177,11 +187,17 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            String reference = "";
-            if (group!=null && group.getIcon()!=null) {
-                reference = group.getIcon().getReference();
+            if(isCreateNewChat==true) {
+                String reference = "";
+                if (group != null && group.getIcon() != null) {
+                    reference = group.getIcon().getReference();
+                }
+                getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
             }
-            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
+            else
+            {
+                getActivity().finish();
+            }
         }
     }
 
