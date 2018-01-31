@@ -539,32 +539,37 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            ArrayList<String> users = new ArrayList();
-                            for (int i = 0; i < mSelection.size(); i++) {
-                                SelectedContact contact = mSelection.valueAt(i);
-                                users.add(contact.nickname);
-                            }
-                            Gson gson = new Gson();
-                            String jsonObject = gson.toJson(users);
-                            JsonParser parser = new JsonParser();
-                            JsonArray json = (JsonArray) parser.parse(jsonObject);
-
-                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
-                                @Override
-                                public void OnComplete(int httpCode, String error, String s) {
-                                    ArrayList<String> users = new ArrayList<>();
-                                    for (int i = 0; i < mSelection.size(); i++) {
-                                        SelectedContact contact = mSelection.valueAt(i);
-                                        users.add(contact.username);
-                                    }
-                                    Intent data = new Intent();
-                                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
-                                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
-
-                                    setResult(RESULT_OK, data);
-                                    finish();
+                            if (groupDto != null) {
+                                ArrayList<String> users = new ArrayList();
+                                for (int i = 0; i < mSelection.size(); i++) {
+                                    SelectedContact contact = mSelection.valueAt(i);
+                                    users.add(contact.nickname);
                                 }
-                            });
+                                Gson gson = new Gson();
+                                String jsonObject = gson.toJson(users);
+                                JsonParser parser = new JsonParser();
+                                JsonArray json = (JsonArray) parser.parse(jsonObject);
+
+                                RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
+                                    @Override
+                                    public void OnComplete(int httpCode, String error, String s) {
+                                        ArrayList<String> users = new ArrayList<>();
+                                        for (int i = 0; i < mSelection.size(); i++) {
+                                            SelectedContact contact = mSelection.valueAt(i);
+                                            users.add(contact.username);
+                                        }
+                                        Intent data = new Intent();
+                                        data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
+                                        data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+
+                                        setResult(RESULT_OK, data);
+                                        finish();
+                                    }
+                                });
+                            } else {
+                                setResult(RESULT_CANCELED);
+                                finish();
+                            }
                         } else {
                             getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                         }
