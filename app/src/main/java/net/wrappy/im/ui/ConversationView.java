@@ -2989,13 +2989,13 @@ public class ConversationView implements OnHandleMessage {
             viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (finalMessageType == Imps.MessageType.OUTGOING) {
-                        goMyPage();
-                    } else {
+                    if (finalMessageType == Imps.MessageType.INCOMING) {
                         Intent intent = new Intent(mContext, ProfileActivity.class);
                         intent.putExtra("address", address);
                         intent.putExtra("nickname", nickname);
                         mContext.startActivity(intent);
+                    } else {
+                        goMyPage();
                     }
 
                 }
