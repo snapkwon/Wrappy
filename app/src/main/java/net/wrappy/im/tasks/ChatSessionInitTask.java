@@ -65,6 +65,9 @@ public class ChatSessionInitTask extends AsyncTask<Contact, Long, Long> {
                     if (session == null) {
                         if (mContactType == Imps.Contacts.TYPE_GROUP)
                             session = conn.getChatSessionManager().createMultiUserChatSession(contact.getAddress().getAddress(), contact.getName(), null, false);
+                            if (session!=null) {
+                                //DatabaseUtils.insertAvatarBlob();
+                            }
                         else {
                             session = conn.getChatSessionManager().createChatSession(contact.getAddress().getAddress(), false);
                         }
