@@ -61,7 +61,6 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -74,7 +73,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
-import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroup;
@@ -92,7 +90,6 @@ import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Activity used to pick a contact.

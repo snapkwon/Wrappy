@@ -380,7 +380,7 @@ public class SettingConversationActivity extends BaseActivity {
             case R.id.layout_search_setting:
                 NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
                 finish();
-                //searchActive();
+//                searchActive();
                 break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
