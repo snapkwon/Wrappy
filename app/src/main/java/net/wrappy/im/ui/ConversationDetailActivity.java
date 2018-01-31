@@ -208,7 +208,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         if (id == NotificationCenter.changeAvatarGroupFromSetting) {
             setCustomActionBar(mConvoView.isGroupChat());
         } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
-
+            addSearchViewInActionBar();
         }
     }
 
@@ -1121,13 +1121,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 case REQUEST_FROM_SETTING:
                     Bundle extras = resultIntent.getExtras();
                     int type = extras.getInt("type");
-                    if (type == TYPE_SEARCH) {
-                        addSearchViewInActionBar();
-//                        mConvoView.activeSearchmode();
-//                        for (int i = 0; i < 4; i++) {
-//                            menuitem.getItem(i).setVisible(false);
-//                        }
-                    } else if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
+                    if (type == TYPE_REQUEST_CHANGE_BACKGROUND) {
                         String imagePath = extras.getString("imagePath");
 
                         ConferenceUtils.saveBitmapPreferences(imagePath, new XmppAddress(mConvoView.mRemoteAddress).getUser(), this);
