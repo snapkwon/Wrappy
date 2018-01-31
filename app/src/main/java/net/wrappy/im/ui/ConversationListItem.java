@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
@@ -49,8 +50,8 @@ import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.Presence;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IChatSessionManager;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.ChatSessionTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
@@ -112,7 +113,7 @@ public class ConversationListItem extends FrameLayout {
      * }
      */
 
-    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar, IChatSessionManager manager) {
+    public void bind(final ConversationViewHolder holder, long contactId, long providerId, long accountId, String address, String nickname, int contactType, String message, long messageDate, String messageType, int presence, String underLineText, boolean showChatMsg, boolean scrolling, int chatFavorite, final String referenceAvatar) {
 
         //applyStyleColors(holder);
         if (nickname == null) {
@@ -268,31 +269,14 @@ public class ConversationListItem extends FrameLayout {
                         } else if (message.startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
                             holder.mLine2.setText(getResources().getString(R.string.location_message));
                         } else if (message.startsWith(ConferenceConstant.DELETE_GROUP_BY_ADMIN)) {
-
-                            IChatSession session = manager.getChatSession(address);
-
-                            if (session == null)
-                                session = manager.createChatSession(address, true);
-
-                            if (session != null) {
-                                session.delete();
-                            }
-
+                            new ChatSessionTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, address);
                         } else if (message.startsWith(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN)) {
 
                             String account = Imps.Account.getAccountName(getContext().getContentResolver(), accountId);
                             String member = message.split(":")[2];
 
                             if (member.startsWith(account)) {
-
-                                IChatSession session = manager.getChatSession(address);
-
-                                if (session == null)
-                                    session = manager.createChatSession(address, true);
-
-                                if (session != null) {
-                                    session.leave();
-                                }
+                                new ChatSessionTask().leave().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, address);
                             } else {
                                 holder.mLine2.setText(String.format(getContext().getString(R.string.message_kicked_from_group), member));
                             }

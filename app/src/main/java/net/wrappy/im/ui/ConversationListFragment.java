@@ -43,7 +43,6 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IChatSessionManager;
@@ -145,7 +144,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
         mLoaderManager.initLoader(mLoaderId, null, mLoaderCallbacks);
 
         Cursor cursor = null;
-        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor, mManager, mConnection);
+        mAdapter = new ConversationListRecyclerViewAdapter(getActivity(), cursor);
     }
 
     public boolean getArchiveFilter() {
@@ -214,18 +213,13 @@ public class ConversationListFragment extends BaseFragmentV4 {
         private int mBackground;
         private Context mContext;
         private CustomBottomSheetDialogFragment mBottomSheet = null;
-        private IChatSessionManager manager;
-        private IImConnection mConnection;
 
 
-        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor, IChatSessionManager manager, IImConnection connection) {
+        public ConversationListRecyclerViewAdapter(Context context, Cursor cursor) {
             super(context, cursor);
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mContext = context;
-            this.manager = manager;
-            this.mConnection = connection;
-
             setHasStableIds(true);
         }
 
@@ -283,7 +277,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
 
                 ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference, manager);
+                clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -297,7 +291,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
                 clItem.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        showBottomSheetDialog(mConnection, address, chatId, chatFavorite, type, providerId, accountId);
+                        showBottomSheetDialog(address, chatId, chatFavorite, type, providerId, accountId);
                         return false;
                     }
                 });
@@ -312,7 +306,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
                 if (address != null) {
 
                     if (viewHolder.itemView instanceof ConversationListItem) {
-                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference, manager);
+                        ((ConversationListItem) viewHolder.itemView).bind(viewHolder, chatId, -1, -1, address, nickname, -1, body, messageDate, messageType, -1, mSearchString, true, false, -1, reference);
 
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -326,10 +320,9 @@ public class ConversationListFragment extends BaseFragmentV4 {
             }
         }
 
-        private void showBottomSheetDialog(IImConnection connection, String address, long chatId, int chatFavorite, int type, long providerId, long accountId) {
+        private void showBottomSheetDialog(String address, long chatId, int chatFavorite, int type, long providerId, long accountId) {
             String account = address.split("@")[0].split("\\.")[0];
             mBottomSheet = CustomBottomSheetDialogFragment.getInstance(chatId, chatFavorite, account, type, providerId, accountId, address);
-            mBottomSheet.getConnection(connection);
             mBottomSheet.show(((FragmentActivity) mContext).getSupportFragmentManager(), "Dialog");
         }
 
