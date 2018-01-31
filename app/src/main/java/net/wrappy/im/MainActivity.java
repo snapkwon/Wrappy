@@ -400,6 +400,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         if (!isRegisterNotification) {
             isRegisterNotification = true;
             NotificationCenter.getInstance().addObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.loadMyPage);
         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
@@ -419,6 +420,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         super.onDestroy();
         if (isRegisterNotification) {
             NotificationCenter.getInstance().removeObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.loadMyPage);
         }
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
@@ -684,6 +686,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             if (id == NotificationCenter.networkStateChange) {
                 int state = (int) args[0];
                 checkConnection(state);
+            } else if (id == NotificationCenter.loadMyPage) {
+                mTabLayout.getTabAt(3).select();
             }
         } catch (Exception ex) {
             ex.printStackTrace();

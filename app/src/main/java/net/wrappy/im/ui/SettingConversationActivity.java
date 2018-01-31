@@ -175,7 +175,7 @@ public class SettingConversationActivity extends BaseActivity {
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
             if (mConn != null && mConn.getState() == ImConnection.LOGGED_IN) {
-                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
+                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + Constant.EMAIL_DOMAIN;
 
 
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
