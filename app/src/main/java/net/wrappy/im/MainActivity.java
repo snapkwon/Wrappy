@@ -118,7 +118,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
 import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
@@ -495,6 +494,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                 String username = intent.getStringExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS);
                 String title = intent.getStringExtra("title");
                 long chatId = ContentUris.parseId(data);
+
                 startActivity(ConversationDetailActivity.getStartIntent(this, chatId, title, null, username));
             } else if (Imps.Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 long providerId = intent.getLongExtra(ImServiceConstants.EXTRA_INTENT_PROVIDER_ID, mApp.getDefaultProviderId());
@@ -555,8 +555,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                     if (users != null) {
                         //start group and do invite hereartGrou
                         try {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                            if (conn.getState() == ImConnection.LOGGED_IN) {
+                            IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                            if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                                 startGroupChat(group, users, conn);
                             }
                         } catch (Exception ex) {
@@ -603,9 +603,9 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                         Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
                     }
                 }
-            } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
+            }/* else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
                 //mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
-            }
+            }*/
         }
     }
 
@@ -1015,7 +1015,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         if (!sessionTasks.isEmpty()) {
             try {
                 IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                if (conn.getState() == ImConnection.LOGGED_IN) {
+                if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                     String nickname = mApp.getDefaultNickname();
                     groupSessionTask = new GroupChatSessionTask(this, sessionTasks.pop(), conn);
                     groupSessionTask.setCallback(new GroupChatSessionTask.OnTaskFinish() {

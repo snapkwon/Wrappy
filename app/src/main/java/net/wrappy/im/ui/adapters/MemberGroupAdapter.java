@@ -79,6 +79,10 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         notifyDataSetChanged();
     }
 
+    public void setAdmin(String mAdminGroup) {
+        this.mAdminGroup = mAdminGroup;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext())
@@ -123,10 +127,24 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         }
 
         public void bind(final MemberGroupDisplay member) {
-            line1.setText(member.getNickname());
+            String referenceAvatar;
 
-            GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
-            String referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
+            if(member.getNickname() != null && !member.getNickname().isEmpty())
+            {
+                line1.setText(member.getNickname());
+
+                GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
+
+                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
+            }
+            else {
+                String[] name = member.getUsername().split("@");
+                line1.setText(name[0]);
+                GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, name[0]);
+                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), name[0]);
+            }
+
+
             if (!TextUtils.isEmpty(referenceAvatar)) {
                 GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(referenceAvatar));
             }

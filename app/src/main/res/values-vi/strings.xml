@@ -271,7 +271,7 @@
     <string name="panic_app_none_summary">Không panic kích hoạt ứng dụng, bỏ qua tất cả trigger hoảng loạn đến.</string>
     <string name="panic_app_default">Mặc định</string>
     <string name="protect_data">Bảo vệ dữ liệu của tôi</string>
-    <string name="action_done">Làm xong</string>
+    <string name="action_done">Hoàn tất</string>
     <string name="lock_app">Khóa ứng dụng</string>
     <string name="clear_app_data">Xóa tất cả dữ liệu trong ứng dụng</string>
     <string name="uninstall_app">Gỡ bỏ cài đặt ứng dụng</string>
@@ -457,7 +457,7 @@
     <string name="mobile_phone">Điện thoại di động</string>
     <string name="gender">Giới tính</string>
     <string name="referral">Người giới thiệu</string>
-    <string name="referral_hint">Số điện thoại</string>
+    <string name="referral_hint">Mã giới thiệu</string>
     <string name="btn_submit">Gửi đi</string>
     <string name="btn_update">Cập nhật</string>
     <string name="hint_answer">Câu trả lời</string>

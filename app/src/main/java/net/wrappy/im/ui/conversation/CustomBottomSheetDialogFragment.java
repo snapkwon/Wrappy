@@ -1,10 +1,9 @@
 package net.wrappy.im.ui.conversation;
 
 import android.content.ContentUris;
-import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -17,18 +16,13 @@ import com.google.gson.JsonObject;
 
 import net.ironrabbit.type.CustomTypefaceTextView;
 import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
-import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.ChatSessionTask;
 import net.wrappy.im.ui.ConversationListFragment;
-import net.wrappy.im.ui.SettingConversationActivity;
-import net.wrappy.im.util.PopupUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,13 +45,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
     private BottomSheetBehavior mBottomSheetBehavior;
     private ConversationListFragment mConversationListFragment;
 
-    private IChatSession mSession;
     private String mAddress = null;
-    IImConnection connection;
-
-    public void getConnection(IImConnection connection) {
-        this.connection = connection;
-    }
 
     public static CustomBottomSheetDialogFragment getInstance(long chatId, int chatFavorite, String account, int type, long providerId, long accountId, String address) {
         CustomBottomSheetDialogFragment dialogFragment = new CustomBottomSheetDialogFragment();
@@ -187,25 +175,6 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
     }
 
     private void leaveXmppGroup() {
-        try {
-            getSession().leave();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public IChatSession getSession() {
-        net.wrappy.im.util.Debug.d("mSession " + mSession);
-        if (mSession == null)
-            try {
-                if (connection.getState() == ImConnection.LOGGED_IN) {
-                    mSession = connection.getChatSessionManager().getChatSession(mAddress);
-                    if (mSession == null)
-                        mSession = connection.getChatSessionManager().createChatSession(mAddress, true);
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        return mSession;
+        new ChatSessionTask().leave().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAddress);
     }
 }
