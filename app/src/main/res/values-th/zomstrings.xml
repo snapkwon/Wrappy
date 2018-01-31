@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?><!DOCTYPE resources [<!ENTITY appName "Wrappy">]>
 <resources>
-    <string name="app_name_zom">Wrappy</string>
+    <string name="app_name_zom">&appName;</string>
     <string name="create_an_account">ลงทะเบียน</string>
-    <string name="create_id">สร้างไอดี Wrappy</string>
+    <string name="create_id">สร้างไอดี &appName;</string>
     <string name="advanced">ขั้นสูง</string>
-    <string name="account_congrats">ขอแสดงความยินดี คุณพร้อมสำหรับ Wrappy แล้ว!</string>
+    <string name="account_congrats">ขอแสดงความยินดี คุณพร้อมสำหรับ &appName; แล้ว!</string>
     <string name="account_congrats_details">หน้าแฟ้มประวัติของคุณ</string>
     <string name="invite_friends">เพิ่มเพื่อน!</string>
     <string name="invite_sms">เอสเอ็มเอส</string>
@@ -13,12 +13,12 @@
     <string name="sign_in_message">ลงชื่อเข้าบัญชีที่มีอยู่แล้ว</string>
     <string name="add_friends">เพิ่มเพื่อน</string>
     <string name="search_by_id">ค้นหาด้วยรหัส</string>
-    <string name="invite_accepted">ตอนนี้คุณเป็นเพื่อนใน Wrappy แล้ว</string>
+    <string name="invite_accepted">ตอนนี้คุณเป็นเพื่อนใน &appName; แล้ว</string>
     <string name="choose_friend">เลือกเพื่อน</string>
     <string name="send_message">ส่งข้อความ</string>
     <string name="push_to_talk">กดเพื่อพูด</string>
-    <string name="recording_release">กำลังบันทึก... ปล่อยเพื่อส่ง</string>
-    <string name="recording_delete">กำลังบันทึก... ปล่อยเพื่อลบ</string>
+    <string name="recording_release">กำลังบันทึก… ปล่อยเพื่อส่ง</string>
+    <string name="recording_delete">กำลังบันทึก… ปล่อยเพื่อลบ</string>
     <string name="swipe_up_delete">กวาดขึ้นเพื่อลบ</string>
     <string name="create_group">สร้างกลุ่ม</string>
     <string name="members">สมาชิก</string>
@@ -27,12 +27,10 @@
     <string name="delete_account">ลบบัญชี</string>
     <string name="choose_photos">เลือกจากรูปภาพ</string>
     <string name="choose_language">สลับภาษา</string>
-    <string name="onboarding_generate">สร้างรหัส Wrappy แล้วเราจะสร้างรหัสผ่านที่ปลอดภัยให้คุณ</string>
-    <string name="grant_perms_camera">คุณต้องอนุญาตสิทธิ์เพื่อให้ Wrappy สามารถใช้กล้องได้</string>
-    <string name="grant_perms_pick_file">You must grant permission for &appName;
-        to select file</string>
-    <string name="grant_perms_audio">You must grant permission for &appName;
-        to record audio</string>
+    <string name="onboarding_generate">สร้างรหัส &appName; แล้วเราจะสร้างรหัสผ่านที่ปลอดภัยให้คุณ</string>
+    <string name="grant_perms_camera">คุณต้องอนุญาตสิทธิ์เพื่อให้ &appName; สามารถใช้กล้องได้</string>
+    <string name="grant_perms_pick_file">คุณต้องให้สิทธิ์ &appName; ในการเลือกไฟล์</string>
+    <string name="grant_perms_audio">คุณต้องให้สิทธิ์สำหรับ &appName; ในการบันทึกเสียง</string>
 
     <string name="action_archived">เก็บถาวรแล้ว</string>
     <string name="action_verified">ตรวจสอบแล้ว</string>
@@ -57,12 +55,12 @@
     <string name="color_bg_summary">สีของพื้นหลังแชตและลิสต์</string>
 
     <string name="header_got_invited">ได้รับการเชิญใช่ไหม</string>
-    <string name="action_tap_invite">แตะที่ลิงก์เชิญของ Wrappy จากเพื่อนของคุณ หรือสแกนคิวอาร์โค้ดตอนนี้เลย</string>
+    <string name="action_tap_invite">แตะที่ลิงก์เชิญของ &appName; จากเพื่อนของคุณ หรือสแกนคิวอาร์โค้ดตอนนี้เลย</string>
 
     <string name="security_code">การระบุตัวตนเพื่อความปลอดภัย</string>
 
     <string name="migrate_menu">โยกย้ายบัญชี</string>
-    <string name="migrate_message">ฉันอัพเกรดบัญชีของฉันแล้ว Wrappy ฉันได้ที่___</string>
+    <string name="migrate_message">ฉันอัพเกรดบัญชีของฉันแล้ว &appName; ฉันได้ที่___</string>
     <string name="action_undo">ยกเลิกการทำ</string>
     <string name="contact_migration_notice">เพื่อนของคุณอัพเกรดแล้ว คุยกับพวกเขาได้ที่</string>
     <string name="contact_migration_action">คุยตอนนี้เลย</string>
@@ -79,7 +77,7 @@
     <string name="turn_notifications_off">ปิดการแจ้ง</string>
     <string name="num_member_group_chat">%1$s สมาชิก</string>
     <string name="confirm_leave_group">คุณแน่ใจหรือไม่ว่าต้องการออกจากกลุ่ม</string>
-    <string name="confirm_delete_and_leave_group">Are you sure you want to delete the group?</string>
-    <string name="confirm_remove_member_group">Are you sure you want to remove this member?</string>
-    <string name="contactswrappy">Contacts</string>
+    <string name="confirm_delete_and_leave_group">คุณแน่ใจหรือไม่ว่าต้องการลบกลุ่ม?</string>
+    <string name="confirm_remove_member_group">คุณแน่ใจหรือไม่ว่าต้องการนำสมาชิกนี้ออก?</string>
+    <string name="contactswrappy">รายชื่อผู้ติดต่อ</string>
 </resources>

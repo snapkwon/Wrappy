@@ -118,7 +118,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import info.guardianproject.iocipher.VirtualFileSystem;
-import me.ydcool.lib.qrmodule.activity.QrScannerActivity;
 
 import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
@@ -400,6 +399,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         if (!isRegisterNotification) {
             isRegisterNotification = true;
             NotificationCenter.getInstance().addObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.loadMyPage);
         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
@@ -419,6 +419,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         super.onDestroy();
         if (isRegisterNotification) {
             NotificationCenter.getInstance().removeObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.loadMyPage);
         }
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
@@ -553,8 +554,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                     if (users != null) {
                         //start group and do invite hereartGrou
                         try {
-                            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                            if (conn.getState() == ImConnection.LOGGED_IN) {
+                            IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+                            if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                                 startGroupChat(group, users, conn);
                             }
                         } catch (Exception ex) {
@@ -601,9 +602,9 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                         Log.w(ImApp.LOG_TAG, "error parsing QR invite link", e);
                     }
                 }
-            } else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
+            }/* else if (resultCode == 1000 || resultCode == QrScannerActivity.QR_REQUEST_CODE) {
                 //mwelcome_wallet_fragment.onActivityResult(requestCode, resultCode, data);
-            }
+            }*/
         }
     }
 
@@ -684,6 +685,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             if (id == NotificationCenter.networkStateChange) {
                 int state = (int) args[0];
                 checkConnection(state);
+            } else if (id == NotificationCenter.loadMyPage) {
+                mTabLayout.getTabAt(3).select();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1011,7 +1014,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         if (!sessionTasks.isEmpty()) {
             try {
                 IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                if (conn.getState() == ImConnection.LOGGED_IN) {
+                if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                     String nickname = mApp.getDefaultNickname();
                     groupSessionTask = new GroupChatSessionTask(this, sessionTasks.pop(), conn);
                     groupSessionTask.setCallback(new GroupChatSessionTask.OnTaskFinish() {

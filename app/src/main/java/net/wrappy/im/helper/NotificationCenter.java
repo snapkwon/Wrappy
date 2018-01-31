@@ -12,6 +12,9 @@ public class NotificationCenter {
     private static int totalEvents = 1;
 
     public static final int networkStateChange = totalEvents++;
+    public static final int loadMyPage = totalEvents++;
+    public static final int changeAvatarGroupFromSetting = totalEvents++;
+    public static final int addSearchBarInDetailConverasation = totalEvents++;
 
 
     private SparseArray<ArrayList<Object>> observers = new SparseArray<>();
