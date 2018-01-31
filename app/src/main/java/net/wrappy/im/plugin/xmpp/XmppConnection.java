@@ -12,7 +12,6 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -4634,14 +4633,10 @@ public class XmppConnection extends ImConnection {
     }
 
     public void loadOldMessages(MultiUserChat muc) throws MultiUserChatException, InterruptedException {
-        AppFuncs.log("loadOldMessages");
-        AppFuncs.log(muc.getRoom().asEntityBareJidString());
-        AppFuncs.log(muc.toString());
         org.jivesoftware.smack.packet.Message oldMessage = null;
         if (findOrCreateSession(muc.getRoom().asEntityBareJidString(), true) != null) {
             while ((oldMessage = muc.nextMessage(2000)) != null) {
-                AppFuncs.log(oldMessage.getBody().toString());
-                DelayInformation inf = null;
+                DelayInformation inf;
                 Date date = new Date();
                 try {
                     inf = oldMessage.getExtension("delay", DelayInformation.NAMESPACE);

@@ -28,7 +28,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -40,12 +39,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -66,13 +62,13 @@ import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
 import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
-import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.PopUpNotice;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKChatRoster;
@@ -80,7 +76,6 @@ import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.service.IConnectionListener;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
@@ -94,7 +89,6 @@ import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ContactsPickerActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
-import net.wrappy.im.ui.LockScreenActivity;
 import net.wrappy.im.ui.MainMenuFragment;
 import net.wrappy.im.ui.ProfileFragment;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
@@ -102,7 +96,6 @@ import net.wrappy.im.ui.promotion.MainPromotionFragment;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -131,7 +124,7 @@ import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
 /**
  */
-public class MainActivity extends BaseActivity implements AppDelegate, IConnectionListener {
+public class MainActivity extends BaseActivity implements AppDelegate, NotificationCenter.NotificationCenterDelegate {
 
     private ImApp mApp;
 
@@ -168,6 +161,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     private ChatSessionInitTask task;
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
+    boolean isRegisterNotification;
 
     private IImConnection mConn;
 
@@ -403,19 +397,11 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     @Override
     protected void onResume() {
         super.onResume();
-//        if (mViewPager.getCurrentItem() == 3) {
-//            if (!Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwelcome_wallet_fragment)) {
-//                adapter.mFragments.remove(mwelcome_wallet_fragment);
-//                fragmentManager.beginTransaction().remove(mwelcome_wallet_fragment).commit();
-//                mwalletFragment = new WalletFragment();
-//                addWalletTab(mwalletFragment);
-//            } else if (Wallet.isNewWallet(this.getFilesDir()) && adapter.getItem(3).equals(mwalletFragment)) {
-//                adapter.mFragments.remove(mwalletFragment);
-//                fragmentManager.beginTransaction().remove(mwalletFragment).commit();
-//                mwelcome_wallet_fragment = new Welcome_Wallet_Fragment();
-//                addWalletTab(mwelcome_wallet_fragment);
-//            }
-//        }
+        if (!isRegisterNotification) {
+            isRegisterNotification = true;
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.loadMyPage);
+        }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
             finish();
@@ -427,37 +413,15 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         }
 
         handleIntent();
-        checkConnection();
-    }
-
-    private IImConnection registerConnection(IImConnection connection) {
-        try {
-            if (mConn != null && !connection.equals(mConn)) {
-                unRegisterConnection();
-            } else {
-                mConn = connection;
-                mConn.registerConnectionListener(this);
-            }
-        } catch (Exception e) {
-            Log.e(ImApp.LOG_TAG, "unable to register connection listener", e);
-        }
-        return mConn;
-    }
-
-    private void unRegisterConnection() {
-        if (mConn != null) {
-            try {
-                mConn.unregisterConnectionListener(this);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        if (isRegisterNotification) {
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.loadMyPage);
+        }
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
             mLoadDataHandler = null;
@@ -468,7 +432,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
             mLoadContactHandler = null;
             syncContactRunnable = null;
         }
-        unRegisterConnection();
 
         XmppConnection.removeTask();
     }
@@ -488,26 +451,22 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         mSbStatus.show();
     }
 
-    private boolean checkConnection() {
+    private boolean checkConnection(int state) {
         try {
             if (mSbStatus != null)
                 mSbStatus.dismiss();
 
-            if (mApp.getDefaultProviderId() != -1 && XmppConnection.isSetup()) {
-                IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-                registerConnection(conn);
-                if (conn.getState() == ImConnection.DISCONNECTED
-                        || conn.getState() == ImConnection.SUSPENDED
-                        || conn.getState() == ImConnection.SUSPENDING) {
-                    showSnackBar(R.string.error_suspended_connection);
-                    return false;
-                } else if (conn.getState() == ImConnection.LOGGING_IN) {
-                    showSnackBar(R.string.signing_in_wait);
-                } else if (conn.getState() == ImConnection.LOGGING_OUT) {
-                    showSnackBar(R.string.signing_out_wait);
-                } else if (conn.getState() == ImConnection.LOGGED_IN) {
-                    rejoinGroupChat();
-                }
+            if (state == ImConnection.DISCONNECTED
+                    || state == ImConnection.SUSPENDED
+                    || state == ImConnection.SUSPENDING) {
+                showSnackBar(R.string.error_suspended_connection);
+                return false;
+            } else if (state == ImConnection.LOGGING_IN) {
+                showSnackBar(R.string.signing_in_wait);
+            } else if (state == ImConnection.LOGGING_OUT) {
+                showSnackBar(R.string.signing_out_wait);
+            } else if (state == ImConnection.LOGGED_IN) {
+                rejoinGroupChat();
             }
 
             return true;
@@ -713,104 +672,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
         return false;
     }
 
-
-    private SearchView mSearchView;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
-//
-//        if (mSearchView != null) {
-//            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//            mSearchView.setIconifiedByDefault(false);
-//
-//            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-//                public boolean onQueryTextChange(String query) {
-//                    if (mTabLayout.getSelectedTabPosition() == 0)
-//                        mConversationList.doSearch(query);
-//                    else if (mTabLayout.getSelectedTabPosition() == 1)
-//                        mContactList.doSearch(query);
-//
-//                    return true;
-//                }
-//
-//                public boolean onQueryTextSubmit(String query) {
-//                    if (mTabLayout.getSelectedTabPosition() == 0)
-//                        mConversationList.doSearch(query);
-//                    else if (mTabLayout.getSelectedTabPosition() == 1)
-//                        mContactList.doSearch(query);
-//
-//                    return true;
-//                }
-//            };
-//
-//            mSearchView.setOnQueryTextListener(queryTextListener);
-//
-//            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-//                @Override
-//                public boolean onClose() {
-//                    mConversationList.doSearch(null);
-//                    return false;
-//                }
-//            });
-//        }
-//
-//        MenuItem mItem = menu.findItem(R.id.menu_lock_reset);
-//
-//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-//        if (!settings.contains(ImApp.PREFERENCE_KEY_TEMP_PASS))
-//            mItem.setVisible(true);
-
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                //mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-//    private void clearFilters() {
-//
-//        if (mTabLayout.getSelectedTabPosition() == 0)
-//            mConversationList.setArchiveFilter(false);
-//        else
-//            mContactList.setArchiveFilter(false);
-//
-//
-//
-//    }
-
-//    private void enableArchiveFilter() {
-//
-//        if (mTabLayout.getSelectedTabPosition() == 0)
-//            mConversationList.setArchiveFilter(true);
-//        else
-//            mContactList.setArchiveFilter(true);
-//
-//
-//
-//    }
-
-    public void resetPassphrase() {
-        /**
-         Intent intent = new Intent(this, LockScreenActivity.class);
-         intent.setAction(LockScreenActivity.ACTION_RESET_PASSPHRASE);
-         startActivity(intent);**/
-
-        //need to setup new user passphrase
-        Intent intent = new Intent(this, LockScreenActivity.class);
-        intent.setAction(LockScreenActivity.ACTION_CHANGE_PASSPHRASE);
-        startActivity(intent);
-    }
-
     @Override
     public void onChangeInApp(int id, String data) {
         if (id == UPDATE_PROFILE_COMPLETE) {
@@ -819,23 +680,18 @@ public class MainActivity extends BaseActivity implements AppDelegate, IConnecti
     }
 
     @Override
-    public void onStateChanged(IImConnection connection, int state, ImErrorInfo error) throws RemoteException {
-        checkConnection();
-    }
-
-    @Override
-    public void onUserPresenceUpdated(IImConnection connection) throws RemoteException {
-
-    }
-
-    @Override
-    public void onUpdatePresenceError(IImConnection connection, ImErrorInfo error) throws RemoteException {
-
-    }
-
-    @Override
-    public IBinder asBinder() {
-        return mConn.asBinder();
+    public void didReceivedNotification(int id, Object... args) {
+        AppFuncs.log("didReceivedNotification");
+        try {
+            if (id == NotificationCenter.networkStateChange) {
+                int state = (int) args[0];
+                checkConnection(state);
+            } else if (id == NotificationCenter.loadMyPage) {
+                mTabLayout.getTabAt(3).select();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public class Adapter extends FragmentPagerAdapter {

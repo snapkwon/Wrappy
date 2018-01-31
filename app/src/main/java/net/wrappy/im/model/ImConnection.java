@@ -17,14 +17,16 @@
 
 package net.wrappy.im.model;
 
+import android.content.Context;
+
+import net.wrappy.im.helper.NotificationCenter;
+
+import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import android.content.Context;
-
-import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 
 /**
  * An <code>ImConnection</code> is an abstract representation of a connection to
@@ -147,6 +149,8 @@ public abstract class ImConnection {
                 listener.onStateChanged(state, error);
             }
         }
+
+        NotificationCenter.getInstance().postNotificationName(NotificationCenter.networkStateChange,state);
     }
 
     protected void notifyUserPresenceUpdated() {
