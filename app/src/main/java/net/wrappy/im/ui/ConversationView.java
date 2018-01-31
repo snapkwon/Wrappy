@@ -429,7 +429,8 @@ public class ConversationView implements OnHandleMessage {
                     if (otrChatSession != null && (!isGroupChat())) {
                         String remoteJID = otrChatSession.getRemoteUserId();
 
-                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure") || remoteJID.toLowerCase().contains("zom")));
+//                        boolean doOtr = (remoteJID != null && (remoteJID.toLowerCase().contains("chatsecure") || remoteJID.toLowerCase().contains("zom")));
+                        boolean doOtr = true;
 
                         if (!doOtr)
                             doOtr = OtrAndroidKeyManagerImpl.getInstance(mActivity).hasRemoteFingerprint(remoteJID);
