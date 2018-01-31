@@ -31,6 +31,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
@@ -369,7 +370,9 @@ public class SettingConversationActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
-                searchActive();
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
+                finish();
+                //searchActive();
                 break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
