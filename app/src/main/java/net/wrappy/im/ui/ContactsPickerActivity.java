@@ -81,6 +81,7 @@ import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -305,8 +306,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
         });
 
-        doFilterAsync("");
-
         if (getIntent() != null) {
             if (getIntent().getBooleanExtra(BundleKeyConstant.KEY_GROUP, false)) {
                 setGroupMode(true);
@@ -377,13 +376,9 @@ public class ContactsPickerActivity extends BaseActivity {
                                 reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                                 WpKIcon icon = new WpKIcon();
                                 icon.setReference(reference);
-                                WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
-                                wpKChatGroupDto.setName(groupName);
-                                wpKChatGroupDto.setDescription("");
+                                WpKChatGroupDto wpKChatGroupDto = createChatGroupDto(groupName);
                                 wpKChatGroupDto.setIcon(icon);
-                                WpKChatGroup wpKChatGroup = new WpKChatGroup();
-                                wpKChatGroup.setMemberIds(members);
-                                wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                                WpKChatGroup wpKChatGroup = createChatGroup(wpKChatGroupDto, members);
                                 JsonObject json = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                                 createGroupXMPP(groupName, reference, json);
                             } catch (Exception ex) {
@@ -394,12 +389,8 @@ public class ContactsPickerActivity extends BaseActivity {
                     });
                 } else {
                     try {
-                        WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
-                        wpKChatGroupDto.setName(groupName);
-                        wpKChatGroupDto.setDescription("");
-                        WpKChatGroup wpKChatGroup = new WpKChatGroup();
-                        wpKChatGroup.setMemberIds(members);
-                        wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                        WpKChatGroupDto wpKChatGroupDto = createChatGroupDto(groupName);
+                        WpKChatGroup wpKChatGroup = createChatGroup(wpKChatGroupDto, members);
                         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                         createGroupXMPP(groupName, "", jsonObject);
                     } catch (Exception ex) {
@@ -414,7 +405,22 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
+    private WpKChatGroupDto createChatGroupDto(String groupName) {
+        WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
+        wpKChatGroupDto.setName(groupName);
+        wpKChatGroupDto.setDescription("");
+        return wpKChatGroupDto;
+    }
+
+    private WpKChatGroup createChatGroup(WpKChatGroupDto wpKChatGroupDto, ArrayList<String> members) {
+        WpKChatGroup wpKChatGroup = new WpKChatGroup();
+        wpKChatGroup.setMemberIds(members);
+        wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+        return wpKChatGroup;
+    }
+
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
+        Debug.d(jsonObject.toString());
         RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
@@ -504,13 +510,13 @@ public class ContactsPickerActivity extends BaseActivity {
             SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
                 public boolean onQueryTextChange(String newText) {
                     mSearchString = newText;
-                    doFilterAsync(mSearchString);
+                    doFilter(mSearchString);
                     return true;
                 }
 
                 public boolean onQueryTextSubmit(String query) {
                     mSearchString = query;
-                    doFilterAsync(mSearchString);
+                    doFilter(mSearchString);
 
                     return true;
                 }
@@ -612,9 +618,11 @@ public class ContactsPickerActivity extends BaseActivity {
             super.onBackPressed();
     }
 
-    public void doFilterAsync(final String query) {
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        doFilter(query);
+        doFilter(mSearchString);
     }
 
     boolean mAwaitingUpdate = false;
@@ -844,19 +852,15 @@ public class ContactsPickerActivity extends BaseActivity {
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
-            if(isenablealphabet == false)
-            {
-                if( index > 0 && charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
-                {
+            if (isenablealphabet == false) {
+                if (index > 0 && charSection.equalsIgnoreCase(String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)))) {
 
                     holder.linesection.setVisibility(View.INVISIBLE);
                     holder.textsection.setVisibility(View.INVISIBLE);
 
 
-                }
-                else
-                {
-                    charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
+                } else {
+                    charSection = String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
                     holder.textsection.setVisibility(View.VISIBLE);
                     if (index > 0) {
                         holder.linesection.setVisibility(View.VISIBLE);
