@@ -193,6 +193,10 @@ public class MessageListItem extends FrameLayout {
             nickname = ImApp.getNickname(address);
         }
 
+        if (nickname.contains("@")) {
+            nickname = nickname.split("@")[0];
+        }
+
         lastMessage = formatMessage(body);
         showAvatar(address, nickname);
 
@@ -676,7 +680,7 @@ public class MessageListItem extends FrameLayout {
         mHolder.mMediaContainer.setVisibility(View.GONE);
         mHolder.mAudioButton.setImageResource(R.drawable.media_audio_play);
 
-        showAvatar(address, Store.getStringData(context,Store.USERNAME));
+        showAvatar(address, Store.getStringData(context, Store.USERNAME));
         mHolder.resetOnClickListenerMediaThumbnail();
 
         lastMessage = body;
@@ -786,7 +790,7 @@ public class MessageListItem extends FrameLayout {
         if (mHolder.mAvatar == null)
             return;
 
-        String reference= Imps.Avatars.getAvatar(context.getContentResolver(), address);
+        String reference = Imps.Avatars.getAvatar(context.getContentResolver(), address);
         if (address != null) {
             mHolder.mAvatar.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(reference)) {
