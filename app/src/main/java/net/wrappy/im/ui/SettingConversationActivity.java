@@ -32,6 +32,7 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
@@ -136,7 +137,7 @@ public class SettingConversationActivity extends BaseActivity {
         @Override
         public void run() {
             memberGroupAdapter.setData(memberGroupDisplays);
-            if (memberGroupDisplays!=null && memberGroupDisplays.size() > 0) {
+            if (memberGroupDisplays != null && memberGroupDisplays.size() > 0) {
                 for (MemberGroupDisplay member : memberGroupDisplays) {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
@@ -176,7 +177,7 @@ public class SettingConversationActivity extends BaseActivity {
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
             if (mConn != null && mConn.getState() == ImConnection.LOGGED_IN) {
-                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId);
+                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + Constant.EMAIL_DOMAIN;
 
 
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
@@ -313,17 +314,20 @@ public class SettingConversationActivity extends BaseActivity {
                             }
                         }
 
+                        Boolean isExist = false;
                         if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
                             for (WpKMemberDto memberDto : identifiers) {
                                 String account = memberDto.getXMPPAuthDto().getAccount();
                                 if (member.getUsername().contains(account)) {
                                     member.setNickname(memberDto.getIdentifier());
                                     Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                                    isExist = true;
                                     break;
                                 }
                             }
                         }
-                        members.add(member);
+                        if (isExist)
+                            members.add(member);
 
                     }
                     c.close();
@@ -367,7 +371,9 @@ public class SettingConversationActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_search_setting:
-                searchActive();
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
+                finish();
+                //searchActive();
                 break;
             case R.id.layout_change_background_setting:
                 mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();

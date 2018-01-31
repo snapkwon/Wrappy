@@ -15,7 +15,6 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.model.WpKMemberDto;
-import net.wrappy.im.ui.ContactListItem;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
@@ -82,7 +81,6 @@ public class ContactAdapter
         @BindView(R.id.linesection)
         FrameLayout linesection;
 
-
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -90,7 +88,7 @@ public class ContactAdapter
 
         public void bind(final WpKMemberDto wpKMemberDto, int position) {
             line1.setText(wpKMemberDto.getIdentifier());
-            //line2.setText(wpKMemberDto.getEmail());
+            line2.setVisibility(View.INVISIBLE);
             int padding = 24;
             mAvatar.setVisibility(View.VISIBLE);
             if (wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {

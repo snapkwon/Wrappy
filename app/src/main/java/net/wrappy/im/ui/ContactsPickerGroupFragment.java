@@ -143,9 +143,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
             if (data != null) {
                 if (requestCode == IMAGE_AVARTA) {
 
-                    if (data!=null) {
-                        AppFuncs.cropImage(getActivity(), data, true);
-                    }
+                    AppFuncs.cropImage(getActivity(), data, true);
 
                 } else if (requestCode == UCrop.REQUEST_CROP) {
                     //AppFuncs.showProgressWaiting(getActivity());

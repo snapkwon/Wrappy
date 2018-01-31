@@ -22,7 +22,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -183,12 +182,6 @@ public class ChatSessionManagerAdapter extends
     }
 
     public IChatSession getChatSession(String address) {
-        AppFuncs.log("mActiveChatSessionAdapters");
-        AppFuncs.log(String.valueOf(mActiveChatSessionAdapters.size()));
-        for (String s : mActiveChatSessionAdapters.keySet()) {
-            AppFuncs.log(mActiveChatSessionAdapters.get(s).getAddress());
-            AppFuncs.log(mActiveChatSessionAdapters.get(s).toString());
-        }
         synchronized (mActiveChatSessionAdapters) {
             return mActiveChatSessionAdapters.get(Address.stripResource(address));
         }

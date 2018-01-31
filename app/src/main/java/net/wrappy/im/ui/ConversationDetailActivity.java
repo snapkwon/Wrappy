@@ -85,6 +85,8 @@ import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.FileUtil;
+import net.wrappy.im.helper.NotificationCenter;
+import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.CircleTransform;
@@ -126,11 +128,13 @@ import static net.wrappy.im.helper.RestAPI.getAvatarUrl;
 
 //import com.bumptech.glide.Glide;
 
-public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage {
+public class ConversationDetailActivity extends BaseActivity implements OnHandleMessage, NotificationCenterDelegate {
 
     private AddContactAsyncTask task;
 
    // private WpKChatGroupDto chatGroupDto;
+
+    boolean isRegisterNotificationCenter;
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -196,6 +200,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     public void onHandle(Message msg) {
         handleMessage();
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == NotificationCenter.changeAvatarGroupFromSetting) {
+            setCustomActionBar(mConvoView.isGroupChat());
+        } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
+
+        }
     }
 
     private static class MyHandler extends Handler {
@@ -403,7 +416,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         processIntent(intent);
 
 
-
         collapseToolbar();
 
        /* getWindow().setSoftInputMode(
@@ -442,7 +454,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         // set background for this screen
         loadBitmapPreferences();
-
+        setCustomActionBar(mConvoView.isGroupChat());
 //        updateStatusAvatar(mConvoView.isGroupChat());
     }
 
@@ -461,7 +473,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.comming_soon),R.string.ok,null);
+                PopupUtils.showCustomDialog(this, getString(R.string.comming_soon), getString(R.string.comming_soon), R.string.ok, null);
                 //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
@@ -484,7 +496,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             if (TextUtils.isEmpty(mReference)) {
                 avatar.setImageResource(R.drawable.chat_group);
             } else {
-                GlideHelper.loadBitmapToCircleImage(this,avatar,getAvatarUrl(mReference));
+                GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
 
             status.setVisibility(View.GONE);
@@ -696,7 +708,12 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onResume() {
         super.onResume();
-        setCustomActionBar(mConvoView.isGroupChat());
+        if (!isRegisterNotificationCenter) {
+            isRegisterNotificationCenter = true;
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+        }
+
         mConvoView.setSelected(true);
 
         IntentFilter regFilter = new IntentFilter();
@@ -778,7 +795,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 return true;
 //            case R.id.menu_settings_language:
-                //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+            //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
                     @Override
                     public void run() {
@@ -1364,6 +1381,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (isRegisterNotificationCenter) {
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+        }
         mConvoView.stopListening();
         if (task != null)
             task.setCallback(null);
