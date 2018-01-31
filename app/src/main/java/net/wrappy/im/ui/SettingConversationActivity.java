@@ -132,6 +132,7 @@ public class SettingConversationActivity extends BaseActivity {
     ImApp imApp;
 
     private List<WpKMemberDto> identifiers = new ArrayList<>();
+    long idMemberOwner = -1;
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -259,6 +260,8 @@ public class SettingConversationActivity extends BaseActivity {
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
                         }.getType());
                         memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+                        idMemberOwner = wpKChatGroup.getIdentifier();
+
                         identifiers = wpKChatGroup.getParticipators();
 
                         edGroupName.setText(wpKChatGroup.getName());
@@ -327,6 +330,14 @@ public class SettingConversationActivity extends BaseActivity {
                                 String account = memberDto.getXMPPAuthDto().getAccount();
                                 if (member.getUsername().contains(account)) {
                                     member.setNickname(memberDto.getIdentifier());
+                                    if(memberDto.getId() ==idMemberOwner )
+                                    {
+                                        member.setAffiliation("owner");
+                                    }
+                                    else
+                                    {
+                                        member.setAffiliation("member");
+                                    }
                                     Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
                                     isExist = true;
                                     break;
