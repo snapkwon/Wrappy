@@ -618,6 +618,7 @@ public class ContactsPickerActivity extends BaseActivity {
                             JsonParser parser = new JsonParser();
                             JsonArray json = (JsonArray) parser.parse(jsonObject);*/
 
+
                             RestAPI.PostDataWrappy(this, new JsonObject(), String.format(RestAPI.ADD_MEMBER_TO_GROUP_CHAT, groupDto.getId(),usersinvite), new RestAPIListener(this) {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
@@ -627,11 +628,14 @@ public class ContactsPickerActivity extends BaseActivity {
                                         users.add(contact.username);
                                         insertGroupMemberInDb(lastchatid,contact);
                                     }
-                                });
-                            } else {
-                                setResult(RESULT_CANCELED);
-                                finish();
-                            }
+                                    Intent data = new Intent();
+                                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
+                                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+
+                                    setResult(RESULT_OK, data);
+                                    finish();
+                                }
+                            });
                         } else {
                             getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                         }
