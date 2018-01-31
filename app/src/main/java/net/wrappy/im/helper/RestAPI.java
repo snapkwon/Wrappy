@@ -64,7 +64,7 @@ public class RestAPI {
     private static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
-    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/find-by-jid/%s/";
+    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
     private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
