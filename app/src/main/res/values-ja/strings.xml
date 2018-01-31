@@ -442,7 +442,7 @@
     <string name="mobile_phone">携帯電話</string>
     <string name="gender">性別</string>
     <string name="referral">紹介</string>
-    <string name="referral_hint">電話番号</string>
+    <string name="referral_hint">招待コード</string>
     <string name="btn_submit">提出する</string>
     <string name="btn_update">更新</string>
     <string name="hint_answer">回答</string>
@@ -511,7 +511,7 @@
     <string name="logout_noti">あなたがこのデバイスからログアウトしたいですか？</string>
     <string name="share_title">共有方法を選択します。</string>
     <string name="referral_text">あなたの紹介コードを入力します（オプション）</string>
-    <string name="Referral">紹介コード</string>
+    <string name="Referral">招待</string>
     <string name="update_profile">プロフィールを更新</string>
     <string name="question">質問%d</string>
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>

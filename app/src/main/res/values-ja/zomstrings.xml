@@ -75,7 +75,7 @@
     <string name="add_people">人々を追加</string>
     <string name="turn_notifications_on">通知をオンにする</string>
     <string name="turn_notifications_off">通知のミュート</string>
-    <string name="num_member_group_chat">メンバー％1 $ s人</string>
+    <string name="num_member_group_chat">メンバー%1$s人</string>
     <string name="confirm_leave_group">あなたは本当にグループを離れたいですか？</string>
     <string name="confirm_delete_and_leave_group">グループを削除してもよろしいですか？</string>
     <string name="confirm_remove_member_group">このメンバーを削除してもよろしいですか？</string>
