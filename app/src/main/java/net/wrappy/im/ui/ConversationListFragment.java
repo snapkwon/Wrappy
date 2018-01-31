@@ -39,14 +39,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.wrappy.im.ImApp;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IChatSessionManager;
-import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.conversation.CustomBottomSheetDialogFragment;
 import net.wrappy.im.ui.widgets.ConversationViewHolder;
@@ -70,11 +66,6 @@ public class ConversationListFragment extends BaseFragmentV4 {
     private Button mUpgradeAction;
 
     private boolean mFilterArchive = false;
-
-    private ImApp mApp;
-    private IImConnection mConnection;
-    private IChatSessionManager mManager;
-    private IChatSession mSession;
 
     @Nullable
     @Override
@@ -104,14 +95,6 @@ public class ConversationListFragment extends BaseFragmentV4 {
                 ((MainActivity) getActivity()).inviteContact();
             }
         });
-
-        try {
-            mApp = (ImApp) getActivity().getApplication();
-            mConnection = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-            mManager = mConnection.getChatSessionManager();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         setupRecyclerView(mRecView);
 
