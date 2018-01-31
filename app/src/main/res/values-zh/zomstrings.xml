@@ -17,8 +17,8 @@
     <string name="choose_friend">選擇朋友</string>
     <string name="send_message">發送訊息</string>
     <string name="push_to_talk">提醒對話</string>
-    <string name="recording_release">記錄中.....開始發送</string>
-    <string name="recording_delete">記錄中.....開始删除</string>
+    <string name="recording_release">記錄中…開始發送</string>
+    <string name="recording_delete">記錄中…開始删除</string>
     <string name="swipe_up_delete">向上移動並删除</string>
     <string name="create_group">新增群組</string>
     <string name="members">會員們</string>
@@ -28,12 +28,9 @@
     <string name="choose_photos">由相片集中選擇</string>
     <string name="choose_language">轉換語言</string>
     <string name="onboarding_generate">新增&appName;身份, 然後我們會產生一個保安密碼給你</string>
-    <string name="grant_perms_camera">You must grant permission for &appName;
-        to use the camera</string>
-    <string name="grant_perms_pick_file">You must grant permission for &appName;
-        to select file</string>
-    <string name="grant_perms_audio">You must grant permission for &appName;
-        to record audio</string>
+    <string name="grant_perms_camera">您必須授予&appName;使用相機的權限</string>
+    <string name="grant_perms_pick_file">您必須授予&appName;選擇文件的權限</string>
+    <string name="grant_perms_audio">您必須授權&appName;才能錄製音頻</string>
 
     <string name="action_archived">存檔</string>
     <string name="action_verified">驗証</string>
@@ -63,11 +60,11 @@
     <string name="security_code">安全身份</string>
 
     <string name="migrate_menu">遷移賬戶</string>
-    <string name="migrate_message">我已更新賬戶, 請WRAPPY我</string>
+    <string name="migrate_message">我已更新賬戶, 請&appName;我</string>
     <string name="action_undo">還原</string>
     <string name="contact_migration_notice">你的朋友已更新, 請與他們對話</string>
     <string name="contact_migration_action">立即對話</string>
-    <string name="message_waiting_for_friend">等侯%s你的朋友</string>
+    <string name="message_waiting_for_friend">等待接受你的朋友請求。</string>
     <string name="action_active">活躍</string>
     <string name="action_archive">檔案</string>
     <string name="title_pending">等侯批核</string>
@@ -80,7 +77,7 @@
     <string name="turn_notifications_off">開閉通知</string>
     <string name="num_member_group_chat">%1$s members</string>
     <string name="confirm_leave_group">你想離開群組嗎</string>
-    <string name="confirm_delete_and_leave_group">Are you sure you want to delete the group?</string>
-    <string name="confirm_remove_member_group">Are you sure you want to remove this member?</string>
-    <string name="contactswrappy">Contacts</string>
+    <string name="confirm_delete_and_leave_group">你確定要刪除組嗎？</string>
+    <string name="confirm_remove_member_group">您確定要刪除此成員嗎？</string>
+    <string name="contactswrappy">往來</string>
 </resources>
