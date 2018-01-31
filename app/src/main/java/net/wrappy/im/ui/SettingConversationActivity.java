@@ -141,6 +141,12 @@ public class SettingConversationActivity extends BaseActivity {
                 for (MemberGroupDisplay member : memberGroupDisplays) {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
+                        String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
+                        if(currentUser.equals(member.getNickname()))
+                        {
+                                mAdminDeleteGroup.setVisibility(View.VISIBLE);
+                                mMemberLeaveGroup.setVisibility(View.GONE);
+                        }
                         memberGroupAdapter.setAdmin(member.getNickname());
                         edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
                     }
@@ -208,6 +214,7 @@ public class SettingConversationActivity extends BaseActivity {
 
         boolean isGroup = mContactType == Imps.Contacts.TYPE_GROUP;
         // showing member group chat
+
         mAddMemberLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         mMemberGroupsLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         if (isGroup) {
@@ -469,15 +476,15 @@ public class SettingConversationActivity extends BaseActivity {
 
                 if (users != null) {
                     //start group and do invite hereartGrou
-                    finish();
-                   /* try {
+                    //finish();
+                    try {
                         IImConnection conn = ImApp.getConnection(imApp.getDefaultProviderId(), imApp.getDefaultAccountId());
                         if (conn != null && conn.getState() == ImConnection.LOGGED_IN) {
                             startGroupChat(group, users, conn);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                    }*/
+                    }
 
                 }
 

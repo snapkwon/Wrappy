@@ -76,6 +76,7 @@ import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.SelectedContact;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
@@ -598,12 +599,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            String usersinvite = "";
-                          //  ArrayList<String> users = new ArrayList();
+                           // String usersinvite = "";
+                            ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
-                            //    users.add(contact.nickname);
-                                if(usersinvite.isEmpty())
+                                users.add(contact.nickname);
+                               /* if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
 
@@ -611,22 +612,22 @@ public class ContactsPickerActivity extends BaseActivity {
                                 else
                                 {
                                     usersinvite = usersinvite + "-" + contact.nickname;
-                                }
+                                }*/
                             }
-                           /* Gson gson = new Gson();
+                            Gson gson = new Gson();
                             String jsonObject = gson.toJson(users);
                             JsonParser parser = new JsonParser();
-                            JsonArray json = (JsonArray) parser.parse(jsonObject);*/
+                            JsonArray json = (JsonArray) parser.parse(jsonObject);
 
 
-                            RestAPI.PostDataWrappy(this, new JsonObject(), String.format(RestAPI.ADD_MEMBER_TO_GROUP_CHAT, groupDto.getId(),usersinvite), new RestAPIListener(this) {
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
                                     ArrayList<String> users = new ArrayList<>();
                                     for (int i = 0; i < mSelection.size(); i++) {
                                         SelectedContact contact = mSelection.valueAt(i);
                                         users.add(contact.username);
-                                        insertGroupMemberInDb(lastchatid,contact);
+                                      //  insertGroupMemberInDb(lastchatid,contact);
                                     }
                                     Intent data = new Intent();
                                     data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
