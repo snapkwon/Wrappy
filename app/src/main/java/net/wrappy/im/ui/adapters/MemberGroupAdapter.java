@@ -173,8 +173,16 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     }
 
     private boolean isAdminGroup(MemberGroupDisplay member) {
-        return member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
-                member.getAffiliation().contentEquals("admin"));
+        if(member.getAffiliation() == null)
+        {
+            return  false;
+        }
+        else if(member.getAffiliation().contentEquals("owner") ||
+                member.getAffiliation().contentEquals("admin"))
+        {
+            return true;
+        }
+        return false;
     }
 
     private void confirmRemoveMember(final int position, final MemberGroupDisplay member) {
