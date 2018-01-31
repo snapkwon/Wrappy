@@ -100,6 +100,7 @@ import net.wrappy.im.crypto.IOtrChatSession;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.crypto.otr.OtrChatManager;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
@@ -2608,6 +2609,11 @@ public class ConversationView implements OnHandleMessage {
 
     }
 
+    public void goMyPage() {
+        NotificationCenter.getInstance().postNotificationName(NotificationCenter.loadMyPage,"");
+        mActivity.finish();
+    }
+
     public interface adapterCallback {
         public void search(int position);
     }
@@ -2894,15 +2900,7 @@ public class ConversationView implements OnHandleMessage {
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
             final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
 
-            viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(mContext, ProfileActivity.class);
-                    intent.putExtra("address", address);
-                    intent.putExtra("nickname", nickname);
-                    mContext.startActivity(intent);
-                }
-            });
+
             final String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             final String body = cursor.getString(mBodyColumn);
@@ -2987,6 +2985,21 @@ public class ConversationView implements OnHandleMessage {
                 messageType = Imps.MessageType.OUTGOING;
                 encState = EncryptionState.ENCRYPTED_AND_VERIFIED;
             }
+            final int finalMessageType = messageType;
+            viewHolder.mAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (finalMessageType == Imps.MessageType.OUTGOING) {
+                        goMyPage();
+                    } else {
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
+                        intent.putExtra("address", address);
+                        intent.putExtra("nickname", nickname);
+                        mContext.startActivity(intent);
+                    }
+
+                }
+            });
             viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {

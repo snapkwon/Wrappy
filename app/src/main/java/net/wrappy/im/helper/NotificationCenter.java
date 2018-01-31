@@ -12,6 +12,7 @@ public class NotificationCenter {
     private static int totalEvents = 1;
 
     public static final int networkStateChange = totalEvents++;
+    public static final int loadMyPage = totalEvents++;
 
 
     private SparseArray<ArrayList<Object>> observers = new SparseArray<>();
