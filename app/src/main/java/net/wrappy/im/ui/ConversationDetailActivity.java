@@ -130,7 +130,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-    private WpKChatGroupDto chatGroupDto;
+   // private WpKChatGroupDto chatGroupDto;
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
@@ -149,9 +149,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-    public WpKChatGroupDto getGroupDto() {
-        return chatGroupDto;
-    }
+   // public WpKChatGroupDto getGroupDto() {
+   //     return chatGroupDto;
+    //}
 
 
     public static Intent getStartIntent(Context context, long chatId) {
@@ -409,9 +409,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
-        String address = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
+      /*  String address = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
 
-        if (!address.isEmpty()) {
+        if (mConvoView.isGroupChat()) {
             String[] separated = address.split("@");
 
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
@@ -420,7 +420,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
                 }
             });
-        }
+        }*/
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

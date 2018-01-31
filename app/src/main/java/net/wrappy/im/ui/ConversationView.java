@@ -3550,7 +3550,7 @@ public class ConversationView implements OnHandleMessage {
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
         intent.putExtra("nickname", mRemoteNickname);
-        intent.putExtra("groupid", mActivity.getGroupDto());
+        //intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }
 }
