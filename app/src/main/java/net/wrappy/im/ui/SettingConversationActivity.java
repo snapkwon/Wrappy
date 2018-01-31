@@ -147,6 +147,11 @@ public class SettingConversationActivity extends BaseActivity {
                         {
                                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
                                 mMemberLeaveGroup.setVisibility(View.GONE);
+                                mAddMemberLayout.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                                mAddMemberLayout.setVisibility(View.GONE);
                         }
                         memberGroupAdapter.setAdmin(member.getNickname());
                         edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
