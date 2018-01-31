@@ -404,17 +404,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         processIntent(intent);
 
 
-
         collapseToolbar();
 
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
-        String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
-
-        if (address.isEmpty()) {
+        //String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
+        if (!TextUtils.isEmpty(address) && address.contains(Constant.DEFAULT_CONFERENCE_SERVER)) {
+            //String[] separated = address.split("@");
             String[] separated = address.split("@");
-
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
@@ -462,7 +460,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 break;
             case R.drawable.ic_camera:
-                PopupUtils.showCustomDialog(this,getString(R.string.comming_soon),getString(R.string.comming_soon),R.string.ok,null);
+                PopupUtils.showCustomDialog(this, getString(R.string.comming_soon), getString(R.string.comming_soon), R.string.ok, null);
                 //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
@@ -477,7 +475,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),address);
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), address);
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
         }
@@ -485,7 +483,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             if (TextUtils.isEmpty(mReference)) {
                 avatar.setImageResource(R.drawable.chat_group);
             } else {
-                GlideHelper.loadBitmapToCircleImage(this,avatar,getAvatarUrl(mReference));
+                GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
 
             status.setVisibility(View.GONE);
@@ -779,7 +777,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 mConvoView.startAudioConference();
                 return true;
 //            case R.id.menu_settings_language:
-                //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
+            //   final FrameLayout popupWindow = mConvoView.popupDisplay(ConversationDetailActivity.this);
               /*  new Handler().post(new Runnable() {
                     @Override
                     public void run() {
