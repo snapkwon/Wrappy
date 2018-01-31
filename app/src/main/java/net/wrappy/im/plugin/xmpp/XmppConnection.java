@@ -9,9 +9,13 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
@@ -28,6 +32,7 @@ import net.wrappy.im.model.ImException;
 import net.wrappy.im.model.Invitation;
 import net.wrappy.im.model.Message;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsErrorInfo;
 import net.wrappy.im.service.IChatSession;
@@ -1111,7 +1116,7 @@ public class XmppConnection extends ImConnection {
             executeNow(new Runnable() {
 
                 public void run() {
-                    String chatRoomJid = group.getAddress().getAddress();
+                    final String chatRoomJid = group.getAddress().getAddress();
 
                     if (mMUCs.containsKey(chatRoomJid)) {
                         MultiUserChat muc = mMUCs.get(chatRoomJid);
@@ -1138,7 +1143,25 @@ public class XmppConnection extends ImConnection {
         public void acceptInvitationAsync(Invitation invitation) {
 
             Address addressGroup = invitation.getGroupAddress();
+            final String chatRoomJid = addressGroup.getAddress();
+            if (chatRoomJid.contains(Constant.DEFAULT_CONFERENCE_SERVER) && chatRoomJid.contains("@")) {
+                RestAPI.GetDataWrappy(mContext, RestAPI.getGroupByXmppId(chatRoomJid.split("@")[0]), new RestAPIListener() {
+                    @Override
+                    protected void OnComplete(int httpCode, String error, String s) {
+                        try {
+                            WpKChatGroupDto wpKChatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
+                            if (wpKChatGroupDto.getIcon()!=null) {
+                                String avatar = wpKChatGroupDto.getIcon().getReference();
+                                String hash  = DatabaseUtils.generateHashFromAvatar(avatar);
+                                DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, "", hash, chatRoomJid);
+                            }
+                        }catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
 
+                    }
+                });
+            }
             joinChatGroupAsync(addressGroup, invitation.getReason());
 
         }

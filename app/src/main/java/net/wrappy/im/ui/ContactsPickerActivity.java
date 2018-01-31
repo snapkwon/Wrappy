@@ -80,6 +80,7 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
@@ -428,6 +429,11 @@ public class ContactsPickerActivity extends BaseActivity {
                     users.add(contact.username);
                     providers.add(contact.provider);
                     accounts.add(contact.account);
+                }
+                if (chatGroupDto.getIcon()!=null) {
+                    String avatar = chatGroupDto.getIcon().getReference();
+                    String hash  = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatar);
+                    net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, "", hash, chatGroupDto.getXmppGroup()+"@"+ Constant.DEFAULT_CONFERENCE_SERVER);
                 }
                 Store.putStringData(getApplicationContext(), groupName, reference);
                 Intent data = new Intent();

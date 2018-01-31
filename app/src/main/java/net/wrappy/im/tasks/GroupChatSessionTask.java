@@ -113,13 +113,19 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
                 if (session != null) {
-                    if (needToStartChat) {
-                        mRequestedChatId = session.getId();
-                        publishProgress(mRequestedChatId);
-                    } else if (isStable()) {
-                        updateInfoInGroup();
+                    if (session!=null) {
+//                        if (group!=null && group.getIcon()!=null) {
+//                            String avatar = group.getIcon().getReference();
+//                            String hash = DatabaseUtils.generateHashFromAvatar(avatar);
+//                            DatabaseUtils.insertAvatarBlob(weakReference.get().getContentResolver(),Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(),avatar,"",hash,group.getXmppGroup());
+//                        }
+                        if (needToStartChat) {
+                            mRequestedChatId = session.getId();
+                            publishProgress(mRequestedChatId);
+                        } else if (isStable()) {
+                            updateInfoInGroup();
+                        }
                     }
-
                 } else {
                     if (isStable()) {
                         return getActivity().getString(R.string.unable_to_create_or_join_group_chat);
@@ -171,7 +177,11 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), null));
+            String reference = "";
+            if (group!=null && group.getIcon()!=null) {
+                reference = group.getIcon().getReference();
+            }
+            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
         }
     }
 
