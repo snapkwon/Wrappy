@@ -20,6 +20,7 @@ public class BundleKeyConstant {
     public final static String EXTRA_RESULT_GROUP_NAME = "groupname";
     public final static String EXTRA_GROUP_ID = "groupid";
     public final static String EXTRA_LIST_MEMBER = "listmember";
+    public final static String EXTRA_CHAT_ID = "chatid";
 
     public static String NICK_NAME_KEY = "nickname";
     public static String KEY_MESSAGE = "message";

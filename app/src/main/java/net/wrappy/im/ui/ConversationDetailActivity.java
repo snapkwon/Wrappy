@@ -132,8 +132,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-    private WpKChatGroupDto chatGroupDto;
-    private static String address = "";
+   // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
 
@@ -150,13 +149,13 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
-        address = maddress;
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, maddress);
         return intent;
     }
 
-    public WpKChatGroupDto getGroupDto() {
-        return chatGroupDto;
-    }
+   // public WpKChatGroupDto getGroupDto() {
+   //     return chatGroupDto;
+    //}
 
 
     public static Intent getStartIntent(Context context, long chatId) {
@@ -422,17 +421,18 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
        /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );*/
-        //String address = String.valueOf(intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY,-1));
-        if (!TextUtils.isEmpty(address) && address.contains(Constant.DEFAULT_CONFERENCE_SERVER)) {
-            //String[] separated = address.split("@");
+      /*  String address = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
+
+        if (mConvoView.isGroupChat()) {
             String[] separated = address.split("@");
+
             RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
                 @Override
                 public void OnComplete(int httpCode, String error, String s) {
                     chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
                 }
             });
-        }
+        }*/
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -488,7 +488,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), address);
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
         }

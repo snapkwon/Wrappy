@@ -511,7 +511,7 @@
     <string name="logout_noti">あなたがこのデバイスからログアウトしたいですか？</string>
     <string name="share_title">共有方法を選択します。</string>
     <string name="referral_text">あなたの紹介コードを入力します（オプション）</string>
-    <string name="Referral">紹介</string>
+    <string name="Referral">紹介コード</string>
     <string name="update_profile">プロフィールを更新</string>
     <string name="question">質問%d</string>
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>

@@ -18,6 +18,8 @@
 package net.wrappy.im.ui;
 
 import android.app.SearchManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,6 +64,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 
@@ -71,19 +74,24 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
+import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
+import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.ui.widgets.FlowLayout;
 import net.wrappy.im.util.BundleKeyConstant;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Activity used to pick a contact.
@@ -127,6 +135,8 @@ public class ContactsPickerActivity extends BaseActivity {
 
     //private AppBarLayout appBarLayout;
     private Toolbar mToolbar;
+
+    private long lastchatid;
 
     // The callbacks through which we will interact with the LoaderManager.
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
@@ -205,6 +215,7 @@ public class ContactsPickerActivity extends BaseActivity {
         groupmember = new ArrayList<>();
 
         type = getIntent().getIntExtra("type", -1);
+        lastchatid = getIntent().getLongExtra(BundleKeyConstant.EXTRA_CHAT_ID, -1);
         if (type == SettingConversationActivity.PICKER_ADD_MEMBER) {
             groupDto = getIntent().getParcelableExtra(BundleKeyConstant.EXTRA_GROUP_ID);
             groupmember = getIntent().getStringArrayListExtra(BundleKeyConstant.EXTRA_LIST_MEMBER);
@@ -304,8 +315,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
         });
 
-        doFilterAsync("");
-
         if (getIntent() != null) {
             if (getIntent().getBooleanExtra(BundleKeyConstant.KEY_GROUP, false)) {
                 setGroupMode(true);
@@ -376,13 +385,9 @@ public class ContactsPickerActivity extends BaseActivity {
                                 reference = jsonObject.get(RestAPI.PHOTO_REFERENCE).getAsString();
                                 WpKIcon icon = new WpKIcon();
                                 icon.setReference(reference);
-                                WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
-                                wpKChatGroupDto.setName(groupName);
-                                wpKChatGroupDto.setDescription("");
+                                WpKChatGroupDto wpKChatGroupDto = createChatGroupDto(groupName);
                                 wpKChatGroupDto.setIcon(icon);
-                                WpKChatGroup wpKChatGroup = new WpKChatGroup();
-                                wpKChatGroup.setMemberIds(members);
-                                wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                                WpKChatGroup wpKChatGroup = createChatGroup(wpKChatGroupDto, members);
                                 JsonObject json = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                                 createGroupXMPP(groupName, reference, json);
                             } catch (Exception ex) {
@@ -393,12 +398,8 @@ public class ContactsPickerActivity extends BaseActivity {
                     });
                 } else {
                     try {
-                        WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
-                        wpKChatGroupDto.setName(groupName);
-                        wpKChatGroupDto.setDescription("");
-                        WpKChatGroup wpKChatGroup = new WpKChatGroup();
-                        wpKChatGroup.setMemberIds(members);
-                        wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+                        WpKChatGroupDto wpKChatGroupDto = createChatGroupDto(groupName);
+                        WpKChatGroup wpKChatGroup = createChatGroup(wpKChatGroupDto, members);
                         JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                         createGroupXMPP(groupName, "", jsonObject);
                     } catch (Exception ex) {
@@ -413,7 +414,22 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
+    private WpKChatGroupDto createChatGroupDto(String groupName) {
+        WpKChatGroupDto wpKChatGroupDto = new WpKChatGroupDto();
+        wpKChatGroupDto.setName(groupName);
+        wpKChatGroupDto.setDescription("");
+        return wpKChatGroupDto;
+    }
+
+    private WpKChatGroup createChatGroup(WpKChatGroupDto wpKChatGroupDto, ArrayList<String> members) {
+        WpKChatGroup wpKChatGroup = new WpKChatGroup();
+        wpKChatGroup.setMemberIds(members);
+        wpKChatGroup.setWpKChatGroupDto(wpKChatGroupDto);
+        return wpKChatGroup;
+    }
+
     private void createGroupXMPP(final String groupName, final String reference, JsonObject jsonObject) {
+        Debug.d(jsonObject.toString());
         RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
@@ -428,6 +444,11 @@ public class ContactsPickerActivity extends BaseActivity {
                     users.add(contact.username);
                     providers.add(contact.provider);
                     accounts.add(contact.account);
+                }
+                if (chatGroupDto.getIcon()!=null) {
+                    String avatar = chatGroupDto.getIcon().getReference();
+                    String hash  = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatar);
+                    net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, "", hash, chatGroupDto.getXmppGroup()+"@"+ Constant.DEFAULT_CONFERENCE_SERVER);
                 }
                 Store.putStringData(getApplicationContext(), groupName, reference);
                 Intent data = new Intent();
@@ -498,13 +519,13 @@ public class ContactsPickerActivity extends BaseActivity {
             SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
                 public boolean onQueryTextChange(String newText) {
                     mSearchString = newText;
-                    doFilterAsync(mSearchString);
+                    doFilter(mSearchString);
                     return true;
                 }
 
                 public boolean onQueryTextSubmit(String query) {
                     mSearchString = query;
-                    doFilterAsync(mSearchString);
+                    doFilter(mSearchString);
 
                     return true;
                 }
@@ -526,6 +547,44 @@ public class ContactsPickerActivity extends BaseActivity {
         }
     }
 
+    private void insertGroupMemberInDb(long chatid , SelectedContact contact) {
+
+        Uri mChatURI = ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatid);
+        if (mChatURI != null) {
+            String username = contact.getUsername();
+            String nickname = contact.getNickName();
+
+            ContentValues values = new ContentValues(4);
+            values.put(Imps.GroupMembers.USERNAME, username);
+            values.put(Imps.GroupMembers.NICKNAME, nickname);
+
+            long groupId = ContentUris.parseId(mChatURI);
+            Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, chatid);
+
+            values.put(Imps.GroupMembers.ROLE, "none");
+            values.put(Imps.GroupMembers.AFFILIATION, "none");
+            getContentResolver().insert(uri, values);
+            if (username.contains(nickname) || nickname == null) {
+                updateUnknownFriendInfoInGroup(uri, nickname);
+            }
+        }
+    }
+
+    private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
+        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
+            @Override
+            public void OnComplete(int httpCode, String error, String s) {
+                Debug.d(s);
+                try {
+                    WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
+                    }.getType());
+                    Imps.GroupMembers.updateNicknameFromGroupUri(getContentResolver(), uri, wpKMemberDtos.getIdentifier());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -539,31 +598,34 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            if (groupDto != null) {
-                                ArrayList<String> users = new ArrayList();
-                                for (int i = 0; i < mSelection.size(); i++) {
-                                    SelectedContact contact = mSelection.valueAt(i);
-                                    users.add(contact.nickname);
+                            String usersinvite = "";
+                          //  ArrayList<String> users = new ArrayList();
+                            for (int i = 0; i < mSelection.size(); i++) {
+                                SelectedContact contact = mSelection.valueAt(i);
+                            //    users.add(contact.nickname);
+                                if(usersinvite.isEmpty())
+                                {
+                                    usersinvite = contact.nickname;
+
                                 }
-                                Gson gson = new Gson();
-                                String jsonObject = gson.toJson(users);
-                                JsonParser parser = new JsonParser();
-                                JsonArray json = (JsonArray) parser.parse(jsonObject);
+                                else
+                                {
+                                    usersinvite = usersinvite + "-" + contact.nickname;
+                                }
+                            }
+                           /* Gson gson = new Gson();
+                            String jsonObject = gson.toJson(users);
+                            JsonParser parser = new JsonParser();
+                            JsonArray json = (JsonArray) parser.parse(jsonObject);*/
 
-                                RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
-                                    @Override
-                                    public void OnComplete(int httpCode, String error, String s) {
-                                        ArrayList<String> users = new ArrayList<>();
-                                        for (int i = 0; i < mSelection.size(); i++) {
-                                            SelectedContact contact = mSelection.valueAt(i);
-                                            users.add(contact.username);
-                                        }
-                                        Intent data = new Intent();
-                                        data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
-                                        data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
-
-                                        setResult(RESULT_OK, data);
-                                        finish();
+                            RestAPI.PostDataWrappy(this, new JsonObject(), String.format(RestAPI.ADD_MEMBER_TO_GROUP_CHAT, groupDto.getId(),usersinvite), new RestAPIListener(this) {
+                                @Override
+                                public void OnComplete(int httpCode, String error, String s) {
+                                    ArrayList<String> users = new ArrayList<>();
+                                    for (int i = 0; i < mSelection.size(); i++) {
+                                        SelectedContact contact = mSelection.valueAt(i);
+                                        users.add(contact.username);
+                                        insertGroupMemberInDb(lastchatid,contact);
                                     }
                                 });
                             } else {
@@ -606,9 +668,11 @@ public class ContactsPickerActivity extends BaseActivity {
             super.onBackPressed();
     }
 
-    public void doFilterAsync(final String query) {
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        doFilter(query);
+        doFilter(mSearchString);
     }
 
     boolean mAwaitingUpdate = false;
@@ -838,19 +902,15 @@ public class ContactsPickerActivity extends BaseActivity {
             } else {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
-            if(isenablealphabet == false)
-            {
-                if( index > 0 && charSection.equalsIgnoreCase( String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0))))
-                {
+            if (isenablealphabet == false) {
+                if (index > 0 && charSection.equalsIgnoreCase(String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)))) {
 
                     holder.linesection.setVisibility(View.INVISIBLE);
                     holder.textsection.setVisibility(View.INVISIBLE);
 
 
-                }
-                else
-                {
-                    charSection =  String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
+                } else {
+                    charSection = String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
                     holder.textsection.setVisibility(View.VISIBLE);
                     if (index > 0) {
                         holder.linesection.setVisibility(View.VISIBLE);
