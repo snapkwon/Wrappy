@@ -29,7 +29,7 @@
     <string name="choose_language">Chuyển ngôn ngữ</string>
     <string name="onboarding_generate">Tạo một id &appName; và chúng tôi sẽ tạo mật khẩu an toàn cho bạn.</string>
     <string name="grant_perms_camera">Bạn cần cấp quyền cho &appName; sử dụng máy ảnh</string>
-<string name="grant_perms_pick_file">Bạn cần cấp quyền cho &appName; để chọn tập tin</string>
+    <string name="grant_perms_pick_file">Bạn cần cấp quyền cho &appName; để chọn tập tin</string>
     <!--<string name="grant_perms_pick_image">You must grant permission for &appName; to select image</string>-->
     <string name="grant_perms_audio">Bạn cần cấp quyền cho &appName; để ghi âm</string>
     <string name="action_archived">Lưu trữ</string>
@@ -65,7 +65,7 @@
     <string name="action_undo">Hủy bỏ</string>
     <string name="contact_migration_notice">Bạn của bạn đã được nâng cấp. Trò chuyện với họ tại</string>
     <string name="contact_migration_action">Nói chuyện ngay</string>
-    <string name="message_waiting_for_friend">Chờ đợi cho bạn bè</string>
+    <string name="message_waiting_for_friend">Chờ kết bạn</string>
     <string name="action_active">Tích cực</string>
     <string name="action_archive">Lưu trữ</string>
     <string name="title_pending">Chờ phê duyệt</string>
