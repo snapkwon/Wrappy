@@ -1150,12 +1150,12 @@ public class XmppConnection extends ImConnection {
                     protected void OnComplete(int httpCode, String error, String s) {
                         try {
                             WpKChatGroupDto wpKChatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
-                            if (wpKChatGroupDto.getIcon()!=null) {
+                            if (wpKChatGroupDto.getIcon() != null) {
                                 String avatar = wpKChatGroupDto.getIcon().getReference();
-                                String hash  = DatabaseUtils.generateHashFromAvatar(avatar);
+                                String hash = DatabaseUtils.generateHashFromAvatar(avatar);
                                 DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, "", hash, chatRoomJid);
                             }
-                        }catch (Exception ex) {
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
 
@@ -2244,10 +2244,14 @@ public class XmppConnection extends ImConnection {
 
                 rec.setID(smackMessage.getStanzaId());
 
-                if (isOmemo)
-                    rec.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
-                else
-                    rec.setType(Imps.MessageType.INCOMING);
+                if (isLoadOld && rec.getTo().getUser().equals(rec.getFrom().getResource())) {
+                    rec.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                } else {
+                    if (isOmemo)
+                        rec.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+                    else
+                        rec.setType(Imps.MessageType.INCOMING);
+                }
 
                 // Detect if this was said by us, and mark message as outgoing
                 if (isGroupMessage) {
