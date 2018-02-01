@@ -560,12 +560,15 @@ public class ContactsPickerActivity extends BaseActivity {
 
             long groupId = ContentUris.parseId(mChatURI);
             Uri uri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, chatid);
-
-            values.put(Imps.GroupMembers.ROLE, "none");
-            values.put(Imps.GroupMembers.AFFILIATION, "none");
-            getContentResolver().insert(uri, values);
-            if (username.contains(nickname) || nickname == null) {
-                updateUnknownFriendInfoInGroup(uri, nickname);
+            long databaseId = 0;
+            Cursor c = getContentResolver().query(uri, new String[]{"_id"}, Imps.GroupMembers.NICKNAME + "=" + contact.getNickName(),null, null);
+            if (c == null) {
+                values.put(Imps.GroupMembers.ROLE, "none");
+                values.put(Imps.GroupMembers.AFFILIATION, "none");
+                getContentResolver().insert(uri, values);
+                if (username.contains(nickname) || nickname == null) {
+                    updateUnknownFriendInfoInGroup(uri, nickname);
+                }
             }
         }
     }
@@ -626,7 +629,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                     for (int i = 0; i < mSelection.size(); i++) {
                                         SelectedContact contact = mSelection.valueAt(i);
                                         users.add(contact.username);
-                                      //  insertGroupMemberInDb(lastchatid,contact);
+                                       // insertGroupMemberInDb(lastchatid,contact);
                                     }
                                     Intent data = new Intent();
                                     data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);

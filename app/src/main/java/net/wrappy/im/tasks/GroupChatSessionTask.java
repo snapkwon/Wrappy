@@ -176,7 +176,13 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         super.onPostExecute(result);
         if (isStable()) {
             if (dialog != null && dialog.isShowing()) {
-                dialog.dismiss();
+                try {
+                    dialog.dismiss();
+                }
+                catch (Exception e)
+                {
+
+                }
             }
         }
 

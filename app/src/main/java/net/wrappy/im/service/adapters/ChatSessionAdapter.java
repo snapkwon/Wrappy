@@ -713,6 +713,28 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
+    public void notifycationMemberLeft(String username)
+    {
+        ImEntity participant = mChatSession.getParticipant();
+        if (mIsGroupChat) {
+
+            ChatGroup group = (ChatGroup) participant;
+            /**
+             List<Contact> members = group.getMembers();
+             for (Contact c : members) {
+             if (username.equals(c.getAddress().getAddress())) {
+
+             return c.getAddress().getResource();
+
+             }
+             }**/
+            Contact groupMember = group.getMember(username);
+            if (groupMember != null) {
+                group.notifyMemberLeft(groupMember);
+            }
+        }
+    }
+
     private String getNickName(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {

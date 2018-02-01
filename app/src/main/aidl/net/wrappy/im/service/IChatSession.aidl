@@ -90,6 +90,11 @@ interface IChatSession {
      */
     void leaveIfInactive();
 
+        /**
+         * Notification left
+         */
+     void notifycationMemberLeft(String username);
+
     /**
      * Sends a message to all participants in this ChatSession.
      */

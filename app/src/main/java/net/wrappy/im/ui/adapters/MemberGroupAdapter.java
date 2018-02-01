@@ -208,6 +208,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         mMembers.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, mMembers.size());
+        //notifyDataSetChanged();
     }
 
     private void removeMemberInDB(MemberGroupDisplay member) {
@@ -226,7 +227,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         sb.append(member.getNickname());
         try {
             session.sendMessage(sb.toString(), false);
-            session.removeMemberGroup(member.getUsername());
+           // session.removeMemberGroup();
+           session.notifycationMemberLeft(member.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
