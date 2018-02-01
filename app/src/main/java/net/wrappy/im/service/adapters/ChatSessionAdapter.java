@@ -713,8 +713,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    public void notifycationMemberLeft(String username)
-    {
+    public void notifycationMemberLeft(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {
 
@@ -1167,10 +1166,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 if (contact != null && !contact.getAddress().getAddress().toLowerCase().contains(contact.getName().toLowerCase())) {
                     nickname = contact.getName();
                 } else {
-                    if (bareAddress.contains(Constant.EMAIL_DOMAIN) || (bareAddress.equals(nickname.toLowerCase()) && bareAddress.matches(regexUUID))) {
+                    if (bareAddress.contains(Constant.EMAIL_DOMAIN) || bareAddress.equals(nickname.toLowerCase())) {
                         nickname = Imps.Contacts.getNicknameFromAddress(mContentResolver, bareAddress);
                         if (TextUtils.isEmpty(nickname)) {
-                            nickname = Imps.GroupMembers.getNicknameFromGroup(mContentResolver, bareAddress);
+                            if (bareAddress.contains(Constant.EMAIL_DOMAIN))
+                                nickname = bareAddress.replace(Constant.EMAIL_DOMAIN, "");
+                            else
+                                nickname = bareAddress;
                         }
                     }
 
