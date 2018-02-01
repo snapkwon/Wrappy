@@ -43,7 +43,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         this.group = group;
     }
 
-    public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn ,boolean iscreatenewchat) {
+    public GroupChatSessionTask(Activity activity, WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn, boolean iscreatenewchat) {
         super();
         weakReference = new WeakReference<>(activity);
         mLastConnGroup = conn;
@@ -58,6 +58,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
         mLastConnGroup = conn;
         this.group = group;
         needToStartChat = false;
+        this.isCreateNewChat = false;
     }
 
     public void setCallback(OnTaskFinish callback) {
@@ -123,18 +124,16 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             if (session == null) {
                 session = manager.createMultiUserChatSession(roomAddress, subject, nickname, true);
                 if (session != null) {
-                    if (session!=null) {
 //                        if (group!=null && group.getIcon()!=null) {
 //                            String avatar = group.getIcon().getReference();
 //                            String hash = DatabaseUtils.generateHashFromAvatar(avatar);
 //                            DatabaseUtils.insertAvatarBlob(weakReference.get().getContentResolver(),Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(),avatar,"",hash,group.getXmppGroup());
 //                        }
-                        if (needToStartChat) {
-                            mRequestedChatId = session.getId();
-                            publishProgress(mRequestedChatId);
-                        } else if (isStable()) {
-                            updateInfoInGroup();
-                        }
+                    if (needToStartChat) {
+                        mRequestedChatId = session.getId();
+                        publishProgress(mRequestedChatId);
+                    } else if (isStable()) {
+                        updateInfoInGroup();
                     }
                 } else {
                     if (isStable()) {
@@ -178,9 +177,7 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
             if (dialog != null && dialog.isShowing()) {
                 try {
                     dialog.dismiss();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
 
                 }
             }
@@ -193,15 +190,14 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            if(isCreateNewChat==true) {
+            if (isCreateNewChat == true) {
                 String reference = "";
                 if (group != null && group.getIcon() != null) {
                     reference = group.getIcon().getReference();
                 }
                 getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
-            }
-            else
-            {
+            } else {
+                if(needToStartChat)// cheat
                 getActivity().finish();
             }
         }
