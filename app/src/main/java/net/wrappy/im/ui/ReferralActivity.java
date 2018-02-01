@@ -30,6 +30,7 @@ public class ReferralActivity extends BaseActivity {
 
     public static void start() {
         Intent intent = new Intent(ImApp.sImApp, ReferralActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ImApp.sImApp.startActivity(intent);
     }
 
@@ -37,8 +38,8 @@ public class ReferralActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
-        initActionBarDefault(false,R.string.Referral);
-        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
+        initActionBarDefault(false, R.string.Referral);
+        Store.putBooleanData(getApplicationContext(), Store.REFERRAL, true);
     }
 
     @OnClick(R.id.btnReferralCheck)
@@ -50,7 +51,7 @@ public class ReferralActivity extends BaseActivity {
             RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListener(this) {
                 @Override
                 protected void OnComplete(int httpCode, String error, String s) {
-                    Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
+                    Store.putBooleanData(getApplicationContext(), Store.REFERRAL, false);
                     finish();
                 }
             });
@@ -58,7 +59,7 @@ public class ReferralActivity extends BaseActivity {
             PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.no, R.string.yes, null, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
+                    Store.putBooleanData(getApplicationContext(), Store.REFERRAL, false);
                     finish();
                 }
             });

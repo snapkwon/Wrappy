@@ -551,7 +551,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void updateData() {
         AppFuncs.log("updateData");
         final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroupTemp);
-        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
+        RestAPI.PutDataWrappy(SettingConversationActivity.this, jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
@@ -562,7 +562,7 @@ public class SettingConversationActivity extends BaseActivity {
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
 //                    changeGroupNameXmpp();
-                    AppFuncs.alert(getApplicationContext(), "Update Success", false);
+                    AppFuncs.alert(SettingConversationActivity.this, getString(R.string.update_profile_success), false);
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }
@@ -571,7 +571,7 @@ public class SettingConversationActivity extends BaseActivity {
             protected void onError(int errorCode) {
                 super.onError(errorCode);
                 if (wpKChatGroup.getIcon() != null) {
-                    GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                    GlideHelper.loadBitmapToCircleImage(SettingConversationActivity.this, btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
                 }
                 runOnUiThread(new Runnable() {
                     @Override
