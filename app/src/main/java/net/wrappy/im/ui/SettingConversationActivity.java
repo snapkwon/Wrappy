@@ -44,13 +44,11 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
-import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.ImpsProvider;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.GroupChatSessionTask;
@@ -253,14 +251,6 @@ public class SettingConversationActivity extends BaseActivity {
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
-
-            memberGroupAdapter.setOnItemClickListener(new MemberGroupAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position) {
-
-                }
-            });
-
 
             RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
