@@ -1120,14 +1120,19 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             } else if (msg.getBody().startsWith(ConferenceConstant.ERROR_ENCRYPTION_FROM_IOS)) {
                 Debug.d(ConferenceConstant.ERROR_ENCRYPTION_FROM_IOS);
                 return false;
-            } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX) && ses.getParticipant() instanceof Contact) {
-                ConferenceMessage conferenceMessage = new ConferenceMessage(body);
-                if (conferenceMessage.isMissedOrDeclined()) {
-                    if (ConferenceActivity.getsIntance() != null)
-                        ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
+            } else if (msg.getBody().startsWith(ConferenceConstant.CONFERENCE_PREFIX))
+                if (Constant.CONFERENCE_ENABLED) {
+                    if (ses.getParticipant() instanceof Contact) {
+                        ConferenceMessage conferenceMessage = new ConferenceMessage(body);
+                        if (conferenceMessage.isMissedOrDeclined()) {
+                            if (ConferenceActivity.getsIntance() != null)
+                                ConferenceActivity.getsIntance().onDenyConference(conferenceMessage);
+                            return true;
+                        }
+                    }
+                } else {
                     return true;
                 }
-            }
             String username = msg.getFrom().getAddress();
             String bareUsername = msg.getFrom().getBareAddress();
             String nickname = getNickName(username);
@@ -1320,18 +1325,20 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
 
         private void checkTriggerConference(final Uri uri, final String bareAddress, String nickname, Message message) {
-            String body = message.getBody();
-            if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
-                long startTime = message.getDateTime().getTime();
-                if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME) {
-                    ConferenceMessage conference = new ConferenceMessage(body);
-                    conference.missed();
-                    updateMessageInDb(message.getID(), conference.toString());
-                } else {
-                    ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
-                    conferenceCall.setGroup(isGroupChatSession());
-                    Intent intent = ConferencePopupActivity.newIntent(conferenceCall);
-                    mConnection.getContext().startActivity(intent);
+            if (Constant.CONFERENCE_ENABLED) {
+                String body = message.getBody();
+                if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                    long startTime = message.getDateTime().getTime();
+                    if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME) {
+                        ConferenceMessage conference = new ConferenceMessage(body);
+                        conference.missed();
+                        updateMessageInDb(message.getID(), conference.toString());
+                    } else {
+                        ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
+                        conferenceCall.setGroup(isGroupChatSession());
+                        Intent intent = ConferencePopupActivity.newIntent(conferenceCall);
+                        mConnection.getContext().startActivity(intent);
+                    }
                 }
             }
         }
