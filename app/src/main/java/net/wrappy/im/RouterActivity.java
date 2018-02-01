@@ -332,7 +332,9 @@ public class RouterActivity extends Activity implements ICacheWordSubscriber {
     void showMain() {
         boolean isReferral = Store.getBooleanData(getApplicationContext(),Store.REFERRAL);
         if (!isReferral) {
-            MainActivity.start();
+            Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            ImApp.sImApp.startActivity(intent);
         } else {
             ReferralActivity.start();
         }
