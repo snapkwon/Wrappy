@@ -544,7 +544,7 @@ public class SettingConversationActivity extends BaseActivity {
                     AppFuncs.log(s);
                     updateAvatarAndNotify(true);
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
-                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting,"");
+
                 }
             }
         });
