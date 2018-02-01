@@ -551,6 +551,7 @@ public class SettingConversationActivity extends BaseActivity {
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
+
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }

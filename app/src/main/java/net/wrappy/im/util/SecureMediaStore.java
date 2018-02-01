@@ -13,6 +13,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileNotFoundException;
@@ -237,6 +238,10 @@ public class SecureMediaStore {
      */
     public static Uri importContent(String sessionId, String fileName, InputStream sourceStream) throws IOException {
         //list("/");
+
+        // remove special characters to upload
+        fileName = FilenameUtils.removeExtension(fileName).replaceAll("[^A-Za-z0-9]","") + (TextUtils.isEmpty(FilenameUtils.getExtension(fileName)) ? "" : "." + FilenameUtils.getExtension(fileName));
+
         String targetPath = "/" + sessionId + "/upload/" + UUID.randomUUID().toString() + '/' + fileName;
         targetPath = createUniqueFilename(targetPath);
         copyToVfs( sourceStream, targetPath );

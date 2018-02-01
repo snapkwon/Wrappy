@@ -876,9 +876,9 @@ public class XmppConnection extends ImConnection {
             if (mMUCs.containsKey(chatRoomJid)) {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
-                    String reason = "";
+                    String reason = group.getName();;
                     muc.kickParticipant(Resourcepart.from(contact.getName()), reason);
-                    //  muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
+                    // muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -1867,6 +1867,7 @@ public class XmppConnection extends ImConnection {
         }
 
         mConfig.setProxyInfo(mProxyInfo);
+        mConfig.setSocketFactory(XMPPSocketFactory.getInstance());
 
         mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
         SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
