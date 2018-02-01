@@ -10,9 +10,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,6 +43,7 @@ import net.wrappy.im.util.SecureMediaStore;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -162,11 +165,45 @@ public class AppFuncs {
 
     }
 
+    private static String mCurrentPhotoPath;
+
+    private static File createImageFile(Activity activity) throws IOException {
+        // Create an image file name
+        String imageFileName = "JPEG_" + UUID.randomUUID().toString();
+        File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     public static void openCamera(Activity activity, int requestCode) {
         if ((ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            activity.startActivityForResult(cameraIntent, requestCode);
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // Ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile(activity);
+                } catch (IOException ex) {
+
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(activity,
+                            activity.getPackageName()+".provider",
+                            photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    activity.startActivityForResult(takePictureIntent, requestCode);
+                }
+            }
         } else {
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -208,13 +245,17 @@ public class AppFuncs {
     }
 
     public static void cropImage(Activity activity, Intent intent, boolean isAvarta) {
+        cropImage(activity, intent, isAvarta, UCrop.REQUEST_CROP);
+    }
+
+    public static void cropImage(Activity activity, Intent intent, boolean isAvarta, int requestCode) {
         Uri source = null;
-        if (intent.getData() != null) {
-            source = intent.getData();
+        if (intent==null) {
+            File path = new File(mCurrentPhotoPath);
+            source = Uri.fromFile(path);
         } else {
-            if (intent.getExtras() != null) {
-                Bitmap bitmap = (Bitmap) intent.getExtras().get("data");
-                source = getImageUri(activity, bitmap);
+            if (intent.getData() != null) {
+                source = intent.getData();
             }
         }
         if (source == null) {
@@ -225,11 +266,11 @@ public class AppFuncs {
         if (isAvarta) {
             UCrop.of(source, destination)
                     .withAspectRatio(1, 1)
-                    .start(activity);
+                    .start(activity, requestCode);
         } else {
             UCrop.of(source, destination)
                     .withAspectRatio(16, 9)
-                    .start(activity);
+                    .start(activity, requestCode);
         }
 
     }
@@ -395,10 +436,10 @@ public class AppFuncs {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                        Gson gson = new Gson();
-                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
-                        }.getType());
-                        AppFuncs.shareApp(activity, promotionSetting.getContent());
+                    Gson gson = new Gson();
+                    PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
+                    }.getType());
+                    AppFuncs.shareApp(activity, promotionSetting.getContent());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

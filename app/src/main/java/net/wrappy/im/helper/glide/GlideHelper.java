@@ -60,7 +60,7 @@ public class GlideHelper {
 
     public static void loadAvatarFromNickname(Context context, final ImageView imageView, String nickname) {
         try {
-            int padding = 24;
+            int padding = 18;
             LetterAvatar lavatar = new LetterAvatar(context, nickname, padding);
             if (lavatar!=null) {
                 imageView.setImageDrawable(lavatar);

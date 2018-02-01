@@ -11,7 +11,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 
-import net.ironrabbit.type.CustomTypefaceManager;
+import net.wrappy.im.helper.layout.AppFonts;
 
 public class LetterAvatar extends ColorDrawable {
         Paint               paint   = new Paint();
@@ -60,12 +60,8 @@ public class LetterAvatar extends ColorDrawable {
             paint.setColor(backgroundColor);
 
             canvas.drawOval(rectBounds, paint);
-
-            if (CustomTypefaceManager.hasCustomTypeface())
-                paint.setTypeface(CustomTypefaceManager.getCurrentTypeface(context));
-            else {
-                paint.setTypeface(Typeface.SANS_SERIF);
-            }
+            Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), AppFonts.FONT_LIGHT);
+            paint.setTypeface(myTypeface);
 
             pLetters = pLetters.toUpperCase();
 

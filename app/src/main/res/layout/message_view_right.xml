@@ -111,7 +111,7 @@
 
             <net.ironrabbit.type.CustomTypefaceTextView
                 android:id="@+id/messagets"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="22sp"
                 android:layout_margin="3dp"
                 android:color="?messageTextSecondary"

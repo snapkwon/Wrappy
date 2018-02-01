@@ -78,7 +78,6 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.gson.Gson;
 
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
@@ -93,7 +92,6 @@ import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
-import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -377,8 +375,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         initActionBarDefault(true, 0);
-        addIconActionBar(R.drawable.ic_camera);
-        addIconActionBar(R.drawable.ic_phone);
+        if (Constant.CONFERENCE_ENABLED) {
+            addIconActionBar(R.drawable.ic_camera);
+            addIconActionBar(R.drawable.ic_phone);
+        }
         addIconActionBar(R.drawable.ic_tran);
         addIconActionBar(R.drawable.ic_info_outline_white_24dp);
         mApp = (ImApp) getApplication();
@@ -527,12 +527,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private void addSearchViewInActionBar() {
         clearViewInActionBar();
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
-
-        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
-        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        avatar.setVisibility(View.GONE);
-        status.setVisibility(View.GONE);
-
+        view.findViewById(R.id.relAvatar).setVisibility(View.GONE);
+        view.findViewById(R.id.chat_room_nickname).setVisibility(View.GONE);
         searchView = (SearchView) view.findViewById(R.id.searchtext);
 
         searchView.setVisibility(View.VISIBLE);

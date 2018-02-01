@@ -71,7 +71,7 @@
 
     <!-- Views: Settings: Account -->
     <string name="do_srv_lookup">SRVルックアップを実行する</string>
-    <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">暗号化されていないトランスポートを使用する場合、ユーザー名とパスワードをプレーンテキストとして送信できるようにする</string>
+    <string name="allow_the_username_and_password_to_be_sent_as_plain_text_when_using_an_unencrypted_transport">暗号化されていないトランスポートを使用する場合、ユーザーIDとパスワードをプレーンテキストとして送信できるようにする</string>
     <string name="allow_plain_text_auth">プレーンテキスト認証を許可する</string>
     <string name="require_tls_ssl_connection">TLS接続が必要</string>
     <string name="transport_encryption">トランスポート暗号化</string>
@@ -100,7 +100,7 @@
     <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\"にブロックされていません。</string>
     <string name="menu_verify">連絡先を確認する</string>
     <string name="empty_conversation_group">会話が開いていないチャットを開始するにはタップしてください！</string>
-    <string name="search_label">接触</string>
+    <string name="search_label">連絡先</string>
     <string name="search_hint">チャットする連絡先の名前を入力してください</string>
     <string name="input_contact_label">あなたの友人のフルネームを入力してください。（例：wrappyisfun.4x3f5g@wrappy.net）</string>
     <!-- Views: Chat: Single -->
@@ -200,7 +200,7 @@
     <!-- Alerts: Dialogs -->
     <string name="bg_data_prompt_message">アプリがログインするには、ネットワークデータ接続（バックグラウンドデータを含む）が必要です。</string>
     <string name="prompt_create_new_account_">新しいアカウントを作成する？</string>
-    <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザー名 \'%1$s\'の新しいチャットアカウントを作成しますか？</string>
+    <string name="allow_s_to_create_a_new_chat_account_for_s_">ユーザーID \'%1$s\'の新しいチャットアカウントを作成しますか？</string>
     <!-- Alerts: Notifications -->
     <string name="subscription_notify_text"><xliff:g id="user">%s</xliff:g>の新しい友だち招待状</string>
     <string name="file_notify_text"><xliff:g id="user">%2$s</xliff:g>の新しいファイル<xliff:g id="filename">%1$s</xliff:g></string>
@@ -233,7 +233,7 @@
     <string name="version_not_supported">サーバーは現在のバージョンをサポートしていません。</string>
     <string name="message_queue_full">メッセージキューがいっぱいです。</string>
     <string name="domain_not_supported">サーバーはドメインへの転送をサポートしていません。</string>
-    <string name="unknown_user">入力したユーザー名は認識されません。</string>
+    <string name="unknown_user">入力したユーザーIDは認識されません。</string>
     <string name="recipient_blocked_the_user">申し訳ありませんが、ユーザーによってブロックされています。</string>
     <string name="session_expired">セッションの有効期限が切れました。もう一度サインインしてください。</string>
     <string name="forced_logout">別のクライアントからサインインしました。</string>
@@ -313,33 +313,33 @@
     <string name="Page1Titlenull"></string>
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">無料</string>
-    <string name="Page3Title">雲</string>
+    <string name="Page3Title">クラウド</string>
     <string name="Page4Title">安全な</string>
     <string name="Page5Title">マジック</string>
-    <string name="Page6Title">強力</string>
+    <string name="Page6Title">ストレージ</string>
     <string name="Page7Title">速い</string>
     <string name="Page8Title">プライバシー</string>
     <string name="Page9Title">エコロジー</string>
-    <string name="Page10Title">フチ無し</string>
+    <string name="Page10Title">ウォレット</string>
     <string name="Page11Title">革命</string>
-    <string name="Page1Message">世界を平坦化する。 これは次世代のSNSプラットフォームです。</string>
-    <string name="Page2Message">Wrappyは自由に使用できます：音声通話、ビデオ通話、テレビ会議を含みます....</string>
-    <string name="Page3Message">Wrappyでは、複数のデバイスからメッセージにアクセスできます。</string>
+    <string name="Page1Message">世界をフラットにする\n次世代SNSプラットフォーム</string>
+    <string name="Page2Message">音声通話、ビデオ通話、グループチャットなどすべて無料</string>
+    <string name="Page3Message">Wrappyでは、様々な機器からメッセージにアクセスできます</string>
     <string name="Page4Message">メッセージは100％暗号化されており、自己破棄することができます</string>
     <string name="Page5Message">あなたは簡単に友人や家族から通貨を送受信できます。</string>
-    <string name="Page6Message">あなたのメディアデータとチャットの記録に無制限のストレージ！</string>
-    <string name="Page7Message">すぐにメッセージを送受信できます。</string>
-    <string name="Page8Message">履歴はいつでも削除できます。</string>
+    <string name="Page6Message">チャット履歴などのストレージ容量無制限！</string>
+    <string name="Page7Message">チャットやメッセージ、送受信もスピーディに</string>
+    <string name="Page8Message">暗号化システムを利用したセキュリティ</string>
     <string name="Page9Message">シンプルな暗号化エコシステム。</string>
-    <string name="Page10Message">通貨は、どの国からでもどこでも使用できます。</string>
-    <string name="Page11Message">革新的かつ絶えず進化する時代のパイオニア。</string>
-    <string name="StartMessaging">メッセージングを開始する</string>
+    <string name="Page10Message">マルチウォレットと連結可能</string>
+    <string name="Page11Message">時代に革命を起こすSNSのパイオニア</string>
+    <string name="StartMessaging">メッセージを開始する</string>
 
-    <string name="id_or_username">ユーザー名の入力</string>
+    <string name="id_or_username">ユーザーIDの入力</string>
     <string name="forget_password">パスワードを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>
-    <string name="search_username">ユーザー名の検索</string>
+    <string name="search_username">ユーザーIDの検索</string>
     <string name="add_contact">連絡先を追加</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
 
@@ -429,7 +429,7 @@
     <string name="input_your_email">あなたの電子メールを入力</string>
     <string name="hint_your_email">あなたのメールアドレス</string>
     <string name="reset_password">パスワードを再設定する</string>
-    <string name="new_group">新しい集団</string>
+    <string name="new_group">新しいブループ</string>
     <string name="about_us">私たちに関しては</string>
     <string name="faq">よくある質問</string>
     <string name="logout">ログアウト</string>
@@ -437,12 +437,12 @@
     <string name="sent">送信済み</string>
     <string name="received">受け取った</string>
     <string name="all">すべて</string>
-    <string name="username">ユーザー名</string>
+    <string name="username">ユーザーID</string>
     <string name="email">Eメール</string>
-    <string name="mobile_phone">携帯電話</string>
+    <string name="mobile_phone">携帯電話番号</string>
     <string name="gender">性別</string>
     <string name="referral">紹介</string>
-    <string name="referral_hint">電話番号</string>
+    <string name="referral_hint">招待コード</string>
     <string name="btn_submit">提出する</string>
     <string name="btn_update">更新</string>
     <string name="hint_answer">回答</string>
@@ -450,7 +450,7 @@
     <string name="choose_new_secret_question">あなたの新しい秘密の質問を選んでください</string>
     <string name="skip">スキップ</string>
     <string name="complete">コンプリート</string>
-    <string name="current_balance">経常収支</string>
+    <string name="current_balance">合計</string>
     <string name="add_photo">写真を追加！</string>
     <string name="error_upload_photo">グループ写真をアップロードできません！</string>
     <string name="error_creating_group">グループの作成失敗</string>
@@ -458,7 +458,7 @@
     <string name="google_play_services_not_available">Google Playサービスはご利用いただけません。</string>
     <string name="english">英語</string>
     <string name="copied_text">コピーされたテキスト</string>
-    <string name="history">歴史</string>
+    <string name="history">履歴</string>
     <string name="activity">アクティビティ</string>
     <string name="error_when_refresh_token">アクセストークンを更新できません：再試行してください！</string>
     <string name="registration">登録</string>
@@ -485,8 +485,8 @@
     <string name="tab_menu_conversation">チャット</string>
     <string name="tab_menu_promotion">プロモーション</string>
     <string name="tab_menu_my_page">私のページ</string>
-    <string name="promotion_invite_friend">友人を招待</string>
-    <string name="promotion_history">歴史</string>
+    <string name="promotion_invite_friend">友達を招待</string>
+    <string name="promotion_history">履歴</string>
     <string name="page_verify">アカウントの確認</string>
     <string name="message_edit">メッセージの編集</string>
     <string name="message_delete">メッセージを削除する</string>
@@ -506,12 +506,12 @@
     <string name="fail">失敗</string>
     <string name="upload_fail">アップロードが失敗しました</string>
     <string name="cancel_and_home">このステップをキャンセルして、ログイン画面に戻りますか？</string>
-    <string name="invite_friends_text">友人を招待</string>
+    <string name="invite_friends_text">友達を招待</string>
     <string name="email_tile">Eメール *</string>
     <string name="logout_noti">あなたがこのデバイスからログアウトしたいですか？</string>
     <string name="share_title">共有方法を選択します。</string>
     <string name="referral_text">あなたの紹介コードを入力します（オプション）</string>
-    <string name="Referral">紹介コード</string>
+    <string name="Referral">招待</string>
     <string name="update_profile">プロフィールを更新</string>
     <string name="question">質問%d</string>
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>
