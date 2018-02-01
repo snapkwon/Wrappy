@@ -34,8 +34,8 @@
     <string name="confirm">Confirm</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="yes">OK</string>
-    <string name="no">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="connect">Connect</string>
     <!-- Views -->
     <string name="title_activity_lock_screen">Wrappy Locked</string>
