@@ -245,6 +245,10 @@ public class AppFuncs {
     }
 
     public static void cropImage(Activity activity, Intent intent, boolean isAvarta) {
+        cropImage(activity, intent, isAvarta, UCrop.REQUEST_CROP);
+    }
+
+    public static void cropImage(Activity activity, Intent intent, boolean isAvarta, int requestCode) {
         Uri source = null;
         if (intent==null) {
             File path = new File(mCurrentPhotoPath);
@@ -262,11 +266,11 @@ public class AppFuncs {
         if (isAvarta) {
             UCrop.of(source, destination)
                     .withAspectRatio(1, 1)
-                    .start(activity);
+                    .start(activity, requestCode);
         } else {
             UCrop.of(source, destination)
                     .withAspectRatio(16, 9)
-                    .start(activity);
+                    .start(activity, requestCode);
         }
 
     }
@@ -432,10 +436,10 @@ public class AppFuncs {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 try {
-                        Gson gson = new Gson();
-                        PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
-                        }.getType());
-                        AppFuncs.shareApp(activity, promotionSetting.getContent());
+                    Gson gson = new Gson();
+                    PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
+                    }.getType());
+                    AppFuncs.shareApp(activity, promotionSetting.getContent());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

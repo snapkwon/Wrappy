@@ -91,6 +91,7 @@ import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity used to pick a contact.
@@ -850,7 +851,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
         private Context mContext;
         private ArrayList<String> groupmember;
-        private String charSection = "";
+        private List<String> charSection = new ArrayList<>();
         private boolean isenablealphabet = false;
 
         public ContactAdapter(Context context, int view) {
@@ -906,21 +907,20 @@ public class ContactsPickerActivity extends BaseActivity {
                 holder.mLine1.setTextColor(holder.mLine1.getCurrentTextColor() | 0xff000000);
             }
             if (isenablealphabet == false) {
-                if (index > 0 && charSection.equalsIgnoreCase(String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)))) {
+                if (index > 0 && charSection.get(index).equalsIgnoreCase(charSection.get(index-1))) {
 
                     holder.linesection.setVisibility(View.INVISIBLE);
                     holder.textsection.setVisibility(View.INVISIBLE);
 
 
                 } else {
-                    charSection = String.valueOf(cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase();
                     holder.textsection.setVisibility(View.VISIBLE);
                     if (index > 0) {
                         holder.linesection.setVisibility(View.VISIBLE);
                     } else {
                         holder.linesection.setVisibility(View.GONE);
                     }
-                    holder.textsection.setText(charSection);
+                    holder.textsection.setText(charSection.get(index));
                 }
             } else {
                 holder.textsection.setVisibility(View.GONE);
@@ -1012,7 +1012,12 @@ public class ContactsPickerActivity extends BaseActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.changeCursor(newCursor);
-
+            mAdapter.charSection.clear();
+            if (newCursor.moveToFirst()) {
+                do {
+                    mAdapter.charSection.add(String.valueOf(newCursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase());
+                } while (newCursor.moveToNext());
+            }
         }
 
         @Override
