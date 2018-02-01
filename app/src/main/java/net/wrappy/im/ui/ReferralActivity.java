@@ -14,6 +14,7 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.layout.AppEditTextView;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.util.PopupUtils;
 
 import butterknife.BindView;
@@ -43,6 +44,7 @@ public class ReferralActivity extends BaseActivity {
 
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
+        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
         String referral = edReferralCode.getText().toString().trim();
         AppFuncs.dismissKeyboard(this);
         if (!TextUtils.isEmpty(referral)) {
@@ -63,6 +65,7 @@ public class ReferralActivity extends BaseActivity {
         PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.ok, R.string.cancel, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
                 MainActivity.start();
             }
         },null);
