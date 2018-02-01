@@ -78,6 +78,9 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
@@ -92,6 +95,7 @@ import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
+import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
@@ -195,6 +199,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private TextView txtStatus;
 
+    WpKChatGroupDto wpKChatGroupDto;
+
     @Override
     public void onHandle(Message msg) {
         handleMessage();
@@ -206,6 +212,13 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             setCustomActionBar(mConvoView.isGroupChat());
         } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
             addSearchViewInActionBar();
+        }
+        if (id == NotificationCenter.updateConversationDetail) {
+            JsonObject jsonObject = (JsonObject) args[0];
+            wpKChatGroupDto = new Gson().fromJson(jsonObject, new TypeToken<WpKChatGroupDto>() {
+            }.getType());
+            AppFuncs.log(jsonObject.toString());
+            setCustomActionBar(mConvoView.isGroupChat());
         }
     }
 
@@ -488,7 +501,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
+        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
+
         String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
         }
@@ -498,15 +514,17 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             } else {
                 GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
-
             status.setVisibility(View.GONE);
+            if (wpKChatGroupDto != null) {
+                txt.setText(wpKChatGroupDto.getName());
+            } else {
+                txt.setText(mNickname);
+            }
         } else {
             GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
             setAvatarStatus(status);
+            txt.setText(mNickname);
         }
-
-        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
-        txt.setText(mNickname);
 
         addCustomViewToActionBar(view);
     }
@@ -708,6 +726,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             isRegisterNotificationCenter = true;
             NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
             NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1374,6 +1393,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
             NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)
