@@ -382,9 +382,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == AVATAR || requestCode == BANNER) {
-                if (data != null) {
-                    AppFuncs.cropImage(getActivity(), data, true);
-                }
+                AppFuncs.cropImage(getActivity(), data, isRequestAvatar);
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 final Uri resultUri = UCrop.getOutput(data);
                 AppFuncs.showProgressWaiting(getActivity());

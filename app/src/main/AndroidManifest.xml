@@ -43,7 +43,7 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false" />
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.wifi"
         android:required="false" />
@@ -74,6 +74,7 @@
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup,android:label">
+
         <meta-data
             android:name="net.wrappy.im.helper.glide.UnsafeOkHttpGlideModule"
             android:value="GlideModule" />
