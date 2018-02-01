@@ -1,7 +1,6 @@
 package net.wrappy.im.util;
 
 import android.content.Context;
-import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -86,10 +85,10 @@ public class Debug {
 
     public static void onConnectionStart() {
         if (DEBUG_ENABLED) {
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-            .detectAll()
-            .penaltyLog()
-            .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//            .detectAll()
+//            .penaltyLog()
+//            .build());
         }
     }
 

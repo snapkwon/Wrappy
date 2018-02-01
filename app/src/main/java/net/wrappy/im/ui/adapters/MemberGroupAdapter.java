@@ -47,16 +47,6 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private WpKChatGroupDto mWpKChatGroupDto;
     private IChatSession session;
 
-    public interface OnItemClickListener {
-        public void onItemClick(int position);
-    }
-
-    private static OnItemClickListener mListener;
-
-    public void setOnItemClickListener(OnItemClickListener clickListener) {
-        MemberGroupAdapter.mListener = clickListener;
-    }
-
     public void setmWpKChatGroupDto(WpKChatGroupDto mWpKChatGroupDto) {
         this.mWpKChatGroupDto = mWpKChatGroupDto;
     }
@@ -123,7 +113,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
         @Override
         public void onClick(View view) {
-            mListener.onItemClick(getAdapterPosition());
+
         }
 
         public void bind(final MemberGroupDisplay member) {

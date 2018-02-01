@@ -10,8 +10,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -225,10 +227,12 @@ public class AppFuncs {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void openPickFolder(Activity activity, int requestCode) {
         openPickFolder(activity, requestCode, null);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void openPickFolder(Activity activity, int requestCode, Uri uri) {
         if ((ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
@@ -256,6 +260,9 @@ public class AppFuncs {
         } else {
             if (intent.getData() != null) {
                 source = intent.getData();
+            } else {
+                File path = new File(mCurrentPhotoPath);
+                source = Uri.fromFile(path);
             }
         }
         if (source == null) {

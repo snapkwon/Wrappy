@@ -44,7 +44,6 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
-import net.wrappy.im.model.SelectedContact;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
@@ -134,6 +133,9 @@ public class SettingConversationActivity extends BaseActivity {
     private List<WpKMemberDto> identifiers = new ArrayList<>();
     long idMemberOwner = -1;
 
+    private String oldGroupName = null;
+    boolean isLoaded = false;
+
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -217,7 +219,7 @@ public class SettingConversationActivity extends BaseActivity {
 
         switch_notification.setChecked(!isMuted());
 
-        boolean isGroup = mContactType == Imps.Contacts.TYPE_GROUP;
+        final boolean isGroup = mContactType == Imps.Contacts.TYPE_GROUP;
         // showing member group chat
 
         mAddMemberLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
@@ -229,10 +231,9 @@ public class SettingConversationActivity extends BaseActivity {
                 groupXmppId = mAddress.split("@")[0];
             }
 
-            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
+//            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
             GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
-            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
 
             if (mIsOwner) {
                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
@@ -247,14 +248,6 @@ public class SettingConversationActivity extends BaseActivity {
             mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
             mGroupRecycleView.setAdapter(memberGroupAdapter);
-
-            memberGroupAdapter.setOnItemClickListener(new MemberGroupAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position) {
-
-                }
-            });
-
 
             RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
@@ -273,6 +266,7 @@ public class SettingConversationActivity extends BaseActivity {
                             GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
                             updateAvatar();
                         }
+                        isLoaded = true;
                         if (identifiers != null) {
                             updateMembers();
                         }
@@ -410,86 +404,87 @@ public class SettingConversationActivity extends BaseActivity {
     @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
             R.id.layout_member_leave_group})
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.layout_search_setting:
-                NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation, "");
-                finish();
+        if(isLoaded) {
+            switch (view.getId()) {
+                case R.id.layout_search_setting:
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
+                    finish();
 //                searchActive();
-                break;
-            case R.id.layout_change_background_setting:
-                mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
-                mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
-                break;
-            case R.id.layout_admin_delete_group:
-                confirmDeleteGroup();
-                break;
-            case R.id.layout_member_leave_group:
-                if (mContactType == Imps.Contacts.TYPE_GROUP) {
-                    confirmLeaveGroup();
-                } else {
-                    clearHistory();
-                }
-                break;
-            case R.id.layout_clean_setting:
-                clearHistory();
-                break;
-            case R.id.btnGroupPhoto:
-                ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-                BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
-                sheetCells.add(sheetCell);
-                sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
-                sheetCells.add(sheetCell);
-                PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
-                    @Override
-                    public void onSelectBottomSheetCell(int index) {
-                        if (index == 1) {
-                            AppFuncs.openCamera(SettingConversationActivity.this, REQUEST_CAMERA);
-                        } else {
-                            AppFuncs.openGallery(SettingConversationActivity.this, REQUEST_CAMERA);
-                        }
+                    break;
+                case R.id.layout_change_background_setting:
+                    mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
+                    mBackgroundFragment.show(getSupportFragmentManager(), "Dialog");
+                    break;
+                case R.id.layout_admin_delete_group:
+                    confirmDeleteGroup();
+                    break;
+                case R.id.layout_member_leave_group:
+                    if (mContactType == Imps.Contacts.TYPE_GROUP) {
+                        confirmLeaveGroup();
+                    } else {
+                        clearHistory();
                     }
-                }).show();
-                break;
-            case R.id.btnEditGroupName:
-                edGroupName.setEnabled(true);
-                edGroupName.setFocusable(true);
-                lnChangeGroupNameController.setVisibility(View.VISIBLE);
-                btnEditGroupName.setVisibility(View.GONE);
-                break;
-            case R.id.btnGroupNameCheck:
-                String name = edGroupName.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    return;
-                }
-                edGroupName.setText(name);
-                wpKChatGroup.setName(name);
-                updateData();
-                edGroupName.setFocusable(false);
-                edGroupName.setEnabled(false);
-                lnChangeGroupNameController.setVisibility(View.GONE);
-                btnEditGroupName.setVisibility(View.VISIBLE);
-                break;
-            case R.id.btnGroupNameClose:
-                edGroupName.setText(wpKChatGroup.getName());
-                edGroupName.setFocusable(false);
-                edGroupName.setEnabled(false);
-                lnChangeGroupNameController.setVisibility(View.GONE);
-                btnEditGroupName.setVisibility(View.VISIBLE);
-                break;
-            case R.id.layout_add_member:
-                Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
-                ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
-                for (MemberGroupDisplay member : memberGroupDisplays) {
-                    usernames.add(member.getNickname());
-                }
-                intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
-                intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, wpKChatGroup);
-                intent.putExtra("type", PICKER_ADD_MEMBER);
-                intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, true);
-                intent.putExtra(BundleKeyConstant.EXTRA_CHAT_ID, mLastChatId);
+                    break;
+                case R.id.layout_clean_setting:
+                    clearHistory();
+                    break;
+                case R.id.btnGroupPhoto:
+                    ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
+                    BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
+                    sheetCells.add(sheetCell);
+                    sheetCell = new BottomSheetCell(2, R.drawable.ic_choose_gallery, getString(R.string.popup_choose_gallery));
+                    sheetCells.add(sheetCell);
+                    PopupUtils.createBottomSheet(this, sheetCells, new BottomSheetListener() {
+                        @Override
+                        public void onSelectBottomSheetCell(int index) {
+                            if (index == 1) {
+                                AppFuncs.openCamera(SettingConversationActivity.this, REQUEST_CAMERA);
+                            } else {
+                                AppFuncs.openGallery(SettingConversationActivity.this, REQUEST_CAMERA);
+                            }
+                        }
+                    }).show();
+                    break;
+                case R.id.btnEditGroupName:
+                    edGroupName.setEnabled(true);
+                    edGroupName.setFocusable(true);
+                    lnChangeGroupNameController.setVisibility(View.VISIBLE);
+                    btnEditGroupName.setVisibility(View.GONE);
+                    break;
+                case R.id.btnGroupNameCheck:
+                    String name = edGroupName.getText().toString().trim();
+                    if (TextUtils.isEmpty(name)) {
+                        return;
+                    }
+                    wpKChatGroup.setName(name);
+                    updateData();
+                    edGroupName.setFocusable(false);
+                    edGroupName.setEnabled(false);
+                    lnChangeGroupNameController.setVisibility(View.GONE);
+                    btnEditGroupName.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.btnGroupNameClose:
+                    edGroupName.setText(wpKChatGroup.getName());
+                    edGroupName.setFocusable(false);
+                    edGroupName.setEnabled(false);
+                    lnChangeGroupNameController.setVisibility(View.GONE);
+                    btnEditGroupName.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.layout_add_member:
+                    Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
+                    ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
+                    for (MemberGroupDisplay member : memberGroupDisplays) {
+                        usernames.add(member.getNickname());
+                    }
+                    intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
+                    intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, wpKChatGroup);
+                    intent.putExtra("type", PICKER_ADD_MEMBER);
+                    intent.putExtra(BundleKeyConstant.EXTRA_EXCLUDED_CONTACTS, true);
+                    intent.putExtra(BundleKeyConstant.EXTRA_CHAT_ID, mLastChatId);
 
-                startActivityForResult(intent, REQUEST_PICK_CONTACT);
-                break;
+                    startActivityForResult(intent, REQUEST_PICK_CONTACT);
+                    break;
+            }
         }
     }
 
@@ -498,7 +493,6 @@ public class SettingConversationActivity extends BaseActivity {
         String nickname = imApp.getDefaultUsername().split("@")[0];
         new GroupChatSessionTask(this, group, invitees, conn, false).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
     }
-
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
@@ -549,18 +543,35 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateData() {
-        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
         RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
-                    updateAvatarAndNotify(true);
+                    if (wpKChatGroup.getIcon() != null) {
+                        updateAvatarAndNotify(true);
+                    }
+                    updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
 
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }
         });
+    }
+
+    private int updateGroupNameInDB(String newGroupName, String oldGroupName) {
+        Uri uri = Imps.Contacts.CONTENT_URI;
+//        Imps.Chats.CONTENT_URI
+
+        String selection = Imps.Contacts.USERNAME + "='" + oldGroupName + "'";
+
+        ContentValues values = new ContentValues();
+        values.put(Imps.Contacts.NICKNAME, newGroupName);
+
+        int ret = getContentResolver().update(uri, values, selection, null);
+        return ret;
     }
 
     private void updateAvatar() {

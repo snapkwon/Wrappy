@@ -1867,6 +1867,7 @@ public class XmppConnection extends ImConnection {
         }
 
         mConfig.setProxyInfo(mProxyInfo);
+        mConfig.setSocketFactory(XMPPSocketFactory.getInstance());
 
         mConfig.setDebuggerEnabled(Debug.DEBUG_ENABLED);
         SmackConfiguration.DEBUG = Debug.DEBUG_ENABLED;
