@@ -3,11 +3,15 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -106,8 +110,15 @@ public class ProfileFragment extends BaseFragmentV4 {
     ImageButton btnProfileCameraHeader;
     @BindView(R.id.spnProfile)
     AppCompatSpinner spnProfile;
+    @BindView(R.id.lnProfilePhone) LinearLayout lnProfilePhone;
+    @BindView(R.id.lnProfileEmail) LinearLayout lnProfileEmail;
+    @BindView(R.id.lnProfileGender) LinearLayout lnProfileGender;
+    @BindView(R.id.lnProfileUsername) LinearLayout lnProfileUsername;
+    @BindView(R.id.txtClientName) AppTextView txtClientName;
 
     ArrayAdapter adapterGender;
+    private MyLoaderCallbacks mLoaderCallbacks;
+    private LoaderManager mLoaderManager;
 
     String email, gender;
 
@@ -120,6 +131,70 @@ public class ProfileFragment extends BaseFragmentV4 {
         ProfileFragment profileFragment = new ProfileFragment();
         profileFragment.setArguments(bundle);
         return profileFragment;
+    }
+
+    class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            StringBuilder buf = new StringBuilder();
+
+            buf.append('(');
+            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
+            buf.append(" = ");
+            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
+            buf.append(')');
+            Uri.Builder builder = Imps.Account.CONTENT_URI.buildUpon();
+            Uri mUri = builder.build();
+            CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
+                    buf == null ? null : buf.toString(), null, null);
+
+            return loader;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+            if (newCursor == null)
+                return; // the app was quit or something while this was working
+
+            if (newCursor.moveToFirst()){
+                String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
+                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
+                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
+                String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
+                if (!TextUtils.isEmpty(c_name)) {
+                    txtUsername.setText(c_name);
+                    String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),c_name+"@"+Constant.DOMAIN);
+                    if (!TextUtils.isEmpty(reference)) {
+                        GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
+                    }
+                }
+                if (!TextUtils.isEmpty(c_email)) {
+                    String upperString = c_email.substring(0, 1).toUpperCase() + c_email.substring(1).toLowerCase();
+                    edEmail.setText(upperString);
+                }
+                if (!TextUtils.isEmpty(c_phone)) {
+                    edPhone.setText(c_phone);
+                }
+                if (!TextUtils.isEmpty(c_gender)) {
+                    edGender.setText(c_gender);
+                }
+            }
+
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+
+        public final String[] CHAT_PROJECTION = { Imps.AccountColumns.ACCOUNT_NAME,
+                Imps.AccountColumns.ACCOUNT_EMAIL,
+                Imps.AccountColumns.ACCOUNT_PHONE,
+                Imps.AccountColumns.ACCOUNT_GENDER,
+                Imps.AccountColumns.USERNAME
+        };
+
+
     }
 
     @Override
@@ -145,9 +220,19 @@ public class ProfileFragment extends BaseFragmentV4 {
                 jid = mApp.getDefaultUsername().split("@")[0];
                 linearForContact.setVisibility(View.GONE);
             }
+            mLoaderCallbacks = new MyLoaderCallbacks();
+            mLoaderManager = getLoaderManager();
+            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
         } else {
+            lnProfileEmail.setVisibility(View.GONE);
+            lnProfileGender.setVisibility(View.GONE);
+            lnProfilePhone.setVisibility(View.GONE);
             linearForSeft.setVisibility(View.GONE);
+            lnProfileUsername.setVisibility(View.GONE);
+            txtClientName.setText(jid);
         }
+
+
         mContactId = getArguments().getLong("contactId");
         mNickname = getArguments().getString("nickName");
         reference = getArguments().getString("nickName");

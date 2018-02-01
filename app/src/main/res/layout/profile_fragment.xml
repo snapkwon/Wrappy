@@ -52,6 +52,15 @@
                         android:orientation="horizontal">
 
                         <include layout="@layout/add_avarta_layout" />
+
+                        <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtClientName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/AppText02"
+                            android:layout_marginLeft="10dp"
+                            android:layout_gravity="center_vertical"/>
+
                     </LinearLayout>
 
 
@@ -62,6 +71,7 @@
                         android:orientation="vertical">
 
                         <LinearLayout
+                            android:id="@+id/lnProfileUsername"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#fff"
@@ -87,6 +97,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/lnProfilePhone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -123,6 +134,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/lnProfileEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -158,6 +170,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/lnProfileGender"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
