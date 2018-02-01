@@ -15,10 +15,16 @@ public class ChatSessionTask extends AsyncTask<String, Long, String> {
 
     private static final int DELETE = 0;
     private static final int LEAVE = 1;
+    private static final int MODIFIED = 2;
     private int type = 0;
 
     public ChatSessionTask leave() {
         this.type = LEAVE;
+        return this;
+    }
+
+    public ChatSessionTask modifyGroupName() {
+        this.type = MODIFIED;
         return this;
     }
 
@@ -39,6 +45,11 @@ public class ChatSessionTask extends AsyncTask<String, Long, String> {
                         session.delete();
                     } else if (type == LEAVE) {
                         session.leave();
+                    } else if (type == MODIFIED) {
+                        if (params.length > 1) {
+                            String groupName = params[1];
+                            session.setGroupChatSubject(groupName);
+                        }
                     }
                 }
 
