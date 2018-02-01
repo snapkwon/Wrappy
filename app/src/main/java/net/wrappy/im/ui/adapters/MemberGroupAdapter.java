@@ -117,7 +117,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         }
 
         public void bind(final MemberGroupDisplay member) {
-            String referenceAvatar;
+
 
             if(member.getNickname() != null && !member.getNickname().isEmpty())
             {
@@ -125,18 +125,16 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
                 GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
 
-                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
             }
             else {
                 String[] name = member.getUsername().split("@");
                 line1.setText(name[0]);
                 GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, name[0]);
-                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), name[0]);
             }
 
 
-            if (!TextUtils.isEmpty(referenceAvatar)) {
-                GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(referenceAvatar));
+            if (!TextUtils.isEmpty(member.getReferenceAvatar())) {
+                GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(member.getReferenceAvatar()));
             }
 
             if (currentUser.equals(mAdminGroup)) {

@@ -301,6 +301,9 @@ public class SettingConversationActivity extends BaseActivity {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
                     member.setNickname(memberDto.getIdentifier());
+                    if(memberDto.getAvatar()!=null) {
+                        member.setReferenceAvatar(memberDto.getAvatar().getReference());
+                    }
                     if (memberDto.getId() == idMemberOwner) {
                         member.setAffiliation("owner");
                         if (member.getNickname().equals(mLocalAddress)) {
