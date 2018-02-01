@@ -256,6 +256,9 @@ public class AppFuncs {
         } else {
             if (intent.getData() != null) {
                 source = intent.getData();
+            } else {
+                File path = new File(mCurrentPhotoPath);
+                source = Uri.fromFile(path);
             }
         }
         if (source == null) {

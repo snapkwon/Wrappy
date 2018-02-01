@@ -64,7 +64,6 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         appDelegate = (AppDelegate) activity;
     }
 
-    AppFuncs appFuncs;
 
     public static ForgetPasswordQuestionFragment newInstance(int type) {
         ForgetPasswordQuestionFragment fragment = new ForgetPasswordQuestionFragment();
@@ -79,7 +78,6 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.forget_password_question_fragment, null);
         ButterKnife.bind(this, mainView);
-        appFuncs = AppFuncs.getInstance();
         type = getArguments().getInt(TYPE, 0);
         if (type == 1) {
             txtSecurityQuestionTitle.setText(getString(R.string.security_change_old_question));
@@ -192,10 +190,17 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
+                AppFuncs.dismissProgressWaiting();
                 if ("true".equals(s))
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
                 else
                     AppFuncs.alert(getActivity(), getString(R.string.error_wrong_answer_1st), true);
+            }
+
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
+                AppFuncs.dismissProgressWaiting();
             }
         });
     }
