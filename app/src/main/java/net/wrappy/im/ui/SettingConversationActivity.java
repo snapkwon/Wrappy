@@ -148,9 +148,11 @@ public class SettingConversationActivity extends BaseActivity {
                                 mAdminDeleteGroup.setVisibility(View.VISIBLE);
                                 mMemberLeaveGroup.setVisibility(View.GONE);
                                 mAddMemberLayout.setVisibility(View.VISIBLE);
+                                btnGroupPhoto.setEnabled(true);
                         }
                         else
                         {
+                                btnGroupPhoto.setEnabled(false);
                                 mAddMemberLayout.setVisibility(View.GONE);
                         }
                         memberGroupAdapter.setAdmin(member.getNickname());
@@ -194,7 +196,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                 mSession = mConn.getChatSessionManager().getChatSession(mAddress);
 
-                if (mSession != null) {
+               /* if (mSession != null) {
                     mGroupOwner = mSession.getGroupChatOwner();
                     if (mGroupOwner != null) {
                         mIsOwner = mGroupOwner.getAddress().getUser().equals(mLocalAddress);
@@ -205,7 +207,7 @@ public class SettingConversationActivity extends BaseActivity {
                     } else {
                         btnGroupPhoto.setEnabled(false);
                     }
-                }
+                }*/
             } else {
                 finish();
                 return;
@@ -338,6 +340,9 @@ public class SettingConversationActivity extends BaseActivity {
                                     if(memberDto.getId() ==idMemberOwner )
                                     {
                                         member.setAffiliation("owner");
+                                        if (member.getUsername().equals(mLocalAddress)) {
+                                            mIsOwner = true;
+                                        }
                                     }
                                     else
                                     {
@@ -506,6 +511,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             } else if (requestCode == REQUEST_CAMERA) {
                 AppFuncs.cropImage(this, data, true);
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting,"");
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(data);
                 btnGroupPhoto.setImageURI(uri);
@@ -538,6 +544,7 @@ public class SettingConversationActivity extends BaseActivity {
                     AppFuncs.log(s);
                     updateAvatarAndNotify(true);
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting,"");
                 }
             }
         });
