@@ -1,44 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/chat_room_avatar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/avatar"/>
+    <RelativeLayout
+        android:id="@+id/relAvatar"
+        android:layout_gravity="center_vertical"
+        android:layout_width="35dp"
+        android:layout_height="35dp">
+        <ImageView
+            android:id="@+id/chat_room_avatar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/avatar"/>
+        <ImageView
+            android:id="@+id/chat_room_status"
+            android:layout_width="9.8dp"
+            android:layout_height="9.8dp"
+            android:src="@drawable/status_active"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"/>
+    </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/chat_room_status"
-        android:layout_width="9.8dp"
-        android:layout_height="9.8dp"
-        android:src="@drawable/status_active"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"/>
-
-    <net.wrappy.im.helper.layout.AppTextView
-        android:id="@+id/chat_room_nickname"
-        android:layout_width="130dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#ffffff"
-        android:layout_toRightOf="@id/chat_room_avatar"
-        android:layout_marginLeft="10dp" />
+        android:layout_gravity="center_vertical"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal">
+        <net.wrappy.im.helper.layout.AppTextView
+            android:id="@+id/chat_room_nickname"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="10dp" />
 
-    <SearchView
-        android:id="@+id/searchtext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
-        android:icon="@drawable/ic_chat_menu_search"
-        android:iconifiedByDefault="false"
-        android:searchIcon="@null"
-        android:background="@drawable/background_search_view"
-        app:showAsAction="always|collapseActionView"
-        android:visibility="gone"/>
+        <SearchView
+            android:id="@+id/searchtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:icon="@drawable/ic_chat_menu_search"
+            android:iconifiedByDefault="false"
+            android:searchIcon="@null"
+            android:background="@drawable/background_search_view"
+            android:visibility="gone"/>
+    </LinearLayout>
 
-</RelativeLayout>
+
+
+
+
+</LinearLayout>
