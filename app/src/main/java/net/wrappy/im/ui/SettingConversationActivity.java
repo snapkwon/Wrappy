@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +52,7 @@ import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.ChatSessionTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.conference.ConferenceConstant;
@@ -556,12 +558,16 @@ public class SettingConversationActivity extends BaseActivity {
                         updateAvatarAndNotify(true);
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
+                    changeGroupNameXmpp();
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
-
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }
         });
+    }
+
+    private void changeGroupNameXmpp() {
+        new ChatSessionTask().modifyGroupName().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, wpKChatGroup.getName());
     }
 
     private int updateGroupNameInDB(String newGroupName, String oldGroupName) {
