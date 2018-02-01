@@ -48,7 +48,6 @@ import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
@@ -59,7 +58,6 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
@@ -304,7 +302,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
                     member.setNickname(memberDto.getIdentifier());
-                    if(memberDto.getAvatar()!=null) {
+                    if (memberDto.getAvatar() != null) {
                         member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }
                     if (memberDto.getId() == idMemberOwner) {
@@ -410,10 +408,10 @@ public class SettingConversationActivity extends BaseActivity {
     @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
             R.id.layout_member_leave_group})
     public void onClick(View view) {
-        if(isLoaded) {
+        if (isLoaded) {
             switch (view.getId()) {
                 case R.id.layout_search_setting:
-                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation, "");
                     finish();
 //                searchActive();
                     break;
@@ -572,8 +570,7 @@ public class SettingConversationActivity extends BaseActivity {
             @Override
             protected void onError(int errorCode) {
                 super.onError(errorCode);
-                AppFuncs.alert(getApplicationContext(), wpKChatGroup.getName(), false);
-                if (wpKChatGroup.getIcon()!=null) {
+                if (wpKChatGroup.getIcon() != null) {
                     GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
                 }
                 runOnUiThread(new Runnable() {
