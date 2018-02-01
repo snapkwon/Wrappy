@@ -34,11 +34,9 @@ import android.util.Log;
 
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.AddContactActivity;
 import net.wrappy.im.ui.IntroActivity;
 import net.wrappy.im.ui.LockScreenActivity;
-import net.wrappy.im.ui.ReferralActivity;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
@@ -330,15 +328,9 @@ public class RouterActivity extends Activity implements ICacheWordSubscriber {
     }
 
     void showMain() {
-        boolean isReferral = Store.getBooleanData(getApplicationContext(),Store.REFERRAL);
-        if (!isReferral) {
-            Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            ImApp.sImApp.startActivity(intent);
-        } else {
-            ReferralActivity.start();
-        }
-
+        Intent intent = new Intent(ImApp.sImApp, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        ImApp.sImApp.startActivity(intent);
     }
 
     void openChat(String username) {

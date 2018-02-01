@@ -34,8 +34,8 @@
     <string name="confirm">確認</string>
     <string name="ok">[OK]</string>
     <string name="cancel">キャンセル</string>
-    <string name="yes">[OK]</string>
-    <string name="no">キャンセル</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
     <string name="connect">接続する</string>
     <!-- Views -->
     <string name="title_activity_lock_screen">Wrappy Locked</string>
@@ -516,7 +516,7 @@
     <string name="question">質問%d</string>
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>
     <string name="remove_member_success">このグループには%sの削除</string>
-    <string name="skip_referral">このステップをキャンセルして、ホーム画面に行きますか？</string>
+    <string name="skip_referral">招待コードを入力しなくて本当によろしいですか？+100PTSのボーナスがゲット出来ません。</string>
     <string name="create_by">%sで作成します。</string>
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>

@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
@@ -263,7 +264,8 @@ public class VerifyCodeFragment extends Fragment {
                                             AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                                         } else {
                                             AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
-                                            ReferralActivity.start();
+                                            Store.putBooleanData(getActivity(),Store.REFERRAL,true);
+                                            MainActivity.start();
                                             getActivity().finish();
                                         }
                                     }

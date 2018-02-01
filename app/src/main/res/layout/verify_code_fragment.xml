@@ -30,14 +30,14 @@
 
         <net.wrappy.im.helper.layout.AppEditTextView
             android:id="@+id/edVerifyPhone"
-            style="@style/AppText_Default_Light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:minWidth="100dp"
             android:textColor="#007aff"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            style="@style/EditText_Phone"/>
 
         <ImageButton
             android:id="@+id/btnVerifyChangePhone"

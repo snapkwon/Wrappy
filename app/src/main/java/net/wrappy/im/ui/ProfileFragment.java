@@ -159,8 +159,8 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             if (newCursor.moveToFirst()){
                 String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
-                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
-                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
+                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
+                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
                 String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
                 if (!TextUtils.isEmpty(c_name)) {
                     txtUsername.setText(c_name);
@@ -169,15 +169,15 @@ public class ProfileFragment extends BaseFragmentV4 {
                         GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
                     }
                 }
-                if (!TextUtils.isEmpty(c_email)) {
-                    String upperString = c_email.substring(0, 1).toUpperCase() + c_email.substring(1).toLowerCase();
-                    edEmail.setText(upperString);
+                if (!TextUtils.isEmpty(c_gender)) {
+                    String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
+                    edGender.setText(upperString);
                 }
                 if (!TextUtils.isEmpty(c_phone)) {
                     edPhone.setText(c_phone);
                 }
-                if (!TextUtils.isEmpty(c_gender)) {
-                    edGender.setText(c_gender);
+                if (!TextUtils.isEmpty(c_email)) {
+                    edEmail.setText(c_email);
                 }
             }
 
@@ -323,10 +323,8 @@ public class ProfileFragment extends BaseFragmentV4 {
                     }
                     if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                         GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
-                        //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                     }
 
-                    //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

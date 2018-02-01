@@ -91,6 +91,7 @@ import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.ui.ConversationListFragment;
 import net.wrappy.im.ui.MainMenuFragment;
 import net.wrappy.im.ui.ProfileFragment;
+import net.wrappy.im.ui.ReferralActivity;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.promotion.MainPromotionFragment;
 import net.wrappy.im.util.AssetUtil;
@@ -182,7 +183,10 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 
-
+        boolean isReferral = Store.getBooleanData(getApplicationContext(),Store.REFERRAL);
+        if (isReferral) {
+            ReferralActivity.start();
+        }
         mApp = (ImApp) getApplication();
         btnHeaderSearch.setVisibility(View.GONE);
         initFloatButton();
