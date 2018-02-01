@@ -1270,7 +1270,12 @@ public class ContactListManagerAdapter extends
         putStringArrayList(values, Imps.Contacts.NICKNAME, nicknames);
         putStringArrayList(values, Imps.Contacts.TYPE, contactTypeArray);
 
-        mResolver.insert(Imps.Contacts.BULK_CONTENT_URI, values);
+        try {
+            mResolver.insert(Imps.Contacts.BULK_CONTENT_URI, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void putStringArrayList(ContentValues values, String key, ArrayList<String> nicknames) {
