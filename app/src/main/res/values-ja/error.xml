@@ -4,8 +4,8 @@
     <string name="error_empty_answer">質問%dの答えは空です</string>
     <string name="error_min_length_answer">質問%dのあなたの答えは、少なくとも3つの文字を持っている必要があります</string>
     <string name="error_duplicate_answer">あなたの答えは異なっている必要があります</string>
-    <string name="error_invalid_text_length">ユーザー名は、少なくとも6つの文字でなければなりません</string>
-    <string name="error_invalid_characters">ユーザー名は、特殊文字を含めることはできません</string>
+    <string name="error_invalid_text_length">ユーザーIDは、少なくとも6つの文字でなければなりません</string>
+    <string name="error_invalid_characters">ユーザーIDは、特殊文字を含めることはできません</string>
     <string name="error_empty_phone">携帯電話番号を入力してください</string>
     <string name="error_empty_email">入力してくださいメールアドレス</string>
     <string name="error_empty_passcode">パスコードを入力してください</string>
@@ -13,7 +13,7 @@
     <string name="error_invalid_email">メールアドレスが有効な形式ではありません</string>
     <string name="error_group_name_empty">グループ名を入力してください</string>
     <string name="error_group_empty">メンバーを選択してください</string>
-    <string name="error_empty_username">ユーザー名を入力してください</string>
+    <string name="error_empty_username">ユーザーIDを入力してください</string>
     <string name="error_wrong_answer_1st">間違った回答！再試行する</string>
     <string name="error_wrong_answer_2nd">間違った回答！メールでお試しください</string>
 
@@ -36,8 +36,8 @@
     <string name="error_8017">登録は存在しません。</string>
     <string name="error_8020">電子メールを送信することはできません</string>
     <string name="error_8021">SMSは、文字の制限を超えました</string>
-    <string name="error_8022">ユーザー名は既に存在します</string>
-    <string name="error_8023">携帯電話の番号はすでに存在します</string>
+    <string name="error_8022">ユーザーIDは既に存在します</string>
+    <string name="error_8023">携帯電話番号はすでに存在します</string>
     <string name="error_8024">メールは既に存在します</string>
     <string name="error_8025">リソースが存在しません。</string>
     <string name="error_8026">メンバーのセキュリティ質問が見つかりません。</string>
@@ -48,6 +48,6 @@
     <string name="error_8031">紹介コードは存在しません。</string>
     <string name="error_8032">失敗したXMPPにユーザーを作成します。</string>
     <string name="error_8033">おっとっと！あなたは間違ったセキュリティの質問に答え</string>
-    <string name="error_8034">ユーザー名またはパターンが正しくありません</string>
+    <string name="error_8034">ユーザーIDまたはパターンが正しくありません</string>
 
 </resources>

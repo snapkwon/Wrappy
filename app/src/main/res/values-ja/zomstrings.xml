@@ -11,7 +11,7 @@
     <string name="invite_share">シェア</string>
     <string name="invite_scan_qr">スキャン</string>
     <string name="sign_in_message">既存のアカウントにサインインする</string>
-    <string name="add_friends">友達に追加する</string>
+    <string name="add_friends">友人を追加</string>
     <string name="search_by_id">IDで検索</string>
     <string name="invite_accepted">あなたは今&appName;の友達です</string>
     <string name="choose_friend">友達を選ぶ</string>
@@ -20,7 +20,7 @@
     <string name="recording_release">録音…送信して送信</string>
     <string name="recording_delete">録音…削除して削除</string>
     <string name="swipe_up_delete">スワイプして削除する</string>
-    <string name="create_group">グループを作成する</string>
+    <string name="create_group">グループを作成</string>
     <string name="members">メンバー</string>
     <string name="photo_gallery">写真ストリーム</string>
     <string name="select_avatar">アバターを選択または作成する</string>
@@ -70,7 +70,7 @@
     <string name="title_pending">承認待ちの</string>
 
 
-    <string name="action_add_buddy">友人を追加する</string>
+    <string name="action_add_buddy">友人を追加</string>
     <string name="action_leave">離れる</string>
     <string name="add_people">人々を追加</string>
     <string name="turn_notifications_on">通知をオンにする</string>

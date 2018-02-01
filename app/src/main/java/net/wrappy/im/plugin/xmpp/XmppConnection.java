@@ -2253,10 +2253,14 @@ public class XmppConnection extends ImConnection {
 
                 rec.setID(smackMessage.getStanzaId());
 
-                if (isOmemo)
-                    rec.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
-                else
-                    rec.setType(Imps.MessageType.INCOMING);
+                if (isLoadOld && rec.getTo().getUser().equals(rec.getFrom().getResource())) {
+                    rec.setType(Imps.MessageType.OUTGOING_ENCRYPTED_VERIFIED);
+                } else {
+                    if (isOmemo)
+                        rec.setType(Imps.MessageType.INCOMING_ENCRYPTED_VERIFIED);
+                    else
+                        rec.setType(Imps.MessageType.INCOMING);
+                }
 
                 // Detect if this was said by us, and mark message as outgoing
                 if (isGroupMessage) {

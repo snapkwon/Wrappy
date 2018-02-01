@@ -398,8 +398,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         super.onResume();
         if (!isRegisterNotification) {
             isRegisterNotification = true;
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.networkStateChange);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.loadMyPage);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.loadMyPage);
         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
@@ -418,8 +418,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
     protected void onDestroy() {
         super.onDestroy();
         if (isRegisterNotification) {
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.networkStateChange);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.loadMyPage);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.networkStateChange);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.loadMyPage);
         }
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
@@ -517,7 +517,8 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER || requestCode == UCrop.REQUEST_CROP) {
+            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER
+                    || requestCode == UCrop.REQUEST_CROP || requestCode == ProfileFragment.CROP_BANNER || requestCode == ProfileFragment.CROP_AVATAR) {
                 try {
                     ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
                     profileFragment.onActivityResult(requestCode, resultCode, data);
