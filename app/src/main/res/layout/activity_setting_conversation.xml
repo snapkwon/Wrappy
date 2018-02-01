@@ -57,7 +57,8 @@
                             android:inputType="text"
                             app:font_type="bold"
                             android:textSize="17sp"
-                            android:textColor="#444344"/>
+                            android:textColor="#444344"
+                            android:minWidth="100dp"/>
                         <net.wrappy.im.helper.layout.AppTextView
                             android:id="@+id/edGroupSubText"
                             style="@style/app_edittext_default"

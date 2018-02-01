@@ -536,15 +536,17 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateData() {
-        JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
         RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
-                    updateAvatarAndNotify(true);
+                    if (wpKChatGroup.getIcon() != null) {
+                        updateAvatarAndNotify(true);
+                    }
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
-                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting,"");
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }
         });
