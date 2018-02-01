@@ -753,7 +753,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                 @Override
                 public void onFinishTask(Long chatId) {
                     if (chatId != -1 && openChat) {
-                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId, ImApp.getNickname(new XmppAddress(username).getBareAddress()), null));
+                        startActivity(ConversationDetailActivity.getStartIntent(MainActivity.this, chatId, ImApp.getNickname(new XmppAddress(username).getBareAddress()), null, username));
                     }
                 }
             });

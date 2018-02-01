@@ -521,7 +521,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 txt.setText(mNickname);
             }
         } else {
-            GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
+            if (TextUtils.isEmpty(mReference)) {
+                GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
+            } else {
+                GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
+            }
             setAvatarStatus(status);
             txt.setText(mNickname);
         }
