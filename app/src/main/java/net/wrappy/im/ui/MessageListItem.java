@@ -17,6 +17,7 @@
 
 package net.wrappy.im.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -348,7 +349,7 @@ public class MessageListItem extends FrameLayout {
     private void bindLocation(String lastMessage) {
         String latLng = lastMessage.replace(ConferenceConstant.SEND_LOCATION_FREFIX, "");
         final String[] coordinates = latLng.split(":");
-        if (mHolder != null) {
+        if (mHolder != null && coordinates.length != 0) {
             Glide.with(context).load(ConferenceUtils.getGoogleMapThumbnail(coordinates[0], coordinates[1])).into(mHolder.mMediaThumbnail);
             mHolder.mMediaThumbnail.setVisibility(VISIBLE);
             mHolder.mTextViewForMessages.setVisibility(View.GONE);
@@ -360,6 +361,8 @@ public class MessageListItem extends FrameLayout {
                     openMapIntent(coordinates[0], coordinates[1]);
                 }
             });
+        } else {
+
         }
     }
 
@@ -506,13 +509,15 @@ public class MessageListItem extends FrameLayout {
             context.startActivity(intent);
 
         } else {
-            if (isIncoming)
-                PopupUtils.showOKCancelDialog(context, "", context.getString(R.string.message_download_attachment), new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppFuncs.openPickFolder((Activity) context, ConversationDetailActivity.REQUEST_PICK_FOLDER, mediaUri);
-                    }
-                }, null);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+                if (isIncoming)
+                    PopupUtils.showOKCancelDialog(context, "", context.getString(R.string.message_download_attachment), new OnClickListener() {
+                        @SuppressLint("NewApi")
+                        @Override
+                        public void onClick(View v) {
+                            AppFuncs.openPickFolder((Activity) context, ConversationDetailActivity.REQUEST_PICK_FOLDER, mediaUri);
+                        }
+                    }, null);
 //            exportMediaFile();
         }
     }

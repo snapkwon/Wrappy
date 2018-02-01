@@ -46,6 +46,7 @@ import net.wrappy.im.model.Avatar;
 import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
+import net.wrappy.im.model.MemberAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
@@ -290,7 +291,8 @@ public class ProfileFragment extends BaseFragmentV4 {
                 Gson gson = new Gson();
                 try {
                     AppFuncs.log("load: " + s);
-                    wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
+                    MemberAccount account = gson.fromJson(s, MemberAccount.class);
+                    wpKMemberDto = account.getWpKMemberDto();
                     wpKMemberDtoTemp = gson.fromJson(s, WpKMemberDto.getType());
                     txtUsername.setText(wpKMemberDto.getIdentifier());
                     edEmail.setText(wpKMemberDto.getEmail());
@@ -327,7 +329,12 @@ public class ProfileFragment extends BaseFragmentV4 {
                 }
             }
         });
-        RestAPI.GetDataWrappy(getActivity(), url, listener);
+        if (!isSelf) {
+            RestAPI.GetDataWrappy(getActivity(), url, listener);
+        } else {
+            RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_MEMBER_INFO, listener);
+        }
+
     }
 
     private void logout() {

@@ -57,7 +57,7 @@ public class ReferralActivity extends BaseActivity {
                 }
             });
         } else {
-            MainActivity.start();
+            onBackPressed();
         }
     }
 

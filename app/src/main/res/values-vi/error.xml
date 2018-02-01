@@ -2,7 +2,7 @@
 <resources>
     <string name="error_question_duplicate">Câu hỏi bí mật bị trùng, bạn hãy chọn câu khác</string>
     <string name="error_empty_answer">Câu trả lời của câu hỏi %d không được để trống</string>
-    <string name="error_min_length_answer">Câu trả lời cần có ít nhất 3 chữ cái</string>
+    <string name="error_min_length_answer">Câu trả lời %d cần có ít nhất 3 chữ cái</string>
     <string name="error_duplicate_answer">Câu trả lời của bạn phải khác nhau</string>
     <string name="error_invalid_text_length">Tên truy cập phải có ít nhất 6 ký tự</string>
     <string name="error_invalid_characters">Tên người dùng không thể chứa ký tự đặc biệt</string>
