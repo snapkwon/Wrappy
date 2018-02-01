@@ -115,6 +115,7 @@ public class SettingConversationActivity extends BaseActivity {
     private Contact mGroupOwner;
     private boolean mIsOwner = false;
     WpKChatGroupDto wpKChatGroup;
+    WpKChatGroupDto wpKChatGroupTemp;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
@@ -443,7 +444,8 @@ public class SettingConversationActivity extends BaseActivity {
                     if (TextUtils.isEmpty(name)) {
                         return;
                     }
-                    wpKChatGroup.setName(name);
+                    wpKChatGroupTemp = wpKChatGroup;
+                    wpKChatGroupTemp.setName(name);
                     updateData();
                     edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
@@ -517,7 +519,8 @@ public class SettingConversationActivity extends BaseActivity {
                             final String reference = RestAPI.getPhotoReference(result.getResult());
                             WpKIcon wpKIcon = new WpKIcon();
                             wpKIcon.setReference(reference);
-                            wpKChatGroup.setIcon(wpKIcon);
+                            wpKChatGroupTemp = wpKChatGroup;
+                            wpKChatGroupTemp.setIcon(wpKIcon);
                             updateData();
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -530,12 +533,14 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateData() {
-        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
+        AppFuncs.log("updateData");
+        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroupTemp);
         RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
+                    wpKChatGroup = wpKChatGroupTemp;
                     if (wpKChatGroup.getIcon() != null) {
                         updateAvatarAndNotify(true);
                     }
@@ -544,6 +549,21 @@ public class SettingConversationActivity extends BaseActivity {
 
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
+            }
+
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
+                AppFuncs.alert(getApplicationContext(), wpKChatGroup.getName(), false);
+                if (wpKChatGroup.getIcon()!=null) {
+                    GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edGroupName.setText(wpKChatGroup.getName());
+                    }
+                });
             }
         });
     }
