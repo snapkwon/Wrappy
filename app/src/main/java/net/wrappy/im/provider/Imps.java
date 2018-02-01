@@ -826,7 +826,7 @@ public class Imps {
 
         public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
             String ret = null;
-            String selection = NICKNAME + "=?";
+            String selection = NICKNAME + "='?'";
             String[] selectionArgs = {nickname};
             String[] projection = {USERNAME};
             Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);

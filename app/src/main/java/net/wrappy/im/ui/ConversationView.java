@@ -137,6 +137,7 @@ import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -2992,7 +2993,10 @@ public class ConversationView implements OnHandleMessage {
                 public void onClick(View view) {
                     if (finalMessageType == Imps.MessageType.INCOMING) {
                         Intent intent = new Intent(mContext, ProfileActivity.class);
-                        intent.putExtra("address", address);
+                        String correctAddress = address;
+                        if (TextUtils.isEmpty(address))
+                            correctAddress = nickname + Constant.EMAIL_DOMAIN;
+                        intent.putExtra("address", correctAddress);
                         intent.putExtra("nickname", nickname);
                         mContext.startActivity(intent);
                     } else {
