@@ -584,7 +584,7 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateAvatar() {
-        updateAvatarAndNotify(false);
+        updateAvatarAndNotify(true);
     }
 
     private void updateAvatarAndNotify(boolean broadcast) {
