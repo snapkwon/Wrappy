@@ -40,11 +40,12 @@ public class ReferralActivity extends BaseActivity {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
         initActionBarDefault(true,R.string.Referral);
+        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
     }
 
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
-        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
+        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
         String referral = edReferralCode.getText().toString().trim();
         AppFuncs.dismissKeyboard(this);
         if (!TextUtils.isEmpty(referral)) {
@@ -65,7 +66,7 @@ public class ReferralActivity extends BaseActivity {
         PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.ok, R.string.cancel, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
+                Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
                 MainActivity.start();
             }
         },null);
