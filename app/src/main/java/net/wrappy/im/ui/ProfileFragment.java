@@ -388,9 +388,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                 case AVATAR:
                     isRequestAvatar = true;
                 case BANNER:
-                    if (data != null) {
-                        AppFuncs.cropImage(getActivity(), data, isRequestAvatar, isRequestAvatar ? CROP_AVATAR : CROP_BANNER);
-                    }
+                    AppFuncs.cropImage(getActivity(), data, isRequestAvatar, isRequestAvatar ? CROP_AVATAR : CROP_BANNER);
                     break;
 
                 case CROP_AVATAR:

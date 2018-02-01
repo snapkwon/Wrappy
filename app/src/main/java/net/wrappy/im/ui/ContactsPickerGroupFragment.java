@@ -18,7 +18,6 @@ import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -140,30 +139,16 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (data != null) {
-                if (requestCode == IMAGE_AVARTA) {
+            if (requestCode == IMAGE_AVARTA) {
 
-                    AppFuncs.cropImage(getActivity(), data, true);
+                AppFuncs.cropImage(getActivity(), data, true);
 
-                } else if (requestCode == UCrop.REQUEST_CROP) {
-                    //AppFuncs.showProgressWaiting(getActivity());
+            } else if (requestCode == UCrop.REQUEST_CROP) {
+                if (data!=null) {
                     resultUri = UCrop.getOutput(data);
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                     GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
-//                    RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-//                        @Override
-//                        public void onCompleted(Exception e, Response<String> result) {
-//                            AppFuncs.dismissProgressWaiting();
-//                            if (result!=null && (result.getHeaders().code()==200 || result.getHeaders().code()==201)) {
-//                                reference = result.getResult();
-//
-//                            } else {
-//                                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.network_error),R.string.cancel,null);
-//                            }
-//                        }
-//                    });
-
                 }
             }
         } catch (Exception ex) {
