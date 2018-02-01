@@ -1391,6 +1391,13 @@ public class XmppConnection extends ImConnection {
 
     }
 
+    private void reconnectWhenPingFailed() {
+        debug(TAG, "re-login on ping failed: " + mUser.getAddress().getAddress());
+        mStreamHandler.quickShutdown();
+        do_login();
+        clearPing();
+    }
+
     // Runs in executor thread
     private void do_login() {
 
@@ -1575,7 +1582,9 @@ public class XmppConnection extends ImConnection {
                 @Override
                 public void pingFailed() {
                     debug(TAG, "pingFailed");
-                    force_reconnect();
+                    if (mConnection != null && mConnection.isConnected()) {
+                        reconnectWhenPingFailed();
+                    }
                 }
             });
 
@@ -2180,7 +2189,7 @@ public class XmppConnection extends ImConnection {
             mConnection.connect();
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -2816,8 +2825,8 @@ public class XmppConnection extends ImConnection {
             //since we don't show lists anymore, let's just load all entries together
 
             try {
-                if (!mRoster.isLoaded())
-                    mRoster.reloadAndWait();
+//                if (!mRoster.isLoaded())
+                mRoster.reloadAndWait();
             } catch (Exception e) {
                 debug(TAG, "error loading roaster", e);
                 return;
@@ -3401,10 +3410,13 @@ public class XmppConnection extends ImConnection {
             if (PING_ENABLED) {
                 // Check ping on every heartbeat.  checkPing() will return true immediately if we already checked.
                 if (!mPingSuccess) {
-                    debug(TAG, "reconnect on ping failed: " + mUser.getAddress().getAddress());
-                    setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network timeout"));
-                    force_reconnect();
-//                    maybe_reconnect();
+                    if (mConnection != null && mConnection.isConnected()) {
+                        reconnectWhenPingFailed();
+                    } else {
+                        debug(TAG, "reconnect on ping failed: " + mUser.getAddress().getAddress());
+                        setState(LOGGING_IN, new ImErrorInfo(ImErrorInfo.NETWORK_ERROR, "network timeout"));
+                        maybe_reconnect();
+                    }
                 } else {
                     // Send pings only at intervals configured by the user
                     if (heartbeatSequence >= heartbeatInterval) {
