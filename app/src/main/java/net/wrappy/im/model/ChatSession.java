@@ -187,7 +187,8 @@ public class ChatSession {
                 else {
                     //do OTR!
 
-                    if (otrStatus == SessionStatus.ENCRYPTED) {
+                    //Cheat to send msg
+                    if (otrStatus != SessionStatus.FINISHED) {
 
 
                         if (verified) {

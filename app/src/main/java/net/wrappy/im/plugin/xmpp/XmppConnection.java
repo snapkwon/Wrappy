@@ -2397,7 +2397,7 @@ public class XmppConnection extends ImConnection {
                 // ignore
             }
         }
-        removeTask();
+        isSetup = false;
     }
 
     @Override

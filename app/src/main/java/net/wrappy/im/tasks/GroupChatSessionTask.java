@@ -187,11 +187,17 @@ public class GroupChatSessionTask extends AsyncTask<String, Long, String> {
 
     private void showChat(long chatId) {
         if (isStable()) {
-            String reference = "";
-            if (group!=null && group.getIcon()!=null) {
-                reference = group.getIcon().getReference();
+            if(isCreateNewChat==true) {
+                String reference = "";
+                if (group != null && group.getIcon() != null) {
+                    reference = group.getIcon().getReference();
+                }
+                getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
             }
-            getActivity().startActivity(ConversationDetailActivity.getStartIntent(getActivity(), chatId, group.getName(), reference));
+            else
+            {
+                getActivity().finish();
+            }
         }
     }
 

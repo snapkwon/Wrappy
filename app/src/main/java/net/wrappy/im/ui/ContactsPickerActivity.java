@@ -74,8 +74,8 @@ import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
-import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.SelectedContact;
+import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
@@ -91,7 +91,6 @@ import net.wrappy.im.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Activity used to pick a contact.
@@ -598,12 +597,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            String usersinvite = "";
-                          //  ArrayList<String> users = new ArrayList();
+                           // String usersinvite = "";
+                            ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
-                            //    users.add(contact.nickname);
-                                if(usersinvite.isEmpty())
+                                users.add(contact.nickname);
+                               /* if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
 
@@ -611,27 +610,31 @@ public class ContactsPickerActivity extends BaseActivity {
                                 else
                                 {
                                     usersinvite = usersinvite + "-" + contact.nickname;
-                                }
+                                }*/
                             }
-                           /* Gson gson = new Gson();
+                            Gson gson = new Gson();
                             String jsonObject = gson.toJson(users);
                             JsonParser parser = new JsonParser();
-                            JsonArray json = (JsonArray) parser.parse(jsonObject);*/
+                            JsonArray json = (JsonArray) parser.parse(jsonObject);
 
-                            RestAPI.PostDataWrappy(this, new JsonObject(), String.format(RestAPI.ADD_MEMBER_TO_GROUP_CHAT, groupDto.getId(),usersinvite), new RestAPIListener(this) {
+
+                            RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
                                 @Override
                                 public void OnComplete(int httpCode, String error, String s) {
                                     ArrayList<String> users = new ArrayList<>();
                                     for (int i = 0; i < mSelection.size(); i++) {
                                         SelectedContact contact = mSelection.valueAt(i);
                                         users.add(contact.username);
-                                        insertGroupMemberInDb(lastchatid,contact);
+                                      //  insertGroupMemberInDb(lastchatid,contact);
                                     }
-                                });
-                            } else {
-                                setResult(RESULT_CANCELED);
-                                finish();
-                            }
+                                    Intent data = new Intent();
+                                    data.putExtra(BundleKeyConstant.EXTRA_RESULT_GROUP_NAME, groupDto);
+                                    data.putStringArrayListExtra(BundleKeyConstant.EXTRA_RESULT_USERNAMES, users);
+
+                                    setResult(RESULT_OK, data);
+                                    finish();
+                                }
+                            });
                         } else {
                             getFragmentManager().beginTransaction().add(R.id.containerGroup, ContactsPickerGroupFragment.newsIntance()).addToBackStack(null).commit();
                         }
