@@ -826,7 +826,7 @@ public class Imps {
 
         public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
             String ret = null;
-            String selection = NICKNAME + "=?";
+            String selection = NICKNAME + "='?'";
             String[] selectionArgs = {nickname};
             String[] projection = {USERNAME};
             Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
@@ -1623,24 +1623,6 @@ public class Imps {
          * group member.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/imps-groupMembers";
-
-        public static final String getNicknameFromGroup(ContentResolver cr, String address) {
-            String ret = null;
-            String selection = USERNAME + " like '" + address + "%' and " + NICKNAME + " !='" + address + "'";
-            String[] selectionArgs = {};
-            String[] projection = {NICKNAME};
-            Cursor cursor = cr.query(Imps.GroupMembers.CONTENT_URI, projection, selection, selectionArgs, null);
-            if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        ret = cursor.getString(cursor.getColumnIndexOrThrow(NICKNAME));
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-            return ret;
-        }
 
         public static int updateNicknameFromGroupUri(ContentResolver cr, Uri uri, String nickname) {
             ContentValues values = new ContentValues();

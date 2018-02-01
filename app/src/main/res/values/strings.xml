@@ -34,8 +34,8 @@
     <string name="confirm">Confirm</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="yes">OK</string>
-    <string name="no">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="connect">Connect</string>
     <!-- Views -->
     <string name="title_activity_lock_screen">Wrappy Locked</string>
@@ -533,7 +533,7 @@
     <string name="question">Question %d</string>
     <string name="request_send_email_success">Send successful! Please check email to change new password</string>
     <string name="remove_member_success">Remove %s in this group</string>
-    <string name="skip_referral">Cancel this step and go to Home screen?</string>
+    <string name="skip_referral">Are you sure you don\'t type referral code? you can\'t get +100PTS reward</string>
     <string name="create_by">Create by %s</string>
     <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>

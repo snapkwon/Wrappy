@@ -64,14 +64,17 @@ public class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             getSupportActionBar().setCustomView(R.layout.actionbar_register);
+            ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
+
             if (isShowBackButton) {
-                ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
                 backButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         onClickActionBar(-1);
                     }
                 });
+            } else {
+                backButton.setVisibility(View.GONE);
             }
 
             if (resStringId != 0) {

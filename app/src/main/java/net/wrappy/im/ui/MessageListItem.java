@@ -67,7 +67,6 @@ import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Debug;
@@ -796,18 +795,10 @@ public class MessageListItem extends FrameLayout {
             return;
 
         String reference = Imps.Avatars.getAvatar(context.getContentResolver(), address);
-        if (address != null) {
-            mHolder.mAvatar.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(reference)) {
-                GlideHelper.loadBitmapToCircleImageDefault(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference), nickname);
-            } else {
-                LetterAvatar lavatar = new LetterAvatar(context, nickname, 18);
-                mHolder.mAvatar.setImageDrawable(lavatar);
-                mHolder.mAvatar.setVisibility(View.VISIBLE);
-                //GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
-            }
+        if (!TextUtils.isEmpty(reference)) {
+            GlideHelper.loadBitmapToCircleImageDefault(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference), nickname);
         } else {
-            mHolder.mAvatar.setVisibility(View.GONE);
+            GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
         }
     }
 

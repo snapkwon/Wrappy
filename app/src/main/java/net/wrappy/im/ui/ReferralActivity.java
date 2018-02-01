@@ -8,7 +8,6 @@ import android.view.View;
 import com.google.gson.JsonObject;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -31,7 +30,7 @@ public class ReferralActivity extends BaseActivity {
 
     public static void start() {
         Intent intent = new Intent(ImApp.sImApp, ReferralActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ImApp.sImApp.startActivity(intent);
     }
 
@@ -39,13 +38,12 @@ public class ReferralActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.referral_activity);
         super.onCreate(savedInstanceState);
-        initActionBarDefault(true,R.string.Referral);
-        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,true);
+        initActionBarDefault(false, R.string.Referral);
+        Store.putBooleanData(getApplicationContext(), Store.REFERRAL, true);
     }
 
     @OnClick(R.id.btnReferralCheck)
     public void onClick(View view) {
-        Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
         String referral = edReferralCode.getText().toString().trim();
         AppFuncs.dismissKeyboard(this);
         if (!TextUtils.isEmpty(referral)) {
@@ -53,22 +51,23 @@ public class ReferralActivity extends BaseActivity {
             RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListener(this) {
                 @Override
                 protected void OnComplete(int httpCode, String error, String s) {
-                    MainActivity.start();
+                    Store.putBooleanData(getApplicationContext(), Store.REFERRAL, false);
+                    finish();
                 }
             });
         } else {
-            onBackPressed();
+            PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.no, R.string.yes, null, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Store.putBooleanData(getApplicationContext(), Store.REFERRAL, false);
+                    finish();
+                }
+            });
         }
     }
 
     @Override
     public void onBackPressed() {
-        PopupUtils.showCustomDialog(this, getString(R.string.warning), getString(R.string.skip_referral), R.string.ok, R.string.cancel, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Store.putBooleanData(getApplicationContext(),Store.REFERRAL,false);
-                MainActivity.start();
-            }
-        },null);
+
     }
 }

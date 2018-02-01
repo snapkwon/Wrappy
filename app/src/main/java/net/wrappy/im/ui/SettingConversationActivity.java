@@ -48,7 +48,6 @@ import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
@@ -59,7 +58,6 @@ import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.conversation.BackgroundBottomSheetFragment;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.Constant;
-import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
 
 import java.io.File;
@@ -117,6 +115,7 @@ public class SettingConversationActivity extends BaseActivity {
     private Contact mGroupOwner;
     private boolean mIsOwner = false;
     WpKChatGroupDto wpKChatGroup;
+    WpKChatGroupDto wpKChatGroupTemp;
 
     private BackgroundBottomSheetFragment mBackgroundFragment;
 
@@ -303,7 +302,7 @@ public class SettingConversationActivity extends BaseActivity {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
                     member.setNickname(memberDto.getIdentifier());
-                    if(memberDto.getAvatar()!=null) {
+                    if (memberDto.getAvatar() != null) {
                         member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }
                     if (memberDto.getId() == idMemberOwner) {
@@ -409,10 +408,10 @@ public class SettingConversationActivity extends BaseActivity {
     @OnClick({R.id.btnGroupPhoto, R.id.btnGroupNameClose, R.id.btnGroupNameCheck, R.id.btnEditGroupName, R.id.layout_search_setting, R.id.layout_change_background_setting, R.id.layout_clean_setting, R.id.layout_admin_delete_group, R.id.layout_add_member,
             R.id.layout_member_leave_group})
     public void onClick(View view) {
-        if(isLoaded) {
+        if (isLoaded) {
             switch (view.getId()) {
                 case R.id.layout_search_setting:
-                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation,"");
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation, "");
                     finish();
 //                searchActive();
                     break;
@@ -461,7 +460,8 @@ public class SettingConversationActivity extends BaseActivity {
                     if (TextUtils.isEmpty(name)) {
                         return;
                     }
-                    wpKChatGroup.setName(name);
+                    wpKChatGroupTemp = wpKChatGroup;
+                    wpKChatGroupTemp.setName(name);
                     updateData();
                     edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
@@ -535,7 +535,8 @@ public class SettingConversationActivity extends BaseActivity {
                             final String reference = RestAPI.getPhotoReference(result.getResult());
                             WpKIcon wpKIcon = new WpKIcon();
                             wpKIcon.setReference(reference);
-                            wpKChatGroup.setIcon(wpKIcon);
+                            wpKChatGroupTemp = wpKChatGroup;
+                            wpKChatGroupTemp.setIcon(wpKIcon);
                             updateData();
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -548,20 +549,36 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateData() {
-        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
-        RestAPI.PutDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
+        AppFuncs.log("updateData");
+        final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroupTemp);
+        RestAPI.PutDataWrappy(SettingConversationActivity.this, jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
             public void OnComplete(int httpCode, String error, String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
+                    wpKChatGroup = wpKChatGroupTemp;
                     if (wpKChatGroup.getIcon() != null) {
                         updateAvatarAndNotify(true);
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
 //                    changeGroupNameXmpp();
-                    AppFuncs.alert(getApplicationContext(), "Update Success", false);
+                    AppFuncs.alert(SettingConversationActivity.this, getString(R.string.update_profile_success), false);
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
+            }
+
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
+                if (wpKChatGroup.getIcon() != null) {
+                    GlideHelper.loadBitmapToCircleImage(SettingConversationActivity.this, btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edGroupName.setText(wpKChatGroup.getName());
+                    }
+                });
             }
         });
     }

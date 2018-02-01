@@ -531,7 +531,7 @@
     <string name="question">Câu hỏi %d</string>
     <string name="request_send_email_success">Đã gửi thành công, Vui lòng kiểm tra email của bạn để thay đổi mật khẩu mới</string>
     <string name="remove_member_success">Đã xóa %s khỏi nhóm</string>
-    <string name="skip_referral">Bỏ qua bước này và đi vào màn hình Home?</string>
+    <string name="skip_referral">Are you sure you don\'t type referral code? you can\'t get +100PTS reward</string>
     <string name="create_by">Được tạo bởi %s</string>
     <string name="chat_message_item">%1$s trò chuyện %2$s.</string>
     <string name="message_kicked_from_group">%s được xóa bởi Admin</string>

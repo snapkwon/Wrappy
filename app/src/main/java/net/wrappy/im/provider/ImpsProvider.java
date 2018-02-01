@@ -1702,17 +1702,19 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_MESSAGES_BY_PACKET_ID:
             case MATCH_OTR_MESSAGES_BY_PACKET_ID:
-                appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", url.getPathSegments().get(1));
+                String[] arg = new String[]{url.getPathSegments().get(1)};
+                String packetWhere = Imps.Messages.PACKET_ID + "='?'";
+//                appendWhere(whereClause, Imps.Messages.PACKET_ID, "=", url.getPathSegments().get(1));
                 qb.setTables(TABLE_MESSAGES);
 
-                final String selectionClausePacketId = whereClause.toString();
-                final String query1PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
+                final String selectionClausePacketId = whereClause.toString() + packetWhere;
+                final String query1PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, arg, null, null,
                         null, null /* limit */);
 
                 // Build the second query for frequent
                 qb = new SQLiteQueryBuilder();
                 qb.setTables(TABLE_IN_MEMORY_MESSAGES);
-                final String query2PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, null, null, null,
+                final String query2PacketId = qb.buildQuery(projectionIn, selectionClausePacketId, arg, null, null,
                         null, null /* limit */);
 
                 // Put them together
@@ -2832,7 +2834,17 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
 
             case MATCH_OTR_MESSAGES:
                 // Insert into the messages table.
-                rowID = db.insert(TABLE_IN_MEMORY_MESSAGES, "thread_id", initialValues);
+                try {
+                    rowID = db.insert(TABLE_IN_MEMORY_MESSAGES, "thread_id", initialValues);
+                } catch (SQLiteConstraintException e) {
+                    if (initialValues.containsKey(Imps.Messages.PACKET_ID)) {
+                        String where = Imps.Messages.PACKET_ID + "='?'";
+                        String[] arg = new String[]{(String) initialValues.get(Imps.Messages.PACKET_ID)};
+                        db.delete(TABLE_IN_MEMORY_MESSAGES, where, arg);
+                        rowID = db.insert(TABLE_IN_MEMORY_MESSAGES, "thread_id", initialValues);
+                    }
+                }
+
                 if (rowID > 0) {
                     resultUri = Uri.parse(Imps.Messages.OTR_MESSAGES_CONTENT_URI + "/" + rowID);
                 }

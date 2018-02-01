@@ -525,7 +525,7 @@
     <string name="question">提問%d</string>
     <string name="request_send_email_success">發送成功，請檢查您的郵件更改新密碼</string>
     <string name="remove_member_success">本組中移除%s</string>
-    <string name="skip_referral">取消這一步，轉到主屏幕？</string>
+    <string name="skip_referral">Are you sure you don\'t type referral code? you can\'t get +100PTS reward</string>
     <string name="create_by">%s所創建</string>
     <string name="chat_message_item">%1$s聊天%2$s。</string>
     <string name="message_kicked_from_group">%s被管理員除去</string>

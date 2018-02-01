@@ -76,7 +76,6 @@ public class ProfileFragment extends BaseFragmentV4 {
     AppFuncs appFuncs;
     String jid = "";
     WpKMemberDto wpKMemberDto;
-    WpKMemberDto wpKMemberDtoTemp;
     private long mContactId = -1;
     private String mNickname = null;
     private String reference = "";
@@ -121,7 +120,8 @@ public class ProfileFragment extends BaseFragmentV4 {
     private MyLoaderCallbacks mLoaderCallbacks;
     private LoaderManager mLoaderManager;
 
-    String email, gender;
+    String emailTemp = "";
+    String genderTemp = "";
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -159,8 +159,8 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             if (newCursor.moveToFirst()){
                 String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
-                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
-                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
+                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
+                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
                 String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
                 if (!TextUtils.isEmpty(c_name)) {
                     txtUsername.setText(c_name);
@@ -169,15 +169,15 @@ public class ProfileFragment extends BaseFragmentV4 {
                         GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
                     }
                 }
-                if (!TextUtils.isEmpty(c_email)) {
-                    String upperString = c_email.substring(0, 1).toUpperCase() + c_email.substring(1).toLowerCase();
-                    edEmail.setText(upperString);
+                if (!TextUtils.isEmpty(c_gender)) {
+                    String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
+                    edGender.setText(upperString);
                 }
                 if (!TextUtils.isEmpty(c_phone)) {
                     edPhone.setText(c_phone);
                 }
-                if (!TextUtils.isEmpty(c_gender)) {
-                    edGender.setText(c_gender);
+                if (!TextUtils.isEmpty(c_email)) {
+                    edEmail.setText(c_email);
                 }
             }
 
@@ -231,6 +231,11 @@ public class ProfileFragment extends BaseFragmentV4 {
             linearForSeft.setVisibility(View.GONE);
             lnProfileUsername.setVisibility(View.GONE);
             txtClientName.setText(jid);
+            String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
+            if (!TextUtils.isEmpty(reference)) {
+                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
+            }
+
         }
 
 
@@ -291,9 +296,16 @@ public class ProfileFragment extends BaseFragmentV4 {
                 Gson gson = new Gson();
                 try {
                     AppFuncs.log("load: " + s);
-                    MemberAccount account = gson.fromJson(s, MemberAccount.class);
-                    wpKMemberDto = account.getWpKMemberDto();
-                    wpKMemberDtoTemp = gson.fromJson(s, WpKMemberDto.getType());
+                    if (isSelf) {
+                        MemberAccount account = gson.fromJson(s, MemberAccount.class);
+                        wpKMemberDto = account.getWpKMemberDto();
+                        emailTemp = wpKMemberDto.getEmail();
+                        genderTemp = wpKMemberDto.getGender();
+                    } else {
+                        wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
+                    }
+
+
                     txtUsername.setText(wpKMemberDto.getIdentifier());
                     edEmail.setText(wpKMemberDto.getEmail());
                     edPhone.setText(wpKMemberDto.getMobile());
@@ -311,10 +323,8 @@ public class ProfileFragment extends BaseFragmentV4 {
                     }
                     if (wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                         GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
-                        //GlideHelper.loadBitmap(getContext(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()));
                     }
 
-                    //RestAPI.loadImageUrl(getApplicationContext(),imgPhotoAvatar,wpKMemberDto.getReference());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -371,13 +381,13 @@ public class ProfileFragment extends BaseFragmentV4 {
 
             if (view.getId() == R.id.btnPhotoCameraAvatar) {
                 isRequestAvatar = true;
-                if (wpKMemberDtoTemp != null && wpKMemberDtoTemp.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
+                if (wpKMemberDto != null && wpKMemberDto.getAvatar() != null && !TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                     sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
             } else {
                 isRequestAvatar = false;
-                if (wpKMemberDtoTemp != null && wpKMemberDtoTemp.getBanner() != null && !TextUtils.isEmpty(wpKMemberDtoTemp.getBanner().getReference())) {
+                if (wpKMemberDto != null && wpKMemberDto.getBanner() != null && !TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                     sheetCell = new BottomSheetCell(3, R.drawable.setting_delete, getString(R.string.popup_delete_photo));
                     sheetCells.add(sheetCell);
                 }
@@ -396,12 +406,11 @@ public class ProfileFragment extends BaseFragmentV4 {
                         case 3:
                             if (isRequestAvatar) {
                                 imgPhotoAvatar.setImageResource(R.drawable.avatar);
-                                if (wpKMemberDtoTemp.getAvatar() != null) {
-                                    if (!TextUtils.isEmpty(wpKMemberDtoTemp.getAvatar().getReference())) {
+                                if (wpKMemberDto.getAvatar() != null) {
+                                    if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                                         RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListener(getActivity()) {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
-                                                wpKMemberDtoTemp.setAvatar(null);
                                                 wpKMemberDto.setAvatar(null);
                                                 AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
                                             }
@@ -416,7 +425,6 @@ public class ProfileFragment extends BaseFragmentV4 {
                                             @Override
                                             public void OnComplete(int httpCode, String error, String s) {
                                                 wpKMemberDto.setBanner(null);
-                                                wpKMemberDtoTemp.setBanner(null);
                                                 AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
                                             }
                                         });
@@ -530,6 +538,8 @@ public class ProfileFragment extends BaseFragmentV4 {
             public void OnComplete(int httpCode, String error, String s) {
                 AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                 if (wpKMemberDto != null) {
+                    emailTemp = wpKMemberDto.getEmail();
+                    genderTemp = wpKMemberDto.getGender();
                     String avatarReference = wpKMemberDto.getAvatar() != null ? wpKMemberDto.getAvatar().getReference() : "";
                     String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
                     String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
@@ -551,12 +561,23 @@ public class ProfileFragment extends BaseFragmentV4 {
                             }
                         }
                     });
-                    wpKMemberDtoTemp = wpKMemberDto;
                 } else {
                     AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
                 }
             }
+
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
+                edEmail.setText(emailTemp);
+                String upperString = genderTemp.substring(0, 1).toUpperCase() + genderTemp.substring(1).toLowerCase();
+                edGender.setText(upperString);
+                wpKMemberDto.setEmail(emailTemp);
+                wpKMemberDto.setGender(genderTemp);
+            }
         });
+
+
     }
 
     public void startChat() {
