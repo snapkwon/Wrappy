@@ -64,7 +64,9 @@ import butterknife.OnClick;
 public class ProfileFragment extends BaseFragmentV4 {
 
     public static final int AVATAR = 321;
-    public static final int BANNER = 322;
+    public static final int BANNER = AVATAR + 1;
+    public static final int CROP_AVATAR = BANNER + 1;
+    public static final int CROP_BANNER = CROP_AVATAR + 1;
     View mainView;
     AppFuncs appFuncs;
     String jid = "";
@@ -165,7 +167,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         if (isSelf) {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
-            txtUsername.setText(Store.getStringData(getActivity(),Store.USERNAME));
+            txtUsername.setText(Store.getStringData(getActivity(), Store.USERNAME));
         }
         final String[] arr = {"", ""};
         final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
@@ -371,9 +373,9 @@ public class ProfileFragment extends BaseFragmentV4 {
         } else if (view.getId() == R.id.lnProfileFragment) {
             AppFuncs.dismissKeyboard(getActivity());
         } else if (view.getId() == R.id.lnProfileBlockUser) {
-            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
+            AppFuncs.alert(getActivity(), getString(R.string.comming_soon), false);
         } else if (view.getId() == R.id.lnProfileShareContact) {
-            AppFuncs.alert(getActivity(),getString(R.string.comming_soon),false);
+            AppFuncs.alert(getActivity(), getString(R.string.comming_soon), false);
         }
     }
 
@@ -381,40 +383,49 @@ public class ProfileFragment extends BaseFragmentV4 {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == AVATAR || requestCode == BANNER) {
-                if (data != null) {
-                    AppFuncs.cropImage(getActivity(), data, true);
-                }
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                final Uri resultUri = UCrop.getOutput(data);
-                AppFuncs.showProgressWaiting(getActivity());
-                RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                    @Override
-                    public void onCompleted(Exception e, Response<String> result) {
-                        AppFuncs.dismissProgressWaiting();
-                        try {
-                            String reference = RestAPI.getPhotoReference(result.getResult());
-                            if (!TextUtils.isEmpty(reference)) {
-                                if (isRequestAvatar) {
-                                    //GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
-                                    Avatar avatar = new Avatar(reference);
-                                    wpKMemberDto.setAvatar(avatar);
-                                } else {
-                                    //GlideHelper.loadBitmap(getActivity(), imgProfileHeader, resultUri.toString(), false);
-                                    Banner banner = new Banner(reference);
-                                    wpKMemberDto.setBanner(banner);
-                                }
-                                updateData();
-                            } else {
-                                AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
-                            }
-
-                        } catch (Exception ex) {
-                            AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
-                            ex.printStackTrace();
-                        }
+            isRequestAvatar = false;
+            switch (requestCode) {
+                case AVATAR:
+                    isRequestAvatar = true;
+                case BANNER:
+                    if (data != null) {
+                        AppFuncs.cropImage(getActivity(), data, isRequestAvatar, isRequestAvatar ? CROP_AVATAR : CROP_BANNER);
                     }
-                });
+                    break;
+
+                case CROP_AVATAR:
+                    isRequestAvatar = true;
+                case CROP_BANNER:
+                    final Uri resultUri = UCrop.getOutput(data);
+                    AppFuncs.showProgressWaiting(getActivity());
+                    RestAPI.uploadFile(getActivity(), new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            AppFuncs.dismissProgressWaiting();
+                            try {
+                                String reference = RestAPI.getPhotoReference(result.getResult());
+                                if (!TextUtils.isEmpty(reference)) {
+                                    if (isRequestAvatar) {
+                                        //GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, resultUri.toString(), true);
+                                        Avatar avatar = new Avatar(reference);
+                                        wpKMemberDto.setAvatar(avatar);
+                                    } else {
+                                        //GlideHelper.loadBitmap(getActivity(), imgProfileHeader, resultUri.toString(), false);
+                                        Banner banner = new Banner(reference);
+                                        wpKMemberDto.setBanner(banner);
+                                    }
+                                    updateData();
+                                } else {
+                                    AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
+                                }
+
+                            } catch (Exception ex) {
+                                AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                    break;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
