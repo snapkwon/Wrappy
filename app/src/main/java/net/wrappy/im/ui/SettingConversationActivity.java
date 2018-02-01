@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +52,7 @@ import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
+import net.wrappy.im.tasks.ChatSessionTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.ui.adapters.MemberGroupAdapter;
 import net.wrappy.im.ui.conference.ConferenceConstant;
@@ -145,20 +147,17 @@ public class SettingConversationActivity extends BaseActivity {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
                         String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
-                        if(currentUser.equals(member.getNickname()))
-                        {
-                                mAdminDeleteGroup.setVisibility(View.VISIBLE);
-                                mMemberLeaveGroup.setVisibility(View.GONE);
-                                mAddMemberLayout.setVisibility(View.VISIBLE);
-                                btnGroupPhoto.setEnabled(true);
-                        }
-                        else
-                        {
-                                btnGroupPhoto.setEnabled(false);
-                                mAddMemberLayout.setVisibility(View.GONE);
+                        if (currentUser.equals(member.getNickname())) {
+                            mAdminDeleteGroup.setVisibility(View.VISIBLE);
+                            mMemberLeaveGroup.setVisibility(View.GONE);
+                            mAddMemberLayout.setVisibility(View.VISIBLE);
+                            btnGroupPhoto.setEnabled(true);
+                        } else {
+                            btnGroupPhoto.setEnabled(false);
+                            mAddMemberLayout.setVisibility(View.GONE);
                         }
                         memberGroupAdapter.setAdmin(member.getNickname());
-                        edGroupSubText.setText(String.format(getString(R.string.create_by),member.getNickname()));
+                        edGroupSubText.setText(String.format(getString(R.string.create_by), member.getNickname()));
                     }
                 }
             }
@@ -300,60 +299,79 @@ public class SettingConversationActivity extends BaseActivity {
                 ContentResolver cr = getContentResolver();
                 Cursor c = cr.query(memberUri, projection, null, null, null);
 
-                if (c != null) {
-                    int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
-                    int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
-                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
-                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+                for (WpKMemberDto memberDto : identifiers) {
 
-                    while (c.moveToNext()) {
-                        MemberGroupDisplay member = new MemberGroupDisplay();
-                        member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-//                        member.setNickname(c.getString(colNickname));
-                        member.setRole(c.getString(colRole));
-                        member.setEmail(ImApp.getEmail(member.getUsername()));
-                        member.setAffiliation(c.getString(colAffiliation));
-
-                        Debug.e("username: " + member.getUsername());
-
-                        if (member.getAffiliation() != null) {
-                            if (member.getAffiliation().contentEquals("owner") ||
-                                    member.getAffiliation().contentEquals("admin")) {
-                                if (member.getUsername().equals(mLocalAddress)) {
-                                    mIsOwner = true;
-                                }
-                            }
-                        }
-
-                        Boolean isExist = false;
-                        if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
-                            for (WpKMemberDto memberDto : identifiers) {
-                                String account = memberDto.getXMPPAuthDto().getAccount();
-                                if (member.getUsername().contains(account)) {
-                                    member.setNickname(memberDto.getIdentifier());
-                                    if(memberDto.getId() ==idMemberOwner )
-                                    {
-                                        member.setAffiliation("owner");
-                                        if (member.getUsername().equals(mLocalAddress)) {
-                                            mIsOwner = true;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        member.setAffiliation("member");
-                                    }
-                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
-                                    isExist = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (isExist)
-                            members.add(member);
-
+                    MemberGroupDisplay member = new MemberGroupDisplay();
+                    member.setNickname(memberDto.getIdentifier());
+                    if(memberDto.getAvatar()!=null) {
+                        member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }
-                    c.close();
+                    if (memberDto.getId() == idMemberOwner) {
+                        member.setAffiliation("owner");
+                        if (member.getNickname().equals(mLocalAddress)) {
+                            mIsOwner = true;
+                        }
+                    } else {
+                        member.setAffiliation("member");
+                    }
+//                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                    members.add(member);
                 }
+
+//                if (c != null) {
+//                    int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
+//                    int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
+//                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
+//                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
+//
+//                    while (c.moveToNext()) {
+//                        MemberGroupDisplay member = new MemberGroupDisplay();
+//                        member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
+////                        member.setNickname(c.getString(colNickname));
+//                        member.setRole(c.getString(colRole));
+//                        member.setEmail(ImApp.getEmail(member.getUsername()));
+//                        member.setAffiliation(c.getString(colAffiliation));
+//
+//                        Debug.e("username: " + member.getUsername());
+//
+//                        if (member.getAffiliation() != null) {
+//                            if (member.getAffiliation().contentEquals("owner") ||
+//                                    member.getAffiliation().contentEquals("admin")) {
+//                                if (member.getUsername().equals(mLocalAddress)) {
+//                                    mIsOwner = true;
+//                                }
+//                            }
+//                        }
+//
+//                        Boolean isExist = false;
+//                        if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
+//                            for (WpKMemberDto memberDto : identifiers) {
+//                                String account = memberDto.getXMPPAuthDto().getAccount();
+//                                if (member.getUsername().contains(account)) {
+//                                    member.setNickname(memberDto.getIdentifier());
+//                                    if(memberDto.getId() ==idMemberOwner )
+//                                    {
+//                                        member.setAffiliation("owner");
+//                                        if (member.getUsername().equals(mLocalAddress)) {
+//                                            mIsOwner = true;
+//                                        }
+//                                    }
+//                                    else
+//                                    {
+//                                        member.setAffiliation("member");
+//                                    }
+//                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+//                                    isExist = true;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                        if (isExist)
+//                            members.add(member);
+//
+//                    }
+//                    c.close();
+//                }
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
@@ -478,7 +496,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void startGroupChat(WpKChatGroupDto group, ArrayList<String> invitees, IImConnection conn) {
         String chatServer = ""; //use the default
         String nickname = imApp.getDefaultUsername().split("@")[0];
-        new GroupChatSessionTask(this, group, invitees, conn,false).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
+        new GroupChatSessionTask(this, group, invitees, conn, false).executeOnExecutor(ImApp.sThreadPoolExecutor, chatServer, nickname);
     }
 
     @Override
@@ -505,7 +523,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             } else if (requestCode == REQUEST_CAMERA) {
                 AppFuncs.cropImage(this, data, true);
-                NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting,"");
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting, "");
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(data);
                 btnGroupPhoto.setImageURI(uri);
@@ -540,12 +558,16 @@ public class SettingConversationActivity extends BaseActivity {
                         updateAvatarAndNotify(true);
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
+//                    changeGroupNameXmpp();
                     AppFuncs.alert(getApplicationContext(), "Update Success", false);
-
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
             }
         });
+    }
+
+    private void changeGroupNameXmpp() {
+        new ChatSessionTask().modifyGroupName().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, wpKChatGroup.getName());
     }
 
     private int updateGroupNameInDB(String newGroupName, String oldGroupName) {
@@ -562,7 +584,7 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void updateAvatar() {
-        updateAvatarAndNotify(false);
+        updateAvatarAndNotify(true);
     }
 
     private void updateAvatarAndNotify(boolean broadcast) {

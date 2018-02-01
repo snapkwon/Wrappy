@@ -117,7 +117,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         }
 
         public void bind(final MemberGroupDisplay member) {
-            String referenceAvatar;
+
 
             if(member.getNickname() != null && !member.getNickname().isEmpty())
             {
@@ -125,18 +125,16 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
                 GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
 
-                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), member.getUsername());
             }
             else {
                 String[] name = member.getUsername().split("@");
                 line1.setText(name[0]);
                 GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, name[0]);
-                referenceAvatar = Imps.Avatars.getAvatar(itemView.getContext().getContentResolver(), name[0]);
             }
 
 
-            if (!TextUtils.isEmpty(referenceAvatar)) {
-                GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(referenceAvatar));
+            if (!TextUtils.isEmpty(member.getReferenceAvatar())) {
+                GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(member.getReferenceAvatar()));
             }
 
             if (currentUser.equals(mAdminGroup)) {
@@ -185,6 +183,12 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                         @Override
                         public void OnComplete(int httpCode, String error, String s) {
                             AppFuncs.alert(mContext, String.format(mContext.getString(R.string.remove_member_success), member.getNickname()), false);
+                            try {
+                                // session.removeMemberGroup();
+                                session.notifycationMemberLeft(member.getUsername());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
                             removeMemberInArray(position);
                             removeMemberInDB(member);
                         }
@@ -196,9 +200,9 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
     private void removeMemberInArray(int position) {
         mMembers.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mMembers.size());
-        //notifyDataSetChanged();
+      //  notifyItemRemoved(position);
+       // notifyItemRangeChanged(position, mMembers.size());
+        notifyDataSetChanged();
     }
 
     private void removeMemberInDB(MemberGroupDisplay member) {
@@ -208,9 +212,9 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         buf.append(" LIKE ");
         android.database.DatabaseUtils.appendValueToSql(buf, "%" + member.getUsername() + "%");
 
-        Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+      /*  Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
         ContentResolver cr = mContext.getContentResolver();
-        cr.delete(memberUri, buf.toString(), null);
+        cr.delete(memberUri, buf.toString(), null);*/
 
         StringBuffer sb = new StringBuffer();
         sb.append(ConferenceConstant.REMOVE_MEMBER_GROUP_BY_ADMIN);
@@ -218,7 +222,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         try {
             session.sendMessage(sb.toString(), false);
            // session.removeMemberGroup();
-           session.notifycationMemberLeft(member.getUsername());
+           //session.notifycationMemberLeft(member.getUsername());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

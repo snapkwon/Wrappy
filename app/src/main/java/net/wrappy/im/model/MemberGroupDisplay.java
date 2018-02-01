@@ -11,6 +11,7 @@ public class MemberGroupDisplay {
     private String nickname;
     private String email;
     private String role;
+    private String referenceAvatar;
     private String affiliation;
     private Drawable avatar;
     private boolean online = false;
@@ -25,6 +26,14 @@ public class MemberGroupDisplay {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public void setReferenceAvatar(String referenceAvatar) {
+        this.referenceAvatar = referenceAvatar;
+    }
+
+    public String getReferenceAvatar() {
+        return referenceAvatar;
     }
 
     public void setNickname(String nickname) {
