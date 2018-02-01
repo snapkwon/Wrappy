@@ -527,12 +527,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private void addSearchViewInActionBar() {
         clearViewInActionBar();
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_chat_room, null);
-
-        ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
-        ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        avatar.setVisibility(View.GONE);
-        status.setVisibility(View.GONE);
-
+        view.findViewById(R.id.relAvatar).setVisibility(View.GONE);
+        view.findViewById(R.id.chat_room_nickname).setVisibility(View.GONE);
         searchView = (SearchView) view.findViewById(R.id.searchtext);
 
         searchView.setVisibility(View.VISIBLE);

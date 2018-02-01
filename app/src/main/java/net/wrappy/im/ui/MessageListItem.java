@@ -796,7 +796,7 @@ public class MessageListItem extends FrameLayout {
             if (!TextUtils.isEmpty(reference)) {
                 GlideHelper.loadBitmapToCircleImageDefault(getContext(), mHolder.mAvatar, RestAPI.getAvatarUrl(reference), nickname);
             } else {
-                LetterAvatar lavatar = new LetterAvatar(context, nickname, 12);
+                LetterAvatar lavatar = new LetterAvatar(context, nickname, 18);
                 mHolder.mAvatar.setImageDrawable(lavatar);
                 mHolder.mAvatar.setVisibility(View.VISIBLE);
                 //GlideHelper.loadAvatarFromNickname(getContext(), mHolder.mAvatar, nickname);
