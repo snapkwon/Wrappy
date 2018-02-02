@@ -176,15 +176,18 @@ public class ProfileFragment extends BaseFragmentV4 {
                 if (!TextUtils.isEmpty(c_gender)) {
                     String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
                     edGender.setText(upperString);
+                    genderTemp = c_gender;
                 }
                 if (!TextUtils.isEmpty(c_phone)) {
                     edPhone.setText(c_phone);
                 }
                 if (!TextUtils.isEmpty(c_email)) {
                     edEmail.setText(c_email);
+                    emailTemp = c_email;
                 }
                 if (!TextUtils.isEmpty(c_name)) {
                     edFullName.setText(c_name);
+                    nameTemp = c_name;
                 }
             }
 
@@ -312,11 +315,12 @@ public class ProfileFragment extends BaseFragmentV4 {
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
-                    nameTemp = wpKMemberDto.getGiven();
+
                     if (!TextUtils.isEmpty(emailTemp)) {
                         edEmail.setText(emailTemp);
                     }
-                    if (!TextUtils.isEmpty(nameTemp)) {
+                    if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
+                        nameTemp = wpKMemberDto.getGiven();
                         edFullName.setText(nameTemp);
                     }
 
@@ -607,7 +611,6 @@ public class ProfileFragment extends BaseFragmentV4 {
                 }
             }
         });
-
 
     }
 
