@@ -277,6 +277,7 @@ public class SettingConversationActivity extends BaseActivity {
                 }
             });
         } else {
+            isLoaded = true;
             lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
