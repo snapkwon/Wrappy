@@ -462,7 +462,7 @@
     <string name="activity">アクティビティ</string>
     <string name="error_when_refresh_token">アクセストークンを更新できません：再試行してください！</string>
     <string name="registration">登録</string>
-    <string name="update_profile_success">更新の成功</string>
+    <string name="update_profile_success">アップデートが成功した。</string>
     <string name="update_profile_fail">更新が失敗する</string>
     <string name="error_upload_image">アップロードに失敗しました</string>
     <string name="logout_all_devices">すべてのデバイスをログアウトする</string>
