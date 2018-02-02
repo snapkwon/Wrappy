@@ -222,6 +222,19 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mConvoView.getSearchMode()) {
+            mConvoView.unActiveSearchmode();
+            searchView.setVisibility(View.GONE);
+            addIconActionBar(R.drawable.ic_tran);
+            addIconActionBar(R.drawable.ic_info_outline_white_24dp);
+            setCustomActionBar(mConvoView.isGroupChat());
+        } else {
+            finish();
+        }
+    }
+
     private static class MyHandler extends Handler {
         private WeakReference<Activity> weakReference;
         private OnHandleMessage onHandleMessage;
