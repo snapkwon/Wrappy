@@ -314,78 +314,13 @@ public class SettingConversationActivity extends BaseActivity {
                     } else {
                         member.setAffiliation("member");
                     }
-//                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
                     members.add(member);
                 }
 
-//                if (c != null) {
-//                    int colUsername = c.getColumnIndex(Imps.GroupMembers.USERNAME);
-//                    int colNickname = c.getColumnIndex(Imps.GroupMembers.NICKNAME);
-//                    int colRole = c.getColumnIndex(Imps.GroupMembers.ROLE);
-//                    int colAffiliation = c.getColumnIndex(Imps.GroupMembers.AFFILIATION);
-//
-//                    while (c.moveToNext()) {
-//                        MemberGroupDisplay member = new MemberGroupDisplay();
-//                        member.setUsername(new XmppAddress(c.getString(colUsername)).getBareAddress());
-////                        member.setNickname(c.getString(colNickname));
-//                        member.setRole(c.getString(colRole));
-//                        member.setEmail(ImApp.getEmail(member.getUsername()));
-//                        member.setAffiliation(c.getString(colAffiliation));
-//
-//                        Debug.e("username: " + member.getUsername());
-//
-//                        if (member.getAffiliation() != null) {
-//                            if (member.getAffiliation().contentEquals("owner") ||
-//                                    member.getAffiliation().contentEquals("admin")) {
-//                                if (member.getUsername().equals(mLocalAddress)) {
-//                                    mIsOwner = true;
-//                                }
-//                            }
-//                        }
-//
-//                        Boolean isExist = false;
-//                        if (TextUtils.isEmpty(member.getNickname()) || member.getUsername().contains(member.getNickname())) {
-//                            for (WpKMemberDto memberDto : identifiers) {
-//                                String account = memberDto.getXMPPAuthDto().getAccount();
-//                                if (member.getUsername().contains(account)) {
-//                                    member.setNickname(memberDto.getIdentifier());
-//                                    if(memberDto.getId() ==idMemberOwner )
-//                                    {
-//                                        member.setAffiliation("owner");
-//                                        if (member.getUsername().equals(mLocalAddress)) {
-//                                            mIsOwner = true;
-//                                        }
-//                                    }
-//                                    else
-//                                    {
-//                                        member.setAffiliation("member");
-//                                    }
-//                                    Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
-//                                    isExist = true;
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        if (isExist)
-//                            members.add(member);
-//
-//                    }
-//                    c.close();
-//                }
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
                 runOnUiThread(mRunnable);
-//                mHandler.post(mRunnable);
-               /* if (!Thread.currentThread().isInterrupted()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            memberGroupAdapter.setData(memberGroupDisplays);
-                            memberGroupAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }*/
             }
         });
         mThreadUpdate.start();
