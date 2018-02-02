@@ -2146,6 +2146,10 @@ public class XmppConnection extends ImConnection {
                 sendPresencePacket();
                 ((XmppChatGroupManager) getChatGroupManager()).reconnectAll();
 
+                if (!mPingSuccess) {
+                    sendPing();
+                }
+
             }
 
             @Override
@@ -4711,7 +4715,7 @@ public class XmppConnection extends ImConnection {
 
     public static void removeTask() {
         isSetup = false;
-        mConnection = null;
+//        mConnection = null;
     }
 
     public static boolean isAuthenticated() {
