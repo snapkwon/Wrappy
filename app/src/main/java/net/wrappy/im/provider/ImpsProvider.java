@@ -2835,7 +2835,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             case MATCH_OTR_MESSAGES:
                 // Insert into the messages table.
                 try {
-                    rowID = db.insert(TABLE_IN_MEMORY_MESSAGES, "thread_id", initialValues);
+                    rowID = db.insertWithOnConflict(TABLE_IN_MEMORY_MESSAGES, "thread_id", initialValues, 0);
                 } catch (SQLiteConstraintException e) {
                     if (initialValues.containsKey(Imps.Messages.PACKET_ID)) {
                         String where = Imps.Messages.PACKET_ID + "='?'";
