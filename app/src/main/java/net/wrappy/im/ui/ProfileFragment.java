@@ -384,10 +384,10 @@ public class ProfileFragment extends BaseFragmentV4 {
                 PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),Utils.isValidEmail(getActivity(), email),R.string.cancel,null);
                 return;
             }
-            if (TextUtils.isEmpty(name)) {
-                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.error_empty_name),R.string.cancel,null);
-                return;
-            }
+//            if (TextUtils.isEmpty(name)) {
+//                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.error_empty_name),R.string.cancel,null);
+//                return;
+//            }
             edEmail.clearFocus();
             edGender.clearFocus();
             edFullName.clearFocus();

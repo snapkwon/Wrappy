@@ -529,7 +529,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });

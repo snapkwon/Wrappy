@@ -49,5 +49,9 @@
     <string name="error_8032">Tạo người dùng trên xmpp thất bại</string>
     <string name="error_8033">Rất tiếc! Bạn đã trả lời câu hỏi bảo mật sai</string>
     <string name="error_8034">Tên người dùng hoặc mật khẩu là không chính xác</string>
+    <string name="error_8035">The username or password is incorrect. You have only 2 times to input again.</string>
+    <string name="error_8036">The username or password is incorrect. You have only 1 time to input again.</string>
+    <string name="error_8037">The username or password is incorrect. Your account is locked in 3 hours.</string>
+    <string name="error_unknown">An error occurred, please try again later.</string>
 
 </resources>
