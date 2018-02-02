@@ -316,8 +316,8 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -325,7 +325,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(null);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });
@@ -348,21 +348,18 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             int errorCode = getErrorCodeFromResponse(result.getResult());
-                            if (url.contains("oauth/token?grant_type=password") && errorCode==0) {
-                                errorCode = 8034;
-                            }
                             listenner.onError(errorCode);
                         }
 
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -383,8 +380,8 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -392,7 +389,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -412,8 +409,8 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -421,7 +418,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -444,8 +441,8 @@ public class RestAPI {
                         AppFuncs.log(result.getResult());
                         listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
@@ -453,7 +450,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });
