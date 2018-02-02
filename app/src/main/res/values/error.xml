@@ -49,5 +49,5 @@
     <string name="error_8032">Create user on the xmpp fail</string>
     <string name="error_8033">Oops! You answered the wrong security question</string>
     <string name="error_8034">The username or pattern is incorrect</string>
-
+    <string name="error_empty_name">Please input full name</string>
 </resources>

@@ -430,7 +430,9 @@ public class AppFuncs {
                 Debug.d(s);
                 try {
                     Registration registration = new Gson().fromJson(s, Registration.class);
-                    Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration, accountId);
+                    if (registration!=null && registration.getWpKMemberDto()!=null) {
+                        Imps.Account.updateAccountFromDataServer(ImApp.sImApp.getContentResolver(), registration.getWpKMemberDto(), accountId);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
