@@ -1,9 +1,6 @@
 package net.wrappy.im.ui.adapters;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.net.Uri;
 import android.os.RemoteException;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -181,7 +178,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                     RestAPI.DeleteDataWrappy(mContext, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, mWpKChatGroupDto.getId(),
                             member.getNickname()), new RestAPIListener(mContext) {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void OnComplete(String s) {
                             AppFuncs.alert(mContext, String.format(mContext.getString(R.string.remove_member_success), member.getNickname()), false);
                             try {
                                 // session.removeMemberGroup();

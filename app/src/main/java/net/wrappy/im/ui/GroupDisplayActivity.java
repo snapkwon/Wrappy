@@ -410,7 +410,7 @@ public class GroupDisplayActivity extends BaseActivity {
     private void updateUnknownFriendInfoInGroup(final GroupMemberDisplay member) {
         RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.nickname).getUser()), new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {

@@ -19,7 +19,6 @@ import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.R;
 import net.wrappy.im.model.BaseObject;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.model.translate.DetectLanguageResponse;
@@ -315,10 +314,10 @@ public class RestAPI {
 
                     } else if (checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.log(result.getResult());
-                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                        listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -326,7 +325,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.OnComplete(0, null, null);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });
@@ -347,19 +346,20 @@ public class RestAPI {
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.log(result.getResult());
-                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                        listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
-                            listenner.onError(getErrorCodeFromResponse(result.getResult()));
+                            int errorCode = getErrorCodeFromResponse(result.getResult());
+                            listenner.onError(errorCode);
                         }
 
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -378,10 +378,10 @@ public class RestAPI {
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.log(result.getResult());
-                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                        listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -389,7 +389,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -407,10 +407,10 @@ public class RestAPI {
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.log(result.getResult());
-                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                        listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0, url);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK.getErrorCode(), url);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()));
@@ -418,7 +418,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
 
             }
@@ -439,10 +439,10 @@ public class RestAPI {
                         }
                     } else if (checkHttpCode(result.getHeaders().code())) {
                         AppFuncs.log(result.getResult());
-                        listenner.OnComplete(result.getHeaders().code(), (e != null) ? e.getLocalizedMessage() : null, result.getResult());
+                        listenner.OnComplete(result.getResult());
                     } else {
-                        if (result.getHeaders().code() == 0)
-                            listenner.onError(0);
+                        if (result.getHeaders().code() == ErrorCode.NO_NETWORK.getErrorCode())
+                            listenner.onError(ErrorCode.NO_NETWORK);
                         else {
                             AppFuncs.log(result.getResult());
                             listenner.onError(getErrorCodeFromResponse(result.getResult()), url);
@@ -450,7 +450,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });
@@ -492,11 +492,11 @@ public class RestAPI {
                     int httpCode = (result != null) ? result.getHeaders().code() : 0;
                     String error = (e != null) ? e.getLocalizedMessage() : "";
                     if ((checkAuthenticationCode(httpCode))) {
-                        listenner.OnComplete(httpCode, null, null);
+                        listenner.OnComplete(null);
                         return;
                     }
                     if (httpCode == 400 /*invalid expire token*/) {
-                        listenner.OnComplete(-1, context.getString(R.string.error_when_refresh_token), null);
+                        listenner.OnComplete(null);
                         logout(context);
                         return;
                     }
@@ -504,7 +504,7 @@ public class RestAPI {
 //                        AppFuncs.alert(context, error, true);
                         if (numberRefreshToken >= NUMBER_REQUEST_TOKEN) {
                             numberRefreshToken = 0;
-                            listenner.OnComplete(-1, context.getString(R.string.error_when_refresh_token), null);
+                            listenner.OnComplete(null);
                             logout(context);
                         } else {
                             numberRefreshToken++;
@@ -549,7 +549,11 @@ public class RestAPI {
     }
 
     public static int getErrorCodeFromResponse(String response) {
-        JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
-        return jsonObject.get("code").getAsInt();
+        try {
+            JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
+            return jsonObject.get("code").getAsInt();
+        } catch (Exception ex){
+            return 0;
+        }
     }
 }

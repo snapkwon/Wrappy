@@ -18,16 +18,10 @@ public class WpKMemberDto extends T {
     private String gender;
     private Avatar avatar;
     private Banner banner;
+    private String given;
     private String reference;
     @SerializedName("wpKAuthList")
     private ArrayList<WpKAuthDto> wpKAuthDtoList;
-
-    public WpKMemberDto(String identifier, String email, String mobile, String gender) {
-        this.identifier = identifier;
-        this.email = email;
-        this.mobile = mobile;
-        this.gender = gender;
-    }
 
     public WpKMemberDto() {
     }
@@ -113,5 +107,13 @@ public class WpKMemberDto extends T {
             if ("XMPP".equals(wpKAuthDto.getMethod()))
                 return wpKAuthDto;
         return null;
+    }
+
+    public String getGiven() {
+        return given;
+    }
+
+    public void setGiven(String given) {
+        this.given = given;
     }
 }

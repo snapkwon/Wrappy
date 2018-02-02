@@ -65,7 +65,7 @@ public class ForgetPasswordResetEmailFragment extends Fragment {
         AppFuncs.showProgressWaiting(getActivity());
         RestAPI.GetDataWrappy(getActivity(), RestAPI.sendEmailAndUsernameToGetPassUrl(Store.getStringData(getActivity(), Store.USERNAME), email), new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.dismissProgressWaiting();
                 AppFuncs.alert(getActivity(), getString(R.string.request_send_email_success), true);
                 getActivity().finish();

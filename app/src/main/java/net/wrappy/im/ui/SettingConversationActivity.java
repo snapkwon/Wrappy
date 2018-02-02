@@ -252,7 +252,7 @@ public class SettingConversationActivity extends BaseActivity {
 
             RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     try {
                         Gson gson = new Gson();
                         wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
@@ -277,6 +277,7 @@ public class SettingConversationActivity extends BaseActivity {
                 }
             });
         } else {
+            isLoaded = true;
             lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
@@ -553,7 +554,7 @@ public class SettingConversationActivity extends BaseActivity {
         final JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroupTemp);
         RestAPI.PutDataWrappy(SettingConversationActivity.this, jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 if (!TextUtils.isEmpty(s)) {
                     AppFuncs.log(s);
                     wpKChatGroup = wpKChatGroupTemp;
@@ -671,7 +672,7 @@ public class SettingConversationActivity extends BaseActivity {
                 JsonObject jsonObject = AppFuncs.convertClassToJsonObject(wpKChatGroup);
                 RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
                     @Override
-                    public void OnComplete(int httpCode, String error, String s) {
+                    public void OnComplete(String s) {
                         AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
                         deleteGroupByAdmin();
                     }
@@ -695,7 +696,7 @@ public class SettingConversationActivity extends BaseActivity {
             RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
                     Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     AppFuncs.log(s != null ? s : "");
                     leaveXmppGroup();
                 }
