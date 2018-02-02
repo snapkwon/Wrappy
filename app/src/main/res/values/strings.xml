@@ -538,5 +538,8 @@
     <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
+
+    <string name="create_new_password">Create a password</string>
+    <string name="input_your_password">Input your Password</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

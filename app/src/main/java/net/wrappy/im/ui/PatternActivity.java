@@ -227,6 +227,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(getApplicationContext());
+            //        Intent intent = new Intent(PatternActivity.this,InputPasswordLoginActivity.class);
+                 //   PatternActivity.this.startActivity(intent);
                     doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
                 } catch (Exception ex) {
                     AppFuncs.dismissProgressWaiting();
