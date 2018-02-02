@@ -1147,7 +1147,7 @@ public class XmppConnection extends ImConnection {
             if (chatRoomJid.contains(Constant.DEFAULT_CONFERENCE_SERVER) && chatRoomJid.contains("@")) {
                 RestAPI.GetDataWrappy(mContext, RestAPI.getGroupByXmppId(chatRoomJid.split("@")[0]), new RestAPIListener() {
                     @Override
-                    protected void OnComplete(int httpCode, String error, String s) {
+                    protected void OnComplete(String s) {
                         try {
                             WpKChatGroupDto wpKChatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
                             if (wpKChatGroupDto.getIcon() != null) {

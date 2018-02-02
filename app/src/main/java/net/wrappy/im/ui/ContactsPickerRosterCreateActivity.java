@@ -115,7 +115,7 @@ public class ContactsPickerRosterCreateActivity extends BaseActivity {
     private void getTypeRoster() {
         RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_TYPE_ROSTER, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     JsonArray jsonArray = AppFuncs.convertToJson(s).getAsJsonArray();
                     for (JsonElement element : jsonArray) {

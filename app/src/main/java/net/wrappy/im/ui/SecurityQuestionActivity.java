@@ -76,7 +76,7 @@ public class SecurityQuestionActivity extends BaseActivity implements AppDelegat
                     jsonObject.add("kMemberSecurityQuestionDtoList", jsonArray);
                     RestAPIListener listener = new RestAPIListener(this) {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void OnComplete(String s) {
                             isFinish = true;
                             ImageView view = new ImageView(SecurityQuestionActivity.this);
                             view.setImageResource(R.drawable.waiting_success);

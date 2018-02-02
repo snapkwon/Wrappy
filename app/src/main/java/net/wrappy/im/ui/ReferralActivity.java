@@ -50,7 +50,7 @@ public class ReferralActivity extends BaseActivity {
             AppFuncs.showProgressWaiting(this);
             RestAPI.PutDataWrappy(this, new JsonObject(), String.format(RestAPI.REFERRAL, referral), new RestAPIListener(this) {
                 @Override
-                protected void OnComplete(int httpCode, String error, String s) {
+                protected void OnComplete(String s) {
                     Store.putBooleanData(getApplicationContext(), Store.REFERRAL, false);
                     finish();
                 }

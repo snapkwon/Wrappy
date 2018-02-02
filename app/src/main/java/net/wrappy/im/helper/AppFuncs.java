@@ -426,7 +426,7 @@ public class AppFuncs {
     public static void getSyncUserInfo(final long accountId) {
         RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_MEMBER_INFO, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Debug.d(s);
                 try {
                     Registration registration = new Gson().fromJson(s, Registration.class);
@@ -441,7 +441,7 @@ public class AppFuncs {
     public static void sendRequestInviteFriend(final Activity activity) {
         RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListener(activity) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     Gson gson = new Gson();
                     PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {

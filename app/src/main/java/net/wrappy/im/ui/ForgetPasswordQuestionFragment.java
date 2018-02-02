@@ -90,7 +90,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
         AppFuncs.showProgressWaiting(getActivity());
         RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS + Store.getStringData(getActivity(), Store.USERNAME), new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     AppFuncs.dismissProgressWaiting();
 
@@ -166,7 +166,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     private void postDataForForgetPassword(JsonObject json) {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.dismissProgressWaiting();
                 if (!TextUtils.isEmpty(s))
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);
@@ -189,7 +189,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
     private void postDataForChangeSecurityQuestions(JsonObject json) {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.POST_CHANGE_QUESTION_CHECK, new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.dismissProgressWaiting();
                 if ("true".equals(s))
                     appDelegate.onChangeInApp(ACTION_FROM_QUESTION, s);

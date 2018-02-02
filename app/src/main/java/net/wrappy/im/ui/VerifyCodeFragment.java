@@ -167,7 +167,7 @@ public class VerifyCodeFragment extends Fragment {
     private void getCountryCodesFromServer() {
         RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_COUNTRY_CODES, new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     if (s != null) {
                         Type listType = new TypeToken<ArrayList<WpkCountry>>() {
@@ -238,13 +238,13 @@ public class VerifyCodeFragment extends Fragment {
             AppFuncs.showProgressWaiting(getActivity());
             RestAPI.PostDataWrappy(getActivity(), new JsonObject(), RestAPI.getVerifyCodeUrl(registration.getWpKMemberDto().getMobile(), pin), new RestAPIListener(getActivity()) {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     String url = RestAPI.loginUrl(registration.getWpKMemberDto().getIdentifier(), registration.getWpKAuthDto().getSecret());
                     AppFuncs.log(url);
                     RestAPIListener listener = new RestAPIListener(getActivity()) {
 
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void OnComplete(String s) {
                             try {
                                 AppFuncs.log("loginUrl: " + s);
                                 JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
@@ -311,7 +311,7 @@ public class VerifyCodeFragment extends Fragment {
         AppFuncs.log("sendCodeAgain: " + url);
         RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_success), false);
             }
         });
@@ -325,7 +325,7 @@ public class VerifyCodeFragment extends Fragment {
         AppFuncs.log("requestChangePhoneNumber" + url);
         RestAPI.PostDataWrappy(getActivity(), new JsonObject(), url, new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 btnVerifyChangePhone.setImageResource(R.drawable.page_1);
                 btnVerifyChangePhone.setSelected(false);
                 AppFuncs.alert(getActivity(), getString(R.string.verify_send_sms_success), false);

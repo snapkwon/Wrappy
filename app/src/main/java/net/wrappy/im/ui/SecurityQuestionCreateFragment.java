@@ -90,7 +90,7 @@ public class SecurityQuestionCreateFragment extends Fragment {
 
 
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     JsonArray jsonArray = (new JsonParser()).parse(s).getAsJsonArray();
                     ArrayList<String> stringQuestions = new ArrayList<>();

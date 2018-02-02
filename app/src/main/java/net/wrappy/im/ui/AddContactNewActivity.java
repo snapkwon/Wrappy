@@ -116,7 +116,7 @@ public class AddContactNewActivity extends BaseActivity {
         if (!TextUtils.isEmpty(s)) {
             RestAPI.GetDataWrappy(this, String.format(RestAPI.GET_SEARCH_USERNAME, s), new RestAPIListener(this) {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     Debug.d(s);
                     try {
                         ArrayList<WpKMemberDto> wpKMemberDtos = new Gson().fromJson(s, new TypeToken<ArrayList<WpKMemberDto>>() {

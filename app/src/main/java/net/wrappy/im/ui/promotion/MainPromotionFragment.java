@@ -80,7 +80,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     private void getPromotionHistory() {
         RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_HISTORY, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     Gson gson = new Gson();
                     AwardHistory history = gson.fromJson(s, new TypeToken<AwardHistory>() {
@@ -103,7 +103,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     private void getStatusInviteFriend() {
         RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_SETTING, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     Gson gson = new Gson();
                     PromotionSetting promotionSetting = gson.fromJson(s, new TypeToken<PromotionSetting>() {
@@ -121,7 +121,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
     private void getPromotionBalance() {
         RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_PROMOTION_BALANCE, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
                     long balance = jsonObject.get("balance").getAsLong();

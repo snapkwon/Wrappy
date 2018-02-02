@@ -257,7 +257,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
     private void showPopUpNotice() {
         RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.GET_POPUP_NOTICE, new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     Gson gson = new Gson();
                     ArrayList<PopUpNotice> popUpNotices = gson.fromJson(s, new TypeToken<ArrayList<PopUpNotice>>() {
@@ -938,7 +938,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             Imps.Contacts.reset(getContentResolver());
             RestAPI.GetDataWrappy(this, RestAPI.CHAT_GROUP, new RestAPIListener() {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     try {
                         WpKChatGroupDto[] wpKMemberDtos = new Gson().fromJson(s, WpKChatGroupDto[].class);
                         syncData(mLoadDataHandler, wpKMemberDtos, syncGroupListener, 0);
@@ -949,7 +949,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             });
             RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     try {
                         WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
                         syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);

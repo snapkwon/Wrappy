@@ -75,7 +75,6 @@ import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.SelectedContact;
-import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
@@ -432,7 +431,7 @@ public class ContactsPickerActivity extends BaseActivity {
         Debug.d(jsonObject.toString());
         RestAPI.PostDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(this) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.dismissProgressWaiting();
                 ArrayList<String> users = new ArrayList<>();
                 ArrayList<Integer> providers = new ArrayList<>();
@@ -576,7 +575,7 @@ public class ContactsPickerActivity extends BaseActivity {
     private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
         RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
@@ -624,7 +623,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                             RestAPI.PostDataWrappyArray(this, json, String.format(RestAPI.ADD_MEMBER_TO_GROUP, groupDto.getId()), new RestAPIListener(this) {
                                 @Override
-                                public void OnComplete(int httpCode, String error, String s) {
+                                public void OnComplete(String s) {
                                     ArrayList<String> users = new ArrayList<>();
                                     for (int i = 0; i < mSelection.size(); i++) {
                                         SelectedContact contact = mSelection.valueAt(i);
@@ -754,7 +753,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
                         RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListener(ContactsPickerActivity.this) {
                             @Override
-                            public void OnComplete(int httpCode, String error, String s) {
+                            public void OnComplete(String s) {
                                 ImApp.removeContact(getContentResolver(), address, conn);
                             }
                         });
