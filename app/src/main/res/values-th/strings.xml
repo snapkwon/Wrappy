@@ -516,4 +516,6 @@
     <string name="chat_message_item">แชท %1$s %2$s</string>
     <string name="message_kicked_from_group">%s จะถูกลบออกโดยผู้ดูแลระบบ</string>
     <string name="comming_soon">เร็ว ๆ นี้</string>
+    <string name="fullname">ชื่อเต็ม</string>
+    <string name="info">Info</string>
 </resources>

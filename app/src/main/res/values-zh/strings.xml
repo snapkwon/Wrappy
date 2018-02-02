@@ -530,4 +530,6 @@
     <string name="chat_message_item">%1$s聊天%2$s。</string>
     <string name="message_kicked_from_group">%s被管理員除去</string>
     <string name="comming_soon">快來了</string>
+    <string name="fullname">全名</string>
+    <string name="info">Info</string>
 </resources>

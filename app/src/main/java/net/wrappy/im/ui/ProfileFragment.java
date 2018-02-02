@@ -148,7 +148,7 @@ public class ProfileFragment extends BaseFragmentV4 {
 //            buf.append(" = ");
 //            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
 //            buf.append(')');
-            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, Store.getIntData(getActivity(),Store.ACCOUNT_ID));
+            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, Store.getLongData(getActivity(),Store.ACCOUNT_ID));
             Uri.Builder builder = accountUri.buildUpon();
             Uri mUri = builder.build();
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
@@ -611,7 +611,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(String s) {
-                AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
+                PopupUtils.showOKDialog(getActivity(), getString(R.string.info), getString(R.string.update_profile_success));
                 if (wpKMemberDto != null) {
                     Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,mApp.getDefaultAccountId());
                     emailTemp = wpKMemberDto.getEmail();

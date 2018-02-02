@@ -539,5 +539,6 @@
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
     <string name="fullname">Full Name</string>
+    <string name="info">Info</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

@@ -52,6 +52,7 @@
     <string name="error_8035">IDもしくはパスワードが正しくありません。あと2回のミスでアカウントが3時間ロックされます</string>
     <string name="error_8036">IDもしくはパスワードが正しくありません。あと1回のミスでアカウントが3時間ロックされます</string>
     <string name="error_8037">IDもしくはパスワードが正しくありません。アカウントは3時間ロックされます。</string>
+    <string name="error_8038">IDもしくはパスワードが正しくありません。</string>
     <string name="error_unknown">エラーが発生したましたので、後ほどもう一度お試しください。</string>
 
 
