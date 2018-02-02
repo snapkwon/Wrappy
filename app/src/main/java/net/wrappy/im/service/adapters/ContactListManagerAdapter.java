@@ -974,7 +974,7 @@ public class ContactListManagerAdapter extends
             RestAPIListener listener = new RestAPIListener() {
 
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     if (!TextUtils.isEmpty(s)) {
                         try {
                             ContentValues values = new ContentValues(6);
@@ -1341,7 +1341,7 @@ public class ContactListManagerAdapter extends
         final Uri uri = mResolver.insert(mContactUrl, values);
         RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Debug.d(s);
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {

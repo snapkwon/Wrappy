@@ -201,7 +201,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         String url = RestAPI.resetPasswordUrl(hashResetPassword, pass);
         RestAPIListener listener = new RestAPIListener() {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 login(pass);
             }
         };
@@ -220,7 +220,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         RestAPI.PostDataWrappy(this, new JsonObject(), url, new RestAPIListener(this) {
 
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     AppFuncs.log("PatternActivity: " + s);
                     JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();

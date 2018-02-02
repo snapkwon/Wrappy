@@ -158,7 +158,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private void getCountryCodesFromServer() {
         RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.GET_COUNTRY_CODES, new RestAPIListener(this) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 try {
                     if (s != null) {
                         Type listType = new TypeToken<ArrayList<WpkCountry>>() {
@@ -367,7 +367,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         AppFuncs.log(dataJson.toString());
         RestAPIListener listener = new RestAPIListener(this) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Bundle bundle = new Bundle();
                 bundle.putString("data", dataJson.toString());
                 bundle.putString("country" , wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix());

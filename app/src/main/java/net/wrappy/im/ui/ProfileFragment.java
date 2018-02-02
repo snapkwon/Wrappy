@@ -292,7 +292,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         String url = RestAPI.getMemberByIdUrl(jid);
         RestAPIListener listener = new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 Gson gson = new Gson();
                 try {
                     AppFuncs.log("load: " + s);
@@ -410,7 +410,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getAvatar().getReference())) {
                                         RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_AVATAR, new RestAPIListener(getActivity()) {
                                             @Override
-                                            public void OnComplete(int httpCode, String error, String s) {
+                                            public void OnComplete(String s) {
                                                 wpKMemberDto.setAvatar(null);
                                                 AppFuncs.alert(getActivity(), getString(R.string.message_remove_avatar_success), true);
                                             }
@@ -423,7 +423,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                                     if (!TextUtils.isEmpty(wpKMemberDto.getBanner().getReference())) {
                                         RestAPI.DeleteDataWrappy(getActivity(), new JsonObject(), RestAPI.DELETE_BANNER, new RestAPIListener(getActivity()) {
                                             @Override
-                                            public void OnComplete(int httpCode, String error, String s) {
+                                            public void OnComplete(String s) {
                                                 wpKMemberDto.setBanner(null);
                                                 AppFuncs.alert(getActivity(), getString(R.string.message_remove_banner_success), true);
                                             }
@@ -535,7 +535,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         AppFuncs.log("update: " + jsonObject.toString());
         RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListener(getActivity()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                 if (wpKMemberDto != null) {
                     emailTemp = wpKMemberDto.getEmail();

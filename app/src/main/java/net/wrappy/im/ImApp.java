@@ -1258,7 +1258,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                         } else {
                             RestAPI.GetDataWrappy(sImApp, RestAPI.getMemberByIdUrl(new XmppAddress(contact.getAddress().getBareAddress()).getUser()), new RestAPIListener() {
                                 @Override
-                                public void OnComplete(int httpCode, String error, String s) {
+                                public void OnComplete(String s) {
                                     try {
                                         IContactListManager manager = mConn.getContactListManager();
                                         if (TextUtils.isEmpty(s)) {

@@ -95,7 +95,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
             RestAPI.GetDataWrappy(getContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener() {
                 @Override
-                protected void OnComplete(int httpCode, String error, String s) {
+                protected void OnComplete(String s) {
                     Gson gson = new Gson();
                     wpKChatGroupDto = gson.fromJson(s, new TypeToken<WpKChatGroupDto>(){
                     }.getType());
@@ -143,7 +143,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
                     RestAPI.PostDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPIListener() {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void OnComplete(String s) {
 
                         }
                     });
@@ -154,7 +154,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
                     RestAPI.DeleteDataWrappy(getContext(), null, String.format(RestAPI.PIN_CONVERSATION, account), new RestAPIListener() {
                         @Override
-                        public void OnComplete(int httpCode, String error, String s) {
+                        public void OnComplete(String s) {
 
                         }
                     });
@@ -186,7 +186,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
         RestAPI.DeleteDataWrappy(getContext(), new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, groupXmppId,
                 Imps.Account.getAccountName(getContext().getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(getContext()) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.log(s != null ? s : "");
                 leaveXmppGroup();
             }

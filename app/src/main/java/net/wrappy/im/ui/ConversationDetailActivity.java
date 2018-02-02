@@ -685,7 +685,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     protected void onClickAddFriend(View v) {
         RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListener(this) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 mConvoView.updateStatusAddContact();
                 task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
                     @Override

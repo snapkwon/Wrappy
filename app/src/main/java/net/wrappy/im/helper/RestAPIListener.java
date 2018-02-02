@@ -26,7 +26,7 @@ public abstract class RestAPIListener {
         this.mContext = context;
     }
 
-    protected abstract void OnComplete(int httpCode, String error, String s);
+    protected abstract void OnComplete(String s);
 
     protected void onError(int errorCode, String url) {
         Debug.d(url);
@@ -51,6 +51,8 @@ public abstract class RestAPIListener {
             return -1;
         }
     }
+
+
 
     private View.OnClickListener onOkListener;
     private Context mContext;

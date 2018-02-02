@@ -1307,7 +1307,7 @@ public class ConversationView implements OnHandleMessage {
 
         RestAPI.PostDataWrappy(mContext, jsonObject, RestAPI.POST_CHECK_OBJECTIONABLE, new RestAPIListener(mActivity) {
             @Override
-            public void OnComplete(int httpCode, String error, String s) {
+            public void OnComplete(String s) {
                 AppFuncs.log(s);
                 try {
                     JsonObject jObject = (new JsonParser()).parse(s).getAsJsonObject();
@@ -3129,7 +3129,7 @@ public class ConversationView implements OnHandleMessage {
 
             RestAPI.PostDataWrappy(ImApp.sImApp, jsonObject, RestAPI.POST_REPORT_MESSAGE, new RestAPIListener(mActivity) {
                 @Override
-                public void OnComplete(int httpCode, String error, String s) {
+                public void OnComplete(String s) {
                     Debug.e(s);
                 }
             });
