@@ -226,6 +226,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         mApp = (ImApp) getActivity().getApplication();
         appFuncs = AppFuncs.getInstance();
         jid = getArguments().getString("jid");
+        edFullName.setEnabled(false);
         if (TextUtils.isEmpty(jid)) {
             isSelf = true;
             if (mApp.getDefaultUsername().contains("@")) {
@@ -241,7 +242,6 @@ public class ProfileFragment extends BaseFragmentV4 {
             lnProfilePhone.setVisibility(View.GONE);
             linearForSeft.setVisibility(View.GONE);
             lnProfileUsername.setVisibility(View.VISIBLE);
-            txtClientName.setText(jid);
             String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
             if (!TextUtils.isEmpty(reference)) {
                 GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
@@ -312,9 +312,9 @@ public class ProfileFragment extends BaseFragmentV4 {
                         wpKMemberDto = account.getWpKMemberDto();
                     } else {
                         wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
-                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
-                            txtClientName.setText(wpKMemberDto.getGiven());
-                        }
+//                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
+//                            txtClientName.setText(wpKMemberDto.getGiven());
+//                        }
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
