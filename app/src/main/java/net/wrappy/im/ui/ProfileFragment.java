@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -142,12 +143,13 @@ public class ProfileFragment extends BaseFragmentV4 {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            buf.append('(');
-            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
-            buf.append(" = ");
-            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
-            buf.append(')');
-            Uri.Builder builder = Imps.Account.CONTENT_URI.buildUpon();
+//            buf.append('(');
+//            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
+//            buf.append(" = ");
+//            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
+//            buf.append(')');
+            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, Store.getIntData(getActivity(),Store.ACCOUNT_ID));
+            Uri.Builder builder = accountUri.buildUpon();
             Uri mUri = builder.build();
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, null);
@@ -624,6 +626,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     }
 
     public void onDataChange() {
+        edEmail.setEnabled(true);
         edFullName.setEnabled(true);
         edFullName.setFocusable(true);
         edFullName.requestFocus();
