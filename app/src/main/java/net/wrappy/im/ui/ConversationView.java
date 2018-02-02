@@ -1186,7 +1186,7 @@ public class ConversationView implements OnHandleMessage {
             }
         });
 
-        mComposeMessage.setOnKeyListener(new View.OnKeyListener() {
+          mComposeMessage.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {

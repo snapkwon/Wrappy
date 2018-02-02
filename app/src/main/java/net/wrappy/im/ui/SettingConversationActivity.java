@@ -290,7 +290,12 @@ public class SettingConversationActivity extends BaseActivity {
         mThreadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
-
+                List<Contact> memberss  = new ArrayList<>();
+                try {
+                    memberss =   mSession.getMembers();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
 
                 String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
@@ -299,11 +304,11 @@ public class SettingConversationActivity extends BaseActivity {
                 ContentResolver cr = getContentResolver();
                 Cursor c = cr.query(memberUri, projection, null, null, null);
 
-                for (WpKMemberDto memberDto : identifiers) {
+                for (Contact memberDto : memberss) {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getIdentifier());
-                    if (memberDto.getAvatar() != null) {
+                    member.setNickname(memberDto.getName());
+                   /* if (memberDto.getAvatar() != null) {
                         member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }
                     if (memberDto.getId() == idMemberOwner) {
@@ -313,7 +318,7 @@ public class SettingConversationActivity extends BaseActivity {
                         }
                     } else {
                         member.setAffiliation("member");
-                    }
+                    }*/
 //                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
                     members.add(member);
                 }
