@@ -7,6 +7,7 @@ import android.util.Log;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
 import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.legacy.SignInHelper;
 import net.wrappy.im.ui.legacy.SimpleAlertHandler;
 import net.wrappy.im.ui.onboarding.OnboardingAccount;
@@ -90,6 +91,7 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
             return;
         }
 
+        Store.putLongData(activity,Store.ACCOUNT_ID,account.accountId);
 
     }
 }

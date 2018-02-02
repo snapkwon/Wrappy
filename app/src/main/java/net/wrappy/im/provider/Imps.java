@@ -30,7 +30,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.ConferenceUtils;
@@ -354,36 +353,35 @@ public class Imps {
             return ret;
         }
 
-        public static int updateAccountFromDataServer(ContentResolver cr, Registration registration, long accountId) {
+
+        public static int updateAccountFromDataServer(ContentResolver cr, WpKMemberDto memberDto, long accountId) {
             int id = -1;
-            if (registration != null && registration.getWpKMemberDto() != null) {
+            if (memberDto != null) {
                 ContentValues values = new ContentValues();
+                setValue(values, Account.ACCOUNT_EMAIL, memberDto.getEmail());
+                setValue(values, Account.ACCOUNT_PHONE, memberDto.getMobile());
+                setValue(values, Account.ACCOUNT_NAME, memberDto.getGiven());
+                setValue(values, Account.NAME, memberDto.getIdentifier());
+                setValue(values, Account.ACCOUNT_GENDER, memberDto.getGender());
 
-                WpKMemberDto memberDto = registration.getWpKMemberDto();
-                if (memberDto != null) {
-                    setValue(values, Account.ACCOUNT_EMAIL, memberDto.getEmail());
-                    setValue(values, Account.ACCOUNT_PHONE, memberDto.getMobile());
-                    setValue(values, Account.ACCOUNT_NAME, memberDto.getIdentifier());
+                Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
+                id = cr.update(accountUri, values, null, null);
 
-                    Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-                    id = cr.update(accountUri, values, null, null);
+                //Update avatar for user when login
+                String avatarReference = "";
+                String bannerReference = "";
+                if (memberDto.getAvatar() != null) {
+                    avatarReference = memberDto.getAvatar().getReference();
+                }
+                if (memberDto.getBanner() != null) {
+                    bannerReference = memberDto.getBanner().getReference();
+                }
 
-                    //Update avatar for user when login
-                    String avatarReference = "";
-                    String bannerReference = "";
-                    if (memberDto.getAvatar() != null) {
-                        avatarReference = memberDto.getAvatar().getReference();
-                    }
-                    if (memberDto.getBanner() != null) {
-                        bannerReference = memberDto.getBanner().getReference();
-                    }
-
-                    if (!TextUtils.isEmpty(avatarReference) || !TextUtils.isEmpty(bannerReference)) {
-                        String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
-                        String address = memberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
-                        net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
-                        ImApp.broadcastIdentity(null);
-                    }
+                if (!TextUtils.isEmpty(avatarReference) || !TextUtils.isEmpty(bannerReference)) {
+                    String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatarReference);
+                    String address = memberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
+                    net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+                    ImApp.broadcastIdentity(null);
                 }
             }
             return id;

@@ -6,9 +6,6 @@ package net.wrappy.im.model;
 
 public class WpKChatRoster {
     Integer id;
-    Integer identifier;
-    String member;
-    String reference;
     WpKMemberDto contact;
 
     public WpKMemberDto getContact() {
