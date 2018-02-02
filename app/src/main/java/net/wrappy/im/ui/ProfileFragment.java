@@ -219,6 +219,47 @@ public class ProfileFragment extends BaseFragmentV4 {
         }
     }
 
+    public final String[] CHAT_PROJECTION = {
+            Imps.AccountColumns.ACCOUNT_NAME,
+            Imps.AccountColumns.ACCOUNT_EMAIL,
+            Imps.AccountColumns.ACCOUNT_PHONE,
+            Imps.AccountColumns.ACCOUNT_GENDER,
+            Imps.AccountColumns.NAME
+    };
+
+    private void updateDataFromLocal(Cursor newCursor) {
+        if (newCursor.moveToFirst()){
+            String c_username = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.NAME));
+            String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
+            String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
+            String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
+            String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
+            if (!TextUtils.isEmpty(c_username)) {
+                txtUsername.setText(c_username);
+                String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),c_username+"@"+Constant.DOMAIN);
+                if (!TextUtils.isEmpty(reference)) {
+                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
+                }
+            }
+            if (!TextUtils.isEmpty(c_gender)) {
+                String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
+                edGender.setText(upperString);
+                genderTemp = c_gender;
+            }
+            if (!TextUtils.isEmpty(c_phone)) {
+                edPhone.setText(c_phone);
+            }
+            if (!TextUtils.isEmpty(c_email)) {
+                edEmail.setText(c_email);
+                emailTemp = c_email;
+            }
+            if (!TextUtils.isEmpty(c_name)) {
+                edFullName.setText(c_name);
+                nameTemp = c_name;
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -235,9 +276,9 @@ public class ProfileFragment extends BaseFragmentV4 {
                 jid = mApp.getDefaultUsername().split("@")[0];
                 linearForContact.setVisibility(View.GONE);
             }
-            mLoaderCallbacks = new MyLoaderCallbacks();
-            mLoaderManager = getLoaderManager();
-            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
+//            mLoaderCallbacks = new MyLoaderCallbacks();
+//            mLoaderManager = getLoaderManager();
+//            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
         } else {
             lnProfileEmail.setVisibility(View.GONE);
             lnProfileGender.setVisibility(View.GONE);
@@ -257,6 +298,9 @@ public class ProfileFragment extends BaseFragmentV4 {
         reference = getArguments().getString("nickName");
         preferenceView();
         if (isSelf) {
+            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId());
+            Cursor cursor = getActivity().getContentResolver().query(accountUri,CHAT_PROJECTION,null,null,null);
+            updateDataFromLocal(cursor);
             mainActivity = (MainActivity) getActivity();
         }
 
@@ -569,7 +613,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             public void OnComplete(String s) {
                 AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
                 if (wpKMemberDto != null) {
-                    Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,Store.getLongData(getActivity(),Store.ACCOUNT_ID));
+                    Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,mApp.getDefaultAccountId());
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
                     nameTemp = wpKMemberDto.getGiven();
