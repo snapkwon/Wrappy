@@ -56,6 +56,8 @@ import com.github.javiersantos.appupdater.enums.Display;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
@@ -515,21 +517,48 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         }
     }
 
+    @Override
+    public void onResultPickerImage(final boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        try {
+            final Uri resultUri = UCrop.getOutput(data);
+            AppFuncs.showProgressWaiting(this);
+            final boolean isFinalAvatar = isAvatar;
+            RestAPI.uploadFile(this, new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    AppFuncs.dismissProgressWaiting();
+                    try {
+                        String reference = RestAPI.getPhotoReference(result.getResult());
+                        ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                        profileFragment.receiverReferenceAvatarOrBanner(isFinalAvatar,reference);
+                    } catch (Exception ex) {
+                        AppFuncs.alert(MainActivity.this, getString(R.string.upload_fail), false);
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception ex) {
+
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER
-                    || requestCode == UCrop.REQUEST_CROP || requestCode == ProfileFragment.CROP_BANNER || requestCode == ProfileFragment.CROP_AVATAR) {
-                try {
-                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                    profileFragment.onActivityResult(requestCode, resultCode, data);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else if (requestCode == REQUEST_CHANGE_SETTINGS) {
+//            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER
+//                    || requestCode == UCrop.REQUEST_CROP || requestCode == ProfileFragment.CROP_BANNER || requestCode == ProfileFragment.CROP_AVATAR) {
+//                try {
+//                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+//                    profileFragment.onActivityResult(requestCode, resultCode, data);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            } else
+                if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
