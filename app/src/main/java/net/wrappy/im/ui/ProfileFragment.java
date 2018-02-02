@@ -240,7 +240,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             lnProfileGender.setVisibility(View.GONE);
             lnProfilePhone.setVisibility(View.GONE);
             linearForSeft.setVisibility(View.GONE);
-            lnProfileUsername.setVisibility(View.GONE);
+            lnProfileUsername.setVisibility(View.VISIBLE);
             txtClientName.setText(jid);
             String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
             if (!TextUtils.isEmpty(reference)) {
@@ -312,6 +312,9 @@ public class ProfileFragment extends BaseFragmentV4 {
                         wpKMemberDto = account.getWpKMemberDto();
                     } else {
                         wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
+                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
+                            txtClientName.setText(wpKMemberDto.getGiven());
+                        }
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
