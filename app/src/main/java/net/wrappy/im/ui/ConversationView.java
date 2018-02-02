@@ -356,7 +356,7 @@ public class ConversationView implements OnHandleMessage {
 
     public void unActiveSearchmode() {
         isSearchMode = false;
-        searchView.setVisibility(View.GONE);
+//        searchView.setVisibility(View.GONE);
         mMessageAdapter.searchText("");
         inputlayout.setVisibility(View.VISIBLE);
         searchlayout.setVisibility(View.GONE);
