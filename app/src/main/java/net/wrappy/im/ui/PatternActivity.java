@@ -41,6 +41,7 @@ import java.util.List;
 import me.tornado.android.patternlock.PatternUtils;
 import me.tornado.android.patternlock.PatternView;
 
+import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_INPUT_NEW_PASSWORD;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_LOGIN;
 import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 
@@ -133,7 +134,6 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             this.setTypePattern(TYPE_NOCONFIRM);
             title.setText(R.string.login);
             startTimer();
-
         } else {
             this.setTypePattern(TYPE_CONFIRM);
 
@@ -171,10 +171,11 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         password = PatternUtils.patternToString(pattern);
         if (type_request == REQUEST_CODE_REGISTER) {
-
             showQuestionScreen(password);
         } else if (type_request == REQUEST_CODE_LOGIN) {
             login(password);
+        } else if (type_request == REQUEST_CODE_INPUT_NEW_PASSWORD) {
+            ForgetPasswordInputNewPassword.start(PatternActivity.this);
         }
         mPatternView.clearPattern();
     }

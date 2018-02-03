@@ -546,6 +546,8 @@
 
     <string name="create_new_password">Create a password</string>
     <string name="input_your_password">Input your Password</string>
+    <string name="input_new_password">Input new password</string>
+    <string name="input_repeat_password">Input repeat your password</string>
     <string name="fullname">Full Name</string>
     <string name="info">Info</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
