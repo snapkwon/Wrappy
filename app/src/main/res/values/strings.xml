@@ -443,11 +443,6 @@
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
     <string name="input_your_email">Input your email</string>
-    <string name="reset_your_password">Reset your password</string>
-    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
-    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
-    <string name="back_to_login">Back to login</string>
-    <string name="resend_link">Resend</string>
     <string name="hint_your_email">Your Email</string>
     <string name="reset_password">Reset Password</string>
     <string name="new_group">New Group</string>
@@ -545,5 +540,11 @@
     <string name="comming_soon">coming soon</string>
     <string name="fullname">Full Name</string>
     <string name="info">Info</string>
-    <!--<string name="waiting_develop">This function is developing</string>-->
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+
 </resources>

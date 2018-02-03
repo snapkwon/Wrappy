@@ -518,4 +518,10 @@
     <string name="comming_soon">เร็ว ๆ นี้</string>
     <string name="fullname">ชื่อเต็ม</string>
     <string name="info">Info</string>
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
 </resources>

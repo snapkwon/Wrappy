@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 
-        boolean isReferral = Store.getBooleanData(getApplicationContext(),Store.REFERRAL);
+        boolean isReferral = Store.getBooleanData(getApplicationContext(), Store.REFERRAL);
         if (isReferral) {
             ReferralActivity.start();
         }
