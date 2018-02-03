@@ -100,6 +100,9 @@
         <activity
             android:name=".ui.SecurityQuestionActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ForgetPasswordResendLinkActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".plugin.xmpp.XmppImPlugin"
