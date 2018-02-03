@@ -473,10 +473,10 @@ public class ProfileFragment extends BaseFragmentV4 {
                 public void onSelectBottomSheetCell(int index) {
                     switch (index) {
                         case 1:
-                            AppFuncs.openCamera(getActivity(), isRequestAvatar ? AVATAR : BANNER);
+                            AppFuncs.openCamera(getActivity(),isRequestAvatar);
                             break;
                         case 2:
-                            AppFuncs.openGallery(getActivity(), isRequestAvatar ? AVATAR : BANNER);
+                            AppFuncs.openGallery(getActivity(),isRequestAvatar);
                             break;
                         case 3:
                             if (isRequestAvatar) {
@@ -602,6 +602,21 @@ public class ProfileFragment extends BaseFragmentV4 {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void receiverReferenceAvatarOrBanner(boolean isAvatar, String reference) {
+        if (!TextUtils.isEmpty(reference)) {
+            if (isAvatar) {
+                Avatar avatar = new Avatar(reference);
+                wpKMemberDto.setAvatar(avatar);
+            } else {
+                Banner banner = new Banner(reference);
+                wpKMemberDto.setBanner(banner);
+            }
+            updateData();
+        } else {
+            AppFuncs.alert(getActivity(), getString(R.string.upload_fail), false);
         }
     }
 
