@@ -28,6 +28,7 @@ public class LauncherActivity extends BaseActivity {
     LinearLayout lnLoginFrame;
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
+    public static final int REQUEST_CODE_INPUT_NEW_PASSWORD = 1113;
 
     boolean isFlag;
 

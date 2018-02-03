@@ -98,6 +98,9 @@
         <activity
             android:name=".ui.SecurityQuestionActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ForgetPasswordResendLinkActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".plugin.xmpp.XmppImPlugin"
@@ -477,15 +480,17 @@
         <activity
             android:name=".ui.ReferralActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.InputPasswordRegisterActivity"
+        <activity
+            android:name=".ui.InputPasswordRegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="adjustNothing"/>
-        <activity android:name=".ui.InputPasswordLoginActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ui.InputPasswordLoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
+            android:windowSoftInputMode="adjustNothing"></activity>
+        <activity android:name=".ui.ForgetPasswordInputNewPassword"></activity>
     </application>
 
 </manifest>
