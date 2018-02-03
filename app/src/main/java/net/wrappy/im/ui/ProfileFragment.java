@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -142,12 +143,13 @@ public class ProfileFragment extends BaseFragmentV4 {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             StringBuilder buf = new StringBuilder();
 
-            buf.append('(');
-            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
-            buf.append(" = ");
-            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
-            buf.append(')');
-            Uri.Builder builder = Imps.Account.CONTENT_URI.buildUpon();
+//            buf.append('(');
+//            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
+//            buf.append(" = ");
+//            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
+//            buf.append(')');
+            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, Store.getLongData(getActivity(),Store.ACCOUNT_ID));
+            Uri.Builder builder = accountUri.buildUpon();
             Uri mUri = builder.build();
             CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
                     buf == null ? null : buf.toString(), null, null);
@@ -217,6 +219,47 @@ public class ProfileFragment extends BaseFragmentV4 {
         }
     }
 
+    public final String[] CHAT_PROJECTION = {
+            Imps.AccountColumns.ACCOUNT_NAME,
+            Imps.AccountColumns.ACCOUNT_EMAIL,
+            Imps.AccountColumns.ACCOUNT_PHONE,
+            Imps.AccountColumns.ACCOUNT_GENDER,
+            Imps.AccountColumns.NAME
+    };
+
+    private void updateDataFromLocal(Cursor newCursor) {
+        if (newCursor.moveToFirst()){
+            String c_username = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.NAME));
+            String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
+            String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
+            String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
+            String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
+            if (!TextUtils.isEmpty(c_username)) {
+                txtUsername.setText(c_username);
+                String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),c_username+"@"+Constant.DOMAIN);
+                if (!TextUtils.isEmpty(reference)) {
+                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
+                }
+            }
+            if (!TextUtils.isEmpty(c_gender)) {
+                String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
+                edGender.setText(upperString);
+                genderTemp = c_gender;
+            }
+            if (!TextUtils.isEmpty(c_phone)) {
+                edPhone.setText(c_phone);
+            }
+            if (!TextUtils.isEmpty(c_email)) {
+                edEmail.setText(c_email);
+                emailTemp = c_email;
+            }
+            if (!TextUtils.isEmpty(c_name)) {
+                edFullName.setText(c_name);
+                nameTemp = c_name;
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -226,22 +269,22 @@ public class ProfileFragment extends BaseFragmentV4 {
         mApp = (ImApp) getActivity().getApplication();
         appFuncs = AppFuncs.getInstance();
         jid = getArguments().getString("jid");
+        edFullName.setEnabled(false);
         if (TextUtils.isEmpty(jid)) {
             isSelf = true;
             if (mApp.getDefaultUsername().contains("@")) {
                 jid = mApp.getDefaultUsername().split("@")[0];
                 linearForContact.setVisibility(View.GONE);
             }
-            mLoaderCallbacks = new MyLoaderCallbacks();
-            mLoaderManager = getLoaderManager();
-            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
+//            mLoaderCallbacks = new MyLoaderCallbacks();
+//            mLoaderManager = getLoaderManager();
+//            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
         } else {
             lnProfileEmail.setVisibility(View.GONE);
             lnProfileGender.setVisibility(View.GONE);
             lnProfilePhone.setVisibility(View.GONE);
             linearForSeft.setVisibility(View.GONE);
             lnProfileUsername.setVisibility(View.VISIBLE);
-            txtClientName.setText(jid);
             String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
             if (!TextUtils.isEmpty(reference)) {
                 GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
@@ -255,6 +298,9 @@ public class ProfileFragment extends BaseFragmentV4 {
         reference = getArguments().getString("nickName");
         preferenceView();
         if (isSelf) {
+            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId());
+            Cursor cursor = getActivity().getContentResolver().query(accountUri,CHAT_PROJECTION,null,null,null);
+            updateDataFromLocal(cursor);
             mainActivity = (MainActivity) getActivity();
         }
 
@@ -312,9 +358,9 @@ public class ProfileFragment extends BaseFragmentV4 {
                         wpKMemberDto = account.getWpKMemberDto();
                     } else {
                         wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
-                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
-                            txtClientName.setText(wpKMemberDto.getGiven());
-                        }
+//                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
+//                            txtClientName.setText(wpKMemberDto.getGiven());
+//                        }
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
@@ -384,10 +430,10 @@ public class ProfileFragment extends BaseFragmentV4 {
                 PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),Utils.isValidEmail(getActivity(), email),R.string.cancel,null);
                 return;
             }
-            if (TextUtils.isEmpty(name)) {
-                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.error_empty_name),R.string.cancel,null);
-                return;
-            }
+//            if (TextUtils.isEmpty(name)) {
+//                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.error_empty_name),R.string.cancel,null);
+//                return;
+//            }
             edEmail.clearFocus();
             edGender.clearFocus();
             edFullName.clearFocus();
@@ -565,9 +611,9 @@ public class ProfileFragment extends BaseFragmentV4 {
         RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(String s) {
-                AppFuncs.alert(getActivity(), getString(R.string.update_profile_success), true);
+                PopupUtils.showOKDialog(getActivity(), getString(R.string.info), getString(R.string.update_profile_success));
                 if (wpKMemberDto != null) {
-                    Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,Store.getLongData(getActivity(),Store.ACCOUNT_ID));
+                    Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,mApp.getDefaultAccountId());
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
                     nameTemp = wpKMemberDto.getGiven();
@@ -624,6 +670,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     }
 
     public void onDataChange() {
+        edEmail.setEnabled(true);
         edFullName.setEnabled(true);
         edFullName.setFocusable(true);
         edFullName.requestFocus();

@@ -478,7 +478,7 @@
     <string name="activity">Activity</string>
     <string name="error_when_refresh_token">can not refresh access token : please retry!</string>
     <string name="registration">Registration</string>
-    <string name="update_profile_success">Update Success</string>
+    <string name="update_profile_success">Update successfully</string>
     <string name="update_profile_fail">Update fail</string>
     <string name="error_upload_image">Upload fail</string>
     <string name="logout_all_devices">Logout all devices</string>
@@ -542,5 +542,6 @@
     <string name="create_new_password">Create a password</string>
     <string name="input_your_password">Input your Password</string>
     <string name="fullname">Full Name</string>
+    <string name="info">Info</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

@@ -550,7 +550,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             values.put(Imps.Account.NAME, nickname);
             values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
-            values.put(Imps.Account.ACCOUNT_NAME, account_name);
+            //values.put(Imps.Account.ACCOUNT_NAME, account_name);
             if (account != null) {
                 values.put(Imps.Account.ACCOUNT_EMAIL, account.getEmail());
                 values.put(Imps.Account.ACCOUNT_PHONE, account.getPhone());

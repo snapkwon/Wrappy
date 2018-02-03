@@ -457,7 +457,7 @@
     <string name="activity">กิจกรรม</string>
     <string name="error_when_refresh_token">ไม่สามารถรีเฟรชโทเคนการเข้าถึงได้ : โปรดลองอีกครั้ง!</string>
     <string name="registration">การลงทะเบียน</string>
-    <string name="update_profile_success">อัพเดตสำเร็จแล้ว</string>
+    <string name="update_profile_success">อัพเดทประสบความสำเร็จ</string>
     <string name="update_profile_fail">อัพเดตล้มเหลว</string>
     <string name="error_upload_image">อัพโหลดล้มเหลว</string>
     <string name="logout_all_devices">ล็อคเอาต์อุปกรณ์ทั้งหมด</string>
@@ -516,4 +516,6 @@
     <string name="chat_message_item">แชท %1$s %2$s</string>
     <string name="message_kicked_from_group">%s จะถูกลบออกโดยผู้ดูแลระบบ</string>
     <string name="comming_soon">เร็ว ๆ นี้</string>
+    <string name="fullname">ชื่อเต็ม</string>
+    <string name="info">Info</string>
 </resources>
