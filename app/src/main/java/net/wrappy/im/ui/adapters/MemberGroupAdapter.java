@@ -130,9 +130,9 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             }
 
 
-            if (!TextUtils.isEmpty(member.getReferenceAvatar())) {
+           /* if (!TextUtils.isEmpty(member.getReferenceAvatar())) {
                 GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(member.getReferenceAvatar()));
-            }
+            }*/
 
             if (currentUser.equals(mAdminGroup)) {
                 if (isAdminGroup(member)) {

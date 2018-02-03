@@ -95,6 +95,11 @@ interface IChatSession {
          */
      void notifycationMemberLeft(String username);
 
+        /**
+         * get member left
+         */
+     List<Contact> getMembers() ;
+
     /**
      * Sends a message to all participants in this ChatSession.
      */

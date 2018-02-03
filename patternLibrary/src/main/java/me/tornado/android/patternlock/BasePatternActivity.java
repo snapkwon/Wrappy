@@ -24,6 +24,7 @@ public class BasePatternActivity extends AppCompatActivity {
     protected TextView bottomText;
     protected View view;
     protected TextView mMessageTextError;
+    public TextView mCountdownText;
 
     private final Runnable clearPatternRunnable = new Runnable() {
         public void run() {
@@ -45,6 +46,7 @@ public class BasePatternActivity extends AppCompatActivity {
         mRightButton = (Button) findViewById(R.id.pl_right_button);
         bottomText = (TextView) findViewById(R.id.bottomText);
         view = (View) findViewById(R.id.viewspan);
+        mCountdownText = (TextView) findViewById(R.id.pl_countdown_text);
     }
 
     protected void removeClearPatternRunnable() {

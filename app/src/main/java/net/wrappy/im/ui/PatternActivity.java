@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     int type_request;
     AppFuncs appFuncs;
 
+    CountDownTimer cTimer = null;
+
     //    public static final int STATUS_SUCCESS = 1;
 //
 //    private SimpleAlertHandler mHandler;
@@ -63,6 +66,30 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 //    ExistingAccountTask mExistingAccountTask;
     String hashResetPassword = "";
 
+
+    void startTimer() {
+        cTimer = new CountDownTimer(30000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                int seconds = (int) (millisUntilFinished / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+                mCountdownText.setText("TIME : " + String.format("%02d", minutes)
+                        + ":" + String.format("%02d", seconds));
+            }
+            public void onFinish() {
+                cancelTimer();
+                finish();
+        }
+        };
+        cTimer.start();
+    }
+
+
+    //cancel timer
+    void cancelTimer() {
+        if(cTimer!=null)
+            cTimer.cancel();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +132,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         if (type_request == REQUEST_CODE_LOGIN) {
             this.setTypePattern(TYPE_NOCONFIRM);
             title.setText(R.string.login);
+            startTimer();
 
         } else {
             this.setTypePattern(TYPE_CONFIRM);
@@ -227,6 +255,9 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(getApplicationContext());
+                   // Intent intent = new Intent(PatternActivity.this,InputPasswordLoginActivity.class);
+                   // PatternActivity.this.startActivity(intent);
+                  //  AppFuncs.dismissProgressWaiting();
                     doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
                 } catch (Exception ex) {
                     AppFuncs.dismissProgressWaiting();

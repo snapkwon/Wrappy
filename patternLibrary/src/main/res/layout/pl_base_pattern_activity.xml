@@ -29,6 +29,14 @@
             android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/pl_countdown_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
             android:id="@+id/pl_message_text_error"
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -600,12 +600,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                           // String usersinvite = "";
+                            String usersinvite = "";
                             ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
                                 users.add(contact.nickname);
-                               /* if(usersinvite.isEmpty())
+                                if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
 
@@ -613,7 +613,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                 else
                                 {
                                     usersinvite = usersinvite + "-" + contact.nickname;
-                                }*/
+                                }
                             }
                             Gson gson = new Gson();
                             String jsonObject = gson.toJson(users);
