@@ -92,12 +92,14 @@
     <string name="menu_contact_nickname">連絡先ニックネーム</string>
     <string name="menu_view_blocked">ブロックされた</string>
     <string name="nickname">ニックネーム</string>
+
     <string name="confirm_delete_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されます。</string>
     <string name="confirm_block_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"はブロックされます。</string>
     <string name="add_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が追加されました。</string>
     <string name="delete_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されました。</string>
     <string name="block_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"がブロックされました。</string>
     <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\"にブロックされていません。</string>
+
     <string name="menu_verify">連絡先を確認する</string>
     <string name="empty_conversation_group">会話が開いていないチャットを開始するにはタップしてください！</string>
     <string name="search_label">連絡先</string>
@@ -116,7 +118,6 @@
     <string name="wants_to_send_you_the_file">あなたにファイルを送ろうとしています</string>
     <string name="no_connection_for_sending">あなたのシェアを送るための接続はありません！</string>
 
-    <string name="compose_hint">メッセージを送ります</string>
     <string name="compose_hint_secure">プライベートメッセージを送信する</string>
     <string name="menu_end_conversation">チャットを終了</string>
     <string name="select_link_title">リンクを選択</string>
@@ -128,7 +129,6 @@
     <string name="accept_invitation">同意する</string>
     <string name="decline_invitation">低下</string>
     <string name="connecting_to_group_chat_">グループチャットに接続しています…</string>
-
     <string name="empty_contact_list">連絡先が見つかりません。 招待するにはタップします。</string>
     <string name="subscription_prompt"><xliff:g id="USER">%1$s</xliff:g>を追加しますか？</string>
     <string name="approve_subscription">はい</string>
@@ -168,7 +168,6 @@
     <string name="menu_locale">言語</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">言語</string>
     <string name="use_system_default">システムデフォルトを使用する</string>
-
     <string name="button_yes_accept_all">はい、すべて受け入れます</string>
     <string name="pref_delete_unsecured_media_title">安全でないメディアを削除する</string>
     <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後に元の安全でないストレージから自動的に削除します</string>
@@ -303,13 +302,14 @@
     <string name="unable_to_securely_share_this_file">このファイルを安全に共有できません</string>
     <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。 Wrappyを再インストールするか、アプリの「データをクリア」してください</string>
     <string name="swipe_hint">その他のオプションを表示するには左右にスワイプ</string>
-    <string name="no_convos">Wrappyを開始する時間！</string>
+    <string name="no_convos">Wrappyへようこそ！</string>
     <string name="title_more">発見</string>
     <string name="title_me">私</string>
     <string name="no_photos">共有して受信した写真がここに表示されます</string>
     <string name="group_admin">管理者</string>
     <string name="group_you">君は</string>
     <string name="title_activity_launcher">LauncherActivity</string>
+
     <string name="Page1Titlenull"></string>
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">無料</string>
@@ -335,11 +335,11 @@
     <string name="Page11Message">時代に革命を起こすSNSのパイオニア</string>
     <string name="StartMessaging">メッセージを開始する</string>
 
-    <string name="id_or_username">ユーザーIDの入力</string>
+    <string name="id_or_username">ユーザーID</string>
     <string name="forget_password">パスワードを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>
-    <string name="search_username">ユーザーIDの検索</string>
+    <string name="search_username">ユーザーIDで検索</string>
     <string name="add_contact">連絡先を追加</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
 
@@ -429,9 +429,9 @@
     <string name="input_your_email">あなたの電子メールを入力</string>
     <string name="hint_your_email">あなたのメールアドレス</string>
     <string name="reset_password">パスワードを再設定する</string>
-    <string name="new_group">新しいブループ</string>
-    <string name="about_us">私たちに関しては</string>
-    <string name="faq">よくある質問</string>
+    <string name="new_group">グループ新規作成</string>
+    <string name="about_us">About Us</string>
+    <string name="faq">Q&amp;A</string>
     <string name="logout">ログアウト</string>
     <string name="remove">削除する</string>
     <string name="sent">送信済み</string>
@@ -483,24 +483,22 @@
     <string name="user_sent_sticker">%1$sがステッカーを送信しました</string>
     <string name="tab_menu_menu">メニュー</string>
     <string name="tab_menu_conversation">チャット</string>
-    <string name="tab_menu_promotion">プロモーション</string>
-    <string name="tab_menu_my_page">私のページ</string>
+    <string name="tab_menu_promotion">プロモ</string>
+    <string name="tab_menu_my_page">マイページ</string>
     <string name="promotion_invite_friend">友達を招待</string>
     <string name="promotion_history">履歴</string>
     <string name="page_verify">アカウントの確認</string>
     <string name="message_edit">メッセージの編集</string>
     <string name="message_delete">メッセージを削除する</string>
     <string name="message_spam">スパム報告</string>
-    <string name="invite_friend_earn">多くのPTSコインを獲得するためにもっと友達を招待しましょう</string>
-    <string name="promotion_description">WRAPPYを使用するように他の友達を招待すると、あなたは報酬を受ける</string>
+    <string name="invite_friend_earn">友達をWrappyへ招待してPTSボーナスを獲得しよう</string>
+    <string name="promotion_description">友達を招待しWrappyアプリに登録してくれたら報酬を受け取れます</string>
     <string name="promotion_invite_friends">友達を招待</string>
     <string name="verify_send_sms_fail">SMSの送信が失敗した。</string>
     <string name="verify_send_sms_success">SMSの送信が成功した。</string>
     <string name="verify_fail">検証失敗</string>
-    <string name="from">から</string>
     <string name="security_question_change">セキュリティの質問を変更する</string>
     <string name="security_change_old_question">あなたの古い秘密の質問に答える</string>
-    <string name="level">レベル</string>
     <string name="success">成功！</string>
     <string name="secu_success_description">秘密の質問の変更が成功した</string>
     <string name="fail">失敗</string>
@@ -524,9 +522,12 @@
     <string name="fullname">フールネーム</string>
     <string name="info">インフォ</string>
 
-    <string name="reset_your_password">Reset your password</string>
-    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
-    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
-    <string name="back_to_login">Back to login</string>
-    <string name="resend_link">Resend</string>
+    <string name="reset_your_password">パスワードのリセット</string>
+    <string name="receive_password_via_email">パスワードリセットのリンクがWrappyに登録されているE-mailに送られます。</string>
+    <string name="copy_and_paste_url">＊もしリンクがクリックできない場合は、URLをコピーしてブラウザに直接貼り付けて表示してください。</string>
+    <string name="back_to_login">ログインに戻る</string>
+    <string name="resend_link">もう一度送信</string>
+    <string name="local_time_format">yyyy年MMMdd日</string>
+    <string name="promotion_format">%1$s<b>%2$s</b>から　レベル(%d)</string>
+
 </resources>

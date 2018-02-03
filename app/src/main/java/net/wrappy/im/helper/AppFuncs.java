@@ -429,7 +429,7 @@ public class AppFuncs {
     }
 
     public static String convertTimestamp(long timestamp) {
-        String pattern = "MMM dd, yyyy";
+        String pattern = ImApp.sImApp.getString(R.string.local_time_format);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(timestamp);
         return date;

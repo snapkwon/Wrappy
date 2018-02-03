@@ -2103,7 +2103,6 @@ public class ConversationView implements OnHandleMessage {
         }
 
         if (this.isGroupChat()) {
-            mComposeMessage.setHint(R.string.compose_hint);
         } else if (mCurrentChatSession != null) {
             IOtrChatSession otrChatSession = null;
 
@@ -2135,7 +2134,6 @@ public class ConversationView implements OnHandleMessage {
                 mIsStartingOtr = false; //it's started!
 
                 if (mSendButton.getVisibility() == View.GONE) {
-                    mComposeMessage.setHint(R.string.compose_hint);
                     mSendButton.setImageResource(R.drawable.ic_send);
                 }
 
@@ -2150,15 +2148,10 @@ public class ConversationView implements OnHandleMessage {
             } else if (mIsStartingOtr) {
 
             } else if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
-
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
-
-
             } else if (mLastSessionStatus == SessionStatus.FINISHED) {
 
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
             }
         }
     }

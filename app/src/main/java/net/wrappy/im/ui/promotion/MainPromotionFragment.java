@@ -89,7 +89,7 @@ public class MainPromotionFragment extends BaseFragmentV4 {
                     list.add(promotions);
                     ArrayList<PromotionLevel> levels = history.getLevels();
                     for (PromotionLevel level : levels) {
-                        promotions = new Promotions(level.getTitle(), AppFuncs.convertTimestamp(level.getTimestamp()) + " " + getString(R.string.from) + " <b>" + level.getIdentifier() + "</b> " + getString(R.string.level) + " (" + level.getLevel() + ")", level.getBonus());
+                        promotions = new Promotions(level.getTitle(), String.format(getString(R.string.promotion_format), AppFuncs.convertTimestamp(level.getTimestamp()), level.getIdentifier(), level.getLevel()), level.getBonus());
                         list.add(promotions);
                     }
                     promotionAdapter.notifyDataSetChanged();

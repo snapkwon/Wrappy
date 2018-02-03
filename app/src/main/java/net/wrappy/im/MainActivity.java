@@ -190,15 +190,9 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         initFloatButton();
         initViewPager();
         initTabLayout();
-
-        //don't wnat this to happen to often
-//        checkForUpdates();
-
         installRingtones();
-
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
-
         showPopUpNotice();
     }
 

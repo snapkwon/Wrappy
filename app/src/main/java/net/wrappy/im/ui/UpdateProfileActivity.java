@@ -229,7 +229,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(), error, true);
                     return;
                 }
-                appFuncs.showProgressWaiting(this);
+                AppFuncs.showProgressWaiting(this);
                 boolean isFileExist = false;
                 if (uriAvatar != null) {
                     isFileExist = true;
