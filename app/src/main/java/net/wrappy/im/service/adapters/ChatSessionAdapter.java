@@ -713,11 +713,17 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    public List<Contact> getMembers()
+    public  List<Contact> getMembers()
     {
         ImEntity participant = mChatSession.getParticipant();
+        if (mIsGroupChat) {
 
             ChatGroup group = (ChatGroup) participant;
+      //  List<String> members = new ArrayList<>();
+       // ImEntity participant = mChatSession.getParticipant();
+
+        //    Contact contact = (Contact) participant;
+          //  ChatGroup group = getGroupManager().getChatGroup(contact.getAddress());
             /**
              List<Contact> members = group.getMembers();
              for (Contact c : members) {
@@ -727,7 +733,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
 
              }
              }**/
+          /*  for(Contact groups : group.getMembers() )
+            {
+                members.add(groups.getName());
+            }*/
             return group.getMembers();
+        }
+        return null;
 
     }
 

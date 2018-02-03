@@ -597,8 +597,10 @@ public class GroupDisplayActivity extends BaseActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
 
-            if (session == null)
-                session = manager.createChatSession(mAddress, true);
+
+            if (session == null) {
+                session = manager.createMultiUserChatSession(mAddress,mName, null,false);
+            }
 
             if (session != null) {
                 session.leave();

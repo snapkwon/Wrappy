@@ -37,8 +37,9 @@ public class ChatSessionTask extends AsyncTask<String, Long, String> {
             if (connection != null) {
                 manager = connection.getChatSessionManager();
                 IChatSession session = manager.getChatSession(address);
-                if (session == null)
-                    session = manager.createChatSession(address, true);
+                if (session == null) {
+                    session = manager.createMultiUserChatSession(address,"" ,null,false);
+                }
 
                 if (session != null) {
                     if (type == DELETE) {

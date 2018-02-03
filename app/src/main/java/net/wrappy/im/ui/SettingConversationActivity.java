@@ -292,34 +292,36 @@ public class SettingConversationActivity extends BaseActivity {
             public void run() {
                 List<Contact> memberss  = new ArrayList<>();
                 try {
-                    memberss =   mSession.getMembers();
+                    memberss  =     mSession.getMembers();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
 
-                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
-                        Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
-                Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
-                ContentResolver cr = getContentResolver();
-                Cursor c = cr.query(memberUri, projection, null, null, null);
-
                 for (Contact memberDto : memberss) {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
                     member.setNickname(memberDto.getName());
-                   /* if (memberDto.getAvatar() != null) {
-                        member.setReferenceAvatar(memberDto.getAvatar().getReference());
-                    }
-                    if (memberDto.getId() == idMemberOwner) {
-                        member.setAffiliation("owner");
-                        if (member.getNickname().equals(mLocalAddress)) {
-                            mIsOwner = true;
+
+                    for (WpKMemberDto wpkmemberdto :  identifiers )
+                    {
+                        if(wpkmemberdto.getIdentifier().equals(memberDto.getName())) {
+                            if (wpkmemberdto.getAvatar() != null) {
+                                member.setReferenceAvatar(wpkmemberdto.getAvatar().getReference());
+                            }
+                            if (wpkmemberdto.getId() == idMemberOwner) {
+                                member.setAffiliation("owner");
+                                if (member.getNickname().equals(mLocalAddress)) {
+                                    mIsOwner = true;
+                                }
+                            } else {
+                                member.setAffiliation("member");
+                            }
                         }
-                    } else {
-                        member.setAffiliation("member");
-                    }*/
-//                            Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                    }
+
+
+//                  Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
                     members.add(member);
                 }
 
@@ -653,11 +655,22 @@ public class SettingConversationActivity extends BaseActivity {
                 if (mConn.getState() == ImConnection.LOGGED_IN) {
                     mSession = mConn.getChatSessionManager().getChatSession(mAddress);
                     if (mSession == null)
-                        mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+                    {
+                        if(mContactType != Imps.Contacts.TYPE_GROUP) {
+
+                            mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
+
+                        }
+                        else
+                        {
+                            mSession = mConn.getChatSessionManager().createMultiUserChatSession(mAddress,mName ,null, false);
+                        }
                 }
+            }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+
         return mSession;
     }
 
