@@ -859,6 +859,24 @@ public class Imps {
             return ret;
         }
 
+        public static final boolean checkExists(ContentResolver cr, String address) {
+            String selection = USERNAME + "=?";
+            String[] selectionArgs = {address};
+            Cursor cursor = cr.query(CONTENT_URI, null, selection,
+                    selectionArgs /* selection args */, null /* sort order */);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        return true;
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
+            return false;
+        }
+
         /*
         * Reset contact db
         * */

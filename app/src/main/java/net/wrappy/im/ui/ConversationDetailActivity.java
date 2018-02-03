@@ -134,7 +134,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-   // private WpKChatGroupDto chatGroupDto;
+    // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
 
@@ -155,8 +155,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-   // public WpKChatGroupDto getGroupDto() {
-   //     return chatGroupDto;
+    // public WpKChatGroupDto getGroupDto() {
+    //     return chatGroupDto;
     //}
 
 
@@ -516,7 +516,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
         TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
 
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
 
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
@@ -741,9 +741,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onResume();
         if (!isRegisterNotificationCenter) {
             isRegisterNotificationCenter = true;
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1409,8 +1409,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onDestroy();
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)
