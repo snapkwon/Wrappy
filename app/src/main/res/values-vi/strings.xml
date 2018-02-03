@@ -536,4 +536,6 @@
     <string name="chat_message_item">%1$s trò chuyện %2$s.</string>
     <string name="message_kicked_from_group">%s được xóa bởi Admin</string>
     <string name="comming_soon">Sắp có</string>
+    <string name="fullname">Họ và Tên</string>
+    <string name="info">Info</string>
 </resources>

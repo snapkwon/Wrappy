@@ -43,7 +43,8 @@ public abstract class RestAPIListener {
             int resId = getResId("error_" + errorCode);
             if (resId > 0) {
                 PopupUtils.showOKDialog(mContext, mContext.getString(R.string.error), mContext.getString(resId), onOkListener);
-            }
+            } else
+                PopupUtils.showOKDialog(mContext, mContext.getString(R.string.error), mContext.getString(R.string.error_unknown), onOkListener);
         }
     }
 
@@ -55,7 +56,6 @@ public abstract class RestAPIListener {
             return -1;
         }
     }
-
 
 
     private View.OnClickListener onOkListener;

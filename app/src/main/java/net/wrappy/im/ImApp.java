@@ -550,7 +550,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             values.put(Imps.Account.NAME, nickname);
             values.put(Imps.Account.USERNAME, username);
             values.put(Imps.Account.PASSWORD, pw);
-            values.put(Imps.Account.ACCOUNT_NAME, account_name);
+            //values.put(Imps.Account.ACCOUNT_NAME, account_name);
             if (account != null) {
                 values.put(Imps.Account.ACCOUNT_EMAIL, account.getEmail());
                 values.put(Imps.Account.ACCOUNT_PHONE, account.getPhone());
@@ -1313,6 +1313,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
         if (sImApp != null && wpKMemberDto != null && mConn != null) {
             String name = wpKMemberDto.getIdentifier();
             String email = wpKMemberDto.getEmail();
+            String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
             try {
                 ContentUris.appendId(builder, mConn.getProviderId());
@@ -1328,9 +1329,16 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (originValues != null) {
                 values = originValues;
             }
-            values.put(Imps.Contacts.NICKNAME, name);
+            //values.put(Imps.Contacts.NICKNAME, name);
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
+            }
+            if (!TextUtils.isEmpty(fullname)) {
+                values.put(Imps.Contacts.NICKNAME,fullname);
+            } else {
+                if (!TextUtils.isEmpty(name)) {
+                    values.put(Imps.Contacts.NICKNAME,name);
+                }
             }
 
             if (!values.containsKey(Imps.Contacts.TYPE)) {

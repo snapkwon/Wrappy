@@ -343,7 +343,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
     private void postDataToServer() {
         AppFuncs.log("postDataToServer");
-        WpKMemberDto wpKMemberDto = new WpKMemberDto(user, email, phone, adapterGender.getItem(spinnerProfileGender.getSelectedItemPosition()).toString().toUpperCase());
+        WpKMemberDto wpKMemberDto = new WpKMemberDto();
         wpKMemberDto.setIdentifier(user);
         wpKMemberDto.setEmail(email);
         wpKMemberDto.setMobile(phone);

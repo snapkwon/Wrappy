@@ -12,6 +12,7 @@ public class Store {
 
     public final static String USERNAME = "wr_username";
     public final static String REFERRAL = "wr_referral";
+    public final static String ACCOUNT_ID = "wr_account_id";
 
     public static void putStringData(Context context, String key, String data) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -35,6 +36,18 @@ public class Store {
     public static int getIntData(Context context, String key) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(key, 0);
+    }
+
+    public static void putLongData(Context context, String key, long data) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(key, data); // value to store
+        editor.commit();
+    }
+
+    public static long getLongData(Context context, String key) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getLong(key,0);
     }
 
     public static void putBooleanData(Context context, String key, boolean data) {

@@ -48,7 +48,8 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-    private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";
+    //    private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";// real
+    private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
 //    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
@@ -337,7 +338,7 @@ public class RestAPI {
             public void onCompleted(Exception e, Response<String> result) {
                 Debug.d(result != null ? result.getResult() : "");
                 try {
-                    if (e!=null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
+                    if (e != null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
                         AppFuncs.log(e.getLocalizedMessage());
                     }
                     if ((checkAuthenticationCode(result.getHeaders().code()))) {
@@ -430,7 +431,7 @@ public class RestAPI {
             @Override
             public void onCompleted(Exception e, Response<String> result) {
                 try {
-                    if (e!=null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
+                    if (e != null && !TextUtils.isEmpty(e.getLocalizedMessage())) {
                         AppFuncs.log(e.getLocalizedMessage());
                     }
                     if (result != null && (checkAuthenticationCode(result.getHeaders().code()))) {
@@ -529,7 +530,7 @@ public class RestAPI {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    listenner.onError(0);
+                    listenner.onError(ErrorCode.NO_NETWORK);
                 }
             }
         });
@@ -551,9 +552,25 @@ public class RestAPI {
     public static int getErrorCodeFromResponse(String response) {
         try {
             JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
-            return jsonObject.get("code").getAsInt();
-        } catch (Exception ex){
-            return 0;
+            if (jsonObject.has("code"))
+                return jsonObject.get("code").getAsInt();
+            else {
+                String error_description = jsonObject.get("error_description").getAsString();
+                switch (error_description) {
+                    case "ERROR_CODE_LOGIN_FIRST_TIME_FAIL":
+                        return ErrorCode.ERROR_CODE_LOGIN_FIRST_TIME_FAIL.getErrorCode();
+                    case "ERROR_CODE_LOGIN_SECOND_TIME_FAIL":
+                        return ErrorCode.ERROR_CODE_LOGIN_SECOND_TIME_FAIL.getErrorCode();
+                    case "ERROR_CODE_LOGIN_THIRD_TIME_FAIL":
+                        return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
+                    case "ERROR_CODE_LOGIN_LOCKED":
+                        return ErrorCode.ERROR_CODE_LOGIN_LOCKED.getErrorCode();
+                    case "WP_K_MEMBER_NOT_FOUND":
+                        return ErrorCode.WP_K_MEMBER_NOT_FOUND.getErrorCode();
+                }
+            }
+        } catch (Exception ex) {
         }
+        return 0;
     }
 }
