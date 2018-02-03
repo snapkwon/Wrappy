@@ -716,6 +716,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     public  List<Contact> getMembers()
     {
         ImEntity participant = mChatSession.getParticipant();
+        List<Contact> members = new ArrayList<>();
         if (mIsGroupChat) {
 
             ChatGroup group = (ChatGroup) participant;
@@ -739,7 +740,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
             }*/
             return group.getMembers();
         }
-        return null;
+        return members;
 
     }
 

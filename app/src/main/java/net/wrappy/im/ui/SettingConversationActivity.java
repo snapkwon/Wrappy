@@ -42,6 +42,7 @@ import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
+import net.wrappy.im.model.ChatSession;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
@@ -162,6 +163,10 @@ public class SettingConversationActivity extends BaseActivity {
             }
         }
     };
+
+    public  void SettingConversationActivity(IChatSession session) {
+        this.mSession = session;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,22 +295,47 @@ public class SettingConversationActivity extends BaseActivity {
         mThreadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Contact> memberss  = new ArrayList<>();
+                List<Contact> membersList  = new ArrayList<>();
                 try {
-                    memberss  =     mSession.getMembers();
+                    membersList  =     mSession.getMembers();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
+                if(membersList.size()>0) {
+                    for (Contact memberDto : membersList) {
 
-                for (Contact memberDto : memberss) {
+                        MemberGroupDisplay member = new MemberGroupDisplay();
+                        member.setNickname(memberDto.getAddress().getUser());
 
-                    MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getName());
+                        for (WpKMemberDto wpkmemberdto : identifiers) {
+                            if (wpkmemberdto.getIdentifier().equals(memberDto.getAddress().getUser())) {
+                                if (wpkmemberdto.getAvatar() != null) {
+                                    member.setReferenceAvatar(wpkmemberdto.getAvatar().getReference());
+                                }
+                                if (wpkmemberdto.getId() == idMemberOwner) {
+                                    member.setAffiliation("owner");
+                                    if (member.getNickname().equals(mLocalAddress)) {
+                                        mIsOwner = true;
+                                    }
+                                } else {
+                                    member.setAffiliation("member");
+                                }
+                            }
+                        }
 
-                    for (WpKMemberDto wpkmemberdto :  identifiers )
-                    {
-                        if(wpkmemberdto.getIdentifier().equals(memberDto.getName())) {
+
+//                  Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                        members.add(member);
+                    }
+                }
+                else
+                {
+                    for (WpKMemberDto wpkmemberdto : identifiers) {
+
+                            MemberGroupDisplay member = new MemberGroupDisplay();
+                            member.setNickname(wpkmemberdto.getIdentifier());
+
                             if (wpkmemberdto.getAvatar() != null) {
                                 member.setReferenceAvatar(wpkmemberdto.getAvatar().getReference());
                             }
@@ -317,14 +347,9 @@ public class SettingConversationActivity extends BaseActivity {
                             } else {
                                 member.setAffiliation("member");
                             }
-                        }
+
                     }
-
-
-//                  Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
-                    members.add(member);
                 }
-
                 memberGroupDisplays.clear();
                 memberGroupDisplays.addAll(members);
 
