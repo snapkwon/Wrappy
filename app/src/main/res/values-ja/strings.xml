@@ -300,7 +300,6 @@
     <string name="popup_delete_photo">写真を削除する</string>
     <string name="this_is_a_group_chat">グループメッセージを送信する</string>
     <string name="unable_to_securely_share_this_file">このファイルを安全に共有できません</string>
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">キーストアが破損しています。 Wrappyを再インストールするか、アプリの「データをクリア」してください</string>
     <string name="swipe_hint">その他のオプションを表示するには左右にスワイプ</string>
     <string name="no_convos">Wrappyへようこそ！</string>
     <string name="title_more">発見</string>
@@ -528,6 +527,6 @@
     <string name="back_to_login">ログインに戻る</string>
     <string name="resend_link">もう一度送信</string>
     <string name="local_time_format">yyyy年MMMdd日</string>
-    <string name="promotion_format">%1$s<b>%2$s</b>から　レベル(%d)</string>
+    <string name="promotion_format">%1$s<b>%2$s</b>から　レベル(%3$s)</string>
 
 </resources>

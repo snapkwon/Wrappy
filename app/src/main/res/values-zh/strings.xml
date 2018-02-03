@@ -527,6 +527,6 @@
     <string name="back_to_login">Back to login</string>
     <string name="resend_link">Resend</string>
     <string name="local_time_format">MMM dd, yyyy</string>
-    <string name="promotion_format">%1$s 由 <b>%2$s</b> 水平 (%d)</string>
+    <string name="promotion_format">%1$s 由 <b>%2$s</b> 水平 (%3$s)</string>
 
 </resources>

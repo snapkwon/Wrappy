@@ -300,7 +300,6 @@
     <string name="popup_delete_photo">ลบภาพ</string>
     <string name="this_is_a_group_chat">ส่งข้อความกลุ่ม</string>
     <string name="unable_to_securely_share_this_file">ไม่สามารถแชร์ไฟล์นี้ได้อย่างปลอดภัย</string>
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">คีย์สโตร์ของคุณมีปัญหา โปรดติดตั้ง Wrappy อีกครั้ง หรือ \'ล้างข้อมูล\' สำหรับแอพ</string>
     <string name="swipe_hint">กวาดซ้ายและขวาเพื่อดูตัวเลือกเพิ่มขึ้น</string>
     <string name="no_convos">เวลาสำหรับเริ่มต้น Wrappy!</string>
     <string name="title_more">สำรวจ</string>
@@ -528,6 +527,6 @@
     <string name="back_to_login">Back to login</string>
     <string name="resend_link">Resend</string>
     <string name="local_time_format">MMM dd, yyyy</string>
-    <string name="promotion_format">%1$s จาก <b>%2$s</b> ระดับ (%d)</string>
+    <string name="promotion_format">%1$s จาก <b>%2$s</b> ระดับ (%3$s)</string>
 
 </resources>
