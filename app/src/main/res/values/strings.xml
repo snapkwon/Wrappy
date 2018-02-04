@@ -492,7 +492,6 @@
     <string name="message_spam">Report Spam</string>
     <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
     <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
-    <string name="promotion_invite_friends">Invite friend</string>
     <string name="verify_send_sms_fail">Send sms fail</string>
     <string name="verify_send_sms_success">Send sms success</string>
     <string name="verify_fail">Verify fail</string>
@@ -503,7 +502,6 @@
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
     <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
-    <string name="invite_friends_text">Invite Friend</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Do you want to logout of this device?</string>
     <string name="share_title">Choose sharing method</string>

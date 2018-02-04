@@ -338,7 +338,7 @@
     <string name="forget_password">パターンパスを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>
-    <string name="search_username">ユーザーIDで検索</string>
+    <string name="search_username">友達のユーザーIDから追加</string>
     <string name="add_contact">連絡先を追加</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>
 
@@ -419,9 +419,9 @@
     <string name="new_list">新しいリスト</string>
     <string name="key_manager">キーマネージャー</string>
     <string name="add_another_account">別のアカウントを追加する</string>
-    <string name="check_email_passcode">メッセージを確認してパスコードを入力してください</string>
-    <string name="vertify_title_noti">私たちは</string>
-    <string name="send_again">パスコードを再送信</string>
+    <string name="check_email_passcode">5桁の認証コードをこちらの電話番号に送信しました。\nメッセージボックスを確認し、コードを入力してください</string>
+    <string name="vertify_title_noti">携帯電話番号</string>
+    <string name="send_again">認証コードをもう一度送る</string>
     <string name="answer_secret_question">あなたの秘密の質問に答えてください</string>
     <string name="your_answer">あなたの答え</string>
     <string name="btn_next">進む</string>
@@ -492,7 +492,6 @@
     <string name="message_spam">スパム報告</string>
     <string name="invite_friend_earn">友達をWrappyへ招待してPTSボーナスを獲得しよう</string>
     <string name="promotion_description">友達を招待しWrappyアプリに登録してくれたら報酬を受け取れます</string>
-    <string name="promotion_invite_friends">友達を招待</string>
     <string name="verify_send_sms_fail">SMSの送信が失敗した。</string>
     <string name="verify_send_sms_success">SMSの送信が成功した。</string>
     <string name="verify_fail">検証失敗</string>
@@ -503,7 +502,6 @@
     <string name="fail">失敗</string>
     <string name="upload_fail">アップロードが失敗しました</string>
     <string name="cancel_and_home">このステップをキャンセルして、ログイン画面に戻りますか？</string>
-    <string name="invite_friends_text">友達を招待</string>
     <string name="email_tile">Eメール *</string>
     <string name="logout_noti">このデバイスからログアウトしますか？*ログアウトするとチャット履歴が消えてしまいます</string>
     <string name="share_title">共有方法を選択します。</string>

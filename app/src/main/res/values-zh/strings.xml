@@ -492,7 +492,6 @@
     <string name="message_spam">請報告</string>
     <string name="invite_friend_earn">邀請更多朋友可得到更多的PTS COIN</string>
     <string name="promotion_description">當你邀請其他朋友使用WRAPPY, 糸統會獎勵你</string>
-    <string name="promotion_invite_friends">邀請朋友</string>
     <string name="verify_send_sms_fail">發送訊息失敗</string>
     <string name="verify_send_sms_success">發送訊息成功</string>
     <string name="verify_fail">核實測試失敗</string>
@@ -503,7 +502,6 @@
     <string name="fail">失敗</string>
     <string name="upload_fail">上傳失敗</string>
     <string name="cancel_and_home">取消這一步驟，並返回到登錄屏幕？</string>
-    <string name="invite_friends_text">邀請朋友</string>
     <string name="email_tile">郵件*</string>
     <string name="logout_noti">你想退出這個設備的？</string>
     <string name="share_title">選擇共享方法</string>

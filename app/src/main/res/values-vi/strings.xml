@@ -492,7 +492,6 @@
     <string name="message_spam">Báo cáo thư rác</string>
     <string name="invite_friend_earn">Mời bạn bè cùng tham gia để kiếm thêm đồng PTS</string>
     <string name="promotion_description">Wrappy tặng thưởng cho bạn khi bạn mời bạn bè cài đặt ứng dụng Wrappy</string>
-    <string name="promotion_invite_friends">Mời bạn bè</string>
     <string name="verify_send_sms_fail">Gửi tin nhắn thất bại</string>
     <string name="verify_send_sms_success">Gửi tin nhắn thành công</string>
     <string name="verify_fail">Xác nhận thất bại</string>
@@ -503,7 +502,6 @@
     <string name="fail">Thất ​​bại</string>
     <string name="upload_fail">Tải lên thất bại</string>
     <string name="cancel_and_home">Bỏ qua bước này và quay trở lại màn hình đăng nhập?</string>
-    <string name="invite_friends_text">Mời bạn bè</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Bạn có muốn đăng xuất</string>
     <string name="share_title">Chia sẻ với bạn bè</string>
