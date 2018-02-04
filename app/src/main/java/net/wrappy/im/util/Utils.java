@@ -1,6 +1,5 @@
 package net.wrappy.im.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -10,8 +9,6 @@ import android.view.WindowManager;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
-import net.wrappy.im.helper.layout.AppEditTextView;
-import net.wrappy.im.helper.layout.AppTextView;
 
 /**
  * Created by hp on 12/21/2017.
@@ -51,50 +48,5 @@ public class Utils {
             error = context.getString(R.string.error_empty_email);
         }
         return error;
-    }
-
-    public static boolean setTextForView(Object view, String text) {
-        if (view instanceof AppEditTextView) {
-            AppEditTextView textView = (AppEditTextView) view;
-            textView.setText(text);
-            return true;
-        } else if (view instanceof AppTextView) {
-            AppTextView textView = (AppTextView) view;
-            textView.setText(text);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean checkValidateAppEditTextViews(Activity activity, AppEditTextView[] views, int[] errorRes) {
-        String error = "";
-        for (int i = 0; i < views.length; i++) {
-            AppEditTextView editTextView = views[i];
-            String text = editTextView.getText().toString().trim();
-            String email = activity.getString(R.string.error_invalid_email);
-            error = activity.getString(errorRes[i]);
-            if (error.equalsIgnoreCase(email)) {
-                if (!TextUtils.isEmpty(text) && !AppFuncs.isEmailValid(text)) {
-                    error = activity.getString(R.string.error_invalid_email);
-                    break;
-                } else if (TextUtils.isEmpty(text)) {
-                    error = activity.getString(R.string.error_empty_email);
-                    break;
-                } else {
-                    error = "";
-                }
-            } else {
-                if (!TextUtils.isEmpty(text)) {
-                    error = "";
-                } else
-                    break;
-            }
-        }
-        if (error.equalsIgnoreCase("")) {
-            return true;
-        } else {
-            PopupUtils.showCustomDialog(activity, activity.getString(R.string.error), error, R.string.cancel, null);
-            return false;
-        }
     }
 }

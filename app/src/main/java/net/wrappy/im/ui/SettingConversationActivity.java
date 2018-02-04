@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -292,11 +293,16 @@ public class SettingConversationActivity extends BaseActivity {
 
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
 
+                String[] projection = {Imps.GroupMembers.USERNAME, Imps.GroupMembers.NICKNAME,
+                        Imps.GroupMembers.ROLE, Imps.GroupMembers.AFFILIATION};
+                Uri memberUri = ContentUris.withAppendedId(Imps.GroupMembers.CONTENT_URI, mLastChatId);
+                ContentResolver cr = getContentResolver();
+                Cursor c = cr.query(memberUri, projection, null, null, null);
+
                 for (WpKMemberDto memberDto : identifiers) {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getGiven());
-                    member.setUsername(memberDto.getIdentifier());
+                    member.setNickname(memberDto.getIdentifier());
                     if (memberDto.getAvatar() != null) {
                         member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }

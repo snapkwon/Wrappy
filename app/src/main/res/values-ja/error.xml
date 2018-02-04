@@ -2,7 +2,7 @@
 <resources>
     <string name="error_question_duplicate">あなたは、同じセキュリティの質問を選択することはできません</string>
     <string name="error_empty_answer">質問%dの答えは空です</string>
-    <string name="error_min_length_answer">質問のあなたの答えは %d、最低3文字を入れる必要があります</string>
+    <string name="error_min_length_answer">質問%dのあなたの答えは %d、少なくとも3つの文字を持っている必要があります</string>
     <string name="error_duplicate_answer">あなたの答えは異なっている必要があります</string>
     <string name="error_invalid_text_length">ユーザーIDは、少なくとも6つの文字でなければなりません</string>
     <string name="error_invalid_characters">ユーザーIDは、特殊文字を含めることはできません</string>
@@ -54,7 +54,6 @@
     <string name="error_8037">IDもしくはパスワードが正しくありません。アカウントは3時間ロックされます。</string>
     <string name="error_8038">IDもしくはパスワードが正しくありません。</string>
     <string name="error_unknown">エラーが発生したましたので、後ほどもう一度お試しください。</string>
-    <string name="error_empty_nickname">Please input your nick name</string>
 
 
 </resources>
