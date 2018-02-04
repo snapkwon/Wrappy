@@ -14,9 +14,11 @@ public class WpKAuthDto implements Parcelable {
     private String method;
     private Long member;
     private Long id;
+    private String passcode;
 
-    public WpKAuthDto(String secret) {
+    public WpKAuthDto(String secret ,String passcode) {
         this.secret = secret;
+        this.passcode = passcode;
     }
 
     public WpKAuthDto() {}
@@ -44,6 +46,16 @@ public class WpKAuthDto implements Parcelable {
     public void setSecret(String secret) {
         this.secret = secret;
     }
+
+    public String getPasscode() {
+        return passcode;
+    }
+
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
+    }
+
+
 
     public String getAccount() {
         return account;

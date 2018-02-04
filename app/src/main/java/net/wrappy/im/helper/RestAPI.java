@@ -48,8 +48,8 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-        private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";// real
-    //private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
+      //  private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";// real
+    private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
 //    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
@@ -95,6 +95,8 @@ public class RestAPI {
     public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
     public static String REFERRAL = root_url + "member/inviter/%s";
     public static String ADD_MEMBER_TO_GROUP_CHAT = root_url + "chat/group/%s/participator/%s";
+
+    public static String CHECK_PASSCODE = root_url + "member/login/%s/check-passcode";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";

@@ -41,9 +41,11 @@ public class InputPasswordRegisterActivity extends BaseActivity {
 
     private String patternPassword;
 
-    private void showQuestionScreen(String pass) {
+    private void showQuestionScreen(String pass ,String passcode) {
             Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
-            WpKAuthDto wpKAuthDto = new WpKAuthDto(pass);
+            WpKAuthDto wpKAuthDto = new WpKAuthDto(pass,passcode);
+            wpKAuthDto.setPasscode(passcode);
+            intent.putExtra(UpdateProfileActivity.PASSCODE,passcode);
             intent.putExtra(WpKAuthDto.class.getName(), wpKAuthDto);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -75,7 +77,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                         //passwordValidation(mEditPassword.getText().toString());
                         if(password.equals(mEditConfirmPassword.getText().toString()))
                         {
-                            showQuestionScreen(patternPassword);
+                            showQuestionScreen(patternPassword,password);
                         }
                         else
                         {

@@ -1,15 +1,124 @@
 package net.wrappy.im.ui;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.LoginTask;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListener;
+import net.wrappy.im.model.RegistrationAccount;
+import net.wrappy.im.model.WpkToken;
+import net.wrappy.im.provider.Store;
+import net.wrappy.im.ui.onboarding.OnboardingAccount;
+import net.wrappy.im.util.Constant;
+import net.wrappy.im.util.PopupUtils;
+
+import javax.annotation.Nullable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class InputPasswordLoginActivity extends BaseActivity {
+
+
+
+    TextView mBtnForgetPass;
+    WpkToken wpkToken;
+    Button btnLogin;
+    EditText edtPassword;
+
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_password_login);
+
+        ButterKnife.bind(this);
+        wpkToken = getIntent().getParcelableExtra(PatternActivity.USER_INFO);
+        initViews();
+
+        userName = getIntent().getStringExtra("username");
+
+        mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ForgetPasswordActivity.start(InputPasswordLoginActivity.this);
+                finish();
+            }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                RestAPI.PostDataWrappy(InputPasswordLoginActivity.this, null, String.format(RestAPI.CHECK_PASSCODE, edtPassword.getText().toString()), new RestAPIListener(InputPasswordLoginActivity.this) {
+
+                    @Override
+                    public void OnComplete(String s) {
+                        try {
+                            JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
+                            Gson gson = new Gson();
+                        } catch (Exception ex) {
+                            AppFuncs.dismissProgressWaiting();
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+             //   doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
+            }
+        });
+
     }
+
+    private void onLoginFailed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
+    }
+
+    private void doExistingAccountRegister(String username, String password, String accountName) {
+        RegistrationAccount account = new RegistrationAccount(username, password);
+        account.setNickname(accountName);
+//        if (mExistingAccountTask == null) {
+//            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
+//            mExistingAccountTask.execute(username, password, accountName);
+//        }
+        new LoginTask(this, new LoginTask.EventListenner() {
+            @Override
+            public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
+                AppFuncs.dismissProgressWaiting();
+                if (!isSuccess) {
+                    onLoginFailed();
+                } else {
+                    AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
+                    MainActivity.start();
+                    finish();
+                }
+            }
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
+    }
+
+    private void initViews() {
+        initActionBarDefault(true, R.string.login);
+
+        mBtnForgetPass = (TextView)this.findViewById(R.id.btnforgetpass);
+
+        btnLogin = (Button)this.findViewById(R.id.btnlogin);
+
+        edtPassword = (EditText)this.findViewById(R.id.edtpassword);
+
+    }
+
 }

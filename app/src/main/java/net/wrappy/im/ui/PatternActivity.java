@@ -49,6 +49,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
     public static final String TAG = "PatternActivity";
     public static final String PASSWORD_INPUT = "password";
+    public static final String USER_INFO = "userinfo";
 
     public static Intent getStartIntent(Activity context) {
         return new Intent(context, PatternActivity.class);
@@ -217,10 +218,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         LauncherActivity.start(PatternActivity.this);
     }
 
-    private void showQuestionScreen(String pass) {
+ /*   private void showQuestionScreen(String pass) {
         if (hashResetPassword.isEmpty()) {
             Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
-            WpKAuthDto wpKAuthDto = new WpKAuthDto(password);
+            WpKAuthDto wpKAuthDto = new WpKAuthDto(password,);
             intent.putExtra(WpKAuthDto.class.getName(), wpKAuthDto);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -228,7 +229,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         } else {
             resetPassword(pass);
         }
-    }
+    }*/
 
     private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword, pass);
@@ -260,10 +261,19 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     Gson gson = new Gson();
                     WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                     wpkToken.saveToken(getApplicationContext());
-                   // Intent intent = new Intent(PatternActivity.this,InputPasswordLoginActivity.class);
-                   // PatternActivity.this.startActivity(intent);
-                  //  AppFuncs.dismissProgressWaiting();
-                    doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
+                    if(wpkToken.getHasPasscode() == true ) {
+                        Intent intent = new Intent(PatternActivity.this, InputPasswordLoginActivity.class);
+                        intent.putExtra(PatternActivity.USER_INFO, wpkToken);
+                        intent.putExtra("username",username);
+                        PatternActivity.this.startActivity(intent);
+                        AppFuncs.dismissProgressWaiting();
+                        finish();
+                    }
+                    else
+                    {
+
+                    }
+                  //  doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
                 } catch (Exception ex) {
                     AppFuncs.dismissProgressWaiting();
                     ex.printStackTrace();
@@ -271,10 +281,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             }
         });
     }
-
     private void onLoginFailed() {
         PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
     }
+
 
     private void doExistingAccountRegister(String username, String password, String accountName) {
         RegistrationAccount account = new RegistrationAccount(username, password);

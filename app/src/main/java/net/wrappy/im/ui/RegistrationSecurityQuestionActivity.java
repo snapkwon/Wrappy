@@ -65,8 +65,10 @@ public class RegistrationSecurityQuestionActivity extends BaseActivity implement
                 ArrayList<SecurityQuestions> securityQuestions = gson.fromJson(data, new TypeToken<List<SecurityQuestions>>() {
                 }.getType());
                 WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
+                wpKAuthDto.setPasscode(getIntent().getStringExtra(UpdateProfileActivity.PASSCODE));
 
                 Intent intent = new Intent(RegistrationSecurityQuestionActivity.this, UpdateProfileActivity.class);
+                intent.putExtra(UpdateProfileActivity.PASSCODE,getIntent().getStringExtra(UpdateProfileActivity.PASSCODE));
                 intent.putExtra(WpKAuthDto.class.getName(), wpKAuthDto);
                 intent.putParcelableArrayListExtra(SecurityQuestions.class.getName(), securityQuestions);
                 startActivity(intent);
