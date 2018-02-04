@@ -857,8 +857,11 @@ public class MessageListItem extends FrameLayout {
             deliveryText.append(nickname);
             deliveryText.append(' ');
         }
+        String formatText = sPrettyTime.format(date);
+        if (formatText.contains("さっき"))// cheat japanese
+            formatText = "Now";
 
-        deliveryText.append(sPrettyTime.format(date));
+        deliveryText.append(formatText);
 
         SpannableString spanText = null;
 

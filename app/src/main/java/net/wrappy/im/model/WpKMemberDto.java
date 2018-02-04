@@ -43,7 +43,7 @@ public class WpKMemberDto extends T {
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        this.gender = gender.toUpperCase();
     }
 
     public String getIdentifier() {

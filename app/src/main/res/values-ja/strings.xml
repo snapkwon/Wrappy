@@ -496,7 +496,7 @@
     <string name="verify_send_sms_fail">SMSの送信が失敗した。</string>
     <string name="verify_send_sms_success">SMSの送信が成功した。</string>
     <string name="verify_fail">検証失敗</string>
-    <string name="security_question_change">セキュリティの質問を変更する</string>
+    <string name="security_question_change">秘密の質問を変更する</string>
     <string name="security_change_old_question">あなたの古い秘密の質問に答える</string>
     <string name="success">成功！</string>
     <string name="secu_success_description">秘密の質問の変更が成功した</string>
@@ -518,7 +518,7 @@
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
     <string name="comming_soon">近日公開</string>
-    <string name="fullname">フールネーム</string>
+    <string name="fullname">名前</string>
     <string name="info">インフォ</string>
 
     <string name="reset_your_password">パスワードのリセット</string>
@@ -528,5 +528,11 @@
     <string name="resend_link">もう一度送信</string>
     <string name="local_time_format">yyyy年MMMdd日</string>
     <string name="promotion_format">%1$s<b>%2$s</b>から　レベル(%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>女性</item>
+        <item>男性</item>
+    </string-array>
+
 
 </resources>

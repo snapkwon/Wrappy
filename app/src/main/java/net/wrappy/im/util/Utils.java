@@ -7,11 +7,11 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.layout.AppEditTextView;
-import net.wrappy.im.helper.layout.AppTextView;
 
 /**
  * Created by hp on 12/21/2017.
@@ -53,16 +53,16 @@ public class Utils {
         return error;
     }
 
-    public static boolean setTextForView(Object view, String text) {
-        if (view instanceof AppEditTextView) {
-            AppEditTextView textView = (AppEditTextView) view;
-            textView.setText(text);
-            return true;
-        } else if (view instanceof AppTextView) {
-            AppTextView textView = (AppTextView) view;
-            textView.setText(text);
+    public static String uppercaseFirstChar(String text) {
+        return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
+    }
+
+    public static boolean setTextForView(TextView view, String text) {
+        if (!TextUtils.isEmpty(text)) {
+            view.setText(text);
             return true;
         }
+        view.setText("");
         return false;
     }
 

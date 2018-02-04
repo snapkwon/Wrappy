@@ -518,7 +518,7 @@
     <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
-    <string name="fullname">Full Name</string>
+    <string name="fullname">Nickname</string>
     <string name="info">Info</string>
 
     <string name="reset_your_password">Reset your password</string>
@@ -528,5 +528,10 @@
     <string name="resend_link">Resend</string>
     <string name="local_time_format">MMM dd, yyyy</string>
     <string name="promotion_format">%1$s from <b>%2$s</b> level (%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
 
 </resources>

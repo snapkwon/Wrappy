@@ -80,32 +80,54 @@ public class ProfileFragment extends BaseFragmentV4 {
     private boolean isSelf;
     boolean isRequestAvatar = true;
 
-    @BindView(R.id.imgProfileHeader) ImageView imgProfileHeader;
-    @BindView(R.id.imgPhotoAvatar) ImageView imgPhotoAvatar;
-    @BindView(R.id.txtProfileUsername) AppTextView txtUsername;
-    @BindView(R.id.txtProfileNickname) AppTextView txtProfileNickname;
-    @BindView(R.id.edProfileFullName) AppEditTextView edFullName;
-    @BindView(R.id.edProfilePhone) AppEditTextView edPhone;
-    @BindView(R.id.edProfileEmail) AppEditTextView edEmail;
-    @BindView(R.id.edProfileGender) AppEditTextView edGender;
-    @BindView(R.id.lnForSeft) LinearLayout lnForSeft;
-    @BindView(R.id.lnForFriend) LinearLayout lnForFriend;
-    @BindView(R.id.lnForStranger) LinearLayout lnForStranger;
-    @BindView(R.id.btnPhotoCameraAvatar) ImageButton btnPhotoCameraAvatar;
-    @BindView(R.id.btnProfileSubmit) Button btnProfileSubmit;
-    @BindView(R.id.btnProfileCameraHeader) ImageButton btnProfileCameraHeader;
-    @BindView(R.id.spnProfile) AppCompatSpinner spnProfile;
-    @BindView(R.id.lnProfilePhone) LinearLayout lnProfilePhone;
-    @BindView(R.id.lnProfileEmail) LinearLayout lnProfileEmail;
-    @BindView(R.id.lnProfileGender) LinearLayout lnProfileGender;
-    @BindView(R.id.lnProfileUsername) LinearLayout lnProfileUsername;
-    @BindView(R.id.txtClientName) AppTextView txtClientName;
+    @BindView(R.id.imgProfileHeader)
+    ImageView imgProfileHeader;
+    @BindView(R.id.imgPhotoAvatar)
+    ImageView imgPhotoAvatar;
+    @BindView(R.id.txtProfileUsername)
+    AppTextView txtUsername;
+    @BindView(R.id.txtProfileNickname)
+    AppTextView txtProfileNickname;
+    @BindView(R.id.edProfileFullName)
+    AppEditTextView edFullName;
+    @BindView(R.id.edProfilePhone)
+    AppEditTextView edPhone;
+    @BindView(R.id.edProfileEmail)
+    AppEditTextView edEmail;
+    @BindView(R.id.edProfileGender)
+    AppEditTextView edGender;
+    @BindView(R.id.lnForSeft)
+    LinearLayout lnForSeft;
+    @BindView(R.id.lnForFriend)
+    LinearLayout lnForFriend;
+    @BindView(R.id.lnForStranger)
+    LinearLayout lnForStranger;
+    @BindView(R.id.btnPhotoCameraAvatar)
+    ImageButton btnPhotoCameraAvatar;
+    @BindView(R.id.btnProfileSubmit)
+    Button btnProfileSubmit;
+    @BindView(R.id.btnProfileCameraHeader)
+    ImageButton btnProfileCameraHeader;
+    @BindView(R.id.spnProfile)
+    AppCompatSpinner spnProfile;
+    @BindView(R.id.lnProfilePhone)
+    LinearLayout lnProfilePhone;
+    @BindView(R.id.lnProfileEmail)
+    LinearLayout lnProfileEmail;
+    @BindView(R.id.lnProfileGender)
+    LinearLayout lnProfileGender;
+    @BindView(R.id.lnProfileUsername)
+    LinearLayout lnProfileUsername;
+    @BindView(R.id.txtClientName)
+    AppTextView txtClientName;
 
     ArrayAdapter adapterGender;
 
     String emailTemp = "";
     String genderTemp = "";
     String nameTemp = "";
+    private String[] arrDetail;
+
 
     public static ProfileFragment newInstance(long contactId, String nickName, String reference, String jid) {
         Bundle bundle = new Bundle();
@@ -126,6 +148,8 @@ public class ProfileFragment extends BaseFragmentV4 {
         ButterKnife.bind(this, mainView);
         mApp = (ImApp) getActivity().getApplication();
         jid = getArguments().getString("jid");
+        preferenceView();
+
         edFullName.setEnabled(false);
         if (TextUtils.isEmpty(jid)) {
             isSelf = true;
@@ -134,7 +158,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             }
             isSelfOrFriendsOrStranger(MY_SELF);
         } else {
-            boolean isExists = Imps.Contacts.checkExists(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
+            boolean isExists = Imps.Contacts.checkExists(getActivity().getContentResolver(), jid + "@" + Constant.DOMAIN);
             if (isExists) {
                 isSelfOrFriendsOrStranger(FRIEND);
             } else {
@@ -144,7 +168,6 @@ public class ProfileFragment extends BaseFragmentV4 {
 
         getFriendInforFromIntent();
 
-        preferenceView();
 
         return mainView;
     }
@@ -192,29 +215,34 @@ public class ProfileFragment extends BaseFragmentV4 {
             String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
             String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
             wpKMemberDto = new WpKMemberDto();
-            if (!Utils.setTextForView(txtUsername,c_username)) {
-                txtUsername.setText(c_username);
+            if (!Utils.setTextForView(txtUsername, c_username)) {
                 wpKMemberDto.setIdentifier(c_username);
                 loadAvatarFromLocal(c_username);
             }
             if (!TextUtils.isEmpty(c_gender)) {
-                String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
-                Utils.setTextForView(edGender,upperString);
-                wpKMemberDto.setGender(c_gender.toUpperCase());
-                genderTemp = upperString;
+                genderTemp = Utils.uppercaseFirstChar(c_gender);
+                setTextGender(genderTemp);
+                wpKMemberDto.setGender(genderTemp.toUpperCase());
             }
-            if (Utils.setTextForView(edPhone,c_phone)) {
+            if (Utils.setTextForView(edPhone, c_phone)) {
                 wpKMemberDto.setMobile(c_phone);
             }
-            if (Utils.setTextForView(edEmail,c_email)) {
+            if (Utils.setTextForView(edEmail, c_email)) {
                 wpKMemberDto.setEmail(c_email);
                 emailTemp = c_email;
             }
-            if (Utils.setTextForView(edFullName,c_name)) {
+            if (Utils.setTextForView(edFullName, c_name)) {
                 wpKMemberDto.setGiven(c_name);
                 nameTemp = c_name;
             }
         }
+    }
+
+    private void setTextGender(String text) {
+        if (text.contains("F"))
+            edGender.setText(arrDetail[0]);
+        else
+            edGender.setText(arrDetail[1]);
     }
 
     private void loadAvatarFromLocal(String mJid) {
@@ -238,15 +266,15 @@ public class ProfileFragment extends BaseFragmentV4 {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
-        final String[] arr = {"", ""};
-        final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
+//        final String[] arr = {getString(R.string.male), getString(R.string.female)};
+        arrDetail = getResources().getStringArray(R.array.profile_gender_display);
         adapterGender = new ArrayAdapter<String>(getActivity(), R.layout.update_profile_textview, arrDetail) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final AppTextView v = (AppTextView) vi.inflate(R.layout.update_profile_textview, null);
-                v.setText(arr[position]);
+                v.setText(arrDetail[position]);
                 return v;
             }
         };
@@ -254,8 +282,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         spnProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String upperString = getResources().getStringArray(R.array.profile_gender)[i].substring(0, 1).toUpperCase() + getResources().getStringArray(R.array.profile_gender)[i].substring(1).toLowerCase();
-                edGender.setText(upperString);
+                Utils.setTextForView(edGender, Utils.uppercaseFirstChar(getResources().getStringArray(R.array.profile_gender_display)[i]));
             }
 
             @Override
@@ -279,20 +306,20 @@ public class ProfileFragment extends BaseFragmentV4 {
                         wpKMemberDto = account.getWpKMemberDto();
                     } else {
                         wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
-                        NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeProfileName,wpKMemberDto.getGiven());
+                        NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeProfileName, wpKMemberDto.getGiven());
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
 
-                    Utils.setTextForView(edEmail,emailTemp);
-                    Utils.setTextForView(txtUsername,wpKMemberDto.getIdentifier());
-                    Utils.setTextForView(edPhone,wpKMemberDto.getMobile());
-                    if (Utils.setTextForView(edFullName,wpKMemberDto.getGiven())) {
+                    Utils.setTextForView(edEmail, emailTemp);
+                    Utils.setTextForView(txtUsername, wpKMemberDto.getIdentifier());
+                    Utils.setTextForView(edPhone, wpKMemberDto.getMobile());
+                    if (Utils.setTextForView(edFullName, wpKMemberDto.getGiven())) {
                         nameTemp = wpKMemberDto.getGiven();
                     }
 
                     if (!TextUtils.isEmpty(genderTemp)) {
-                        String upperString = wpKMemberDto.getGender().substring(0, 1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
+                        String upperString = Utils.uppercaseFirstChar(wpKMemberDto.getGender());
                         if (upperString.startsWith("F")) {
                             spnProfile.setSelection(0);
                         } else {
@@ -334,20 +361,28 @@ public class ProfileFragment extends BaseFragmentV4 {
         getActivity().finishAffinity();
     }
 
+    private String getGender() {
+        String text = edGender.getString().toUpperCase();
+        if (!TextUtils.isEmpty(text) && text.equalsIgnoreCase(arrDetail[0]))
+            return getResources().getStringArray(R.array.profile_gender)[0];
+        else
+            return getResources().getStringArray(R.array.profile_gender)[1];
+    }
+
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment, R.id.lnProfileBlockUser, R.id.lnProfileShareContact, R.id.lnProfileAddFriend})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-            int[] stringRes = new int[]{R.string.error_empty_username, R.string.error_invalid_email};
-            AppEditTextView[] views = new AppEditTextView[]{edFullName,edEmail};
-            if (!Utils.checkValidateAppEditTextViews(getActivity(),views,stringRes)) {
+            int[] stringRes = new int[]{/*R.string.error_empty_username,*/ R.string.error_invalid_email};
+            AppEditTextView[] views = new AppEditTextView[]{/*edFullName,*/ edEmail};
+            if (!Utils.checkValidateAppEditTextViews(getActivity(), views, stringRes)) {
                 return;
             }
             onDataEditChange(false);
             wpKMemberDto.setEmail(edEmail.getString());
-            wpKMemberDto.setGender(edGender.getString().toUpperCase());
+            wpKMemberDto.setGender(getGender());
             wpKMemberDto.setGiven(edFullName.getString());
             updateData();
-            NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity,"");
+            NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity, "");
         } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
@@ -374,10 +409,10 @@ public class ProfileFragment extends BaseFragmentV4 {
                 public void onSelectBottomSheetCell(int index) {
                     switch (index) {
                         case 1:
-                            AppFuncs.openCamera(getActivity(),isRequestAvatar);
+                            AppFuncs.openCamera(getActivity(), isRequestAvatar);
                             break;
                         case 2:
-                            AppFuncs.openGallery(getActivity(),isRequestAvatar);
+                            AppFuncs.openGallery(getActivity(), isRequestAvatar);
                             break;
                         case 3:
                             if (isRequestAvatar) {
@@ -512,7 +547,7 @@ public class ProfileFragment extends BaseFragmentV4 {
                 updateTemp();
                 PopupUtils.showOKDialog(getActivity(), getString(R.string.info), getString(R.string.update_profile_success));
                 Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(), wpKMemberDto);
-                NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity,"");
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity, "");
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -552,6 +587,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             txtUsername.setTextColor(getResources().getColor(R.color.line));
             btnProfileSubmit.setVisibility(View.VISIBLE);
             spnProfile.setVisibility(View.VISIBLE);
+            edGender.setVisibility(View.INVISIBLE);
         } else {
             btnProfileSubmit.setVisibility(View.GONE);
             edEmail.clearFocus();
@@ -563,6 +599,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             txtUsername.setTextColor(Color.BLACK);
             btnProfileSubmit.setVisibility(View.GONE);
             spnProfile.setVisibility(View.GONE);
+            edGender.setVisibility(View.VISIBLE);
         }
     }
 
@@ -575,18 +612,20 @@ public class ProfileFragment extends BaseFragmentV4 {
     private void returnDataFromTemp() {
         try {
             edEmail.setText(emailTemp);
-            String upperString = genderTemp.substring(0, 1).toUpperCase() + genderTemp.substring(1).toLowerCase();
-            edGender.setText(upperString);
+            setTextGender(Utils.uppercaseFirstChar(genderTemp));
             edFullName.setText(nameTemp);
             wpKMemberDto.setEmail(emailTemp);
             wpKMemberDto.setGender(genderTemp);
             wpKMemberDto.setGiven(nameTemp);
             spnProfile.setVisibility(View.INVISIBLE);
+            edGender.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public void reloadFragment() {}
+    public void reloadFragment() {
+
+    }
 }
