@@ -143,6 +143,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, nickname + Constant.EMAIL_DOMAIN);
         return intent;
     }
 
@@ -540,6 +541,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
             setAvatarStatus(status);
+            String fName = Imps.Account.getAccountNameFromNickname(getContentResolver(),mNickname);
             txt.setText(mNickname);
         }
 
@@ -748,9 +750,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onResume();
         if (!isRegisterNotificationCenter) {
             isRegisterNotificationCenter = true;
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1383,7 +1385,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         @Override
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
-
             if (data == null || data.getCount() == 0) {
                 findViewById(R.id.btnAddFriend).performClick();
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
@@ -1416,8 +1417,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onDestroy();
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)

@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                 try {
                     AppFuncs.dismissKeyboard(MainActivity.this);
                     ProfileFragment page = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                    page.onDataChange();
+                    page.onDataEditChange(true);
                     btnHeaderEdit.setVisibility(View.GONE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -916,18 +916,18 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                     }
                 }
             });
-            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
-                @Override
-                public void OnComplete(String s) {
-                    try {
-                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
+        RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
+            @Override
+            public void OnComplete(String s) {
+                try {
+                    WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                    syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     SyncDataListener<WpKChatGroupDto> syncGroupListener = new SyncDataListener<WpKChatGroupDto>() {

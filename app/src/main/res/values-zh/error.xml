@@ -54,5 +54,6 @@
     <string name="error_8037">The username or password is incorrect. Your account is locked in 3 hours.</string>
     <string name="error_8038">The username or password is incorrect. Your account has been blocked.</string>
     <string name="error_unknown">An error occurred, please try again later.</string>
+    <string name="error_empty_nickname">Please input your nick name</string>
 
 </resources>

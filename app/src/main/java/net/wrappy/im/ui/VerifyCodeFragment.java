@@ -252,7 +252,7 @@ public class VerifyCodeFragment extends Fragment {
                                 WpkToken wpkToken = gson.fromJson(jsonObject, WpkToken.class);
                                 wpkToken.saveToken(getActivity());
                                 RegistrationAccount account = new RegistrationAccount(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
-                                account.setNickname(registration.getWpKMemberDto().getIdentifier());
+                                account.setNickname(registration.getWpKMemberDto().getGiven());
                                 account.setEmail(registration.getWpKMemberDto().getEmail());
                                 account.setPhone(registration.getWpKMemberDto().getMobile());
                                 account.setGender(registration.getWpKMemberDto().getGender());
