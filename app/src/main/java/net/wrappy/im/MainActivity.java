@@ -58,6 +58,7 @@ import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.comon.BaseFragmentV4;
+import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
@@ -121,7 +122,7 @@ import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
 /**
  */
-public class MainActivity extends BaseActivity implements NotificationCenter.NotificationCenterDelegate {
+public class MainActivity extends BaseActivity implements AppDelegate, NotificationCenter.NotificationCenterDelegate {
 
     private ImApp mApp;
 
@@ -236,7 +237,7 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
                 try {
                     AppFuncs.dismissKeyboard(MainActivity.this);
                     ProfileFragment page = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                    page.onDataEditChange(true);
+                    page.onDataChange();
                     btnHeaderEdit.setVisibility(View.GONE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -395,7 +396,6 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
             isRegisterNotification = true;
             NotificationCenter.getInstance().addObserver(this, NotificationCenter.networkStateChange);
             NotificationCenter.getInstance().addObserver(this, NotificationCenter.loadMyPage);
-            NotificationCenter.getInstance().addObserver(this, NotificationCenter.showEditIconOnMainActivity);
         }
         //if VFS is not mounted, then send to WelcomeActivity
         if (!VirtualFileSystem.get().isMounted()) {
@@ -416,7 +416,6 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
         if (isRegisterNotification) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.networkStateChange);
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.loadMyPage);
-            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.showEditIconOnMainActivity);
         }
         if (mLoadDataHandler != null) {
             mLoadDataHandler.removeCallbacks(syncGroupChatRunnable);
@@ -430,23 +429,6 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
         }
 
         XmppConnection.removeTask();
-    }
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-        AppFuncs.log("didReceivedNotification");
-        try {
-            if (id == NotificationCenter.networkStateChange) {
-                int state = (int) args[0];
-                checkConnection(state);
-            } else if (id == NotificationCenter.loadMyPage) {
-                mTabLayout.getTabAt(3).select();
-            } else if (id == NotificationCenter.showEditIconOnMainActivity) {
-                btnHeaderEdit.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     private void addWalletTab(Fragment fragment) {
@@ -714,7 +696,27 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
         return false;
     }
 
+    @Override
+    public void onChangeInApp(int id, String data) {
+        if (id == UPDATE_PROFILE_COMPLETE) {
+            btnHeaderEdit.setVisibility(View.VISIBLE);
+        }
+    }
 
+    @Override
+    public void didReceivedNotification(int id, Object... args) {
+        AppFuncs.log("didReceivedNotification");
+        try {
+            if (id == NotificationCenter.networkStateChange) {
+                int state = (int) args[0];
+                checkConnection(state);
+            } else if (id == NotificationCenter.loadMyPage) {
+                mTabLayout.getTabAt(3).select();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
@@ -914,18 +916,18 @@ public class MainActivity extends BaseActivity implements NotificationCenter.Not
                     }
                 }
             });
-        }
-        RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
-            @Override
-            public void OnComplete(String s) {
-                try {
-                    WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
-                    syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
+                @Override
+                public void OnComplete(String s) {
+                    try {
+                        WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
+                        syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     SyncDataListener<WpKChatGroupDto> syncGroupListener = new SyncDataListener<WpKChatGroupDto>() {

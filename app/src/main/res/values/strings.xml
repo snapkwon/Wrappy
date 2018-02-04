@@ -518,7 +518,7 @@
     <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
-    <string name="fullname">Nickname</string>
+    <string name="fullname">Full Name</string>
     <string name="info">Info</string>
 
     <string name="reset_your_password">Reset your password</string>

@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -125,7 +126,7 @@ public class ContactListItem extends FrameLayout {
         final String reference = cursor.getString(COLUMN_AVATAR_DATA);
 
         String statusText = cursor.getString(COLUMN_CONTACT_CUSTOM_STATUS);
-
+        String s = DatabaseUtils.dumpCursorToString(cursor);
         if (TextUtils.isEmpty(nickname)) {
             nickname = address.split("@")[0].split("\\.")[0];
         } else {
@@ -143,19 +144,11 @@ public class ContactListItem extends FrameLayout {
 
                 holder.mLine1.setText(str);
 
-            } else {
+            } else
                 holder.mLine1.setText(nickname);
-            }
 
-
-        } else {
-            String fName = Imps.Account.getAccountNameFromNickname(ImApp.sImApp.getContentResolver(),nickname);
-            if (!TextUtils.isEmpty(fName)) {
-                holder.mLine1.setText(fName);
-            } else {
-                holder.mLine1.setText(nickname);
-            }
-        }
+        } else
+            holder.mLine1.setText(nickname);
 
         //holder.mStatusIcon.setVisibility(View.GONE);
 

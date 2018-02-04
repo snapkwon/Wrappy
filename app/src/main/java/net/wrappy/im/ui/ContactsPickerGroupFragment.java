@@ -178,10 +178,7 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         try {
             if (cursor != null && cursor.moveToFirst()) { //make sure you got results, and move to first row
                 do {
-                    String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME); //column 1 for the current row
-                    if (mName.contains("@")) {
-                        mName = mName.split("@")[0];
-                    }
+                    String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME); //column 1 for the current row
                     arrListMember.add(mName);
                 } while (cursor.moveToNext()); //move to next row in the query result
             }

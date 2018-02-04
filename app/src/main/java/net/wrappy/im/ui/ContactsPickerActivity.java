@@ -373,6 +373,7 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 AppFuncs.showProgressWaiting(this);
+                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -613,7 +614,7 @@ public class ContactsPickerActivity extends BaseActivity {
                             ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
-                                users.add(contact.getUsername());
+                                users.add(contact.nickname);
                                /* if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
@@ -900,6 +901,8 @@ public class ContactsPickerActivity extends BaseActivity {
             ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
+
+                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
             v.bind(holder, cursor, mSearchString, false);

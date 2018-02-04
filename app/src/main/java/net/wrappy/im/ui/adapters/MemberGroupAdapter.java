@@ -1,6 +1,6 @@
 package net.wrappy.im.ui.adapters;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.RemoteException;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
-import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.helper.RestAPI;
@@ -23,7 +22,6 @@ import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.ui.ProfileActivity;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.util.PopupUtils;
 
@@ -39,13 +37,12 @@ import butterknife.ButterKnife;
 public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.ViewHolder> {
 
     private ArrayList<MemberGroupDisplay> mMembers;
-    private Activity mContext;
+    private Context mContext;
     private String currentUser;
     private String mAdminGroup;
     private long mLastChatId;
     private WpKChatGroupDto mWpKChatGroupDto;
     private IChatSession session;
-    private ImApp mApp;
 
     public void setmWpKChatGroupDto(WpKChatGroupDto mWpKChatGroupDto) {
         this.mWpKChatGroupDto = mWpKChatGroupDto;
@@ -55,14 +52,13 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         this.session = session;
     }
 
-    public MemberGroupAdapter(Activity mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId, IChatSession session) {
+    public MemberGroupAdapter(Context mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId, IChatSession session) {
         this.mContext = mContext;
         this.mMembers = mMembers;
         this.currentUser = currentUser;
         this.mAdminGroup = mAdminGroup;
         this.mLastChatId = mLastChatId;
         this.session = session;
-        mApp = (ImApp) mContext.getApplication();
     }
 
     public void setData(ArrayList<MemberGroupDisplay> groups) {
@@ -81,19 +77,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         holder.bind(mMembers.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MemberGroupDisplay display = mMembers.get(position);
-
-                if (!display.getUsername().equalsIgnoreCase(mApp.getDefaultUsername().split("@")[0])) {
-                    ProfileActivity.start(mContext,display.getUsername());
-                }
-
-            }
-        });
     }
 
     @Override
@@ -131,7 +116,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         public void bind(final MemberGroupDisplay member) {
 
 
-            if(!TextUtils.isEmpty(member.getNickname()))
+            if(member.getNickname() != null && !member.getNickname().isEmpty())
             {
                 line1.setText(member.getNickname());
 
@@ -139,13 +124,9 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
             }
             else {
-                String nameText = member.getUsername();
-                if (member.getUsername().contains("@")) {
-                    String[] name = member.getUsername().split("@");
-                    nameText = name[0];
-                }
-                line1.setText(nameText);
-                GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, nameText);
+                String[] name = member.getUsername().split("@");
+                line1.setText(name[0]);
+                GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, name[0]);
             }
 
 
