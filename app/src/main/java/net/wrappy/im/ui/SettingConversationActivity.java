@@ -394,14 +394,12 @@ public class SettingConversationActivity extends BaseActivity {
                     wpKChatGroupTemp = wpKChatGroup;
                     wpKChatGroupTemp.setName(name);
                     updateData();
-                    edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
                     lnChangeGroupNameController.setVisibility(View.GONE);
                     btnEditGroupName.setVisibility(View.VISIBLE);
                     break;
                 case R.id.btnGroupNameClose:
                     edGroupName.setText(wpKChatGroup.getName());
-                    edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
                     lnChangeGroupNameController.setVisibility(View.GONE);
                     btnEditGroupName.setVisibility(View.VISIBLE);
