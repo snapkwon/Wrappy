@@ -70,8 +70,16 @@ public class InputPasswordLoginActivity extends BaseActivity {
                     @Override
                     public void OnComplete(String s) {
                         try {
-                            JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-                            Gson gson = new Gson();
+                            boolean ischeck = (new JsonParser()).parse(s).getAsBoolean();
+                            if(ischeck ==true)
+                            {
+                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
+                            }
+                            else
+                            {
+                                onLoginFailed();
+                            }
+
                         } catch (Exception ex) {
                             AppFuncs.dismissProgressWaiting();
                             ex.printStackTrace();
@@ -91,10 +99,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
     private void doExistingAccountRegister(String username, String password, String accountName) {
         RegistrationAccount account = new RegistrationAccount(username, password);
         account.setNickname(accountName);
-//        if (mExistingAccountTask == null) {
-//            mExistingAccountTask = new PatternActivity.ExistingAccountTask(this);
-//            mExistingAccountTask.execute(username, password, accountName);
-//        }
+
         new LoginTask(this, new LoginTask.EventListenner() {
             @Override
             public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {

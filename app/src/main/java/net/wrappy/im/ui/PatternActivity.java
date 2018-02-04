@@ -271,7 +271,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     }
                     else
                     {
-
+                        Intent intent = new Intent(PatternActivity.this, InputPasswordRegisterActivity.class);
+                        intent.putExtra(PatternActivity.USER_INFO, wpkToken);
+                        intent.putExtra("username",username);
+                        PatternActivity.this.startActivity(intent);
+                        AppFuncs.dismissProgressWaiting();
+                        finish();
                     }
                   //  doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), username);
                 } catch (Exception ex) {

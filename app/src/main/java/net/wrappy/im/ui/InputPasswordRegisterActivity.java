@@ -1,6 +1,7 @@
 package net.wrappy.im.ui;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -10,9 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.JsonParser;
+
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
+import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.LoginTask;
+import net.wrappy.im.helper.RestAPI;
+import net.wrappy.im.helper.RestAPIListener;
+import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.WpKAuthDto;
+import net.wrappy.im.model.WpkToken;
+import net.wrappy.im.ui.onboarding.OnboardingAccount;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 
 import javax.annotation.Nullable;
@@ -40,6 +51,8 @@ public class InputPasswordRegisterActivity extends BaseActivity {
     Button mBtnLogin;
 
     private String patternPassword;
+    WpkToken wpkToken;
+    String userName;
 
     private void showQuestionScreen(String pass ,String passcode) {
             Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
@@ -59,7 +72,8 @@ public class InputPasswordRegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_input_password_register);
 
         patternPassword = getIntent().getStringExtra(PatternActivity.PASSWORD_INPUT);
-
+        wpkToken = getIntent().getParcelableExtra(PatternActivity.USER_INFO);
+        userName = getIntent().getStringExtra("username");
         ButterKnife.bind(this);
         initViews();
 
@@ -77,7 +91,26 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                         //passwordValidation(mEditPassword.getText().toString());
                         if(password.equals(mEditConfirmPassword.getText().toString()))
                         {
-                            showQuestionScreen(patternPassword,password);
+                            if(wpkToken==null && userName.isEmpty()) {
+                                showQuestionScreen(patternPassword, password);
+                            }
+                            else
+                            {
+
+                                RestAPI.PostDataWrappy(InputPasswordRegisterActivity.this, null, String.format(RestAPI.CREATE_PASSCODE, password), new RestAPIListener(InputPasswordRegisterActivity.this) {
+
+                                    @Override
+                                    public void OnComplete(String s) {
+                                        try {
+
+                                            doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
+                                        } catch (Exception ex) {
+                                            AppFuncs.dismissProgressWaiting();
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
                         }
                         else
                         {
@@ -91,6 +124,31 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+
+
+    private void onLoginFailed() {
+        PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
+    }
+
+    private void doExistingAccountRegister(String username, String password, String accountName) {
+        RegistrationAccount account = new RegistrationAccount(username, password);
+        account.setNickname(accountName);
+
+        new LoginTask(this, new LoginTask.EventListenner() {
+            @Override
+            public void OnComplete(boolean isSuccess, OnboardingAccount onboardingAccount) {
+                AppFuncs.dismissProgressWaiting();
+                if (!isSuccess) {
+                    onLoginFailed();
+                } else {
+                    AppFuncs.getSyncUserInfo(onboardingAccount.accountId);
+                    MainActivity.start();
+                    finish();
+                }
+            }
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 
     boolean passwordValidation (String password){

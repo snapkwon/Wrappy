@@ -96,7 +96,8 @@ public class RestAPI {
     public static String REFERRAL = root_url + "member/inviter/%s";
     public static String ADD_MEMBER_TO_GROUP_CHAT = root_url + "chat/group/%s/participator/%s";
 
-    public static String CHECK_PASSCODE = root_url + "member/login/%s/check-passcode";
+    public static String CHECK_PASSCODE = root_url + "member/login/%s/check-passcode/";
+    public static String CREATE_PASSCODE = root_url + "member/%s/check-passcode/";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
