@@ -269,7 +269,7 @@ public class SettingConversationActivity extends BaseActivity {
                         }
                         isLoaded = true;
                         if (identifiers != null) {
-                            updateMembers();
+                           updateMembers();
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
