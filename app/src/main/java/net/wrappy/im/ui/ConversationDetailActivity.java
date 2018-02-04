@@ -134,7 +134,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-   // private WpKChatGroupDto chatGroupDto;
+    // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
 
@@ -155,8 +155,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-   // public WpKChatGroupDto getGroupDto() {
-   //     return chatGroupDto;
+    // public WpKChatGroupDto getGroupDto() {
+    //     return chatGroupDto;
     //}
 
 
