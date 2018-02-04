@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
@@ -35,12 +36,11 @@ import java.util.HashMap;
 public class OnboardingManager {
 
     public final static int REQUEST_SCAN = 1111;
-    public final static int REQUEST_CHOOSE_AVATAR = REQUEST_SCAN+1;
+    public final static int REQUEST_CHOOSE_AVATAR = REQUEST_SCAN + 1;
 
     public final static String BASE_INVITE_URL = "https://zom.im/i/#";
 
-    public static void inviteSMSContact (Activity context, String phoneNumber, String message)
-    {
+    public static void inviteSMSContact(Activity context, String phoneNumber, String message) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) // At least KitKat
         {
@@ -57,58 +57,51 @@ public class OnboardingManager {
             }
             context.startActivity(sendIntent);
 
-        }
-        else // For early versions, do what worked for you before.
+        } else // For early versions, do what worked for you before.
         {
             Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW);
             smsIntent.setType("vnd.android-dir/mms-sms");
 
             if (phoneNumber != null)
-            smsIntent.putExtra("address",phoneNumber);
-            smsIntent.putExtra("sms_body",message);
+                smsIntent.putExtra("address", phoneNumber);
+            smsIntent.putExtra("sms_body", message);
 
             context.startActivity(smsIntent);
         }
     }
-    
-    public static void inviteShare (Activity context, String message)
-    {
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);        
+
+    public static void inviteShare(Activity context, String message) {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, message);
         intent.setType("text/plain");
         context.startActivity(intent);
 
     }
-    
-    public static void inviteScan (Activity context, String message)
-    {
+
+    public static void inviteScan(Activity context, String message) {
         Intent intent = new Intent(context, QrScanFriendActivity.class);
-        intent.putExtra(Intent.EXTRA_TEXT,message);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
         intent.setType("text/plain");
         context.startActivityForResult(intent, REQUEST_SCAN);
 
     }
-    
-    public static String generateInviteMessage (Context context, String nickname, String username, String fingerprint)
-    {
-        try
-        {
+
+    public static String generateInviteMessage(Context context, String nickname, String username, String fingerprint) {
+        try {
             StringBuffer resp = new StringBuffer();
 
             resp.append(nickname).append(" is inviting you to Zom: ");
-            
-            resp.append(generateInviteLink(context,username,fingerprint,nickname));
-            
+
+            resp.append(generateInviteLink(context, username, fingerprint, nickname));
+
             return resp.toString();
-        } catch (Exception e)
-        { 
-            Log.d(ImApp.LOG_TAG,"error with link",e);
+        } catch (Exception e) {
+            Log.d(ImApp.LOG_TAG, "error with link", e);
             return null;
         }
     }
 
-    public static DecodedInviteLink decodeInviteLink (String link)
-    {
+    public static DecodedInviteLink decodeInviteLink(String link) {
         DecodedInviteLink diLink = null;
 
         Uri inviteLink = Uri.parse(link);
@@ -124,19 +117,18 @@ public class OnboardingManager {
 
             int idx = -1;
 
-            if ((idx = parseLink.indexOf("?"))!=-1)
-                parseLink = parseLink.substring(0,idx);
+            if ((idx = parseLink.indexOf("?")) != -1)
+                parseLink = parseLink.substring(0, idx);
 
             diLink.username = parseLink;
             diLink.isMigration = false;
 
-            if ((idx = link.indexOf("otr-fingerprint"))!=-1)
-                diLink.fingerprint = link.substring(idx+16);
+            if ((idx = link.indexOf("otr-fingerprint")) != -1)
+                diLink.fingerprint = link.substring(idx + 16);
 
             diLink.nickname = null;
 
-        }
-        else if (code[0].contains("/i/")){
+        } else if (code[0].contains("/i/")) {
 
             //this is an invite link
             try {
@@ -145,20 +137,17 @@ public class OnboardingManager {
 //                String[] parts = out.split("\\?otr=");
                 String[] partsTemp = out.split("\\?");
 
-                if (partsTemp == null)
-                {
+                if (partsTemp == null) {
                     partsTemp = new String[1];
                     partsTemp[0] = out;
                     diLink = new DecodedInviteLink();
                     diLink.username = out;
-                }
-                else {
+                } else {
 
                     diLink = new DecodedInviteLink();
                     diLink.username = partsTemp[0];
 
-                    if (partsTemp.length > 1)
-                    {
+                    if (partsTemp.length > 1) {
                         String[] parts = partsTemp[1].split("&");
 
 
@@ -173,19 +162,16 @@ public class OnboardingManager {
                             else if (keyValue[0].equals("nickname"))
                                 diLink.nickname = keyValue[1];
 
-;
+                            ;
                         }
-
 
 
                     }
 
                 }
 
-            }
-            catch (IllegalArgumentException iae)
-            {
-             Log.e(ImApp.LOG_TAG,"bad link decode",iae);
+            } catch (IllegalArgumentException iae) {
+                Log.e(ImApp.LOG_TAG, "bad link decode", iae);
             }
         }
 
@@ -193,8 +179,7 @@ public class OnboardingManager {
 
     }
 
-    public static String generateXmppLink (String username, String fingerprint) throws IOException
-    {
+    public static String generateXmppLink(String username, String fingerprint) throws IOException {
         StringBuffer inviteUrl = new StringBuffer();
         inviteUrl.append("xmpp:");
         inviteUrl.append(username);
@@ -204,17 +189,15 @@ public class OnboardingManager {
         return inviteUrl.toString();
     }
 
-    public static String generateInviteLink (Context context, String username, String fingerprint, String nickname) throws IOException
-    {
+    public static String generateInviteLink(Context context, String username, String fingerprint, String nickname) throws IOException {
         return generateInviteLink(context, username, fingerprint, nickname, false);
     }
 
-    public static String generateInviteLink (Context context, String username, String fingerprint, String nickname, boolean isMigrateLink) throws IOException
-    {
+    public static String generateInviteLink(Context context, String username, String fingerprint, String nickname, boolean isMigrateLink) throws IOException {
         StringBuffer inviteUrl = new StringBuffer();
         inviteUrl.append(BASE_INVITE_URL);
-        
-        StringBuffer code = new StringBuffer();        
+
+        StringBuffer code = new StringBuffer();
         code.append(username);
         code.append("?otr=").append(fingerprint);
 
@@ -224,30 +207,27 @@ public class OnboardingManager {
         if (isMigrateLink)
             code.append("&m=1");
 
-        inviteUrl.append(Base64.encodeToString(code.toString().getBytes(), Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING));
+        inviteUrl.append(Base64.encodeToString(code.toString().getBytes(), Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
         return inviteUrl.toString();
     }
 
     private final static String PASSWORD_LETTERS = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@!#";
     private final static int PASSWORD_LENGTH = 12;
 
-    public static String generatePassword()
-    {
+    public static String generatePassword() {
         // Pick from some letters that won't be easily mistaken for each
         // other. So, for example, omit o O and 0, 1 l and L.
         SecureRandom random = new SecureRandom();
 
         StringBuffer pw = new StringBuffer();
-        for (int i=0; i<PASSWORD_LENGTH; i++)
-        {
-            int index = (int)(random.nextDouble()*PASSWORD_LETTERS.length());
-            pw.append(PASSWORD_LETTERS.substring(index, index+1));
+        for (int i = 0; i < PASSWORD_LENGTH; i++) {
+            int index = (int) (random.nextDouble() * PASSWORD_LETTERS.length());
+            pw.append(PASSWORD_LETTERS.substring(index, index + 1));
         }
         return pw.toString();
     }
 
-    public static String[] getServers (Context context)
-    {
+    public static String[] getServers(Context context) {
         try {
             JSONObject obj = new JSONObject(loadServersJSON(context));
             JSONArray servers = obj.getJSONArray("servers");
@@ -262,29 +242,24 @@ public class OnboardingManager {
             }
 
             return results;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public static boolean changePassword (Activity context, long providerId, long accountId, String oldPassword, String newPassword)
-    {
+    public static boolean changePassword(Activity context, long providerId, long accountId, String oldPassword, String newPassword) {
         try {
             XmppConnection xmppConn = new XmppConnection(context);
             xmppConn.initUser(providerId, accountId);
             boolean success = xmppConn.changeServerPassword(providerId, accountId, oldPassword, newPassword);
 
             return success;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static OnboardingAccount registerAccount (Context context, String nickname, String username, String password, String domain, String server, int port) throws JSONException {
+    public static OnboardingAccount registerAccount(Context context, String nickname, String username, String password, String domain, String server, int port) throws JSONException {
 
         if (password == null)
             password = generatePassword();
@@ -306,8 +281,7 @@ public class OnboardingManager {
         settings.setTlsCertVerify(true);
         settings.setAllowPlainAuth(false);
 
-        try
-        {
+        try {
             settings.setDomain(domain);
             settings.setPort(port);
 
@@ -315,9 +289,7 @@ public class OnboardingManager {
                 settings.setServer(server); //if we have a host, then we should use it
                 settings.setDoDnsSrv(false);
 
-            }
-            else
-            {
+            } else {
                 settings.setServer(null);
                 settings.setDoDnsSrv(true);
 
@@ -357,15 +329,14 @@ public class OnboardingManager {
 
         }
 
-        ImApp.deleteAccount(context.getContentResolver(),accountId, providerId);
+        ImApp.deleteAccount(context.getContentResolver(), accountId, providerId);
 
         settings.close();
         return null;
 
     }
 
-    public static Pair<String,String> getServerInfo (Context context, int idx) throws JSONException
-    {
+    public static Pair<String, String> getServerInfo(Context context, int idx) throws JSONException {
         //load servers and try them all
         JSONObject obj = new JSONObject(loadServersJSON(context));
         JSONArray servers = obj.getJSONArray("servers");
@@ -377,16 +348,17 @@ public class OnboardingManager {
         return new Pair(domain, server);
     }
 
-    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password) {
+    public static OnboardingAccount addExistingAccount(Activity context, Handler handler, String nickname, String jabberId, String password) {
         return addExistingAccount(context, handler, nickname, jabberId, password, null);
     }
 
-    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, String nickname, String jabberId, String password, String accountName) {
+    public static OnboardingAccount addExistingAccount(Activity context, Handler handler, String nickname, String jabberId, String password, String accountName) {
         RegistrationAccount account = new RegistrationAccount(jabberId, password);
         account.setNickname(accountName);
         return addExistingAccount(context, handler, account);
     }
-    public static OnboardingAccount addExistingAccount (Activity context, Handler handler, RegistrationAccount account) {
+
+    public static OnboardingAccount addExistingAccount(Activity context, Handler handler, RegistrationAccount account) {
 
         OnboardingAccount result = null;
 
@@ -456,7 +428,10 @@ public class OnboardingManager {
         String json = null;
         try {
 
-            InputStream is = context.getAssets().open("servers.json");
+            InputStream is;
+            if (BuildConfig.IS_DEV)
+                is = context.getAssets().open("servers_dev.json");
+            else is = context.getAssets().open("servers.json");
 
             int size = is.available();
 

@@ -1,11 +1,14 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.R;
@@ -28,6 +33,16 @@ import butterknife.ButterKnife;
  * Created by n8fr8 on 5/7/16.
  */
 public class BaseActivity extends AppCompatActivity {
+
+
+    public static final int REQUEST_PERMISSION_CAMERA_AVATAR = 501;
+    public static final int REQUEST_PERMISSION_CAMERA_BANNER = 502;
+    public static final int RESULT_AVATAR = 503;
+    public static final int RESULT_BANNER = 504;
+    public static final int AVATAR = 505;
+    public static final int BANNER = 506;
+    public static final int REQUEST_PERMISSION_PICKER_AVATAR = 507;
+    public static final int REQUEST_PERMISSION_PICKER_BANNER = 508;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,5 +183,51 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case UCrop.RESULT_ERROR:
+                    final Throwable cropError = UCrop.getError(data);
+                    AppFuncs.log(cropError.getLocalizedMessage());
+                    onResultPickerImage(false,data,false);
+                    break;
+                case RESULT_AVATAR:
+                    AppFuncs.cropImage(this, data, true, AVATAR);
+                    break;
+                case RESULT_BANNER:
+                    AppFuncs.cropImage(this, data, false, BANNER);
+                    break;
+                case AVATAR:
+                    onResultPickerImage(true,data,true);
+                    break;
+                case BANNER:
+                    onResultPickerImage(false,data,true);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSION_CAMERA_AVATAR:
+                AppFuncs.openCamera(this,true);
+                break;
+            case REQUEST_PERMISSION_CAMERA_BANNER:
+                AppFuncs.openCamera(this,false);
+                break;
+            case REQUEST_PERMISSION_PICKER_AVATAR:
+                AppFuncs.openGallery(this,true);
+                break;
+            case REQUEST_PERMISSION_PICKER_BANNER:
+                AppFuncs.openGallery(this,false);
+                break;
+        }
+    }
+
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {}
 
 }

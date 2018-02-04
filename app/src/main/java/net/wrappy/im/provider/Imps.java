@@ -319,31 +319,6 @@ public class Imps {
             return ret;
         }
 
-        public static final String getAccountNameFromNickname(ContentResolver cr, String nickName) {
-            if (nickName.contains(Constant.EMAIL_DOMAIN)) {
-                nickName = nickName.split("@")[0];
-            }
-            Cursor cursor1 = cr.query(CONTENT_URI, null, null,
-                    null /* selection args */, null /* sort order */);
-            String selection = NAME + "=?";
-            String[] selectionArgs = {nickName};
-            Cursor cursor = cr.query(CONTENT_URI, new String[]{ACCOUNT_NAME}, selection,
-                    selectionArgs /* selection args */, null /* sort order */);
-            String ret = "";
-
-            if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        ret = cursor.getString(cursor.getColumnIndexOrThrow(ACCOUNT_NAME));
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-
-            return ret;
-        }
-
         public static final String getPassword(ContentResolver cr, long accountId) {
             Cursor cursor = cr.query(CONTENT_URI, new String[]{PASSWORD}, _ID + "=" + accountId,
                     null /* selection args */, null /* sort order */);
@@ -410,46 +385,6 @@ public class Imps {
                 }
             }
             return id;
-        }
-
-        public static void updateAccountFromDataServer(ContentResolver cr, WpKMemberDto memberDto) {
-            if (memberDto != null) {
-                ContentValues values = new ContentValues();
-                setValue(values, Account.ACCOUNT_EMAIL, memberDto.getEmail());
-                setValue(values, Account.ACCOUNT_PHONE, memberDto.getMobile());
-                setValue(values, Account.ACCOUNT_NAME, memberDto.getGiven());
-                setValue(values, Account.NAME, memberDto.getIdentifier());
-                setValue(values, Account.ACCOUNT_GENDER, memberDto.getGender());
-
-                String selection = Account.NAME + "=?";
-                String[] selectionArgs = {memberDto.getIdentifier()};
-                String[] projection = {Account._ID};
-                Cursor cursor = cr.query(Account.CONTENT_URI,projection,selection,selectionArgs,null);
-
-                if (cursor!=null && cursor.moveToFirst()) {
-                    long accountId = cursor.getLong(cursor.getColumnIndex(Account._ID));
-                    if (accountId!=-1) {
-                        Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
-                        cr.update(accountUri, values, null, null);
-                    }
-                } else {
-                    cr.insert(Account.CONTENT_URI, values);
-                }
-                String avatar = memberDto.getAvatar()==null? "" : memberDto.getAvatar().getReference();
-                String banner = memberDto.getBanner()==null? "" : memberDto.getBanner().getReference();
-                updateAvatarBannerToDB(memberDto.getIdentifier(),avatar,banner);
-            }
-        }
-
-        private static void updateAvatarBannerToDB(String username, String avatar, String banner) {
-            avatar = avatar == null? "" : avatar;
-            banner = banner == null? "" : banner;
-            String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatar);
-            if (!username.contains("@")) {
-                username = username + Constant.EMAIL_DOMAIN;
-            }
-            net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, banner, hash, username);
-            ImApp.broadcastIdentity(null);
         }
 
         //update value for each column of account table
@@ -889,7 +824,7 @@ public class Imps {
 
         public static final String getAddressFromNickname(ContentResolver cr, String nickname) {
             String ret = null;
-            String selection = NICKNAME + "=?";
+            String selection = NICKNAME + "='?'";
             String[] selectionArgs = {nickname};
             String[] projection = {USERNAME};
             Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
@@ -903,24 +838,6 @@ public class Imps {
                 }
             }
             return ret;
-        }
-
-        public static final long getContactIdFromNickname(ContentResolver cr, String nickname) {
-            long contactId= -1;
-            String selection = NICKNAME + "=?";
-            String[] selectionArgs = {nickname};
-            String[] projection = {_ID};
-            Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
-            if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        contactId = cursor.getLong(cursor.getColumnIndexOrThrow(_ID));
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-            return contactId;
         }
 
         public static final String getString(ContentResolver cr, String columnName, String address) {
@@ -940,24 +857,6 @@ public class Imps {
             }
 
             return ret;
-        }
-
-        public static final boolean checkExists(ContentResolver cr, String address) {
-            String selection = USERNAME + "=?";
-            String[] selectionArgs = {address};
-            Cursor cursor = cr.query(CONTENT_URI, null, selection,
-                    selectionArgs /* selection args */, null /* sort order */);
-            if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        return true;
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-
-            return false;
         }
 
         /*

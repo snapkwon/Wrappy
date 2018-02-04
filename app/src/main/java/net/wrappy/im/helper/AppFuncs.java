@@ -37,6 +37,7 @@ import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.PopupUtils;
@@ -184,7 +185,7 @@ public class AppFuncs {
         return image;
     }
 
-    public static void openCamera(Activity activity, int requestCode) {
+    public static void openCamera(Activity activity, boolean isAvatar) {
         if ((ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -203,27 +204,50 @@ public class AppFuncs {
                             activity.getPackageName()+".provider",
                             photoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    activity.startActivityForResult(takePictureIntent, requestCode);
+                    if (isAvatar) {
+                        activity.startActivityForResult(takePictureIntent, BaseActivity.RESULT_AVATAR);
+                    } else {
+                        activity.startActivityForResult(takePictureIntent, BaseActivity.RESULT_BANNER);
+                    }
+
                 }
             }
         } else {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
-                    199);
+            if (isAvatar) {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        BaseActivity.REQUEST_PERMISSION_CAMERA_AVATAR);
+            } else {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        BaseActivity.REQUEST_PERMISSION_CAMERA_BANNER);
+            }
+
         }
     }
 
-    public static void openGallery(Activity activity, int requestCode) {
+    public static void openGallery(Activity activity, boolean isAvatar) {
         if ((ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.INTERNAL_CONTENT_URI);
             intent.setType("image/*");
-            activity.startActivityForResult(intent, requestCode);
+            if (isAvatar) {
+                activity.startActivityForResult(intent, BaseActivity.RESULT_AVATAR);
+            } else {
+                activity.startActivityForResult(intent, BaseActivity.RESULT_BANNER);
+            }
         } else {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    199);
+            if (isAvatar) {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        BaseActivity.REQUEST_PERMISSION_PICKER_AVATAR);
+            } else {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        BaseActivity.REQUEST_PERMISSION_PICKER_BANNER);
+            }
+
         }
     }
 
@@ -405,7 +429,7 @@ public class AppFuncs {
     }
 
     public static String convertTimestamp(long timestamp) {
-        String pattern = "MMM dd, yyyy";
+        String pattern = ImApp.sImApp.getString(R.string.local_time_format);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(timestamp);
         return date;
@@ -455,5 +479,4 @@ public class AppFuncs {
             }
         });
     }
-
 }

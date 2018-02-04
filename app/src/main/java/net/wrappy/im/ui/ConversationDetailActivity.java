@@ -134,16 +134,14 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-    // private WpKChatGroupDto chatGroupDto;
+   // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
-    private TextView txtName;
 
     public static Intent getStartIntent(Context context, long chatId, String nickname, String reference) {
         Intent intent = getStartIntent(context, chatId);
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
-        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, nickname + Constant.EMAIL_DOMAIN);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
         return intent;
     }
@@ -157,8 +155,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-    // public WpKChatGroupDto getGroupDto() {
-    //     return chatGroupDto;
+   // public WpKChatGroupDto getGroupDto() {
+   //     return chatGroupDto;
     //}
 
 
@@ -516,9 +514,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        txtName = (TextView) view.findViewById(R.id.chat_room_nickname);
+        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
 
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
 
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
@@ -531,9 +529,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
             status.setVisibility(View.GONE);
             if (wpKChatGroupDto != null) {
-                txtName.setText(wpKChatGroupDto.getName());
+                txt.setText(wpKChatGroupDto.getName());
             } else {
-                txtName.setText(mNickname);
+                txt.setText(mNickname);
             }
         } else {
             if (TextUtils.isEmpty(mReference)) {
@@ -542,12 +540,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
             setAvatarStatus(status);
-            String fName = Imps.Account.getAccountNameFromNickname(getContentResolver(),mNickname);
-            if (!TextUtils.isEmpty(fName)) {
-                txtName.setText(fName);
-            } else {
-                txtName.setText(mNickname);
-            }
+            txt.setText(mNickname);
         }
 
         addCustomViewToActionBar(view);
@@ -706,19 +699,26 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListener(this) {
             @Override
             public void OnComplete(String s) {
-                mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
-                    @Override
-                    public void onFinished(Integer code) {
-                        startChat();
-                    }
-                });
-                task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+                addContactXmpp();
+            }
 
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
             }
         });
     }
 
+    private void addContactXmpp (){
+        mConvoView.updateStatusAddContact();
+        task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
+            @Override
+            public void onFinished(Integer code) {
+                startChat();
+            }
+        });
+        task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+    }
 
     public void startChat() {
         if (loaderCallbacks != null) {
@@ -730,6 +730,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private void startChatting() {
         mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
+//        applyStyleForToolbar();
     }
 
     public void collapseToolbar() {
@@ -747,9 +748,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onResume();
         if (!isRegisterNotificationCenter) {
             isRegisterNotificationCenter = true;
-            NotificationCenter.getInstance().addObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().addObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().addObserver(this, NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1415,8 +1416,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onDestroy();
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)
