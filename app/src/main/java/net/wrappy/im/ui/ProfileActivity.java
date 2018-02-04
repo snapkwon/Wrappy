@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.layout.AppTextView;
+import net.wrappy.im.provider.Imps;
+import net.wrappy.im.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,9 +65,10 @@ public class ProfileActivity extends FragmentActivity implements NotificationCen
             String[] arr = jid.split("@");
             jid = arr[0];
         }
-        mContactId = getIntent().getLongExtra("contactId", -1);
-        mNickname = getIntent().getStringExtra("nickname");
-        reference = getIntent().getStringExtra("reference");
+        //mContactId = getIntent().getLongExtra("contactId", -1);
+        mNickname = Imps.Account.getAccountNameFromNickname(getContentResolver(),jid);
+        reference = Imps.Avatars.getAvatar(getContentResolver(),jid+ Constant.EMAIL_DOMAIN);
+        mContactId = Imps.Contacts.getContactIdFromNickname(getContentResolver(), jid);
         headerbarTitle.setText(mNickname);
         getSupportFragmentManager().beginTransaction().replace(R.id.frProfileContainer,ProfileFragment.newInstance(mContactId,mNickname,reference,jid)).commit();
     }

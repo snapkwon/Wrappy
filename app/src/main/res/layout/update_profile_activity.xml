@@ -55,6 +55,40 @@
                         android:padding="10dp">
 
                         <net.wrappy.im.helper.layout.AppTextView
+                            android:id="@+id/txtProfileNickname"
+                            style="@style/AppText03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fullname" />
+
+                        <View
+                            style="@style/divider"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="10dp" />
+
+                        <net.wrappy.im.helper.layout.AppEditTextView
+                            android:id="@+id/edProfileNickname"
+                            style="@style/AppText02"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="@string/fullname"
+                            android:imeOptions="actionNext"
+                            android:inputType="textNoSuggestions"
+                            android:textColorHint="#bebebe"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#fff"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <net.wrappy.im.helper.layout.AppTextView
                             android:id="@+id/txtProfileUser"
                             style="@style/AppText03"
                             android:layout_width="wrap_content"

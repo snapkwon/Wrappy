@@ -76,7 +76,6 @@ import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.LauncherActivity;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
@@ -1311,6 +1310,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static void updateContact(ContentValues originValues, String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
         // update the server
         if (sImApp != null && wpKMemberDto != null && mConn != null) {
+
             String name = wpKMemberDto.getIdentifier();
             String email = wpKMemberDto.getEmail();
             String fullname = wpKMemberDto.getGiven();
@@ -1318,7 +1318,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             try {
                 ContentUris.appendId(builder, mConn.getProviderId());
                 ContentUris.appendId(builder, mConn.getAccountId());
-                mConn.getContactListManager().setContactName(address, name);
+                mConn.getContactListManager().setContactName(address, fullname);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1333,27 +1333,12 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
-            if (!TextUtils.isEmpty(fullname)) {
-                values.put(Imps.Contacts.NICKNAME,fullname);
-            } else {
-                if (!TextUtils.isEmpty(name)) {
-                    values.put(Imps.Contacts.NICKNAME,name);
-                }
+            if (!TextUtils.isEmpty(name)) {
+                values.put(Imps.Contacts.NICKNAME,name);
             }
 
             if (!values.containsKey(Imps.Contacts.TYPE)) {
                 values.put(Imps.Contacts.TYPE, Imps.ContactsColumns.TYPE_NORMAL);
-            }
-
-            String avatarReference = "";
-            String bannerReference = "";
-            String hash = "";
-            if (wpKMemberDto.getAvatar() != null) {
-                avatarReference = wpKMemberDto.getAvatar().getReference();
-                hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-            }
-            if (wpKMemberDto.getBanner() != null) {
-                bannerReference = wpKMemberDto.getBanner().getReference();
             }
 
             Uri queryUri = builder.build();
@@ -1374,8 +1359,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
-
-            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+            Imps.Account.updateAccountFromDataServer(sImApp.getContentResolver(), wpKMemberDto);
         }
     }
 

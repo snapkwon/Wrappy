@@ -890,8 +890,6 @@ public class ContactsPickerActivity extends BaseActivity {
             ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
-
-                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
             v.bind(holder, cursor, mSearchString, false);

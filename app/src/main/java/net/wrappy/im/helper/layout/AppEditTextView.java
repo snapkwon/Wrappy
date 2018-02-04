@@ -53,10 +53,9 @@ public class AppEditTextView extends android.support.v7.widget.AppCompatEditText
         }
     }
 
-    @Override
-    public String toString() {
+    public String getString() {
         if (getText()!=null) {
-            return getText().toString();
+            return getText().toString().trim();
         }
         return "";
     }

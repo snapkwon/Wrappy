@@ -302,6 +302,7 @@ public class MessageListItem extends FrameLayout {
             if (showContact) {
                 String[] nickParts = nickname.split("/");
                 contact = nickParts[nickParts.length - 1];
+                contact = Imps.Account.getAccountNameFromNickname(context.getContentResolver(),contact);
             }
 
             CharSequence tsText = formatTimeStamp(date, messageType, null, encryption, contact);
