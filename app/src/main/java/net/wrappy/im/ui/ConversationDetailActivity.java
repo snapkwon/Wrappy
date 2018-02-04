@@ -134,7 +134,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-   // private WpKChatGroupDto chatGroupDto;
+    // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
 
@@ -155,8 +155,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-   // public WpKChatGroupDto getGroupDto() {
-   //     return chatGroupDto;
+    // public WpKChatGroupDto getGroupDto() {
+    //     return chatGroupDto;
     //}
 
 
@@ -699,19 +699,26 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListener(this) {
             @Override
             public void OnComplete(String s) {
-                mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
-                    @Override
-                    public void onFinished(Integer code) {
-                        startChat();
-                    }
-                });
-                task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+                addContactXmpp();
+            }
 
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
             }
         });
     }
 
+    private void addContactXmpp (){
+        mConvoView.updateStatusAddContact();
+        task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
+            @Override
+            public void onFinished(Integer code) {
+                startChat();
+            }
+        });
+        task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+    }
 
     public void startChat() {
         if (loaderCallbacks != null) {

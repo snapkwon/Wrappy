@@ -21,7 +21,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -51,11 +50,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.github.javiersantos.appupdater.AppUpdater;
-import com.github.javiersantos.appupdater.enums.Display;
-import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
 
 import net.ironrabbit.type.CustomTypefaceManager;
@@ -183,7 +181,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
 
-        boolean isReferral = Store.getBooleanData(getApplicationContext(),Store.REFERRAL);
+        boolean isReferral = Store.getBooleanData(getApplicationContext(), Store.REFERRAL);
         if (isReferral) {
             ReferralActivity.start();
         }
@@ -192,15 +190,9 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         initFloatButton();
         initViewPager();
         initTabLayout();
-
-        //don't wnat this to happen to often
-        checkForUpdates();
-
         installRingtones();
-
         applyStyle();
         Imps.deleteMessageInDbByTime(getContentResolver());
-
         showPopUpNotice();
     }
 
@@ -515,21 +507,48 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         }
     }
 
+    @Override
+    public void onResultPickerImage(final boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        try {
+            final Uri resultUri = UCrop.getOutput(data);
+            AppFuncs.showProgressWaiting(this);
+            final boolean isFinalAvatar = isAvatar;
+            RestAPI.uploadFile(this, new File(resultUri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    AppFuncs.dismissProgressWaiting();
+                    try {
+                        String reference = RestAPI.getPhotoReference(result.getResult());
+                        ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+                        profileFragment.receiverReferenceAvatarOrBanner(isFinalAvatar,reference);
+                    } catch (Exception ex) {
+                        AppFuncs.alert(MainActivity.this, getString(R.string.upload_fail), false);
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception ex) {
+
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER
-                    || requestCode == UCrop.REQUEST_CROP || requestCode == ProfileFragment.CROP_BANNER || requestCode == ProfileFragment.CROP_AVATAR) {
-                try {
-                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                    profileFragment.onActivityResult(requestCode, resultCode, data);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else if (requestCode == REQUEST_CHANGE_SETTINGS) {
+//            if (requestCode == ProfileFragment.AVATAR || requestCode == ProfileFragment.BANNER
+//                    || requestCode == UCrop.REQUEST_CROP || requestCode == ProfileFragment.CROP_BANNER || requestCode == ProfileFragment.CROP_AVATAR) {
+//                try {
+//                    ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
+//                    profileFragment.onActivityResult(requestCode, resultCode, data);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            } else
+                if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
@@ -771,55 +790,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
         //    UpdateManager.unregister();
     }
 
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        //   UpdateManager.register(this, ImApp.HOCKEY_APP_ID);
-
-        //only check github for updates if there is no Google Play
-        if (!hasGooglePlay()) {
-            try {
-
-                String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-
-                //if this is a full release, without -beta -rc etc, then check the appupdater!
-                if (version.indexOf("-") == -1) {
-
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    long timeNow = new Date().getTime();
-                    long timeSinceLastCheck = prefs.getLong("updatetime", -1);
-
-                    //only check for updates once per day
-                    if (timeSinceLastCheck == -1 || (timeNow - timeSinceLastCheck) > 86400) {
-
-                        AppUpdater appUpdater = new AppUpdater(this);
-                        appUpdater.setDisplay(Display.DIALOG);
-                        appUpdater.setUpdateFrom(UpdateFrom.XML);
-                        appUpdater.setUpdateXML(ImApp.URL_UPDATER);
-
-                        //  appUpdater.showAppUpdated(true);
-                        appUpdater.start();
-
-                        prefs.edit().putLong("updatetime", timeNow).commit();
-                    }
-                }
-            } catch (Exception e) {
-                Log.d("AppUpdater", "error checking app updates", e);
-            }
-        }
-    }
-
-    boolean hasGooglePlay() {
-        try {
-            getApplication().getPackageManager().getPackageInfo("com.android.vending", 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-        return true;
-
-
-    }
-
-
     Uri mLastPhoto = null;
 
     void startPhotoTaker() {
@@ -928,7 +898,6 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
 
     }
 
-
     /*Start sync contacts and group chat from server*/
     private void checkToLoadDataServer() {
         Intent intent = getIntent();
@@ -998,7 +967,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
     public static void approveSubscription(final WpKChatRoster roster) {
         try {
             ImApp mApp = ImApp.sImApp;
-            IImConnection conn = mApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
+            IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
             if (conn.getState() == ImConnection.LOGGED_IN) {
                 String address = roster.getContact().getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
                 ImApp.updateContact(address, roster.getContact(), conn);

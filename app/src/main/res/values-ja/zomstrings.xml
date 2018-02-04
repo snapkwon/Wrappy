@@ -14,9 +14,9 @@
     <string name="add_friends">友人を追加</string>
     <string name="search_by_id">IDで検索</string>
     <string name="invite_accepted">あなたは今&appName;の友達です</string>
-    <string name="choose_friend">友達を選ぶ</string>
-    <string name="send_message">メッセージを送ります</string>
-    <string name="push_to_talk">プッシュトゥートーク</string>
+    <string name="choose_friend">友達を選択</string>
+    <string name="send_message">メッセージ入力</string>
+    <string name="push_to_talk">プッシュトーク</string>
     <string name="recording_release">録音…送信して送信</string>
     <string name="recording_delete">録音…削除して削除</string>
     <string name="swipe_up_delete">スワイプして削除する</string>
@@ -70,12 +70,12 @@
     <string name="title_pending">承認待ちの</string>
 
 
-    <string name="action_add_buddy">友人を追加</string>
+    <string name="action_add_buddy">友達を追加</string>
     <string name="action_leave">離れる</string>
-    <string name="add_people">人々を追加</string>
+    <string name="add_people">友達を選択</string>
     <string name="turn_notifications_on">通知をオンにする</string>
     <string name="turn_notifications_off">通知のミュート</string>
-    <string name="num_member_group_chat">メンバー%1$s人</string>
+    <string name="num_member_group_chat">計%1$s人</string>
     <string name="confirm_leave_group">あなたは本当にグループを離れたいですか？</string>
     <string name="confirm_delete_and_leave_group">グループを削除してもよろしいですか？</string>
     <string name="confirm_remove_member_group">このメンバーを削除してもよろしいですか？</string>

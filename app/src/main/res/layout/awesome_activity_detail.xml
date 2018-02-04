@@ -346,7 +346,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/edittextchat"
                             android:fontFamily="sans-serif-light"
-                            android:hint="@string/compose_hint"
+                            android:hint="@string/send_message"
                             android:imeOptions="actionSend|flagNoEnterAction"
                             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textImeMultiLine"
                             android:padding="2dp"

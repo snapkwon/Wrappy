@@ -1,6 +1,5 @@
 package net.wrappy.im.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -66,12 +65,7 @@ import butterknife.Optional;
 
 public class UpdateProfileActivity extends BaseActivity implements View.OnClickListener {
 
-    private final int IMAGE_HEADER = 100;
-    private final int IMAGE_AVATAR = 101;
-    private final int IMAGE_HEADER_UCROP = 102;
-    private final int IMAGE_AVATAR_UCROP = 103;
     private final int VERIFY_CODE = 104;
-
 
     boolean isFlag;
     String user, email, phone, gender, password, invitePhone;
@@ -235,16 +229,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(), error, true);
                     return;
                 }
-                appFuncs.showProgressWaiting(this);
+                AppFuncs.showProgressWaiting(this);
                 boolean isFileExist = false;
                 if (uriAvatar != null) {
                     isFileExist = true;
-                    AppFuncs.log("Upload Avatar");
                     uploadFileProfile(uriAvatar, RestAPI.PHOTO_AVATAR);
                 }
                 if (uriHeader != null) {
                     isFileExist = true;
-                    AppFuncs.log("Upload Banner");
                     uploadFileProfile(uriHeader, RestAPI.PHOTO_BRAND);
                 }
                 if (!isFileExist) {
@@ -268,10 +260,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, true);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, true);
                                 break;
                             case 3:
                                 uriAvatar = null;
@@ -297,10 +289,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, false);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, false);
                                 break;
                             case 3:
                                 uriHeader = null;
@@ -328,7 +320,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
-                    AppFuncs.log("Upload " + reference);
                     if (type.equals(RestAPI.PHOTO_AVATAR)) {
                         avatarReference = reference;
                     } else {
@@ -492,69 +483,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     boolean isAvatarRequest = false;
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-
-        try {
-            if (resultCode == Activity.RESULT_OK) {
-//                if (requestCode == VERIFY_CODE) {
-//
-//                    String url = RestAPI.loginUrl(user, password);
-//                    AppFuncs.log(url);
-//                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListener() {
-//
-//                        @Override
-//                        public void OnComplete(int httpCode, String error, String s) {
-//                            try {
-//                                if (!RestAPI.checkHttpCode(httpCode)) {
-//                                    String er = WpErrors.getErrorMessage(s);
-//                                    if (!TextUtils.isEmpty(er)) {
-//                                        AppFuncs.alert(getApplicationContext(), er, true);
-//                                    }
-//                                    appFuncs.dismissProgressWaiting();
-//                                    return;
-//                                }
-//                                AppFuncs.log("loginUrl: " + s);
-//                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-//                                Gson gson = new Gson();
-//                                wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-//                                wpkToken.saveToken(getApplicationContext());
-//                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
-//                            } catch (Exception ex) {
-//                                appFuncs.dismissProgressWaiting();
-//                                ex.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                }
-            }
-            if (requestCode == IMAGE_HEADER) {
-                isAvatarRequest = false;
-                AppFuncs.cropImage(this, data, false);
-            } else if (requestCode == IMAGE_AVATAR) {
-                isAvatarRequest = true;
-                AppFuncs.cropImage(this, data, true);
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                if (data!=null) {
-                    if (resultCode == UCrop.RESULT_ERROR) {
-                        final Throwable cropError = UCrop.getError(data);
-                        AppFuncs.log(cropError.getLocalizedMessage());
-                        return;
-                    }
-                    if (isAvatarRequest) {
-                        uriAvatar = UCrop.getOutput(data);
-                        imgAvatar.setImageURI(uriAvatar);
-                    } else {
-                        uriHeader = UCrop.getOutput(data);
-                        imgHeader.setImageURI(uriHeader);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
@@ -570,5 +498,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 LauncherActivity.start(UpdateProfileActivity.this);
             }
         }, null);
+    }
+
+    @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        if (isAvatar) {
+            uriAvatar = UCrop.getOutput(data);
+            imgAvatar.setImageURI(uriAvatar);
+        } else {
+            uriHeader = UCrop.getOutput(data);
+            imgHeader.setImageURI(uriHeader);
+        }
     }
 }
