@@ -16,7 +16,8 @@ public class NotificationCenter {
     public static final int updateConversationDetail = totalEvents++;
     public static final int changeAvatarGroupFromSetting = totalEvents++;
     public static final int addSearchBarInDetailConverasation = totalEvents++;
-
+    public static final int showEditIconOnMainActivity = totalEvents++;
+    public static final int changeProfileName = totalEvents++;
 
     private SparseArray<ArrayList<Object>> observers = new SparseArray<>();
     private SparseArray<ArrayList<Object>> removeAfterBroadcast = new SparseArray<>();

@@ -12,7 +12,6 @@ public class Store {
 
     public final static String USERNAME = "wr_username";
     public final static String REFERRAL = "wr_referral";
-    public final static String ACCOUNT_ID = "wr_account_id";
 
     public static void putStringData(Context context, String key, String data) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
