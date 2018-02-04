@@ -728,10 +728,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     }
 
     private void startChatting() {
-        String fName = Imps.Account.getAccountNameFromNickname(getContentResolver(),mNickname);
-        if (!TextUtils.isEmpty(fName)) {
-            txtName.setText(fName);
-        }
         mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
     }
