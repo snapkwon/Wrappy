@@ -3,7 +3,6 @@
     <string name="app_name_zom">&appName;</string>
     <string name="create_an_account">ลงทะเบียน</string>
     <string name="create_id">สร้างไอดี &appName;</string>
-    <string name="advanced">ขั้นสูง</string>
     <string name="account_congrats">ขอแสดงความยินดี คุณพร้อมสำหรับ &appName; แล้ว!</string>
     <string name="account_congrats_details">หน้าแฟ้มประวัติของคุณ</string>
     <string name="invite_friends">เพิ่มเพื่อน!</string>
