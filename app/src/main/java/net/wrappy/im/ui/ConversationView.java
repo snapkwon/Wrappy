@@ -137,7 +137,6 @@ import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
-import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -2630,6 +2629,7 @@ public class ConversationView implements OnHandleMessage {
         private int mDeliveredColumn;
         private int mMimeTypeColumn;
         private int mIdColumn;
+        private int mUsernameColumn;
 
         class BodyTranslate {
             public boolean mIstranslate;
@@ -2985,13 +2985,13 @@ public class ConversationView implements OnHandleMessage {
                 @Override
                 public void onClick(View view) {
                     if (finalMessageType == Imps.MessageType.INCOMING) {
-                        Intent intent = new Intent(mContext, ProfileActivity.class);
                         String correctAddress = address;
-                        if (TextUtils.isEmpty(address))
-                            correctAddress = nickname + Constant.EMAIL_DOMAIN;
-                        intent.putExtra("address", correctAddress);
-                        intent.putExtra("nickname", nickname);
-                        mContext.startActivity(intent);
+                        if (!TextUtils.isEmpty(address)) {
+                            if (address.contains("@")) {
+                                correctAddress = address.split("@")[0];
+                            }
+                            ProfileActivity.start(mActivity,correctAddress);
+                        }
                     } else {
                         goMyPage();
                     }

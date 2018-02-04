@@ -1,6 +1,5 @@
 package net.wrappy.im.ui;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,11 +29,10 @@ import com.koushikdutta.ion.Response;
 import com.yalantis.ucrop.UCrop;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
-import net.wrappy.im.helper.AppDelegate;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.helper.glide.GlideHelper;
@@ -50,8 +45,6 @@ import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.MemberAccount;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.Store;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.Utils;
@@ -69,12 +62,15 @@ import butterknife.OnClick;
 
 public class ProfileFragment extends BaseFragmentV4 {
 
+    private final int MY_SELF = 1;
+    private final int FRIEND = 2;
+    private final int STRANGER = 3;
+
     public static final int AVATAR = 321;
     public static final int BANNER = AVATAR + 1;
     public static final int CROP_AVATAR = BANNER + 1;
     public static final int CROP_BANNER = CROP_AVATAR + 1;
     View mainView;
-    AppFuncs appFuncs;
     String jid = "";
     WpKMemberDto wpKMemberDto;
     private long mContactId = -1;
@@ -83,36 +79,22 @@ public class ProfileFragment extends BaseFragmentV4 {
     private ImApp mApp;
     private boolean isSelf;
     boolean isRequestAvatar = true;
-    AppDelegate appDelegate;
 
-    MainActivity mainActivity;
-
-    @BindView(R.id.imgProfileHeader)
-    ImageView imgProfileHeader;
-    @BindView(R.id.imgPhotoAvatar)
-    ImageView imgPhotoAvatar;
-    @BindView(R.id.txtProfileUsername)
-    AppTextView txtUsername;
-    @BindView(R.id.edProfileFullName)
-    AppEditTextView edFullName;
-    @BindView(R.id.edProfilePhone)
-    AppEditTextView edPhone;
-    @BindView(R.id.edProfileEmail)
-    AppEditTextView edEmail;
-    @BindView(R.id.edProfileGender)
-    AppEditTextView edGender;
-    @BindView(R.id.linearForSeft)
-    LinearLayout linearForSeft;
-    @BindView(R.id.linearForContact)
-    LinearLayout linearForContact;
-    @BindView(R.id.btnPhotoCameraAvatar)
-    ImageButton btnPhotoCameraAvatar;
-    @BindView(R.id.btnProfileSubmit)
-    Button btnProfileSubmit;
-    @BindView(R.id.btnProfileCameraHeader)
-    ImageButton btnProfileCameraHeader;
-    @BindView(R.id.spnProfile)
-    AppCompatSpinner spnProfile;
+    @BindView(R.id.imgProfileHeader) ImageView imgProfileHeader;
+    @BindView(R.id.imgPhotoAvatar) ImageView imgPhotoAvatar;
+    @BindView(R.id.txtProfileUsername) AppTextView txtUsername;
+    @BindView(R.id.txtProfileNickname) AppTextView txtProfileNickname;
+    @BindView(R.id.edProfileFullName) AppEditTextView edFullName;
+    @BindView(R.id.edProfilePhone) AppEditTextView edPhone;
+    @BindView(R.id.edProfileEmail) AppEditTextView edEmail;
+    @BindView(R.id.edProfileGender) AppEditTextView edGender;
+    @BindView(R.id.lnForSeft) LinearLayout lnForSeft;
+    @BindView(R.id.lnForFriend) LinearLayout lnForFriend;
+    @BindView(R.id.lnForStranger) LinearLayout lnForStranger;
+    @BindView(R.id.btnPhotoCameraAvatar) ImageButton btnPhotoCameraAvatar;
+    @BindView(R.id.btnProfileSubmit) Button btnProfileSubmit;
+    @BindView(R.id.btnProfileCameraHeader) ImageButton btnProfileCameraHeader;
+    @BindView(R.id.spnProfile) AppCompatSpinner spnProfile;
     @BindView(R.id.lnProfilePhone) LinearLayout lnProfilePhone;
     @BindView(R.id.lnProfileEmail) LinearLayout lnProfileEmail;
     @BindView(R.id.lnProfileGender) LinearLayout lnProfileGender;
@@ -120,8 +102,6 @@ public class ProfileFragment extends BaseFragmentV4 {
     @BindView(R.id.txtClientName) AppTextView txtClientName;
 
     ArrayAdapter adapterGender;
-    private MyLoaderCallbacks mLoaderCallbacks;
-    private LoaderManager mLoaderManager;
 
     String emailTemp = "";
     String genderTemp = "";
@@ -138,84 +118,59 @@ public class ProfileFragment extends BaseFragmentV4 {
         return profileFragment;
     }
 
-    class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            StringBuilder buf = new StringBuilder();
-
-//            buf.append('(');
-//            buf.append(Imps.AccountColumns.ACCOUNT_NAME);
-//            buf.append(" = ");
-//            android.database.DatabaseUtils.appendValueToSql(buf,  jid);
-//            buf.append(')');
-            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, Store.getLongData(getActivity(),Store.ACCOUNT_ID));
-            Uri.Builder builder = accountUri.buildUpon();
-            Uri mUri = builder.build();
-            CursorLoader loader = new CursorLoader(getActivity(), mUri, CHAT_PROJECTION,
-                    buf == null ? null : buf.toString(), null, null);
-
-            return loader;
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-            if (newCursor == null)
-                return; // the app was quit or something while this was working
-
-            if (newCursor.moveToFirst()){
-                String c_username = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.NAME));
-                String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
-                String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
-                String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
-                String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
-                if (!TextUtils.isEmpty(c_username)) {
-                    txtUsername.setText(c_username);
-                    String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),c_username+"@"+Constant.DOMAIN);
-                    if (!TextUtils.isEmpty(reference)) {
-                        GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
-                    }
-                }
-                if (!TextUtils.isEmpty(c_gender)) {
-                    String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
-                    edGender.setText(upperString);
-                    genderTemp = c_gender;
-                }
-                if (!TextUtils.isEmpty(c_phone)) {
-                    edPhone.setText(c_phone);
-                }
-                if (!TextUtils.isEmpty(c_email)) {
-                    edEmail.setText(c_email);
-                    emailTemp = c_email;
-                }
-                if (!TextUtils.isEmpty(c_name)) {
-                    edFullName.setText(c_name);
-                    nameTemp = c_name;
-                }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        mainView = inflater.inflate(R.layout.profile_fragment, null);
+        ButterKnife.bind(this, mainView);
+        mApp = (ImApp) getActivity().getApplication();
+        jid = getArguments().getString("jid");
+        edFullName.setEnabled(false);
+        if (TextUtils.isEmpty(jid)) {
+            isSelf = true;
+            if (mApp.getDefaultUsername().contains("@")) {
+                jid = mApp.getDefaultUsername().split("@")[0];
             }
-
-
+            isSelfOrFriendsOrStranger(MY_SELF);
+        } else {
+            boolean isExists = Imps.Contacts.checkExists(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
+            if (isExists) {
+                isSelfOrFriendsOrStranger(FRIEND);
+            } else {
+                isSelfOrFriendsOrStranger(STRANGER);
+            }
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-        }
+        getFriendInforFromIntent();
 
-        public final String[] CHAT_PROJECTION = {
-                Imps.AccountColumns.ACCOUNT_NAME,
-                Imps.AccountColumns.ACCOUNT_EMAIL,
-                Imps.AccountColumns.ACCOUNT_PHONE,
-                Imps.AccountColumns.ACCOUNT_GENDER,
-                Imps.AccountColumns.NAME
-        };
+        preferenceView();
 
-
+        return mainView;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof AppDelegate) {
-            appDelegate = (AppDelegate) activity;
+    private void isSelfOrFriendsOrStranger(int who) {
+        switch (who) {
+            case MY_SELF:
+                updateDataFromLocal();
+                loadAvatarFromLocal(jid);
+                lnForSeft.setVisibility(View.VISIBLE);
+                break;
+            case FRIEND:
+                loadAvatarFromLocal(jid);
+                lnProfileEmail.setVisibility(View.GONE);
+                lnProfileGender.setVisibility(View.GONE);
+                lnProfilePhone.setVisibility(View.GONE);
+                lnProfileUsername.setVisibility(View.GONE);
+                lnForFriend.setVisibility(View.VISIBLE);
+                break;
+            case STRANGER:
+                lnProfileEmail.setVisibility(View.GONE);
+                lnProfileGender.setVisibility(View.GONE);
+                lnProfilePhone.setVisibility(View.GONE);
+                lnProfileUsername.setVisibility(View.GONE);
+                lnForStranger.setVisibility(View.VISIBLE);
+                break;
         }
     }
 
@@ -227,95 +182,61 @@ public class ProfileFragment extends BaseFragmentV4 {
             Imps.AccountColumns.NAME
     };
 
-    private void updateDataFromLocal(Cursor newCursor) {
-        if (newCursor.moveToFirst()){
+    private void updateDataFromLocal() {
+        Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId());
+        Cursor newCursor = getActivity().getContentResolver().query(accountUri, CHAT_PROJECTION, null, null, null);
+        if (newCursor.moveToFirst()) {
             String c_username = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.NAME));
             String c_name = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_NAME));
             String c_email = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_EMAIL));
             String c_phone = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_PHONE));
             String c_gender = newCursor.getString(newCursor.getColumnIndex(Imps.AccountColumns.ACCOUNT_GENDER));
-            if (!TextUtils.isEmpty(c_username)) {
+            wpKMemberDto = new WpKMemberDto();
+            if (!Utils.setTextForView(txtUsername,c_username)) {
                 txtUsername.setText(c_username);
-                String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),c_username+"@"+Constant.DOMAIN);
-                if (!TextUtils.isEmpty(reference)) {
-                    GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
-                }
+                wpKMemberDto.setIdentifier(c_username);
+                loadAvatarFromLocal(c_username);
             }
             if (!TextUtils.isEmpty(c_gender)) {
                 String upperString = c_gender.substring(0, 1).toUpperCase() + c_gender.substring(1).toLowerCase();
-                edGender.setText(upperString);
-                genderTemp = c_gender;
+                Utils.setTextForView(edGender,upperString);
+                wpKMemberDto.setGender(c_gender.toUpperCase());
+                genderTemp = upperString;
             }
-            if (!TextUtils.isEmpty(c_phone)) {
-                edPhone.setText(c_phone);
+            if (Utils.setTextForView(edPhone,c_phone)) {
+                wpKMemberDto.setMobile(c_phone);
             }
-            if (!TextUtils.isEmpty(c_email)) {
-                edEmail.setText(c_email);
+            if (Utils.setTextForView(edEmail,c_email)) {
+                wpKMemberDto.setEmail(c_email);
                 emailTemp = c_email;
             }
-            if (!TextUtils.isEmpty(c_name)) {
-                edFullName.setText(c_name);
+            if (Utils.setTextForView(edFullName,c_name)) {
+                wpKMemberDto.setGiven(c_name);
                 nameTemp = c_name;
             }
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        mainView = inflater.inflate(R.layout.profile_fragment, null);
-        ButterKnife.bind(this, mainView);
-        mApp = (ImApp) getActivity().getApplication();
-        appFuncs = AppFuncs.getInstance();
-        jid = getArguments().getString("jid");
-        edFullName.setEnabled(false);
-        if (TextUtils.isEmpty(jid)) {
-            isSelf = true;
-            if (mApp.getDefaultUsername().contains("@")) {
-                jid = mApp.getDefaultUsername().split("@")[0];
-                linearForContact.setVisibility(View.GONE);
-            }
-//            mLoaderCallbacks = new MyLoaderCallbacks();
-//            mLoaderManager = getLoaderManager();
-//            mLoaderManager.initLoader(1001, null, mLoaderCallbacks);
-        } else {
-            lnProfileEmail.setVisibility(View.GONE);
-            lnProfileGender.setVisibility(View.GONE);
-            lnProfilePhone.setVisibility(View.GONE);
-            linearForSeft.setVisibility(View.GONE);
-            lnProfileUsername.setVisibility(View.VISIBLE);
-            String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(),jid+"@"+Constant.DOMAIN);
-            if (!TextUtils.isEmpty(reference)) {
-                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
-            }
-
+    private void loadAvatarFromLocal(String mJid) {
+        if (mJid.contains("@") && mJid.contains(Constant.DOMAIN)) {
+            mJid = mJid.split("@")[0];
         }
+        String reference = Imps.Avatars.getAvatar(getActivity().getContentResolver(), mJid + "@" + Constant.DOMAIN);
+        if (!TextUtils.isEmpty(reference)) {
+            GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(reference), false);
+        }
+    }
 
-
+    private void getFriendInforFromIntent() {
         mContactId = getArguments().getLong("contactId");
         mNickname = getArguments().getString("nickName");
-        reference = getArguments().getString("nickName");
-        preferenceView();
-        if (isSelf) {
-            Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, mApp.getDefaultAccountId());
-            Cursor cursor = getActivity().getContentResolver().query(accountUri,CHAT_PROJECTION,null,null,null);
-            updateDataFromLocal(cursor);
-            mainActivity = (MainActivity) getActivity();
-        }
-
-        return mainView;
+        reference = getArguments().getString("reference");
     }
 
     private void preferenceView() {
-        edGender.setEnabled(false);
-        edEmail.setEnabled(false);
-        edPhone.setEnabled(false);
-        spnProfile.setVisibility(View.INVISIBLE);
         if (isSelf) {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
-            txtUsername.setText(Store.getStringData(getActivity(), Store.USERNAME));
         }
         final String[] arr = {"", ""};
         final String[] arrDetail = getResources().getStringArray(R.array.profile_gender);
@@ -358,23 +279,17 @@ public class ProfileFragment extends BaseFragmentV4 {
                         wpKMemberDto = account.getWpKMemberDto();
                     } else {
                         wpKMemberDto = gson.fromJson(s, WpKMemberDto.getType());
-//                        if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
-//                            txtClientName.setText(wpKMemberDto.getGiven());
-//                        }
+                        NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeProfileName,wpKMemberDto.getGiven());
                     }
                     emailTemp = wpKMemberDto.getEmail();
                     genderTemp = wpKMemberDto.getGender();
 
-                    if (!TextUtils.isEmpty(emailTemp)) {
-                        edEmail.setText(emailTemp);
-                    }
-                    if (!TextUtils.isEmpty(wpKMemberDto.getGiven())) {
+                    Utils.setTextForView(edEmail,emailTemp);
+                    Utils.setTextForView(txtUsername,wpKMemberDto.getIdentifier());
+                    Utils.setTextForView(edPhone,wpKMemberDto.getMobile());
+                    if (Utils.setTextForView(edFullName,wpKMemberDto.getGiven())) {
                         nameTemp = wpKMemberDto.getGiven();
-                        edFullName.setText(nameTemp);
                     }
-
-                    txtUsername.setText(wpKMemberDto.getIdentifier());
-                    edPhone.setText(wpKMemberDto.getMobile());
 
                     if (!TextUtils.isEmpty(genderTemp)) {
                         String upperString = wpKMemberDto.getGender().substring(0, 1).toUpperCase() + wpKMemberDto.getGender().substring(1).toLowerCase();
@@ -406,10 +321,10 @@ public class ProfileFragment extends BaseFragmentV4 {
                 }
             }
         });
-        if (!isSelf) {
-            RestAPI.GetDataWrappy(getActivity(), url, listener);
-        } else {
+        if (isSelf) {
             RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_MEMBER_INFO, listener);
+        } else {
+            RestAPI.GetDataWrappy(getActivity(), url, listener);
         }
 
     }
@@ -422,31 +337,17 @@ public class ProfileFragment extends BaseFragmentV4 {
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment, R.id.lnProfileBlockUser, R.id.lnProfileShareContact})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-
-            String email = edEmail.getText().toString().trim();
-            String gender = edGender.getText().toString().trim().toUpperCase();
-            String name = edFullName.getText().toString().trim();
-            if (!TextUtils.isEmpty(Utils.isValidEmail(getActivity(), email))) {
-                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),Utils.isValidEmail(getActivity(), email),R.string.cancel,null);
+            int[] stringRes = new int[]{R.string.error_empty_username, R.string.error_invalid_email};
+            AppEditTextView[] views = new AppEditTextView[]{edFullName,edEmail};
+            if (!Utils.checkValidateAppEditTextViews(getActivity(),views,stringRes)) {
                 return;
             }
-//            if (TextUtils.isEmpty(name)) {
-//                PopupUtils.showCustomDialog(getActivity(),getString(R.string.error),getString(R.string.error_empty_name),R.string.cancel,null);
-//                return;
-//            }
-            edEmail.clearFocus();
-            edGender.clearFocus();
-            edFullName.clearFocus();
-            edEmail.setEnabled(false);
-            edFullName.setEnabled(false);
-            edPhone.setTextColor(Color.BLACK);
-            txtUsername.setTextColor(Color.BLACK);
-            wpKMemberDto.setEmail(email);
-            wpKMemberDto.setGender(gender);
-            wpKMemberDto.setGiven(name);
+            onDataEditChange(false);
+            wpKMemberDto.setEmail(edEmail.getString());
+            wpKMemberDto.setGender(edGender.getString().toUpperCase());
+            wpKMemberDto.setGiven(edFullName.getString());
             updateData();
-            btnProfileSubmit.setVisibility(View.GONE);
-            appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
+            NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity,"");
         } else if (view.getId() == R.id.btnPhotoCameraAvatar || view.getId() == R.id.btnProfileCameraHeader) {
             ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
             BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_choose_camera, getString(R.string.popup_take_photo));
@@ -525,24 +426,6 @@ public class ProfileFragment extends BaseFragmentV4 {
                     logout();
                 }
             }, null);
-//            ArrayList<BottomSheetCell> sheetCells = new ArrayList<>();
-//            BottomSheetCell sheetCell = new BottomSheetCell(1, R.drawable.ic_menutab_logout, getString(R.string.logout_device));
-//            sheetCells.add(sheetCell);
-//            sheetCell = new BottomSheetCell(2, R.drawable.ic_logout_all, getString(R.string.logout_all_devices));
-//            sheetCells.add(sheetCell);
-//            BottomSheetDialog bottomSheetDialog = PopupUtils.createBottomSheet(getActivity(), sheetCells, new BottomSheetListener() {
-//                @Override
-//                public void onSelectBottomSheetCell(int index) {
-//                    if (index == 1) {
-//                        logout();
-//                        //AppFuncs.alert(getActivity(), "Logout this device", true);
-//                    } else if (index == 2) {
-//                        logout();
-//                        //AppFuncs.alert(getActivity(), getString(R.string.logout_all_devices), true);
-//                    }
-//                }
-//            });
-//            bottomSheetDialog.show();
         } else if (view.getId() == R.id.lnProfileInvite) {
             AppFuncs.sendRequestInviteFriend(getActivity());
         } else if (view.getId() == R.id.lnProfileFragment) {
@@ -626,78 +509,84 @@ public class ProfileFragment extends BaseFragmentV4 {
         RestAPI.PutDataWrappy(getActivity(), jsonObject, RestAPI.GET_MEMBER_INFO, new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(String s) {
+                updateTemp();
                 PopupUtils.showOKDialog(getActivity(), getString(R.string.info), getString(R.string.update_profile_success));
-                if (wpKMemberDto != null) {
-                    Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(),wpKMemberDto,mApp.getDefaultAccountId());
-                    emailTemp = wpKMemberDto.getEmail();
-                    genderTemp = wpKMemberDto.getGender();
-                    nameTemp = wpKMemberDto.getGiven();
-                    String avatarReference = wpKMemberDto.getAvatar() != null ? wpKMemberDto.getAvatar().getReference() : "";
-                    String bannerReference = wpKMemberDto.getBanner() != null ? wpKMemberDto.getBanner().getReference() : "";
-                    String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-                    String address = wpKMemberDto.getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
-                    DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
-                    ImApp.broadcastIdentity(null);
-                    spnProfile.setVisibility(View.INVISIBLE);
-                    if (appDelegate != null) {
-                        appDelegate.onChangeInApp(MainActivity.UPDATE_PROFILE_COMPLETE, "");
-                    }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (wpKMemberDto.getAvatar() != null) {
-                                GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), true);
-                            }
-                            if (wpKMemberDto.getBanner() != null) {
-                                GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
-                            }
+                Imps.Account.updateAccountFromDataServer(getActivity().getContentResolver(), wpKMemberDto);
+                NotificationCenter.getInstance().postNotificationName(NotificationCenter.showEditIconOnMainActivity,"");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (wpKMemberDto.getAvatar() != null) {
+                            GlideHelper.loadBitmap(getActivity(), imgPhotoAvatar, RestAPI.getAvatarUrl(wpKMemberDto.getAvatar().getReference()), true);
                         }
-                    });
-                } else {
-                    AppFuncs.alert(getActivity(), getString(R.string.network_error), false);
-                }
+                        if (wpKMemberDto.getBanner() != null) {
+                            GlideHelper.loadBitmap(getActivity(), imgProfileHeader, RestAPI.getAvatarUrl(wpKMemberDto.getBanner().getReference()), false);
+                        }
+                    }
+                });
             }
 
             @Override
             protected void onError(int errorCode) {
                 super.onError(errorCode);
-                try {
-                    edEmail.setText(emailTemp);
-                    String upperString = genderTemp.substring(0, 1).toUpperCase() + genderTemp.substring(1).toLowerCase();
-                    edGender.setText(upperString);
-                    edFullName.setText(nameTemp);
-                    wpKMemberDto.setEmail(emailTemp);
-                    wpKMemberDto.setGender(genderTemp);
-                    wpKMemberDto.setGiven(nameTemp);
-                    spnProfile.setVisibility(View.INVISIBLE);
-                } catch (Exception ex) {
-                  ex.printStackTrace();
-                }
+                returnDataFromTemp();
             }
         });
 
     }
 
     public void startChat() {
-        Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, mNickname, reference);
+        Intent intent = ConversationDetailActivity.getStartIntent(getActivity(), mContactId, jid, reference);
         startActivity(intent);
         getActivity().finish();
     }
 
-    public void onDataChange() {
-        edEmail.setEnabled(true);
-        edFullName.setEnabled(true);
-        edFullName.setFocusable(true);
-        edFullName.requestFocus();
-        edFullName.setFocusableInTouchMode(true);
-        edPhone.setTextColor(getResources().getColor(R.color.line));
-        txtUsername.setTextColor(getResources().getColor(R.color.line));
-        btnProfileSubmit.setVisibility(View.VISIBLE);
-        spnProfile.setVisibility(View.VISIBLE);
+    public void onDataEditChange(boolean isEditting) {
+        if (isEditting) {
+            edEmail.setEnabled(true);
+            edFullName.setEnabled(true);
+            edFullName.setFocusable(true);
+            edFullName.requestFocus();
+            edFullName.setFocusableInTouchMode(true);
+            edPhone.setTextColor(getResources().getColor(R.color.line));
+            txtUsername.setTextColor(getResources().getColor(R.color.line));
+            btnProfileSubmit.setVisibility(View.VISIBLE);
+            spnProfile.setVisibility(View.VISIBLE);
+        } else {
+            btnProfileSubmit.setVisibility(View.GONE);
+            edEmail.clearFocus();
+            edGender.clearFocus();
+            edEmail.setEnabled(false);
+            edFullName.clearFocus();
+            edFullName.setEnabled(false);
+            edPhone.setTextColor(Color.BLACK);
+            txtUsername.setTextColor(Color.BLACK);
+            btnProfileSubmit.setVisibility(View.GONE);
+            spnProfile.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateTemp() {
+        emailTemp = wpKMemberDto.getEmail();
+        genderTemp = wpKMemberDto.getGender();
+        nameTemp = wpKMemberDto.getGiven();
+    }
+
+    private void returnDataFromTemp() {
+        try {
+            edEmail.setText(emailTemp);
+            String upperString = genderTemp.substring(0, 1).toUpperCase() + genderTemp.substring(1).toLowerCase();
+            edGender.setText(upperString);
+            edFullName.setText(nameTemp);
+            wpKMemberDto.setEmail(emailTemp);
+            wpKMemberDto.setGender(genderTemp);
+            wpKMemberDto.setGiven(nameTemp);
+            spnProfile.setVisibility(View.INVISIBLE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
-    public void reloadFragment() {
-
-    }
+    public void reloadFragment() {}
 }

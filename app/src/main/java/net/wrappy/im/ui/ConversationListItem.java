@@ -138,11 +138,20 @@ public class ConversationListItem extends FrameLayout {
 
                 holder.mLine1.setText(str);
 
-            } else
+            } else {
                 holder.mLine1.setText(nickname);
+            }
 
-        } else
-            holder.mLine1.setText(nickname);
+
+        } else {
+            String fName = Imps.Account.getAccountNameFromNickname(ImApp.sImApp.getContentResolver(),nickname);
+            if (!TextUtils.isEmpty(fName)) {
+                holder.mLine1.setText(fName);
+            } else {
+                holder.mLine1.setText(nickname);
+            }
+        }
+
 
         holder.mStatusIcon.setVisibility(View.GONE);
 

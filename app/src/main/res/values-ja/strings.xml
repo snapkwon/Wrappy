@@ -518,7 +518,7 @@
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
     <string name="comming_soon">近日公開</string>
-    <string name="fullname">フールネーム</string>
+    <string name="fullname">名前</string>
     <string name="info">インフォ</string>
 
     <string name="reset_your_password">パスワードのリセット</string>
