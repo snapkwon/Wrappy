@@ -483,12 +483,10 @@
         <activity
             android:name=".ui.InputPasswordRegisterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.InputPasswordLoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="adjustNothing"></activity>
         <activity android:name=".ui.ForgetPasswordInputNewPassword"></activity>
     </application>

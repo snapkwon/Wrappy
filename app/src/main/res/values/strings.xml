@@ -550,5 +550,7 @@
     <string name="input_repeat_password">Input repeat your password</string>
     <string name="fullname">Full Name</string>
     <string name="info">Info</string>
+    <string name="wrong_format_password">Passwords must be at least 8 characters long. The password must contain at least three character categories among the following: Uppercase characters (A-Z) Lowercase characters (a-z)</string>
+    <string name = "password_is_empty">password cannot be empty</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

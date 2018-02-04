@@ -48,6 +48,7 @@ import static net.wrappy.im.ui.LauncherActivity.REQUEST_CODE_REGISTER;
 public class PatternActivity extends me.tornado.android.patternlock.SetPatternActivity {
 
     public static final String TAG = "PatternActivity";
+    public static final String PASSWORD_INPUT = "password";
 
     public static Intent getStartIntent(Activity context) {
         return new Intent(context, PatternActivity.class);
@@ -171,7 +172,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
         password = PatternUtils.patternToString(pattern);
         if (type_request == REQUEST_CODE_REGISTER) {
-            showQuestionScreen(password);
+            //showQuestionScreen(password);
+            Intent intent = new Intent(PatternActivity.this , InputPasswordRegisterActivity.class);
+            intent.putExtra(PASSWORD_INPUT,password);
+            PatternActivity.this.startActivity(intent);
         } else if (type_request == REQUEST_CODE_LOGIN) {
             login(password);
         } else if (type_request == REQUEST_CODE_INPUT_NEW_PASSWORD) {
