@@ -67,7 +67,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private final int IMAGE_AVATAR = 101;
     private final int VERIFY_CODE = 104;
 
-
     boolean isFlag;
     String user, email, phone, gender, password, nickname;
     Registration registrationData;
@@ -233,16 +232,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(), error, true);
                     return;
                 }
-                appFuncs.showProgressWaiting(this);
+                AppFuncs.showProgressWaiting(this);
                 boolean isFileExist = false;
                 if (uriAvatar != null) {
                     isFileExist = true;
-                    AppFuncs.log("Upload Avatar");
                     uploadFileProfile(uriAvatar, RestAPI.PHOTO_AVATAR);
                 }
                 if (uriHeader != null) {
                     isFileExist = true;
-                    AppFuncs.log("Upload Banner");
                     uploadFileProfile(uriHeader, RestAPI.PHOTO_BRAND);
                 }
                 if (!isFileExist) {
@@ -266,10 +263,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, true);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, true);
                                 break;
                             case 3:
                                 uriAvatar = null;
@@ -295,10 +292,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, false);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, false);
                                 break;
                             case 3:
                                 uriHeader = null;
@@ -326,7 +323,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
-                    AppFuncs.log("Upload " + reference);
                     if (type.equals(RestAPI.PHOTO_AVATAR)) {
                         avatarReference = reference;
                     } else {
@@ -463,5 +459,17 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 LauncherActivity.start(UpdateProfileActivity.this);
             }
         }, null);
+    }
+
+    @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        if (isAvatar) {
+            uriAvatar = UCrop.getOutput(data);
+            imgAvatar.setImageURI(uriAvatar);
+        } else {
+            uriHeader = UCrop.getOutput(data);
+            imgHeader.setImageURI(uriHeader);
+        }
     }
 }

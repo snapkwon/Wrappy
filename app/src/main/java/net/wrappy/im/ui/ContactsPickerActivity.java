@@ -460,18 +460,28 @@ public class ContactsPickerActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        try {
+            ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+            groupFragment.updateAvatar(data);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
 
         if (response == RESULT_OK) {
-            try {
-                ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
-                groupFragment.onActivityResult(request, response, data);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+//            try {
+//                ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+//                groupFragment.onActivityResult(request, response, data);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
             if (request == REQUEST_CODE_ADD_CONTACT) {
                 String newContact = data.getExtras().getString(BundleKeyConstant.RESULT_KEY);
 

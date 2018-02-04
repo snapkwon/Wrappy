@@ -18,7 +18,6 @@ import net.java.otr4j.session.SessionID;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.IOtrKeyManager;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Address;
 import net.wrappy.im.util.AES_256_CBC;
 import net.wrappy.im.util.LogCleaner;
@@ -84,7 +83,7 @@ public class OtrAndroidKeyManagerImpl extends IOtrKeyManager.Stub implements Otr
 
             return _instance;
         } catch (IOException ioe) {
-            AppFuncs.alert(context, R.string.your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app, true);
+//            AppFuncs.alert(context, R.string.your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app, true);
             throw new RuntimeException("Could not open keystore", ioe);
         }
     }

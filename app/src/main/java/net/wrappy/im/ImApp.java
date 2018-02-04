@@ -136,10 +136,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
 
-    public final static String URL_UPDATER = "https://raw.githubusercontent.com/zom/Zom-Android/master/appupdater.xml";
-
-    public final static String ZOM_SERVICES_ADDRESS = "zombot@home.zom.im";
-
     private Locale locale = null;
 
     public static ImApp sImApp;

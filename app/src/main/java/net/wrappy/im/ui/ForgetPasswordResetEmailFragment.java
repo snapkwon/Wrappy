@@ -56,7 +56,7 @@ public class ForgetPasswordResetEmailFragment extends Fragment {
 
     @OnClick(R.id.btnForgetPasswordResetEmail)
     public void onClick(View v) {
-        String email = edForgetPasswordEmail.getText().toString().trim();
+        final String email = edForgetPasswordEmail.getText().toString().trim();
         String error = Utils.isValidEmail(getActivity(), email);
         if (!TextUtils.isEmpty(error)) {
             PopupUtils.showOKDialog(getActivity(), getString(R.string.error), error);
@@ -67,7 +67,7 @@ public class ForgetPasswordResetEmailFragment extends Fragment {
             @Override
             public void OnComplete(String s) {
                 AppFuncs.dismissProgressWaiting();
-                AppFuncs.alert(getActivity(), getString(R.string.request_send_email_success), true);
+                ForgetPasswordResendLinkActivity.start(getActivity(), email);
                 getActivity().finish();
             }
         });

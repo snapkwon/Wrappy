@@ -372,9 +372,9 @@ public class SettingConversationActivity extends BaseActivity {
                         @Override
                         public void onSelectBottomSheetCell(int index) {
                             if (index == 1) {
-                                AppFuncs.openCamera(SettingConversationActivity.this, REQUEST_CAMERA);
+                                AppFuncs.openCamera(SettingConversationActivity.this, true);
                             } else {
-                                AppFuncs.openGallery(SettingConversationActivity.this, REQUEST_CAMERA);
+                                AppFuncs.openGallery(SettingConversationActivity.this, true);
                             }
                         }
                     }).show();

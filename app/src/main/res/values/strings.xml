@@ -49,10 +49,7 @@
     <!-- Views: Setup -->
     <string name="add_account">Add <xliff:g id="account">%1$s</xliff:g> account</string>
     <string name="menu_about">About</string>
-
     <string name="signed_out_prompt_with_error">You have been signed out of <xliff:g id="account">%1$s</xliff:g> because <xliff:g id="reason">%2$s</xliff:g></string>
-
-
     <string name="pass_err_length">Your passphrase was not long enough</string>
     <!-- Views: About: Welcome -->
     <!-- Views: About: OTR -->
@@ -104,9 +101,7 @@
     <string name="unblock_contact_success">Contact \"<xliff:g id="user">%1$s</xliff:g>\" unblocked.</string>
 
     <string name="menu_verify">Verify Contact</string>
-
     <string name="empty_conversation_group">No conversations open\n\nTap to start chatting!</string>
-
     <string name="search_label">Contact</string>
     <string name="search_hint">type the name of a contact to chat with</string>
     <string name="input_contact_label">Enter your friend\'s full username (ie. wrappyisfun.4x3f5g@wrappy.net) here:</string>
@@ -123,7 +118,6 @@
     <string name="wants_to_send_you_the_file">wants to send you the file</string>
     <string name="no_connection_for_sending">No connection available for sending your share!</string>
 
-    <string name="compose_hint">Send a message</string>
     <string name="compose_hint_secure">Send private message</string>
     <string name="menu_end_conversation">End chat</string>
     <string name="select_link_title">Select link</string>
@@ -135,9 +129,7 @@
     <string name="accept_invitation">Accept</string>
     <string name="decline_invitation">Decline</string>
     <string name="connecting_to_group_chat_">Connecting to group chat…</string>
-
     <string name="empty_contact_list">No contacts found.\n\nTap to invite.</string>
-
     <string name="subscription_prompt">Add <xliff:g id="USER">%1$s</xliff:g>?</string>
     <string name="approve_subscription">Yes</string>
     <string name="decline_subscription">No</string>
@@ -176,7 +168,6 @@
     <string name="menu_locale">Language</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">Languages</string>
     <string name="use_system_default">Use system default</string>
-
     <string name="button_yes_accept_all">Yes, Accept All</string>
     <string name="pref_delete_unsecured_media_title">Delete Insecure Media</string>
     <string name="pref_delete_unsecured_media_summary">After sharing a photo or file, automatically delete it from the original, insecure storage after import</string>
@@ -285,8 +276,6 @@
 
 
     <string name="mtm_accept_cert">Accept Server Certificate?</string>
-
-
     <string name="loading">loading…</string>
     <!-- Other -->
 
@@ -309,16 +298,10 @@
     <string name="popup_take_photo">Take Photo</string>
     <string name="popup_choose_gallery">Choose from Gallery</string>
     <string name="popup_delete_photo">Delete Photo</string>
-
     <string name="this_is_a_group_chat">Send a group message</string>
-
     <string name="unable_to_securely_share_this_file">Unable to securely share this file</string>
-
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">Your keystore is corrupted. Please re-install Wrappy or \'clear data\' for the app</string>
     <string name="swipe_hint">&lt; swipe left and right for more options &gt;</string>
-
     <string name="no_convos">Time to start using Wrappy</string>
-
     <string name="title_more">Discover</string>
     <string name="title_me">Me</string>
     <string name="no_photos">Shared and received photos will appear here</string>
@@ -513,17 +496,14 @@
     <string name="verify_send_sms_fail">Send sms fail</string>
     <string name="verify_send_sms_success">Send sms success</string>
     <string name="verify_fail">Verify fail</string>
-    <string name="from">from</string>
     <string name="security_question_change">Change Security Question</string>
     <string name="security_change_old_question">Answer your old secret question</string>
-    <string name="level">level</string>
     <string name="success">Success!</string>
     <string name="secu_success_description">Your secret question change successful</string>
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
     <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
     <string name="invite_friends_text">Invite Friend</string>
-    <string name="share_app_text">Let me recommend you this application</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Do you want to logout of this device?</string>
     <string name="share_title">Choose sharing method</string>
@@ -540,5 +520,13 @@
     <string name="comming_soon">coming soon</string>
     <string name="fullname">Nickname</string>
     <string name="info">Info</string>
-    <!--<string name="waiting_develop">This function is developing</string>-->
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+    <string name="local_time_format">MMM dd, yyyy</string>
+    <string name="promotion_format">%1$s from <b>%2$s</b> level (%3$s)</string>
+
 </resources>
