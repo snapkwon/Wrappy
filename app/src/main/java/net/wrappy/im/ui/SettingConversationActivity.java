@@ -624,7 +624,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void leaveGroup() {
         if (wpKChatGroup != null) {
             RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
-                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(SettingConversationActivity.this) {
+                    Imps.Account.getUserName(getContentResolver(), mAccountId)), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
                 public void OnComplete(String s) {
                     AppFuncs.log(s != null ? s : "");

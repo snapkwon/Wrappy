@@ -50,6 +50,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
     private String mAddress = null;
     private String groupXmppId = null;
+    private long mAccountId = -1;
 
     WpKChatGroupDto wpKChatGroupDto;
 
@@ -89,6 +90,9 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
             mAddress = getArguments().getString("address");
             groupXmppId = mAddress;
+
+            mAccountId = getArguments().getLong("accountId");
+
             if (mAddress.contains("@")) {
                 groupXmppId = groupXmppId.split("@")[0];
             }
@@ -184,7 +188,7 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment i
 
     private void leaveGroup(int groupXmppId) {
         RestAPI.DeleteDataWrappy(getContext(), new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, groupXmppId,
-                Imps.Account.getAccountName(getContext().getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(getContext()) {
+                Imps.Account.getUserName(getContext().getContentResolver(), mAccountId)), new RestAPIListener(getContext()) {
             @Override
             public void OnComplete(String s) {
                 AppFuncs.log(s != null ? s : "");
