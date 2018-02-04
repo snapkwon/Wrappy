@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_question_duplicate">あなたは、同じセキュリティの質問を選択することはできません</string>
-    <string name="error_empty_answer">質問%dの答えは空です</string>
+    <string name="error_empty_answer">質問%dの答えが空欄です</string>
     <string name="error_min_length_answer">質問のあなたの答えは %d、最低3文字を入れる必要があります</string>
-    <string name="error_duplicate_answer">あなたの答えは異なっている必要があります</string>
-    <string name="error_invalid_text_length">ユーザーIDは、少なくとも6つの文字でなければなりません</string>
-    <string name="error_invalid_characters">ユーザーIDは、特殊文字を含めることはできません</string>
+    <string name="error_duplicate_answer">答えが重複しています。異なる回答を記入して下さい</string>
+    <string name="error_invalid_text_length">ユーザーIDは最低6文字を記入してください</string>
+    <string name="error_invalid_characters">ユーザーIDは半角英数字のみを使用してください</string>
     <string name="error_empty_phone">携帯電話番号を入力してください</string>
     <string name="error_empty_email">入力してくださいメールアドレス</string>
     <string name="error_empty_passcode">パスコードを入力してください</string>
@@ -28,7 +28,7 @@
     <string name="error_8005">メンバーはすでに有効化</string>
     <string name="error_8006">メンバーが起動しません</string>
     <string name="error_8007">メンバーは、無効なメールアドレスを入力しました</string>
-    <string name="error_8009">検証コードの有効期限が切れているか無効であるました</string>
+    <string name="error_8009">認証コードが違うか、有効期限が切れています</string>
     <string name="error_8010">画像は存在しません。</string>
     <string name="error_8011">失敗ファイルを保持している画像は空です</string>
     <string name="error_8013">失敗ファイルを取得画像は利用できません</string>
@@ -36,8 +36,8 @@
     <string name="error_8017">登録は存在しません。</string>
     <string name="error_8020">電子メールを送信することはできません</string>
     <string name="error_8021">SMSは、文字の制限を超えました</string>
-    <string name="error_8022">ユーザーIDは既に存在します</string>
-    <string name="error_8023">携帯電話番号はすでに存在します</string>
+    <string name="error_8022">このユーザーIDはすでに登録済みです</string>
+    <string name="error_8023">この電話番号はすでに登録済みです</string>
     <string name="error_8024">メールは既に存在します</string>
     <string name="error_8025">リソースが存在しません。</string>
     <string name="error_8026">メンバーのセキュリティ質問が見つかりません。</string>
@@ -47,14 +47,14 @@
     <string name="error_8030">報告書は存在しません。</string>
     <string name="error_8031">紹介コードは存在しません。</string>
     <string name="error_8032">失敗したXMPPにユーザーを作成します。</string>
-    <string name="error_8033">おっとっと！あなたは間違ったセキュリティの質問に答え</string>
+    <string name="error_8033">予期せぬエラー、もう一度お試し下さい</string>
     <string name="error_8034">ユーザーIDまたはパターンが正しくありません</string>
     <string name="error_8035">IDもしくはパスワードが正しくありません。あと2回のミスでアカウントが3時間ロックされます</string>
     <string name="error_8036">IDもしくはパスワードが正しくありません。あと1回のミスでアカウントが3時間ロックされます</string>
     <string name="error_8037">IDもしくはパスワードが正しくありません。アカウントは3時間ロックされます。</string>
     <string name="error_8038">IDもしくはパスワードが正しくありません。</string>
     <string name="error_unknown">エラーが発生したましたので、後ほどもう一度お試しください。</string>
-    <string name="error_empty_nickname">Please input your nick name</string>
+    <string name="error_empty_nickname">名前は最低1文字必要です</string>
 
 
 </resources>

@@ -372,8 +372,8 @@ public class ProfileFragment extends BaseFragmentV4 {
     @OnClick({R.id.btnProfileSubmit, R.id.btnProfileCameraHeader, R.id.btnPhotoCameraAvatar, R.id.lnProfileSendMessage, R.id.lnProfileChangeQuestion, R.id.lnProfileInvite, R.id.lnProfileLogout, R.id.lnProfileFragment, R.id.lnProfileBlockUser, R.id.lnProfileShareContact, R.id.lnProfileAddFriend})
     public void onClick(View view) {
         if (view.getId() == R.id.btnProfileSubmit) {
-            int[] stringRes = new int[]{/*R.string.error_empty_username,*/ R.string.error_invalid_email};
-            AppEditTextView[] views = new AppEditTextView[]{/*edFullName,*/ edEmail};
+            int[] stringRes = new int[]{R.string.error_empty_nickname, R.string.error_invalid_email};
+            AppEditTextView[] views = new AppEditTextView[]{edFullName, edEmail};
             if (!Utils.checkValidateAppEditTextViews(getActivity(), views, stringRes)) {
                 return;
             }

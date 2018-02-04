@@ -313,7 +313,7 @@
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">無料</string>
     <string name="Page3Title">クラウド</string>
-    <string name="Page4Title">安全な</string>
+    <string name="Page4Title">安全</string>
     <string name="Page5Title">マジック</string>
     <string name="Page6Title">ストレージ</string>
     <string name="Page7Title">速い</string>
@@ -335,7 +335,7 @@
     <string name="StartMessaging">メッセージを開始する</string>
 
     <string name="id_or_username">ユーザーID</string>
-    <string name="forget_password">パスワードを忘れた</string>
+    <string name="forget_password">パターンパスを忘れた</string>
     <string name="login">ログイン</string>
     <string name="waiting_dialog">待っている…</string>
     <string name="search_username">ユーザーIDで検索</string>
@@ -364,13 +364,13 @@
     <!-- Settings conversation -->
     <string name="setting_screen">設定</string>
     <string name="setting_search">サーチ</string>
-    <string name="setting_clear">履歴をクリア</string>
-    <string name="setting_delete_and_leave_group">グループを削除して離れる</string>
+    <string name="setting_clear">会話履歴消去</string>
+    <string name="setting_delete_and_leave_group">グループ退出</string>
     <string name="setting_leave_group">グループを離れる</string>
-    <string name="setting_delete_chat">チャットの削除</string>
+    <string name="setting_delete_chat">会話を削除</string>
     <string name="setting_report_spam">スパム報告</string>
     <string name="setting_notification">通知</string>
-    <string name="setting_change_background">背景を変更する</string>
+    <string name="setting_change_background">背景を変更</string>
     <string name="setting_add_member">友人を追加する</string>
     <string name="incoming_attachment">1つの添付ファイル</string>
 
@@ -424,7 +424,7 @@
     <string name="send_again">パスコードを再送信</string>
     <string name="answer_secret_question">あなたの秘密の質問に答えてください</string>
     <string name="your_answer">あなたの答え</string>
-    <string name="btn_next">次</string>
+    <string name="btn_next">進む</string>
     <string name="input_your_email">あなたの電子メールを入力</string>
     <string name="hint_your_email">あなたのメールアドレス</string>
     <string name="reset_password">パスワードを再設定する</string>
@@ -445,7 +445,7 @@
     <string name="btn_submit">提出する</string>
     <string name="btn_update">更新</string>
     <string name="hint_answer">回答</string>
-    <string name="choose_secret_question">秘密の質問を選んでください</string>
+    <string name="choose_secret_question">秘密の質問を選択し回答してください</string>
     <string name="choose_new_secret_question">あなたの新しい秘密の質問を選んでください</string>
     <string name="skip">スキップ</string>
     <string name="complete">コンプリート</string>
@@ -461,7 +461,7 @@
     <string name="activity">アクティビティ</string>
     <string name="error_when_refresh_token">アクセストークンを更新できません：再試行してください！</string>
     <string name="registration">登録</string>
-    <string name="update_profile_success">アップデートが成功した。</string>
+    <string name="update_profile_success">更新完了</string>
     <string name="update_profile_fail">更新が失敗する</string>
     <string name="error_upload_image">アップロードに失敗しました</string>
     <string name="logout_all_devices">すべてのデバイスをログアウトする</string>
@@ -470,7 +470,7 @@
     <string name="message_remove_banner_success">バナーの成功を取り除く</string>
     <string name="hint_password">入力パスワード</string>
     <string name="error_reset_password">パスワードのリセットに失敗する</string>
-    <string name="warning">警告</string>
+    <string name="warning">エラー</string>
     <string name="error_tranferring_file">ファイル転送エラー：</string>
     <string name="message_download_attachment">このファイルを保存しますか？</string>
 
@@ -496,7 +496,7 @@
     <string name="verify_send_sms_fail">SMSの送信が失敗した。</string>
     <string name="verify_send_sms_success">SMSの送信が成功した。</string>
     <string name="verify_fail">検証失敗</string>
-    <string name="security_question_change">秘密の質問を変更する</string>
+    <string name="security_question_change">秘密の質問を変更</string>
     <string name="security_change_old_question">あなたの古い秘密の質問に答える</string>
     <string name="success">成功！</string>
     <string name="secu_success_description">秘密の質問の変更が成功した</string>
@@ -505,21 +505,21 @@
     <string name="cancel_and_home">このステップをキャンセルして、ログイン画面に戻りますか？</string>
     <string name="invite_friends_text">友達を招待</string>
     <string name="email_tile">Eメール *</string>
-    <string name="logout_noti">あなたがこのデバイスからログアウトしたいですか？</string>
+    <string name="logout_noti">このデバイスからログアウトしますか？*ログアウトするとチャット履歴が消えてしまいます</string>
     <string name="share_title">共有方法を選択します。</string>
-    <string name="referral_text">あなたの紹介コードを入力します（オプション）</string>
+    <string name="referral_text">招待コード入力(オプション）</string>
     <string name="Referral">招待</string>
     <string name="update_profile">プロフィールを更新</string>
     <string name="question">質問%d</string>
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>
     <string name="remove_member_success">このグループには%sの削除</string>
     <string name="skip_referral">招待コードを入力しなくて本当によろしいですか？+100PTSのボーナスがゲット出来ません。</string>
-    <string name="create_by">%sで作成します。</string>
+    <string name="create_by">管理人:%s</string>
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
     <string name="comming_soon">近日公開</string>
     <string name="fullname">名前</string>
-    <string name="info">インフォ</string>
+    <string name="info">お知らせ</string>
 
     <string name="reset_your_password">パスワードのリセット</string>
     <string name="receive_password_via_email">パスワードリセットのリンクがWrappyに登録されているE-mailに送られます。</string>

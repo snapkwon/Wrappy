@@ -3,9 +3,9 @@
     <string name="error_question_duplicate">You cannot choose the same security question</string>
     <string name="error_empty_answer">Your answer of question %d is empty</string>
     <string name="error_min_length_answer">Your answer of question %d must have at least 3 letter</string>
-    <string name="error_duplicate_answer">Your answers must be different</string>
+    <string name="error_duplicate_answer">Your answers are duplicated</string>
     <string name="error_invalid_text_length">Username must be at least 6 characters</string>
-    <string name="error_invalid_characters">Username cannot contain special characters</string>
+    <string name="error_invalid_characters">Username can not contain special characters</string>
     <string name="error_empty_phone">Please input the mobile phone number</string>
     <string name="error_empty_email">Please input email address</string>
     <string name="error_empty_passcode">Please input the passcode</string>
@@ -54,6 +54,6 @@
     <string name="error_8037">The username or password is incorrect. Your account is locked in 3 hours.</string>
     <string name="error_8038">The username or password is incorrect. Your account has been blocked.</string>
     <string name="error_unknown">An error occurred, please try again later.</string>
-    <string name="error_empty_nickname">Please input your nick name</string>
+    <string name="error_empty_nickname">Your Nickname must have at least 1 character</string>
 
 </resources>

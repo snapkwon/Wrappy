@@ -603,7 +603,7 @@ public class SettingConversationActivity extends BaseActivity {
                 RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
                     @Override
                     public void OnComplete(String s) {
-                        AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                        AppFuncs.alert(getApplicationContext(), R.string.setting_delete_and_leave_group, true);
                         deleteGroupByAdmin();
                     }
                 });
