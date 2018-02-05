@@ -580,7 +580,6 @@ public class ProfileFragment extends BaseFragmentV4 {
         if (isEditting) {
             edEmail.setEnabled(true);
             edFullName.setEnabled(true);
-            edFullName.setFocusable(true);
             edFullName.requestFocus();
             edFullName.setFocusableInTouchMode(true);
             edPhone.setTextColor(getResources().getColor(R.color.line));

@@ -55,11 +55,11 @@
 
                         <net.wrappy.im.helper.layout.AppTextView
                             android:id="@+id/txtClientName"
+                            style="@style/AppText02"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText02"
-                            android:layout_marginLeft="10dp"
-                            android:layout_gravity="center_vertical"/>
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp" />
 
                     </LinearLayout>
 
@@ -100,9 +100,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:maxLength="25"
                                     android:hint="@string/fullname"
-                                    android:inputType="textNoSuggestions" />
+                                    android:inputType="textNoSuggestions"
+                                    android:maxLength="25" />
                             </RelativeLayout>
 
 
@@ -112,8 +112,8 @@
                             android:id="@+id/lnProfileUsername"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="#fff"
                             android:layout_marginTop="10dp"
+                            android:background="#fff"
                             android:orientation="vertical">
 
                             <net.wrappy.im.helper.layout.AppTextView
@@ -164,9 +164,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:hint="@string/mobile_phone"
-                                    android:imeOptions="actionDone"
-                                    android:inputType="phone" />
+                                    android:enabled="false"
+                                    android:hint="@string/mobile_phone" />
                             </RelativeLayout>
 
 
@@ -252,7 +251,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone" />
                             </RelativeLayout>
 
 
