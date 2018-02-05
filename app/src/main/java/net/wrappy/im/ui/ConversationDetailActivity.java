@@ -86,6 +86,7 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.ErrorCode;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
@@ -143,6 +144,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, nickname + Constant.EMAIL_DOMAIN);
         return intent;
     }
 
@@ -516,7 +518,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
         TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
 
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
 
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
@@ -704,12 +706,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
             @Override
             protected void onError(int errorCode) {
-                super.onError(errorCode);
+                if (errorCode == ErrorCode.WP_K_MEMBER_ALREADY_EXISTS.getErrorCode())
+                    addContactXmpp();
+                else
+                    super.onError(errorCode);
             }
         });
     }
 
-    private void addContactXmpp (){
+    private void addContactXmpp() {
         mConvoView.updateStatusAddContact();
         task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
             @Override
@@ -748,9 +753,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onResume();
         if (!isRegisterNotificationCenter) {
             isRegisterNotificationCenter = true;
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1383,7 +1388,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         @Override
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
-
             if (data == null || data.getCount() == 0) {
                 findViewById(R.id.btnAddFriend).performClick();
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
@@ -1416,8 +1420,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onDestroy();
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)

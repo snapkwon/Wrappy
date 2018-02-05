@@ -124,7 +124,7 @@
             android:padding="0dp"
             android:paddingLeft="16dp">
 
-            <net.ironrabbit.type.CustomTypefaceTextView
+            <net.wrappy.im.helper.layout.AppTextView
                 android:id="@+id/messagets"
                 android:layout_width="wrap_content"
                 android:layout_height="22sp"

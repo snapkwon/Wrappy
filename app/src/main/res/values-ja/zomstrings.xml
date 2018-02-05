@@ -3,7 +3,6 @@
     <string name="app_name_zom">&appName;</string>
     <string name="create_an_account">登録</string>
     <string name="create_id">&appName; IDを作成</string>
-    <string name="advanced"></string>
     <string name="account_congrats">おめでとう、あなたは&appName;に準備ができています！</string>
     <string name="account_congrats_details">プロフィールページに自分のパスワードとアカウントの詳細を確認することができます。</string>
     <string name="invite_friends">友達に追加する！</string>
@@ -16,11 +15,11 @@
     <string name="invite_accepted">あなたは今&appName;の友達です</string>
     <string name="choose_friend">友達を選択</string>
     <string name="send_message">メッセージ入力</string>
-    <string name="push_to_talk">プッシュトーク</string>
-    <string name="recording_release">録音…送信して送信</string>
-    <string name="recording_delete">録音…削除して削除</string>
+    <string name="push_to_talk">長押しで録音\u2026</string>
+    <string name="recording_release">録音中..離して送る</string>
+    <string name="recording_delete">指を離してキャンセル</string>
     <string name="swipe_up_delete">スワイプして削除する</string>
-    <string name="create_group">グループを作成</string>
+    <string name="create_group">グループ新規作成</string>
     <string name="members">メンバー</string>
     <string name="photo_gallery">写真ストリーム</string>
     <string name="select_avatar">アバターを選択または作成する</string>
@@ -76,7 +75,7 @@
     <string name="turn_notifications_on">通知をオンにする</string>
     <string name="turn_notifications_off">通知のミュート</string>
     <string name="num_member_group_chat">計%1$s人</string>
-    <string name="confirm_leave_group">あなたは本当にグループを離れたいですか？</string>
+    <string name="confirm_leave_group">グループから退出します</string>
     <string name="confirm_delete_and_leave_group">グループを削除してもよろしいですか？</string>
     <string name="confirm_remove_member_group">このメンバーを削除してもよろしいですか？</string>
     <string name="contactswrappy">連絡先</string>

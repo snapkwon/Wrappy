@@ -74,11 +74,11 @@ import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.plugin.xmpp.XmppConnection;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
-import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.service.ImServiceConstants;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.tasks.ChatSessionInitTask;
+import net.wrappy.im.tasks.ContactApproveTask;
 import net.wrappy.im.tasks.GroupChatSessionTask;
 import net.wrappy.im.tasks.sync.SyncDataListener;
 import net.wrappy.im.tasks.sync.SyncDataRunnable;
@@ -94,7 +94,6 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.promotion.MainPromotionFragment;
 import net.wrappy.im.util.AssetUtil;
 import net.wrappy.im.util.BundleKeyConstant;
-import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
@@ -160,6 +159,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
     private Stack<WpKChatGroupDto> sessionTasks = new Stack<>();
     private GroupChatSessionTask groupSessionTask;
     boolean isRegisterNotification;
+    boolean isContactSynced;
 
     private IImConnection mConn;
 
@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                 try {
                     AppFuncs.dismissKeyboard(MainActivity.this);
                     ProfileFragment page = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                    page.onDataChange();
+                    page.onDataEditChange(true);
                     btnHeaderEdit.setVisibility(View.GONE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -521,7 +521,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                     try {
                         String reference = RestAPI.getPhotoReference(result.getResult());
                         ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + mViewPager.getCurrentItem());
-                        profileFragment.receiverReferenceAvatarOrBanner(isFinalAvatar,reference);
+                        profileFragment.receiverReferenceAvatarOrBanner(isFinalAvatar, reference);
                     } catch (Exception ex) {
                         AppFuncs.alert(MainActivity.this, getString(R.string.upload_fail), false);
                         ex.printStackTrace();
@@ -548,7 +548,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
 //                    ex.printStackTrace();
 //                }
 //            } else
-                if (requestCode == REQUEST_CHANGE_SETTINGS) {
+            if (requestCode == REQUEST_CHANGE_SETTINGS) {
                 finish();
                 startActivity(new Intent(this, MainActivity.class));
             } else if (requestCode == REQUEST_ADD_CONTACT) {
@@ -916,6 +916,9 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                     }
                 }
             });
+        }
+        if (!isContactSynced) {
+            isContactSynced = true;
             RestAPI.GetDataWrappy(this, GET_LIST_CONTACT, new RestAPIListener() {
                 @Override
                 public void OnComplete(String s) {
@@ -923,6 +926,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
                         WpKChatRoster[] kChatRosters = new Gson().fromJson(s, WpKChatRoster[].class);
                         syncData(mLoadContactHandler, kChatRosters, syncContactsListener, 1);
                     } catch (Exception e) {
+                        isContactSynced = false;
                         e.printStackTrace();
                     }
                 }
@@ -955,29 +959,15 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
 
         @Override
         public void processing(WpKChatRoster[] data) {
-            for (WpKChatRoster roster : data) {
-                approveSubscription(roster);
-            }
+            approveSubscription(data);
         }
     };
 
     /*
    * Auto approved contact in list which were loaded from Xmpp server
    * */
-    public static void approveSubscription(final WpKChatRoster roster) {
-        try {
-            ImApp mApp = ImApp.sImApp;
-            IImConnection conn = ImApp.getConnection(mApp.getDefaultProviderId(), mApp.getDefaultAccountId());
-            if (conn.getState() == ImConnection.LOGGED_IN) {
-                String address = roster.getContact().getXMPPAuthDto().getAccount() + Constant.EMAIL_DOMAIN;
-                ImApp.updateContact(address, roster.getContact(), conn);
-                IContactListManager manager = conn.getContactListManager();
-                Contact contact = new Contact(new XmppAddress(address), roster.getContact().getIdentifier(), Imps.Contacts.TYPE_NORMAL);
-                manager.approveSubscription(contact);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void approveSubscription(final WpKChatRoster[] rosters) {
+        new ContactApproveTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, rosters);
     }
 
 

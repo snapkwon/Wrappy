@@ -37,7 +37,6 @@ public class ConfirmPatternActivity extends BasePatternActivity
                 onCancel();
             }
         });
-        mRightButton.setText(R.string.pl_forgot_pattern);
         mRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

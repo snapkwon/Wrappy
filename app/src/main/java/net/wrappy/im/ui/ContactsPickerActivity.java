@@ -79,6 +79,7 @@ import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
@@ -373,7 +374,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 AppFuncs.showProgressWaiting(this);
-                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -601,6 +601,13 @@ public class ContactsPickerActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isClickedMenu) {
+            isClickedMenu = true;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickedMenu = false;
+                }
+            }, 1000);
             switch (item.getItemId()) {
                 case android.R.id.home:
                     onBackPressed();
@@ -610,12 +617,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            String usersinvite = "";
+                            // String usersinvite = "";
                             ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
-                                users.add(contact.nickname);
-                                if(usersinvite.isEmpty())
+                                users.add(contact.getUsername());
+                                /* if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
 
@@ -623,7 +630,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                 else
                                 {
                                     usersinvite = usersinvite + "-" + contact.nickname;
-                                }
+                                }*/
                             }
                             Gson gson = new Gson();
                             String jsonObject = gson.toJson(users);
@@ -662,13 +669,6 @@ public class ContactsPickerActivity extends BaseActivity {
                     startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
-            isClickedMenu = true;
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isClickedMenu = false;
-                }
-            }, 500);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -879,11 +879,34 @@ public class ContactsPickerActivity extends BaseActivity {
             isenablealphabet = check;
         }
 
+        private void updateHeaders(Cursor cursor) {
+            charSection.clear();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+                    if (TextUtils.isEmpty(name)) {
+                        String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                        name = new XmppAddress(address).getUser();
+                    }
+                    if (!TextUtils.isEmpty(name)) {
+                        charSection.add(String.valueOf(name.charAt(0)).toUpperCase());
+                    } else {
+                        charSection.add("");
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
         @Override
         public boolean hasStableIds() {
             return true;
         }
 
+        @Override
+        public void changeCursor(Cursor cursor) {
+            updateHeaders(cursor);
+            super.changeCursor(cursor);
+        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -901,8 +924,6 @@ public class ContactsPickerActivity extends BaseActivity {
             ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
-
-                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
             v.bind(holder, cursor, mSearchString, false);
@@ -1024,20 +1045,11 @@ public class ContactsPickerActivity extends BaseActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.changeCursor(newCursor);
-            mAdapter.charSection.clear();
-            if (newCursor.moveToFirst()) {
-                do {
-                    mAdapter.charSection.add(String.valueOf(newCursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase());
-                } while (newCursor.moveToNext());
-            }
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
             mAdapter.swapCursor(null);
-
-
         }
 
     }

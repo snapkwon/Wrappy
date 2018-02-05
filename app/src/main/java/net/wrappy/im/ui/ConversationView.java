@@ -137,7 +137,6 @@ import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
-import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -264,6 +263,9 @@ public class ConversationView implements OnHandleMessage {
 
     private boolean istranslate;
     private boolean isSearchMode;
+
+    //Check to avoid re-query many times
+    private boolean mQuerying = false;
 
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
@@ -1652,16 +1654,17 @@ public class ConversationView implements OnHandleMessage {
     private int loaderId = 100001;
 
     private synchronized void startQuery(long chatId) {
+        if (!mQuerying) {
+            mQuerying = true;
+            mUri = Imps.Messages.getContentUriByThreadId(chatId);
 
-        mUri = Imps.Messages.getContentUriByThreadId(chatId);
+            mLoaderManager = mActivity.getSupportLoaderManager();
 
-        mLoaderManager = mActivity.getSupportLoaderManager();
-
-        if (mLoaderManager == null)
-            mLoaderManager.initLoader(loaderId++, null, new MyLoaderCallbacks());
-        else
-            mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
-
+            if (mLoaderManager == null)
+                mLoaderManager.initLoader(loaderId++, null, new MyLoaderCallbacks());
+            else
+                mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
+        }
     }
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -1694,6 +1697,7 @@ public class ConversationView implements OnHandleMessage {
                 }
 
             }
+            mQuerying = false;
 
         }
 
@@ -1706,18 +1710,20 @@ public class ConversationView implements OnHandleMessage {
     }
 
     void scheduleRequery(long interval) {
+        if (!mQuerying) {
+            mQuerying = true;
 
+            if (mRequeryCallback == null) {
+                mRequeryCallback = new RequeryCallback();
+            } else {
+                mHandler.removeCallbacks(mRequeryCallback);
+            }
 
-        if (mRequeryCallback == null) {
-            mRequeryCallback = new RequeryCallback();
-        } else {
-            mHandler.removeCallbacks(mRequeryCallback);
+            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
+                Debug.d("scheduleRequery");
+            }
+            mHandler.postDelayed(mRequeryCallback, interval);
         }
-
-        if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            Debug.d("scheduleRequery");
-        }
-        mHandler.postDelayed(mRequeryCallback, interval);
 
 
     }
@@ -2893,7 +2899,7 @@ public class ConversationView implements OnHandleMessage {
 
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
-            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
+            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? nickname : mRemoteAddress;
 
 
             final String mimeType = cursor.getString(mMimeTypeColumn);
@@ -2985,13 +2991,13 @@ public class ConversationView implements OnHandleMessage {
                 @Override
                 public void onClick(View view) {
                     if (finalMessageType == Imps.MessageType.INCOMING) {
-                        Intent intent = new Intent(mContext, ProfileActivity.class);
                         String correctAddress = address;
-                        if (TextUtils.isEmpty(address))
-                            correctAddress = nickname + Constant.EMAIL_DOMAIN;
-                        intent.putExtra("address", correctAddress);
-                        intent.putExtra("nickname", nickname);
-                        mContext.startActivity(intent);
+                        if (!TextUtils.isEmpty(address)) {
+                            if (address.contains("@")) {
+                                correctAddress = address.split("@")[0];
+                            }
+                            ProfileActivity.start(mActivity,correctAddress);
+                        }
                     } else {
                         goMyPage();
                     }

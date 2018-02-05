@@ -445,7 +445,7 @@
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
-    <string name="choose_secret_question">Choose your secret question</string>
+    <string name="choose_secret_question">Choose your security question</string>
     <string name="choose_new_secret_question">Choose your new secret question</string>
     <string name="skip">SKIP</string>
     <string name="complete">COMPLETE</string>
@@ -492,7 +492,6 @@
     <string name="message_spam">Report Spam</string>
     <string name="invite_friend_earn">Invite more friends\nto earn more PTS coin</string>
     <string name="promotion_description">Wrappy rewards for you when you\ninvite friend install Wrappy app</string>
-    <string name="promotion_invite_friends">Invite friend</string>
     <string name="verify_send_sms_fail">Send sms fail</string>
     <string name="verify_send_sms_success">Send sms success</string>
     <string name="verify_fail">Verify fail</string>
@@ -503,7 +502,6 @@
     <string name="fail">FAIL</string>
     <string name="upload_fail">Upload fail</string>
     <string name="cancel_and_home">Cancel this step and return to Login screen?</string>
-    <string name="invite_friends_text">Invite Friend</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Do you want to logout of this device?</string>
     <string name="share_title">Choose sharing method</string>
@@ -518,6 +516,7 @@
     <string name="chat_message_item">%1$s chat %2$s.</string>
     <string name="message_kicked_from_group">%s is removed by admin</string>
     <string name="comming_soon">coming soon</string>
+    <string name="fullname">Nickname</string>
 
     <string name="create_new_password">Create a password</string>
     <string name="input_your_password">Input your Password</string>
@@ -533,5 +532,10 @@
     <string name="resend_link">Resend</string>
     <string name="local_time_format">MMM dd, yyyy</string>
     <string name="promotion_format">%1$s from <b>%2$s</b> level (%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
 
 </resources>

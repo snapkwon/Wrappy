@@ -1,7 +1,6 @@
 package net.wrappy.im.ui;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -290,38 +289,25 @@ public class SettingConversationActivity extends BaseActivity {
         mThreadUpdate = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Contact> memberss  = new ArrayList<>();
-                try {
-                    memberss  =     mSession.getMembers();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+
                 ArrayList<MemberGroupDisplay> members = new ArrayList<>();
 
-                for (Contact memberDto : memberss) {
+                for (WpKMemberDto memberDto : identifiers) {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getName());
-
-                    for (WpKMemberDto wpkmemberdto :  identifiers )
-                    {
-                        if(wpkmemberdto.getIdentifier().equals(memberDto.getName())) {
-                            if (wpkmemberdto.getAvatar() != null) {
-                                member.setReferenceAvatar(wpkmemberdto.getAvatar().getReference());
-                            }
-                            if (wpkmemberdto.getId() == idMemberOwner) {
-                                member.setAffiliation("owner");
-                                if (member.getNickname().equals(mLocalAddress)) {
-                                    mIsOwner = true;
-                                }
-                            } else {
-                                member.setAffiliation("member");
-                            }
-                        }
+                    member.setNickname(memberDto.getIdentifier());
+                    member.setUsername(memberDto.getIdentifier());
+                    if (memberDto.getAvatar() != null) {
+                        member.setReferenceAvatar(memberDto.getAvatar().getReference());
                     }
-
-
-//                  Imps.GroupMembers.updateNicknameFromGroup(getContentResolver(), member.getUsername(), memberDto.getIdentifier());
+                    if (memberDto.getId() == idMemberOwner) {
+                        member.setAffiliation("owner");
+                        if (member.getNickname().equals(mLocalAddress)) {
+                            mIsOwner = true;
+                        }
+                    } else {
+                        member.setAffiliation("member");
+                    }
                     members.add(member);
                 }
 
@@ -408,14 +394,12 @@ public class SettingConversationActivity extends BaseActivity {
                     wpKChatGroupTemp = wpKChatGroup;
                     wpKChatGroupTemp.setName(name);
                     updateData();
-                    edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
                     lnChangeGroupNameController.setVisibility(View.GONE);
                     btnEditGroupName.setVisibility(View.VISIBLE);
                     break;
                 case R.id.btnGroupNameClose:
                     edGroupName.setText(wpKChatGroup.getName());
-                    edGroupName.setFocusable(false);
                     edGroupName.setEnabled(false);
                     lnChangeGroupNameController.setVisibility(View.GONE);
                     btnEditGroupName.setVisibility(View.VISIBLE);
@@ -591,23 +575,13 @@ public class SettingConversationActivity extends BaseActivity {
             try {
                 if (mConn.getState() == ImConnection.LOGGED_IN) {
                     mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-                    if (mSession == null)
-                    {
-                        if(mContactType != Imps.Contacts.TYPE_GROUP) {
-
-                            mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
-
-                        }
-                        else
-                        {
-                            mSession = mConn.getChatSessionManager().createMultiUserChatSession(mAddress,mName ,null, false);
-                        }
+                     if (mSession == null)
+                        mSession = mConn.getChatSessionManager().createChatSession(mAddress, true);
                 }
-            }
+
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-
         return mSession;
     }
 
@@ -628,7 +602,7 @@ public class SettingConversationActivity extends BaseActivity {
                 RestAPI.DeleteDataWrappy(getApplicationContext(), jsonObject, RestAPI.CHAT_GROUP, new RestAPIListener(SettingConversationActivity.this) {
                     @Override
                     public void OnComplete(String s) {
-                        AppFuncs.alert(getApplicationContext(), "Delete and leave group", true);
+                        AppFuncs.alert(getApplicationContext(), R.string.setting_delete_and_leave_group, true);
                         deleteGroupByAdmin();
                     }
                 });
@@ -649,7 +623,7 @@ public class SettingConversationActivity extends BaseActivity {
     private void leaveGroup() {
         if (wpKChatGroup != null) {
             RestAPI.DeleteDataWrappy(this, new JsonObject(), String.format(RestAPI.DELETE_MEMBER_GROUP, wpKChatGroup.getId(),
-                    Imps.Account.getAccountName(getContentResolver(), ImApp.sImApp.getDefaultAccountId())), new RestAPIListener(SettingConversationActivity.this) {
+                    Imps.Account.getUserName(getContentResolver(), mAccountId)), new RestAPIListener(SettingConversationActivity.this) {
                 @Override
                 public void OnComplete(String s) {
                     AppFuncs.log(s != null ? s : "");

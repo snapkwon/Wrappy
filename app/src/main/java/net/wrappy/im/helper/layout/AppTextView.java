@@ -60,4 +60,12 @@ public class AppTextView extends TextView {
             }
         }
     }
+
+    public String getString() {
+        if (getText()!=null) {
+            return getText().toString();
+        }
+        return "";
+    }
+
 }

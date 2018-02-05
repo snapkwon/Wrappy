@@ -220,11 +220,11 @@ public class ContactListManagerAdapter extends
 
     public int updateContact(String address, String name, String email) {
         // update the server
-        try {
-            mAdaptee.setContactName(address, name);
-        } catch (ImException e) {
-            return e.getImError().getCode();
-        }
+//        try {
+//            mAdaptee.setContactName(address, name);
+//        } catch (ImException e) {
+//            return e.getImError().getCode();
+//        }
         // update locally
         String selection = Imps.Contacts.USERNAME + "=?";
         String[] selectionArgs = {address};
@@ -983,7 +983,7 @@ public class ContactListManagerAdapter extends
                             values.put(Imps.Contacts.CONTACTLIST, FAKE_TEMPORARY_LIST_ID);
                             values.put(Imps.Contacts.SUBSCRIPTION_TYPE, subscriptionType);
                             values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subscriptionStatus);
-                            ImApp.updateContact(values, username, (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
+                            ImApp.updateContact(values, username.toLowerCase(), (WpKMemberDto) new Gson().fromJson(s, WpKMemberDto.getType()), mConn);
 
                             //check broadcast and send notification
                             broadcast(contact, subscriptionType, subscriptionStatus);
@@ -1346,11 +1346,6 @@ public class ContactListManagerAdapter extends
                 try {
                     WpKMemberDto wpKMemberDtos = new Gson().fromJson(s, new TypeToken<WpKMemberDto>() {
                     }.getType());
-                    try {
-                        mAdaptee.setContactName(contact.getAddress().getBareAddress(), wpKMemberDtos.getIdentifier());
-                    } catch (ImException e) {
-                        e.printStackTrace();
-                    }
                     ImApp.updateContact(contact.getAddress().getBareAddress(), wpKMemberDtos, mConn);
                 } catch (Exception e) {
                     e.printStackTrace();
