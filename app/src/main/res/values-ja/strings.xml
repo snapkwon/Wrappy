@@ -524,6 +524,6 @@
     <string name="fullname">フールネーム</string>
     <string name="info">インフォ</string>
     <string name="wrong_format_password">パスワードは最低8文字の英数字、最低1文字の大文字、最低1文字の小文字、および最低1数字を含ませてください</string>
-    <string name = "pattern_coutdown">"制限時間/n%s秒/n以内にパターンをなぞってください"</string>
-    <string name = "passcode_coutdown">"制限時間/n%s秒/n以内にパスワードを入力してください"</string>
+    <string name = "pattern_coutdown">"制限時間\n%s秒\n以内にパターンをなぞってください"</string>
+    <string name = "passcode_coutdown">"制限時間\n%s秒\n以内にパスワードを入力してください"</string>
 </resources>

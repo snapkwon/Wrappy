@@ -52,7 +52,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
                 seconds = seconds % 60;
-                mCountdownText.setText(String.format("%02d", seconds));
+                mCountdownText.setText(String.format(InputPasswordLoginActivity.this.getString(R.string.passcode_coutdown), String.format("%02d", seconds)));
             }
             public void onFinish() {
                 cancelTimer();
