@@ -10,7 +10,7 @@ android {
         //applicationId 'net.wrappy.im'
         applicationId 'net.wrappy.im'
         versionCode 22
-        versionName "1.0.3"
+        versionName "1.0.2"
         archivesBaseName = "Wrappy-" + versionName
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
