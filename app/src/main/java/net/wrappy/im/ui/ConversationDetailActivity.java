@@ -541,7 +541,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
             }
             setAvatarStatus(status);
-            String fName = Imps.Account.getAccountNameFromNickname(getContentResolver(),mNickname);
             txt.setText(mNickname);
         }
 
