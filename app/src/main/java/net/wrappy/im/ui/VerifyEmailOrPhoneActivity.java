@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.util.PopupUtils;
 
 /**
@@ -26,13 +26,14 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         setContentView(R.layout.verify_email_or_phone_activity);
         super.onCreate(savedInstanceState);
         initActionBarDefault(true,R.string.page_verify);
         if (getIntent().getExtras() != null) {
             getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
         }
-        AppFuncs.dismissKeyboard(this);
     }
 
     @Override

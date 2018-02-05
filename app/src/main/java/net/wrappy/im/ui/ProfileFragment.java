@@ -148,7 +148,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         ButterKnife.bind(this, mainView);
         mApp = (ImApp) getActivity().getApplication();
         jid = getArguments().getString("jid");
-        preferenceView();
+
 
         edFullName.setEnabled(false);
         if (TextUtils.isEmpty(jid)) {
@@ -168,7 +168,7 @@ public class ProfileFragment extends BaseFragmentV4 {
 
         getFriendInforFromIntent();
 
-
+        preferenceView();
         return mainView;
     }
 

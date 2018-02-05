@@ -134,6 +134,7 @@ public class VerifyCodeFragment extends Fragment {
 
             }
         });
+        AppFuncs.dismissKeyboard(getActivity());
         return mainView;
     }
 

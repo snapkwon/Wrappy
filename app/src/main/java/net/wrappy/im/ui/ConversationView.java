@@ -137,6 +137,7 @@ import net.wrappy.im.ui.stickers.StickerSelectListener;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.ui.widgets.RoundedAvatarDrawable;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.GiphyAPI;
 import net.wrappy.im.util.LogCleaner;
@@ -2636,6 +2637,7 @@ public class ConversationView implements OnHandleMessage {
         private int mDeliveredColumn;
         private int mMimeTypeColumn;
         private int mIdColumn;
+        private int mUsernameColumn;
 
         class BodyTranslate {
             public boolean mIstranslate;
@@ -2899,9 +2901,11 @@ public class ConversationView implements OnHandleMessage {
 
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
-            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? nickname : mRemoteAddress;
-
-
+            String addressTemp = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mContext.getContentResolver(),nickname) : mRemoteAddress;
+            if (TextUtils.isEmpty(addressTemp)) {
+                addressTemp = nickname+ Constant.EMAIL_DOMAIN;
+            }
+            final String address = addressTemp;
             final String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             final String body = cursor.getString(mBodyColumn);

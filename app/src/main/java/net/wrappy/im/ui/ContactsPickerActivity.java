@@ -311,7 +311,7 @@ public class ContactsPickerActivity extends BaseActivity {
 //                    setResult(RESULT_OK, data);
                     String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
                     String nickName = address.split("@")[0];
-                    long chatId = Imps.Contacts.getContactIdFromNickname(getContentResolver(),nickName);
+                    long chatId = Imps.Contacts.getContactIdFromAddress(getContentResolver(),address);
 
                     Intent intent = ConversationDetailActivity.getStartIntent(ContactsPickerActivity.this,chatId,nickName,"");
                     startActivity(intent);

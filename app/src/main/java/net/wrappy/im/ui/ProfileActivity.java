@@ -66,9 +66,9 @@ public class ProfileActivity extends FragmentActivity implements NotificationCen
             jid = arr[0];
         }
         //mContactId = getIntent().getLongExtra("contactId", -1);
-        mNickname = Imps.Account.getAccountNameFromNickname(getContentResolver(),jid);
+        mNickname = Imps.Contacts.getNicknameFromAddress(getContentResolver(),jid+Constant.EMAIL_DOMAIN);
         reference = Imps.Avatars.getAvatar(getContentResolver(),jid+ Constant.EMAIL_DOMAIN);
-        mContactId = Imps.Contacts.getContactIdFromNickname(getContentResolver(), jid);
+        mContactId = Imps.Contacts.getContactIdFromAddress(getContentResolver(), jid+Constant.EMAIL_DOMAIN);
         headerbarTitle.setText(mNickname);
         getSupportFragmentManager().beginTransaction().replace(R.id.frProfileContainer,ProfileFragment.newInstance(mContactId,mNickname,reference,jid)).commit();
     }
