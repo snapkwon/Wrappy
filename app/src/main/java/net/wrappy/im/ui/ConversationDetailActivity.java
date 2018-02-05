@@ -86,6 +86,7 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.ErrorCode;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
@@ -517,7 +518,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
         TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
 
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
 
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
@@ -705,12 +706,15 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
             @Override
             protected void onError(int errorCode) {
-                super.onError(errorCode);
+                if (errorCode == ErrorCode.WP_K_MEMBER_ALREADY_EXISTS.getErrorCode())
+                    addContactXmpp();
+                else
+                    super.onError(errorCode);
             }
         });
     }
 
-    private void addContactXmpp (){
+    private void addContactXmpp() {
         mConvoView.updateStatusAddContact();
         task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
             @Override
