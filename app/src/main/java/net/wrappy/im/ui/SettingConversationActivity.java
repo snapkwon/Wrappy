@@ -274,7 +274,7 @@ public class SettingConversationActivity extends BaseActivity {
                         }
                         isLoaded = true;
                         if (identifiers != null) {
-                            updateMembers();
+                           updateMembers();
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -421,6 +421,7 @@ public class SettingConversationActivity extends BaseActivity {
                 case R.id.btnEditGroupName:
                     edGroupName.setEnabled(true);
                     edGroupName.setFocusable(true);
+                    edGroupName.setSelection(edGroupName.getText().length());
                     lnChangeGroupNameController.setVisibility(View.VISIBLE);
                     btnEditGroupName.setVisibility(View.GONE);
                     break;
@@ -530,7 +531,7 @@ public class SettingConversationActivity extends BaseActivity {
                         updateAvatarAndNotify(true);
                     }
                     updateGroupNameInDB(wpKChatGroup.getName(), wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER);
-//                    changeGroupNameXmpp();
+                    changeGroupNameXmpp();
                     AppFuncs.alert(SettingConversationActivity.this, getString(R.string.update_profile_success), false);
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateConversationDetail, jsonObject);
                 }
@@ -553,7 +554,7 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     private void changeGroupNameXmpp() {
-        new ChatSessionTask().modifyGroupName().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, wpKChatGroup.getName());
+        new ChatSessionTask().modifyGroupName().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, wpKChatGroup.getXmppGroup() + "@" + Constant.DEFAULT_CONFERENCE_SERVER, wpKChatGroup.getName());
     }
 
     private int updateGroupNameInDB(String newGroupName, String oldGroupName) {
