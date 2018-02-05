@@ -1311,7 +1311,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
             // update locally
-            String selection = Imps.Contacts.USERNAME + "='" + address + "'";
+            String selection = Imps.Contacts.USERNAME + "=?";
             String[] selectionArgs = {address};
             ContentValues values = new ContentValues();
             if (originValues != null) {
@@ -1328,6 +1328,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 //                    values.put(Imps.Contacts.NICKNAME,name);
 //                }
 //            }
+            if (TextUtils.isEmpty(name)) {
+                name = new XmppAddress(address).getUser();
+            }
             values.put(Imps.Contacts.NICKNAME,name);
 
             if (!values.containsKey(Imps.Contacts.TYPE)) {
@@ -1336,15 +1339,16 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
             Uri queryUri = builder.build();
             Cursor cursor = sImApp.getContentResolver().query(queryUri, new String[]{Imps.Contacts._ID},
-                    selection, null, null);
+                    selection, selectionArgs, null);
             boolean isUpdated = false;
+
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
                     isUpdated = sImApp.getContentResolver().update(uri, values, null, null) > 0;
                 } else {
-                    sImApp.getContentResolver().delete(queryUri, selection, null);
+                    sImApp.getContentResolver().delete(queryUri, selection, selectionArgs);
                 }
                 cursor.close();
             }
