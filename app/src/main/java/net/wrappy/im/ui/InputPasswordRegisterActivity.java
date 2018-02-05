@@ -91,7 +91,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                         //passwordValidation(mEditPassword.getText().toString());
                         if(password.equals(mEditConfirmPassword.getText().toString()))
                         {
-                            if(wpkToken==null && userName.isEmpty()) {
+                            if(wpkToken==null) {
                                 showQuestionScreen(patternPassword, password);
                             }
                             else

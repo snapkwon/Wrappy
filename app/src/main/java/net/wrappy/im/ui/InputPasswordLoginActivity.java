@@ -2,6 +2,7 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.google.gson.JsonParser;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.ErrorCode;
 import net.wrappy.im.helper.LoginTask;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
@@ -39,8 +41,38 @@ public class InputPasswordLoginActivity extends BaseActivity {
     WpkToken wpkToken;
     Button btnLogin;
     EditText edtPassword;
+    TextView mCountdownText;
 
     String userName;
+    CountDownTimer cTimer = null;
+
+    void startTimer() {
+        cTimer = new CountDownTimer(60000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                int seconds = (int) (millisUntilFinished / 1000);
+                //int minutes = seconds / 60;
+                seconds = seconds % 60;
+                mCountdownText.setText(String.format("%02d", seconds));
+            }
+            public void onFinish() {
+                cancelTimer();
+                finish();
+            }
+        };
+        cTimer.start();
+    }
+
+    //cancel timer
+    void cancelTimer() {
+        if(cTimer!=null)
+            cTimer.cancel();
+    }
+
+    //resume timer
+    void resume() {
+        if(cTimer!=null)
+            cTimer.start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +83,11 @@ public class InputPasswordLoginActivity extends BaseActivity {
         wpkToken = getIntent().getParcelableExtra(PatternActivity.USER_INFO);
         initViews();
 
+        startTimer();
+
         userName = getIntent().getStringExtra("username");
+
+        showHidePassword(edtPassword);
 
         mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +103,14 @@ public class InputPasswordLoginActivity extends BaseActivity {
 
                 RestAPI.PostDataWrappy(InputPasswordLoginActivity.this, null, String.format(RestAPI.CHECK_PASSCODE, edtPassword.getText().toString()), new RestAPIListener(InputPasswordLoginActivity.this) {
 
+                    @Override
+                    public void onError(int errorCode)
+                    {
+                        int resId = getResId("error_" + errorCode);
+                        getIntent().putExtra("error", InputPasswordLoginActivity.this.getString(resId));
+                        setResult(RESULT_OK, getIntent());
+                        finish();
+                    }
                     @Override
                     public void OnComplete(String s) {
                         try {
@@ -94,6 +138,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
 
     private void onLoginFailed() {
         PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.network_error), R.string.yes, null, false);
+        finish();
     }
 
     private void doExistingAccountRegister(String username, String password, String accountName) {
@@ -123,6 +168,8 @@ public class InputPasswordLoginActivity extends BaseActivity {
         btnLogin = (Button)this.findViewById(R.id.btnlogin);
 
         edtPassword = (EditText)this.findViewById(R.id.edtpassword);
+
+        mCountdownText = (TextView)this.findViewById(R.id.tvCountdownTime);
 
     }
 

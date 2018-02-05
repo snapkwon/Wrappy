@@ -48,7 +48,7 @@ public abstract class RestAPIListener {
         }
     }
 
-    private int getResId(String resName) {
+    public int getResId(String resName) {
         try {
             return mContext.getResources().getIdentifier(resName, "string", mContext.getPackageName());
         } catch (Exception e) {
