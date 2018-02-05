@@ -379,11 +379,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             phone = edPhone.getString();
             nickname = edProfileNickname.getString();
 
-//            if (TextUtils.isEmpty(nickname)) {
-//                error = getString(R.string.error_empty_nickname);
-//            }else
-//
-            if (TextUtils.isEmpty(user)) {
+            if (TextUtils.isEmpty(nickname)) {
+                error = getString(R.string.error_empty_nickname);
+            }else if (TextUtils.isEmpty(user)) {
                 error = getString(R.string.error_empty_username);
             } else if (user.length() < 6) {
                 error = getString(R.string.error_invalid_text_length);

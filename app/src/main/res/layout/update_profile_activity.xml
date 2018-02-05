@@ -53,7 +53,7 @@
                         android:background="#fff"
                         android:orientation="vertical"
                         android:padding="10dp"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <net.wrappy.im.helper.layout.AppTextView
                             android:id="@+id/txtProfileNickname"

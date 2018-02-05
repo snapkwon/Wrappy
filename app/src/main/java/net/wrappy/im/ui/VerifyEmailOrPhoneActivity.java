@@ -7,6 +7,7 @@ import android.view.View;
 
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppDelegate;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.util.PopupUtils;
 
 /**
@@ -31,6 +32,7 @@ public class VerifyEmailOrPhoneActivity extends BaseActivity implements AppDeleg
         if (getIntent().getExtras() != null) {
             getFragmentManager().beginTransaction().replace(R.id.frVerifyContainer, VerifyCodeFragment.newInstance(getIntent().getExtras())).commit();
         }
+        AppFuncs.dismissKeyboard(this);
     }
 
     @Override
