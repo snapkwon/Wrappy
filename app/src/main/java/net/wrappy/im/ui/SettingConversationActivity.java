@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -183,38 +182,18 @@ public class SettingConversationActivity extends BaseActivity {
 
         }
 
-        Cursor cursor = getContentResolver().query(Imps.ProviderSettings.CONTENT_URI, new String[]{Imps.ProviderSettings.NAME, Imps.ProviderSettings.VALUE}, Imps.ProviderSettings.PROVIDER + "=?", new String[]{Long.toString(mProviderId)}, null);
-//        AppFuncs.log(DatabaseUtils.dumpCursorToString(cursor));
-        if (cursor == null)
-            return; //not going to work
         try {
             mConn = ImApp.getConnection(mProviderId, mAccountId);
-            if (mConn != null && mConn.getState() == ImConnection.LOGGED_IN) {
-                mLocalAddress = Imps.Account.getUserName(getContentResolver(), mAccountId) + Constant.EMAIL_DOMAIN;
-
-
-                mSession = mConn.getChatSessionManager().getChatSession(mAddress);
-
-               /* if (mSession != null) {
-                    mGroupOwner = mSession.getGroupChatOwner();
-                    if (mGroupOwner != null) {
-                        mIsOwner = mGroupOwner.getAddress().getUser().equals(mLocalAddress);
-                        mAdminGroup = mGroupOwner.getName();
-                        if (!mIsOwner) {
-                            btnGroupPhoto.setEnabled(false);
-                        }
-                    } else {
-                        btnGroupPhoto.setEnabled(false);
+            if (mConn==null) {
+                PopupUtils.showCustomDialog(this, getString(R.string.error), getString(R.string.error_0), R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
                     }
-                }*/
-            } else {
-                finish();
-                return;
+                });
             }
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             AppFuncs.log(e.getLocalizedMessage());
-        } finally {
-            cursor.close();
         }
 
         switch_notification.setChecked(!isMuted());
@@ -295,7 +274,7 @@ public class SettingConversationActivity extends BaseActivity {
                 for (WpKMemberDto memberDto : identifiers) {
 
                     MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getIdentifier());
+                    member.setNickname(memberDto.getGiven());
                     member.setUsername(memberDto.getIdentifier());
                     if (memberDto.getAvatar() != null) {
                         member.setReferenceAvatar(memberDto.getAvatar().getReference());

@@ -18,6 +18,7 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.BaseObject;
 import net.wrappy.im.model.WpkToken;
@@ -48,8 +49,8 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-    //    private static String root_url = BuildConfig.ROOT_URL;// real
-    private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
+        private static String root_url = BuildConfig.ROOT_URL;// real
+    //private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
 //    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
