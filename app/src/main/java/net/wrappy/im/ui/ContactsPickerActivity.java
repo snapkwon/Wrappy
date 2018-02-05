@@ -79,6 +79,7 @@ import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
@@ -878,11 +879,34 @@ public class ContactsPickerActivity extends BaseActivity {
             isenablealphabet = check;
         }
 
+        private void updateHeaders(Cursor cursor) {
+            charSection.clear();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+                    if (TextUtils.isEmpty(name)) {
+                        String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                        name = new XmppAddress(address).getUser();
+                    }
+                    if (!TextUtils.isEmpty(name)) {
+                        charSection.add(String.valueOf(name.charAt(0)).toUpperCase());
+                    } else {
+                        charSection.add("");
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
         @Override
         public boolean hasStableIds() {
             return true;
         }
 
+        @Override
+        public void changeCursor(Cursor cursor) {
+            updateHeaders(cursor);
+            super.changeCursor(cursor);
+        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -1021,20 +1045,11 @@ public class ContactsPickerActivity extends BaseActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.changeCursor(newCursor);
-            mAdapter.charSection.clear();
-            if (newCursor.moveToFirst()) {
-                do {
-                    mAdapter.charSection.add(String.valueOf(newCursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase());
-                } while (newCursor.moveToNext());
-            }
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
             mAdapter.swapCursor(null);
-
-
         }
 
     }
