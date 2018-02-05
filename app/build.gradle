@@ -9,9 +9,9 @@ android {
     defaultConfig {
         //applicationId 'net.wrappy.im'
         applicationId 'net.wrappy.im'
-        versionCode 18
-        versionName "1.0.1"
-        archivesBaseName = "Wrappy-1.0.0"
+        versionCode 22
+        versionName "1.0.3"
+        archivesBaseName = "Wrappy-" + versionName
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         testApplicationId 'net.wrappy.im.test'
@@ -54,10 +54,21 @@ android {
     flavorDimensions "free"
 
     productFlavors {
+        dev {
+            dimension "free"
+            applicationId = "net.wrappy.im"
+            applicationId 'net.wrappy.im'
+            buildConfigField 'String', 'ROOT_URL', '"http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/"'
+            buildConfigField 'String', 'DOMAIN', '"im2.wrappy.network"'
+            buildConfigField 'Boolean', 'IS_DEV', 'true'
+        }
         free {
             dimension "free"
             applicationId = "net.wrappy.im"
             applicationId 'net.wrappy.im'
+            buildConfigField 'String', 'ROOT_URL', '"https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/"'
+            buildConfigField 'String', 'DOMAIN', '"im.wrappy.network"'
+            buildConfigField 'Boolean', 'IS_DEV', 'false'
         }
         zomrelease {
             dimension "free"

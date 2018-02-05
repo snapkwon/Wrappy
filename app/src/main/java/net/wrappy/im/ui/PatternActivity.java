@@ -51,6 +51,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     public static final String TAG = "PatternActivity";
     public static final String PASSWORD_INPUT = "password";
     public static final String USER_INFO = "userinfo";
+    public static final String HASHPASSWORD = "hashpassword";
 
     public static Intent getStartIntent(Activity context) {
         return new Intent(context, PatternActivity.class);
@@ -141,21 +142,23 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             this.setTypePattern(TYPE_NOCONFIRM);
             title.setText(R.string.login);
             startTimer();
+            mCountdownText.setVisibility(View.VISIBLE);
+
         } else {
             this.setTypePattern(TYPE_CONFIRM);
 
             if (hashResetPassword.isEmpty()) {
                 title.setText(R.string.registration);
-                mCountdownText.setVisibility(View.GONE);
             } else {
                 title.setText(R.string.forget_password);
-                mCountdownText.setVisibility(View.VISIBLE);
             }
+            mCountdownText.setVisibility(View.GONE);
         }
 
         bottomText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                cancelTimer();
                 ForgetPasswordActivity.start(PatternActivity.this);
                 finish();
             }
@@ -188,7 +191,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             login(password);
             cancelTimer();
         } else if (type_request == REQUEST_CODE_INPUT_NEW_PASSWORD) {
-            ForgetPasswordInputNewPassword.start(PatternActivity.this);
+            ForgetPasswordInputNewPassword.start(PatternActivity.this,password,hashResetPassword);
         }
         mPatternView.clearPattern();
     }
@@ -239,12 +242,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         }
     }*/
 
-    private void resetPassword(final String pass) {
+  /*  private void resetPassword(final String pass) {
         String url = RestAPI.resetPasswordUrl(hashResetPassword, pass);
         RestAPIListener listener = new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
-                login(pass);
+                resetPasscode();
             }
         };
         listener.setOnListener(new View.OnClickListener() {
@@ -254,7 +257,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             }
         });
         RestAPI.PostDataWrappy(getApplicationContext(), new JsonObject(), url, listener);
-    }
+    }*/
 
   /*  private int getResId(String resName) {
         try {
@@ -264,6 +267,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             return -1;
         }
     }*/
+  /*private void resetPasscode()
+  {
+      ForgetPasswordInputNewPassword.start(PatternActivity.this);
+  }*/
 
     private void login(String pass) {
         AppFuncs.showProgressWaiting(this);

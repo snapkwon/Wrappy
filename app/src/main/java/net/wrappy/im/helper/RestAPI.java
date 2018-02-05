@@ -65,7 +65,7 @@ public class RestAPI {
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
     public static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
-    private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
+    public static String POST_RESET_PASSWORD = root_url + "member/%s/password/%s/%s/reset/";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
     public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
@@ -133,8 +133,8 @@ public class RestAPI {
         return String.format(POST_LOGIN, user, pass);
     }
 
-    public static String resetPasswordUrl(String hash, String newPass) {
-        return String.format(GET_RESET_PASSWORD, hash, newPass);
+    public static String resetPasswordUrl(String hash, String newPass , String newPasscode) {
+        return String.format(POST_RESET_PASSWORD, hash, newPass);
     }
 
     public static String getHashStringResetPassUrl(String username, String answer01, String answer02, String answer03) {
