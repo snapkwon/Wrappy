@@ -424,26 +424,29 @@ public class Imps {
                 String selection = Account.NAME + "=?";
                 String[] selectionArgs = {memberDto.getIdentifier()};
                 String[] projection = {Account._ID};
-                Cursor cursor = cr.query(Account.CONTENT_URI,projection,selection,selectionArgs,null);
+                Cursor cursor = cr.query(Account.CONTENT_URI, projection, selection, selectionArgs, null);
 
-                if (cursor!=null && cursor.moveToFirst()) {
+                if (cursor != null && cursor.moveToFirst()) {
                     long accountId = cursor.getLong(cursor.getColumnIndex(Account._ID));
-                    if (accountId!=-1) {
+                    if (accountId != -1) {
                         Uri accountUri = ContentUris.withAppendedId(Imps.Account.CONTENT_URI, accountId);
                         cr.update(accountUri, values, null, null);
                     }
                 } else {
                     cr.insert(Account.CONTENT_URI, values);
                 }
-                String avatar = memberDto.getAvatar()==null? "" : memberDto.getAvatar().getReference();
-                String banner = memberDto.getBanner()==null? "" : memberDto.getBanner().getReference();
-                updateAvatarBannerToDB(memberDto.getIdentifier(),avatar,banner);
+                if (cursor != null) {
+                    cursor.close();
+                }
+                String avatar = memberDto.getAvatar() == null ? "" : memberDto.getAvatar().getReference();
+                String banner = memberDto.getBanner() == null ? "" : memberDto.getBanner().getReference();
+                updateAvatarBannerToDB(memberDto.getIdentifier(), avatar, banner);
             }
         }
 
         private static void updateAvatarBannerToDB(String username, String avatar, String banner) {
-            avatar = avatar == null? "" : avatar;
-            banner = banner == null? "" : banner;
+            avatar = avatar == null ? "" : avatar;
+            banner = banner == null ? "" : banner;
             String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatar);
             if (!username.contains("@")) {
                 username = username + Constant.EMAIL_DOMAIN;
@@ -906,7 +909,7 @@ public class Imps {
         }
 
         public static final long getContactIdFromNickname(ContentResolver cr, String nickname) {
-            long contactId= -1;
+            long contactId = -1;
             String selection = NICKNAME + "=?";
             String[] selectionArgs = {nickname};
             String[] projection = {_ID};

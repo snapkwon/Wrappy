@@ -1310,13 +1310,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             String email = wpKMemberDto.getEmail();
             String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
-            try {
-                ContentUris.appendId(builder, mConn.getProviderId());
-                ContentUris.appendId(builder, mConn.getAccountId());
-                mConn.getContactListManager().setContactName(address, name);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
             // update locally
             String selection = Imps.Contacts.USERNAME + "='" + address + "'";
             String[] selectionArgs = {address};
@@ -1359,7 +1352,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
-            Imps.Account.updateAccountFromDataServer(sImApp.getContentResolver(), wpKMemberDto);
         }
     }
 
