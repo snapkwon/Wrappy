@@ -251,10 +251,12 @@ public class BaseActivity extends AppCompatActivity {
                         if (!isVisible) {
                             editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                             editText.setSelection(editText.length());
+                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_visibility_black_24dp, 0);
                             isVisible = true;
                         } else {
                             editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                             editText.setSelection(editText.length());
+                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_hidden, 0);
                             isVisible = false;
                         }
                     }
