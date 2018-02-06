@@ -17,7 +17,6 @@
 
 package net.wrappy.im.model;
 
-import net.wrappy.im.ImApp;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 
@@ -142,7 +141,6 @@ public class ContactList extends ImEntity {
         }
 
         mContactsCache.put(aKey, contact);
-        ImApp.approveSubscription(contact);
     }
 
     /**

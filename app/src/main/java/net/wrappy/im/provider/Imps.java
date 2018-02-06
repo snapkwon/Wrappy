@@ -833,7 +833,7 @@ public class Imps {
         public static final String DEFAULT_SORT_ORDER = "subscriptionType DESC, last_message_date DESC,"
                 + " mode DESC, nickname COLLATE NOCASE ASC";
 
-        public static final String DEFAULT_SORT_NICKNAME_ORDER = "nickname ASC";
+        public static final String DEFAULT_SORT_NICKNAME_ORDER = "nickname ASC, username ASC";
         /**
          * The default sort order for this table
          */
