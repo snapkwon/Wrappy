@@ -2,8 +2,8 @@
 {
   "servers":[
     {
-      "domain": "im2.wrappy.network",
-      "server": "im2.wrappy.network",
+      "domain": "imdev.wrappy.network",
+      "server": "imdev.wrappy.network",
       "address": "10.11.5.12",
       "port": 5222,
       "certificate": "",
