@@ -204,5 +204,5 @@ dependencies {
     compile 'com.github.yalantis:ucrop:2.2.1'
     compile 'com.baoyz.swipemenulistview:library:1.3.0'
     compile 'com.github.GoodieBag:Pinview:v1.3'
-
+    compile "me.leolin:ShortcutBadger:1.1.21@aar"
 }
