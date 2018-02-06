@@ -908,10 +908,10 @@ public class Imps {
             return ret;
         }
 
-        public static final long getContactIdFromNickname(ContentResolver cr, String nickname) {
+        public static final long getContactIdFromAddress(ContentResolver cr, String address) {
             long contactId = -1;
-            String selection = NICKNAME + "=?";
-            String[] selectionArgs = {nickname};
+            String selection = USERNAME + "=?";
+            String[] selectionArgs = {address};
             String[] projection = {_ID};
             Cursor cursor = cr.query(Imps.Contacts.CONTENT_URI, projection, selection, selectionArgs, null);
             if (cursor != null) {

@@ -1331,7 +1331,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (TextUtils.isEmpty(name)) {
                 name = new XmppAddress(address).getUser();
             }
-            values.put(Imps.Contacts.NICKNAME,name);
+            values.put(Imps.Contacts.NICKNAME,fullname);
 
             if (!values.containsKey(Imps.Contacts.TYPE)) {
                 values.put(Imps.Contacts.TYPE, Imps.ContactsColumns.TYPE_NORMAL);

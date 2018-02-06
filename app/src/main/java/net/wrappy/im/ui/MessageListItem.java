@@ -69,6 +69,7 @@ import net.wrappy.im.ui.onboarding.OnboardingManager;
 import net.wrappy.im.ui.widgets.ImageViewActivity;
 import net.wrappy.im.ui.widgets.MessageViewHolder;
 import net.wrappy.im.util.ConferenceUtils;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 import net.wrappy.im.util.LinkifyHelper;
 import net.wrappy.im.util.PopupUtils;
@@ -302,6 +303,10 @@ public class MessageListItem extends FrameLayout {
             if (showContact) {
                 String[] nickParts = nickname.split("/");
                 contact = nickParts[nickParts.length - 1];
+                String fName = Imps.Contacts.getNicknameFromAddress(ImApp.sImApp.getContentResolver(),contact + Constant.EMAIL_DOMAIN);
+                if (!TextUtils.isEmpty(fName)) {
+                    contact = fName;
+                }
             }
 
             CharSequence tsText = formatTimeStamp(date, messageType, null, encryption, contact);
