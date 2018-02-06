@@ -168,35 +168,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
         mEditPassword.setText("");
         mEditConfirmPassword.setText("");
 
-
-
-        mEditPassword.setOnTouchListener(new View.OnTouchListener() {
-            boolean isVisible = false;
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
-
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-
-                    if (motionEvent.getRawX() >= (mEditPassword.getRight() - mEditPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-
-                        if (!isVisible) {
-                            mEditPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                            mEditPassword.setSelection(mEditPassword.length());
-                            isVisible = true;
-                        } else {
-                            mEditPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                            mEditPassword.setSelection(mEditPassword.length());
-                            isVisible = false;
-                        }
-                    }
-                }
-                return false;
-            }
-        });
+        showHidePassword(mEditPassword);
+        showHidePassword(mEditConfirmPassword);
     }
 }

@@ -174,9 +174,9 @@ public class ForgetPasswordInputNewPassword extends BaseActivity {
     private void initViews() {
         initActionBarDefault(true, R.string.forget_password);
 
-        mTitlePage.setText(R.string.input_new_password);
-        mTitlePassword.setText(R.string.input_new_password);
-        mEditPassword.setHint(R.string.input_your_password);
+        mTitlePage.setText(R.string.input_password);
+        mTitlePassword.setText(R.string.input_password);
+        mEditPassword.setHint(R.string.input_new_password);
         mEditConfirmPassword.setHint(R.string.input_repeat_password);
         mBtnLogin.setText(R.string.login);
 
