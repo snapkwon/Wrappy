@@ -132,6 +132,9 @@ public class RestAPI {
     }
 
     public static String getGroupByXmppId(String xmppId) {
+        if (xmppId.contains("@")) {
+            xmppId = xmppId.split("@")[0];
+        }
         return String.format(GET_GROUP_BY_XMPP_ID, xmppId);
     }
 

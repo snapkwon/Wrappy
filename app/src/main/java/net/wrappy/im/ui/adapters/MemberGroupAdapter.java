@@ -41,7 +41,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
     private ArrayList<MemberGroupDisplay> mMembers;
     private Activity mContext;
     private String currentUser;
-    private String mAdminGroup;
+    private String mOwnerGroup;
     private long mLastChatId;
     private WpKChatGroupDto mWpKChatGroupDto;
     private IChatSession session;
@@ -55,11 +55,11 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         this.session = session;
     }
 
-    public MemberGroupAdapter(Activity mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mAdminGroup, long mLastChatId, IChatSession session) {
+    public MemberGroupAdapter(Activity mContext, ArrayList<MemberGroupDisplay> mMembers, String currentUser, String mOwnerGroup, long mLastChatId, IChatSession session) {
         this.mContext = mContext;
         this.mMembers = mMembers;
         this.currentUser = currentUser;
-        this.mAdminGroup = mAdminGroup;
+        this.mOwnerGroup = mOwnerGroup;
         this.mLastChatId = mLastChatId;
         this.session = session;
         mApp = (ImApp) mContext.getApplication();
@@ -70,8 +70,8 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
         notifyDataSetChanged();
     }
 
-    public void setAdmin(String mAdminGroup) {
-        this.mAdminGroup = mAdminGroup;
+    public void setOwner(String mOwnerGroup) {
+        this.mOwnerGroup = mOwnerGroup;
     }
 
     @Override
@@ -152,7 +152,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
                 GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(member.getReferenceAvatar()));
             }
             mDeleteMember.setVisibility(View.GONE);
-            if (currentUser.equals(mAdminGroup)) {
+            if (currentUser.equals(mOwnerGroup)) {
                 if (isAdminGroup(member)) {
                     avatarCrown.setVisibility(View.VISIBLE);
                 } else {
@@ -214,8 +214,6 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
     private void removeMemberInArray(int position) {
         mMembers.remove(position);
-      //  notifyItemRemoved(position);
-       // notifyItemRangeChanged(position, mMembers.size());
         notifyDataSetChanged();
     }
 
