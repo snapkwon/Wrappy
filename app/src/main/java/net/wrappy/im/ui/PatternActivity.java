@@ -78,7 +78,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
                 seconds = seconds % 60;
-                mCountdownText.setText(String.format(PatternActivity.this.getString(R.string.pattern_coutdown), String.format("%02d", seconds)));
+                mMessageText.setText(String.format(PatternActivity.this.getString(R.string.pattern_coutdown), String.format("%02d", seconds)));
             }
             public void onFinish() {
                 cancelTimer();
@@ -142,7 +142,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             this.setTypePattern(TYPE_NOCONFIRM);
             title.setText(R.string.login);
             startTimer();
-            mCountdownText.setVisibility(View.VISIBLE);
+           // mCountdownText.setVisibility(View.VISIBLE);
 
         } else {
             this.setTypePattern(TYPE_CONFIRM);
@@ -152,7 +152,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             } else {
                 title.setText(R.string.forget_password);
             }
-            mCountdownText.setVisibility(View.GONE);
+           // mCountdownText.setVisibility(View.GONE);
         }
 
         bottomText.setOnClickListener(new View.OnClickListener() {

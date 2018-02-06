@@ -46,7 +46,7 @@ public class BasePatternActivity extends AppCompatActivity {
         mRightButton = (Button) findViewById(R.id.pl_right_button);
         bottomText = (TextView) findViewById(R.id.bottomText);
         view = (View) findViewById(R.id.viewspan);
-        mCountdownText = (TextView) findViewById(R.id.pl_countdown_text);
+      //  mCountdownText = (TextView) findViewById(R.id.pl_countdown_text);
     }
 
     protected void removeClearPatternRunnable() {
