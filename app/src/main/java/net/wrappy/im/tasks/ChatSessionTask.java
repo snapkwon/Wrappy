@@ -32,9 +32,10 @@ public class ChatSessionTask extends AsyncTask<String, Long, String> {
     protected String doInBackground(String... params) {
         String address = params[0];
         try {
-            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultProviderId());
+            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
             IChatSessionManager manager;
             if (connection != null) {
+
                 manager = connection.getChatSessionManager();
                 IChatSession session = manager.getChatSession(address);
                 if (session == null)

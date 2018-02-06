@@ -100,6 +100,7 @@ import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.LetterAvatar;
@@ -204,6 +205,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private TextView txtTitleActionBar;
 
     WpKChatGroupDto wpKChatGroupDto;
+    IImConnection mConn;
 
     @Override
     public void onHandle(Message msg) {

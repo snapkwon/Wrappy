@@ -150,7 +150,7 @@ public class SettingConversationActivity extends BaseActivity {
                             mAddMemberLayout.setVisibility(View.VISIBLE);
                             btnGroupPhoto.setEnabled(true);
                         } else {
-                            btnGroupPhoto.setEnabled(false);
+                            //btnGroupPhoto.setEnabled(false);
                             mAddMemberLayout.setVisibility(View.GONE);
                         }
                         memberGroupAdapter.setAdmin(member.getNickname());
