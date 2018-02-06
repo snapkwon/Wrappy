@@ -214,23 +214,22 @@ public class DatabaseUtils {
             values.put(Imps.Avatars.BANNER, bannerReference);
         }
         values.put(Imps.Avatars.HASH, hash);
-        AppFuncs.log(values.toString());
 
-        String selection = Imps.Avatars.CONTACT + "='" + contact + "'";
+        String selection = Imps.Avatars.CONTACT + "=?";
+        String[] arg = new String[]{contact};
         Cursor cursor = resolver.query(updateUri, new String[]{Imps.Avatars._ID},
-                selection, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                long avatarId = cursor.getLong(0);
-                Uri uri = ContentUris.withAppendedId(updateUri, avatarId);
-                resolver.update(uri, values, null, null);
-            }
-            cursor.close();
+                selection, arg, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            long avatarId = cursor.getLong(0);
+            Uri uri = ContentUris.withAppendedId(updateUri, avatarId);
+            resolver.update(uri, values, null, null);
         } else {
             resolver.insert(updateUri, values);
         }
-        resolver.insert(updateUri, values);
 
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     private static BitmapDrawable decodeSquareAvatar(byte[] data, int width, int height) {
