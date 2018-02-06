@@ -572,10 +572,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             mNickname = mAddress.split("@")[0];
         }
         mReference = intent.getStringExtra(BundleKeyConstant.REFERENCE_KEY);
-        loaderCallbacks = new MyLoaderCallbacks();
+
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
-
+            loaderCallbacks = new MyLoaderCallbacks();
             loaderManager.initLoader(1, null, loaderCallbacks);
         } else {
 //            finish();
