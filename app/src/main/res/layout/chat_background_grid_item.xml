@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
 
     <net.wrappy.im.helper.layout.CircleImageView
         android:id="@+id/image_thumb_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/chat_bg_thumb_1"
-        android:layout_margin="5dp" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:cropToPadding="true"
+        android:padding="1dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/chat_bg_thumb_1" />
 
 </LinearLayout>

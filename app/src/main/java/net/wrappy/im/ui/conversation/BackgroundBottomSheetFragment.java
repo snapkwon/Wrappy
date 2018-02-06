@@ -33,7 +33,8 @@ public class BackgroundBottomSheetFragment extends BottomSheetDialogFragment {
             R.drawable.chat_bg_thumb_5,
             R.drawable.chat_bg_thumb_6,
             R.drawable.chat_bg_thumb_7,
-            R.drawable.chat_bg_thumb_8
+            R.drawable.chat_bg_thumb_8,
+            R.drawable.chat_bg_0
     };
 
     public String[] mImagePath = {
@@ -45,6 +46,7 @@ public class BackgroundBottomSheetFragment extends BottomSheetDialogFragment {
             "backgrounds/page_1/chat_bg_6.jpg",
             "backgrounds/page_1/chat_bg_7.jpg",
             "backgrounds/page_1/chat_bg_8.jpg",
+            "backgrounds/page_1/chat_bg_0.jpg"
     };
 
     public static final BackgroundBottomSheetFragment getInstance() {
