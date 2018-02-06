@@ -1896,6 +1896,16 @@ public class Imps {
             return result;
         }
 
+        public static void updateAvatarBannerToDB(String address, String avatar, String banner) {
+            avatar = avatar == null? "" : avatar;
+            banner = banner == null? "" : banner;
+            String hash = net.wrappy.im.ui.legacy.DatabaseUtils.generateHashFromAvatar(avatar);
+            if (!address.contains("@")) {
+                address = address + Constant.EMAIL_DOMAIN;
+            }
+            net.wrappy.im.ui.legacy.DatabaseUtils.insertAvatarBlob(ImApp.sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId(), avatar, banner, hash, address);
+        }
+
     }
 
     /**

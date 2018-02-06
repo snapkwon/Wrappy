@@ -505,7 +505,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             if (TextUtils.isEmpty(mReference)) {
                 GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
             } else {
-                GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
+                GlideHelper.loadBitmapToCircleImageDefault(this, avatar, getAvatarUrl(mReference), mNickname);
             }
             setAvatarStatus(status);
             String fName = Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress);
