@@ -148,7 +148,7 @@ public class ProfileFragment extends BaseFragmentV4 {
         ButterKnife.bind(this, mainView);
         mApp = (ImApp) getActivity().getApplication();
         jid = getArguments().getString("jid");
-
+        arrDetail = getResources().getStringArray(R.array.profile_gender_display);
 
         edFullName.setEnabled(false);
         if (TextUtils.isEmpty(jid)) {
@@ -266,8 +266,7 @@ public class ProfileFragment extends BaseFragmentV4 {
             btnPhotoCameraAvatar.setVisibility(View.VISIBLE);
             btnProfileCameraHeader.setVisibility(View.VISIBLE);
         }
-//        final String[] arr = {getString(R.string.male), getString(R.string.female)};
-        arrDetail = getResources().getStringArray(R.array.profile_gender_display);
+
         adapterGender = new ArrayAdapter<String>(getActivity(), R.layout.update_profile_textview, arrDetail) {
             @NonNull
             @Override

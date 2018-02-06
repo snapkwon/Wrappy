@@ -32,7 +32,7 @@
 
     <!-- General: Actions -->
     <string name="confirm">確認</string>
-    <string name="ok">[OK]</string>
+    <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
