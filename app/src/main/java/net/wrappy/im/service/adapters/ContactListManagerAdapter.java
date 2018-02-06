@@ -1339,7 +1339,7 @@ public class ContactListManagerAdapter extends
         values.put(Imps.Contacts.SUBSCRIPTION_STATUS, subStatus);
 
         final Uri uri = mResolver.insert(mContactUrl, values);
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, contact.getAddress().getUser()), new RestAPIListener() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(contact.getAddress().getUser()), new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
                 Debug.d(s);

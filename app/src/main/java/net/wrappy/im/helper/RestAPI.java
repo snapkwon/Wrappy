@@ -25,6 +25,7 @@ import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.model.translate.DetectLanguageResponse;
 import net.wrappy.im.model.translate.TranslateLanguageResponse;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 
 import org.json.JSONException;
@@ -65,7 +66,7 @@ public class RestAPI {
     private static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
-    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
+    private static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
     private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
@@ -74,7 +75,6 @@ public class RestAPI {
     public static String GET_COUNTRY_CODES = root_url + "master/country";
     public static String GET_TYPE_ROSTER = root_url + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url + "chat/roster/group/add";
-    private static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s/";
     public static String POST_CHANGE_QUESTION_CHECK = root_url + "member/security/check";
     public static String PUT_CHANGE_SECURITY_QUESTION = root_url + "member/security/";
     private static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
@@ -111,6 +111,14 @@ public class RestAPI {
 
     private static int NUMBER_REQUEST_TOKEN = 3;
 
+    public static String getMemberByIdUrl(String jid) {
+        String identifer = jid;
+        if (jid.contains(Constant.EMAIL_DOMAIN)) {
+            identifer = jid.split("@")[0];
+        }
+        return String.format(GET_MEMBER_INFO_BY_JID,identifer.toLowerCase());
+    }
+
     public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
         return String.format(POST_VERIFY_CODE_CHANGE_PHONE, user, oldPhone, newPhone);
     }
@@ -146,10 +154,6 @@ public class RestAPI {
     private static String refreshTokenUrl(Context context) {
         String refreshToken = Store.getStringData(context, WpkToken.STORE_REFRESH_TOKEN);
         return String.format(POST_REFRESH_TOKEN, refreshToken);
-    }
-
-    public static String getMemberByIdUrl(String jid) {
-        return String.format(GET_MEMBER_BY_JID, jid.toLowerCase());
     }
 
     public static String getPhotoReference(String s) {

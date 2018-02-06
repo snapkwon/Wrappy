@@ -583,7 +583,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(jid), new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
                 Debug.d(s);

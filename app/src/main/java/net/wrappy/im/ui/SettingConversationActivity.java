@@ -46,6 +46,7 @@ import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.IImConnection;
@@ -143,18 +144,18 @@ public class SettingConversationActivity extends BaseActivity {
                 for (MemberGroupDisplay member : memberGroupDisplays) {
                     if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
                             member.getAffiliation().contentEquals("admin"))) {
-                        String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
-                        if (currentUser.equals(member.getNickname())) {
-                            mAdminDeleteGroup.setVisibility(View.VISIBLE);
+                        if (mIsOwner) {
                             mMemberLeaveGroup.setVisibility(View.GONE);
+                            mAdminDeleteGroup.setVisibility(View.VISIBLE);
                             mAddMemberLayout.setVisibility(View.VISIBLE);
-                            btnGroupPhoto.setEnabled(true);
                         } else {
                             //btnGroupPhoto.setEnabled(false);
+                            mMemberLeaveGroup.setVisibility(View.VISIBLE);
+                            mAdminDeleteGroup.setVisibility(View.GONE);
                             mAddMemberLayout.setVisibility(View.GONE);
                         }
-                        memberGroupAdapter.setAdmin(member.getNickname());
-                        edGroupSubText.setText(String.format(getString(R.string.create_by), member.getNickname()));
+                        memberGroupAdapter.setAdmin(member.getUsername());
+                        edGroupSubText.setText(String.format(getString(R.string.create_by), TextUtils.isEmpty(member.getNickname())?member.getUsername():member.getNickname()));
                     }
                 }
             }
@@ -213,11 +214,6 @@ public class SettingConversationActivity extends BaseActivity {
 //            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
             String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
             GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
-
-            if (mIsOwner) {
-                mAdminDeleteGroup.setVisibility(View.VISIBLE);
-                mMemberLeaveGroup.setVisibility(View.GONE);
-            }
 
             memberGroupDisplays = new ArrayList<>();
 
@@ -281,7 +277,7 @@ public class SettingConversationActivity extends BaseActivity {
                     }
                     if (memberDto.getId() == idMemberOwner) {
                         member.setAffiliation("owner");
-                        if (member.getNickname().equals(mLocalAddress)) {
+                        if (member.getUsername().equals(new XmppAddress(ImApp.sImApp.getDefaultUsername()).getUser())) {
                             mIsOwner = true;
                         }
                     } else {
@@ -387,7 +383,7 @@ public class SettingConversationActivity extends BaseActivity {
                     Intent intent = new Intent(SettingConversationActivity.this, ContactsPickerActivity.class);
                     ArrayList<String> usernames = new ArrayList<>(memberGroupDisplays.size());
                     for (MemberGroupDisplay member : memberGroupDisplays) {
-                        usernames.add(member.getNickname());
+                        usernames.add(member.getUsername());
                     }
                     intent.putExtra(BundleKeyConstant.EXTRA_LIST_MEMBER, usernames);
                     intent.putExtra(BundleKeyConstant.EXTRA_GROUP_ID, wpKChatGroup);
