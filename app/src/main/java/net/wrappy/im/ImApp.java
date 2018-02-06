@@ -1311,6 +1311,8 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             String email = wpKMemberDto.getEmail();
             String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
+            ContentUris.appendId(builder, sImApp.getDefaultProviderId());
+            ContentUris.appendId(builder, sImApp.getDefaultAccountId());
             // update locally
             String selection = Imps.Contacts.USERNAME + "=?";
             String[] selectionArgs = {correctAddress};
