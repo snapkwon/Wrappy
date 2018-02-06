@@ -447,10 +447,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         });
 
-        // set background for this screen
-        loadBitmapPreferences();
         setCustomActionBar(mConvoView.isGroupChat());
         processIntent(getIntent());
+
+        // set background for this screen
+        loadBitmapPreferences();
     }
 
     @Override
