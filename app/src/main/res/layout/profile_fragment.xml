@@ -55,11 +55,11 @@
 
                         <net.wrappy.im.helper.layout.AppTextView
                             android:id="@+id/txtClientName"
+                            style="@style/AppText02"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="@style/AppText02"
-                            android:layout_marginLeft="10dp"
-                            android:layout_gravity="center_vertical"/>
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp" />
 
                     </LinearLayout>
 
@@ -79,6 +79,7 @@
                             android:orientation="vertical">
 
                             <net.wrappy.im.helper.layout.AppTextView
+                                android:id="@+id/txtProfileNickname"
                                 style="@style/AppText03"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -99,9 +100,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:maxLength="25"
                                     android:hint="@string/fullname"
-                                    android:inputType="textNoSuggestions" />
+                                    android:inputType="textNoSuggestions"
+                                    android:maxLength="25" />
                             </RelativeLayout>
 
 
@@ -111,8 +112,8 @@
                             android:id="@+id/lnProfileUsername"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="#fff"
                             android:layout_marginTop="10dp"
+                            android:background="#fff"
                             android:orientation="vertical">
 
                             <net.wrappy.im.helper.layout.AppTextView
@@ -163,9 +164,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@null"
-                                    android:hint="@string/mobile_phone"
-                                    android:imeOptions="actionDone"
-                                    android:inputType="phone" />
+                                    android:enabled="false"
+                                    android:hint="@string/mobile_phone" />
                             </RelativeLayout>
 
 
@@ -250,8 +250,8 @@
                                     android:id="@+id/spnProfile"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true" />
+                                    android:layout_centerVertical="true"
+                                    android:visibility="gone" />
                             </RelativeLayout>
 
 
@@ -276,13 +276,14 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/linearForContact"
+                    android:id="@+id/lnForFriend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:background="#fff"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:id="@+id/lnProfileSendMessage"
@@ -299,7 +300,6 @@
                             android:src="@drawable/ic_setting_chat" />
 
                         <net.wrappy.im.helper.layout.AppTextView
-                            android:id="@+id/txtProfileSendMessage"
                             style="@style/AppText02"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -366,13 +366,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/linearForSeft"
+                    android:id="@+id/lnForSeft"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:background="#fff"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:id="@+id/lnProfileChangeQuestion"
@@ -419,7 +420,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:text="@string/invite_friends_text" />
+                            android:text="@string/promotion_invite_friend" />
 
                     </LinearLayout>
 
@@ -450,6 +451,39 @@
 
                     </LinearLayout>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnForStranger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="#fff"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/lnProfileAddFriend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/setting_add" />
+
+                        <net.wrappy.im.helper.layout.AppTextView
+                            style="@style/AppText02"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="@string/add_people" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

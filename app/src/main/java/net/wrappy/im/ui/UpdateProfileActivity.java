@@ -66,16 +66,12 @@ import butterknife.Optional;
 
 public class UpdateProfileActivity extends BaseActivity implements View.OnClickListener {
 
-    private final int IMAGE_HEADER = 100;
-    private final int IMAGE_AVATAR = 101;
-    private final int IMAGE_HEADER_UCROP = 102;
-    private final int IMAGE_AVATAR_UCROP = 103;
     private final int VERIFY_CODE = 104;
 
     public static final String PASSCODE = "passcode";
 
     boolean isFlag;
-    String user, email, phone, gender, password, invitePhone;
+    String user, email, phone, gender, password, nickname;
     Registration registrationData;
     AppFuncs appFuncs;
 
@@ -88,9 +84,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     @BindView(R.id.edProfileUsername)
     AppEditTextView edUsername;
     @BindView(R.id.edProfileEmail)
-    EditText edEmail;
+    AppEditTextView edEmail;
     @BindView(R.id.edProfilePhone)
-    EditText edPhone;
+    AppEditTextView edPhone;
     @BindView(R.id.spinnerProfileGender)
     AppCompatSpinner spinnerProfileGender;
     @BindView(R.id.spnProfileCountryCodesReference)
@@ -105,6 +101,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     AppTextView txtProfileMobile;
     @BindView(R.id.txtProfileUser)
     AppTextView txtProfileUser;
+    @BindView(R.id.edProfileNickname) AppEditTextView edProfileNickname;
+    @BindView(R.id.txtProfileNickname) AppTextView txtProfileNickname;
 
     ArrayAdapter countryAdapter;
     ArrayAdapter<CharSequence> adapterGender;
@@ -151,8 +149,9 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 R.array.profile_gender, R.layout.update_profile_textview);
         spinnerProfileGender.setAdapter(adapterGender);
         getCountryCodesFromServer();
-        txtProfileMobile.setText(txtProfileMobile.getText().toString().trim() + " *");
-        txtProfileUser.setText(txtProfileUser.getText().toString().trim() + " *");
+        txtProfileMobile.setText(txtProfileMobile.getString() + " *");
+        txtProfileUser.setText(txtProfileUser.getString() + " *");
+        txtProfileNickname.setText(txtProfileNickname.getString() + " *");
         locale = getResources().getConfiguration().locale.getCountry();
 
     }
@@ -270,10 +269,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, true);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_AVATAR);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, true);
                                 break;
                             case 3:
                                 uriAvatar = null;
@@ -299,10 +298,10 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     public void onSelectBottomSheetCell(int index) {
                         switch (index) {
                             case 1:
-                                AppFuncs.openCamera(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openCamera(UpdateProfileActivity.this, false);
                                 break;
                             case 2:
-                                AppFuncs.openGallery(UpdateProfileActivity.this, IMAGE_HEADER);
+                                AppFuncs.openGallery(UpdateProfileActivity.this, false);
                                 break;
                             case 3:
                                 uriHeader = null;
@@ -359,8 +358,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             Banner banner = new Banner(bannerReference);
             wpKMemberDto.setBanner(banner);
         }
-        if (!TextUtils.isEmpty(invitePhone)) {
-            registrationData.setInviterMobile(invitePhone);
+        if (!TextUtils.isEmpty(nickname)) {
+            wpKMemberDto.setGiven(nickname);
         }
         registrationData.setWpKMemberDto(wpKMemberDto);
 
@@ -384,17 +383,14 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private String validateData() {
         String error = "";
         try {
-            user = edUsername.getText().toString().trim();
-            email = edEmail.getText().toString().trim();
-            phone = edPhone.getText().toString().trim();
-            invitePhone = edProfileReferral.getText().toString().trim();
-            if (!TextUtils.isEmpty(phone) && phone.startsWith("0")) {
-                phone = phone.substring(1, phone.length());
-            }
-            if (!TextUtils.isEmpty(invitePhone) && invitePhone.startsWith("0")) {
-                invitePhone = invitePhone.substring(1, invitePhone.length());
-            }
-            if (TextUtils.isEmpty(user)) {
+            user = edUsername.getString();
+            email = edEmail.getString();
+            phone = edPhone.getString();
+            nickname = edProfileNickname.getString();
+
+            if (TextUtils.isEmpty(nickname)) {
+                error = getString(R.string.error_empty_nickname);
+            }else if (TextUtils.isEmpty(user)) {
                 error = getString(R.string.error_empty_username);
             } else if (user.length() < 6) {
                 error = getString(R.string.error_invalid_text_length);
@@ -405,18 +401,12 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             } else if (!TextUtils.isEmpty(Utils.isValidEmail(this, email))) {
                 error = Utils.isValidEmail(this, email);
             }
-
+            if (!TextUtils.isEmpty(phone) && phone.startsWith("0")) {
+                phone = phone.substring(1, phone.length());
+            }
             if (wpkCountry != null) {
                 String countryName = wpkCountry.get(spnProfileCountryCodes.getSelectedItemPosition()).getPrefix();
                 phone = countryName + phone;
-            }
-            if (!TextUtils.isEmpty(invitePhone)) {
-                if (wpkCountry != null) {
-                    String countryName = wpkCountry.get(spnProfileCountryCodesReference.getSelectedItemPosition()).getPrefix();
-                    invitePhone = countryName + invitePhone;
-                }
-            } else {
-                invitePhone = null;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -427,134 +417,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     //ExistingAccountTask mExistingAccountTask;
     SimpleAlertHandler mHandler;
 
-    private RegistrationAccount login() {
-        RegistrationAccount account = new RegistrationAccount("", "");
-        account.setNickname(edUsername.getText().toString());
-        account.setEmail(edEmail.getText().toString());
-        account.setPhone(edPhone.getText().toString());
-        account.setGender(gender);
-        return account;
-//        if (mExistingAccountTask == null) {
-//            mExistingAccountTask = new ExistingAccountTask();
-//            mExistingAccountTask.execute(account);
-//        }
-
-    }
-
-//    private class ExistingAccountTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
-//        @Override
-//        protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
-//            try {
-//
-//                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(UpdateProfileActivity.this);
-//                KeyPair keyPair = keyMan.generateLocalKeyPair();
-//
-//                RegistrationAccount account = accounts[0];
-//                OnboardingAccount result = OnboardingManager.addExistingAccount(UpdateProfileActivity.this, mHandler, account);
-//
-//                if (result != null) {
-//                    String jabberId = result.username + '@' + result.domain;
-//                    keyMan.storeKeyPair(jabberId, keyPair);
-//                }
-//
-//                return result;
-//            } catch (Exception e) {
-//                Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-//                return null;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(OnboardingAccount account) {
-//            // mUsername = account.username + '@' + account.domain;
-//            appFuncs.dismissProgressWaiting();
-//            ImApp mApp = (ImApp) getApplication();
-//            mApp.setDefaultAccount(account.providerId, account.accountId);
-//
-//            SignInHelper signInHelper = new SignInHelper(UpdateProfileActivity.this, mHandler);
-//            signInHelper.activateAccount(account.providerId, account.accountId);
-//            signInHelper.signIn(account.password, account.providerId, account.accountId, true);
-//
-//            String hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-//
-//            try {
-//                DatabaseUtils.insertAvatarBlob(getContentResolver(), Imps.Avatars.CONTENT_URI, account.providerId, account.accountId, avatarReference, bannerReference, hash, account.username);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            mExistingAccountTask = null;
-//
-//            Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
-//            startActivity(intent);
-//        }
-//    }
-
     Uri uriHeader, uriAvatar;
     boolean isAvatarRequest = false;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-
-        try {
-            if (resultCode == Activity.RESULT_OK) {
-//                if (requestCode == VERIFY_CODE) {
-//
-//                    String url = RestAPI.loginUrl(user, password);
-//                    AppFuncs.log(url);
-//                    RestAPI.PostDataWrappy(getApplicationContext(), null, url, new RestAPI.RestAPIListener() {
-//
-//                        @Override
-//                        public void OnComplete(int httpCode, String error, String s) {
-//                            try {
-//                                if (!RestAPI.checkHttpCode(httpCode)) {
-//                                    String er = WpErrors.getErrorMessage(s);
-//                                    if (!TextUtils.isEmpty(er)) {
-//                                        AppFuncs.alert(getApplicationContext(), er, true);
-//                                    }
-//                                    appFuncs.dismissProgressWaiting();
-//                                    return;
-//                                }
-//                                AppFuncs.log("loginUrl: " + s);
-//                                JsonObject jsonObject = (new JsonParser()).parse(s).getAsJsonObject();
-//                                Gson gson = new Gson();
-//                                wpkToken = gson.fromJson(jsonObject, WpkToken.class);
-//                                wpkToken.saveToken(getApplicationContext());
-//                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword());
-//                            } catch (Exception ex) {
-//                                appFuncs.dismissProgressWaiting();
-//                                ex.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                }
-            }
-            if (requestCode == IMAGE_HEADER) {
-                isAvatarRequest = false;
-                AppFuncs.cropImage(this, data, false);
-            } else if (requestCode == IMAGE_AVATAR) {
-                isAvatarRequest = true;
-                AppFuncs.cropImage(this, data, true);
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                if (data!=null) {
-                    if (resultCode == UCrop.RESULT_ERROR) {
-                        final Throwable cropError = UCrop.getError(data);
-                        AppFuncs.log(cropError.getLocalizedMessage());
-                        return;
-                    }
-                    if (isAvatarRequest) {
-                        uriAvatar = UCrop.getOutput(data);
-                        imgAvatar.setImageURI(uriAvatar);
-                    } else {
-                        uriHeader = UCrop.getOutput(data);
-                        imgHeader.setImageURI(uriHeader);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -572,5 +436,16 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                 LauncherActivity.start(UpdateProfileActivity.this);
             }
         }, null);
+    }
+    @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        if (isAvatar) {
+            uriAvatar = UCrop.getOutput(data);
+            imgAvatar.setImageURI(uriAvatar);
+        } else {
+            uriHeader = UCrop.getOutput(data);
+            imgHeader.setImageURI(uriHeader);
+        }
     }
 }

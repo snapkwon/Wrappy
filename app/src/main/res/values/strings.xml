@@ -352,7 +352,7 @@
     <string name="StartMessaging">Start Messaging</string>
 
     <string name="id_or_username">Input the username</string>
-    <string name="forget_password">Forget Password</string>
+    <string name="forget_password">Reset Password</string>
     <string name="login">Login</string>
     <string name="waiting_dialog">Waiting…</string>
     <string name="search_username">Search username</string>
@@ -442,13 +442,8 @@
     <string name="answer_secret_question">Answer your secret question</string>
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
-    <string name="input_your_email">Input your email</string>
-    <string name="reset_your_password">Reset your password</string>
-    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
-    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
-    <string name="back_to_login">Back to login</string>
-    <string name="resend_link">Resend</string>
-    <string name="hint_your_email">Your Email</string>
+    <string name="input_your_email">Enter your email address to reset password</string>
+    <string name="hint_your_email">Email</string>
     <string name="reset_password">Reset Password</string>
     <string name="new_group">New Group</string>
     <string name="about_us">About us</string>
@@ -467,7 +462,7 @@
     <string name="btn_submit">Submit</string>
     <string name="btn_update">Update</string>
     <string name="hint_answer">Answer</string>
-    <string name="choose_secret_question">Choose your secret question</string>
+    <string name="choose_secret_question">Choose your security question</string>
     <string name="choose_new_secret_question">Choose your new secret question</string>
     <string name="skip">SKIP</string>
     <string name="complete">COMPLETE</string>
@@ -549,11 +544,24 @@
     <string name="input_password">Input  new password</string>
     <string name="input_new_password">Input your new password</string>
     <string name="input_repeat_password">Confirm new password</string>
-    <string name="fullname">Full Name</string>
+        <string name="fullname">Nickname</string>
     <string name="info">Info</string>
     <string name="wrong_format_password">Password must have at least 8 characters. Inlcluding 1 Uppercase, 1 lowercase and 1 number.</string>
     <string name = "password_is_empty">password cannot be empty</string>
     <string name = "pattern_coutdown">Draw your pattern\n\nin %s seconds </string>
     <string name = "passcode_coutdown">Input your passcode\n\nin %s seconds </string>
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">A reset link has been sent to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+    <string name="local_time_format">MMM dd, yyyy</string>
+    <string name="promotion_format">%1$s from <b>%2$s</b> level (%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

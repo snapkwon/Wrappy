@@ -3,9 +3,9 @@
     <string name="error_question_duplicate">You cannot choose the same security question</string>
     <string name="error_empty_answer">Your answer of question %d is empty</string>
     <string name="error_min_length_answer">Your answer of question %d must have at least 3 letter</string>
-    <string name="error_duplicate_answer">Your answers must be different</string>
+    <string name="error_duplicate_answer">Your answers are duplicated</string>
     <string name="error_invalid_text_length">Username must be at least 6 characters</string>
-    <string name="error_invalid_characters">Username cannot contain special characters</string>
+    <string name="error_invalid_characters">Username can not contain special characters</string>
     <string name="error_empty_phone">Please input the mobile phone number</string>
     <string name="error_empty_email">Please input email address</string>
     <string name="error_empty_passcode">Please input the passcode</string>
@@ -46,7 +46,7 @@
     <string name="error_8029">Report already exists</string>
     <string name="error_8030">Report does not exist</string>
     <string name="error_8031">User does not exist</string>
-    <string name="error_8032">Create user on the xmpp fail</string>
+    <string name="error_8032">Create new user failed. Please try again.</string>
     <string name="error_8033">Oops! You answered the wrong security question</string>
     <string name="error_8034">The username or pattern is incorrect</string>
     <string name="error_8035">The username or password is incorrect. You have only 2 times to input again.</string>
@@ -54,5 +54,6 @@
     <string name="error_8037">The username or password is incorrect. Your account is locked in 3 hours.</string>
     <string name="error_8038">The username or password is incorrect. Your account has been blocked.</string>
     <string name="error_unknown">An error occurred, please try again later.</string>
+    <string name="error_empty_nickname">Your Nickname must have at least 1 character</string>
 
 </resources>

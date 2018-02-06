@@ -713,37 +713,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    public  List<Contact> getMembers()
-    {
-        ImEntity participant = mChatSession.getParticipant();
-        List<Contact> members = new ArrayList<>();
-        if (mIsGroupChat) {
-
-            ChatGroup group = (ChatGroup) participant;
-      //  List<String> members = new ArrayList<>();
-       // ImEntity participant = mChatSession.getParticipant();
-
-        //    Contact contact = (Contact) participant;
-          //  ChatGroup group = getGroupManager().getChatGroup(contact.getAddress());
-            /**
-             List<Contact> members = group.getMembers();
-             for (Contact c : members) {
-             if (username.equals(c.getAddress().getAddress())) {
-
-             return c.getAddress().getResource();
-
-             }
-             }**/
-          /*  for(Contact groups : group.getMembers() )
-            {
-                members.add(groups.getName());
-            }*/
-            return group.getMembers();
-        }
-        return members;
-
-    }
-
     public void notifycationMemberLeft(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {
@@ -763,6 +732,11 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 group.notifyMemberLeft(groupMember);
             }
         }
+    }
+
+    @Override
+    public List<Contact> getMembers() throws RemoteException {
+        return null;
     }
 
     private String getNickName(String username) {
@@ -975,7 +949,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
     }
 
     private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(jid), new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
                 Debug.d(s);
@@ -1363,7 +1337,7 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
 
         private void updateUnknownFriendInfoInGroup(final Uri uri, final String bareAddress, String jid) {
-            RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
+            RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(jid), new RestAPIListener() {
                 @Override
                 public void OnComplete(String s) {
                     Debug.d(s);
