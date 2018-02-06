@@ -335,7 +335,7 @@
     <string name="StartMessaging">Start Messaging</string>
 
     <string name="id_or_username">Input the username</string>
-    <string name="forget_password">Forget Password</string>
+    <string name="forget_password">Reset Password</string>
     <string name="login">Login</string>
     <string name="waiting_dialog">Waiting…</string>
     <string name="search_username">Search username</string>
@@ -425,8 +425,8 @@
     <string name="answer_secret_question">Answer your secret question</string>
     <string name="your_answer">Your Answer</string>
     <string name="btn_next">Next</string>
-    <string name="input_your_email">Input your email</string>
-    <string name="hint_your_email">Your Email</string>
+    <string name="input_your_email">Enter your email address to reset password</string>
+    <string name="hint_your_email">Email</string>
     <string name="reset_password">Reset Password</string>
     <string name="new_group">New Group</string>
     <string name="about_us">About us</string>
@@ -520,7 +520,7 @@
     <string name="info">Info</string>
 
     <string name="reset_your_password">Reset your password</string>
-    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="receive_password_via_email">A reset link has been sent to the email address associated with your account.</string>
     <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
     <string name="back_to_login">Back to login</string>
     <string name="resend_link">Resend</string>
