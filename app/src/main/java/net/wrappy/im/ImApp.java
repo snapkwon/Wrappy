@@ -76,7 +76,6 @@ import net.wrappy.im.service.StatusBarNotifier;
 import net.wrappy.im.service.adapters.ChatSessionManagerAdapter;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.LauncherActivity;
-import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.ui.legacy.ImPluginHelper;
 import net.wrappy.im.ui.legacy.ProviderDef;
 import net.wrappy.im.ui.legacy.adapter.ConnectionListenerAdapter;
@@ -136,10 +135,6 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static final String DEFAULT_XMPP_RESOURCE = "ChatSecureZom";
     public static final int DEFAULT_XMPP_PRIORITY = 20;
     public static final String DEFAULT_XMPP_OTR_MODE = "auto";
-
-    public final static String URL_UPDATER = "https://raw.githubusercontent.com/zom/Zom-Android/master/appupdater.xml";
-
-    public final static String ZOM_SERVICES_ADDRESS = "zombot@home.zom.im";
 
     private Locale locale = null;
 
@@ -1311,71 +1306,54 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static void updateContact(ContentValues originValues, String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
         // update the server
         if (sImApp != null && wpKMemberDto != null && mConn != null) {
+            String correctAddress = address.toLowerCase();
             String name = wpKMemberDto.getIdentifier();
             String email = wpKMemberDto.getEmail();
             String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
-            try {
-                ContentUris.appendId(builder, mConn.getProviderId());
-                ContentUris.appendId(builder, mConn.getAccountId());
-                mConn.getContactListManager().setContactName(address, name);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            ContentUris.appendId(builder, sImApp.getDefaultProviderId());
+            ContentUris.appendId(builder, sImApp.getDefaultAccountId());
             // update locally
-            String selection = Imps.Contacts.USERNAME + "='" + address + "'";
-            String[] selectionArgs = {address};
+            String selection = Imps.Contacts.USERNAME + "=?";
+            String[] selectionArgs = {correctAddress};
             ContentValues values = new ContentValues();
             if (originValues != null) {
                 values = originValues;
             }
-            //values.put(Imps.Contacts.NICKNAME, name);
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
-            if (!TextUtils.isEmpty(fullname)) {
-                values.put(Imps.Contacts.NICKNAME,fullname);
-            } else {
-                if (!TextUtils.isEmpty(name)) {
-                    values.put(Imps.Contacts.NICKNAME,name);
-                }
+            if (TextUtils.isEmpty(name)) {
+                name = new XmppAddress(correctAddress).getUser();
             }
+            values.put(Imps.Contacts.NICKNAME,fullname);
 
             if (!values.containsKey(Imps.Contacts.TYPE)) {
                 values.put(Imps.Contacts.TYPE, Imps.ContactsColumns.TYPE_NORMAL);
             }
 
-            String avatarReference = "";
-            String bannerReference = "";
-            String hash = "";
-            if (wpKMemberDto.getAvatar() != null) {
-                avatarReference = wpKMemberDto.getAvatar().getReference();
-                hash = DatabaseUtils.generateHashFromAvatar(avatarReference);
-            }
-            if (wpKMemberDto.getBanner() != null) {
-                bannerReference = wpKMemberDto.getBanner().getReference();
-            }
-
             Uri queryUri = builder.build();
             Cursor cursor = sImApp.getContentResolver().query(queryUri, new String[]{Imps.Contacts._ID},
-                    selection, null, null);
+                    selection, selectionArgs, null);
             boolean isUpdated = false;
+
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     long contactId = cursor.getLong(0);
                     Uri uri = ContentUris.withAppendedId(Imps.Contacts.CONTENT_URI, contactId);
                     isUpdated = sImApp.getContentResolver().update(uri, values, null, null) > 0;
                 } else {
-                    sImApp.getContentResolver().delete(queryUri, selection, null);
+                    sImApp.getContentResolver().delete(queryUri, selection, selectionArgs);
                 }
                 cursor.close();
             }
             if (!isUpdated) {
-                values.put(Imps.Contacts.USERNAME, address);
+                values.put(Imps.Contacts.USERNAME, correctAddress);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
-
-            DatabaseUtils.insertAvatarBlob(sImApp.getContentResolver(), Imps.Avatars.CONTENT_URI, sImApp.getDefaultProviderId(), sImApp.getDefaultAccountId(), avatarReference, bannerReference, hash, address);
+            String avatar = wpKMemberDto.getAvatar()!=null? wpKMemberDto.getAvatar().getReference() : "";
+            String banner = wpKMemberDto.getBanner()!=null? wpKMemberDto.getBanner().getReference() : "";
+            Imps.Avatars.updateAvatarBannerToDB(address,avatar,banner);
         }
     }
 

@@ -79,6 +79,7 @@ import net.wrappy.im.model.WpKChatGroup;
 import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.model.WpKIcon;
 import net.wrappy.im.model.WpKMemberDto;
+import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.Store;
 import net.wrappy.im.service.IImConnection;
@@ -302,12 +303,12 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                 } else {
                     Cursor cursor = (Cursor) mAdapter.getItem(position);
-                    Intent data = new Intent();
-                    data.putExtra(BundleKeyConstant.RESULT_KEY, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
-                    data.putExtra(BundleKeyConstant.PROVIDER_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
-                    data.putExtra(BundleKeyConstant.ACCOUNT_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
-
-                    setResult(RESULT_OK, data);
+                    String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                    String nickName = address.split("@")[0];
+                    long chatId = Imps.Contacts.getContactIdFromAddress(getContentResolver(),address);
+                    String referenceAvatar = Imps.Avatars.getAvatar(getContentResolver(),address);
+                    Intent intent = ConversationDetailActivity.getStartIntent(ContactsPickerActivity.this,chatId,nickName,referenceAvatar);
+                    startActivity(intent);
                     finish();
                 }
             }
@@ -373,7 +374,6 @@ public class ContactsPickerActivity extends BaseActivity {
 
             if (error.isEmpty()) {
                 AppFuncs.showProgressWaiting(this);
-                isClickedMenu = true;
                 if (uri != null) {
                     RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
                         @Override
@@ -461,18 +461,28 @@ public class ContactsPickerActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        try {
+            ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+            groupFragment.updateAvatar(data);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
 
         if (response == RESULT_OK) {
-            try {
-                ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
-                groupFragment.onActivityResult(request, response, data);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+//            try {
+//                ContactsPickerGroupFragment groupFragment = (ContactsPickerGroupFragment) getFragmentManager().findFragmentById(R.id.containerGroup);
+//                groupFragment.onActivityResult(request, response, data);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
             if (request == REQUEST_CODE_ADD_CONTACT) {
                 String newContact = data.getExtras().getString(BundleKeyConstant.RESULT_KEY);
 
@@ -573,7 +583,7 @@ public class ContactsPickerActivity extends BaseActivity {
     }
 
     private void updateUnknownFriendInfoInGroup(final Uri uri, String jid) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, jid), new RestAPIListener() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(jid), new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
                 Debug.d(s);
@@ -591,6 +601,13 @@ public class ContactsPickerActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isClickedMenu) {
+            isClickedMenu = true;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickedMenu = false;
+                }
+            }, 1000);
             switch (item.getItemId()) {
                 case android.R.id.home:
                     onBackPressed();
@@ -600,12 +617,12 @@ public class ContactsPickerActivity extends BaseActivity {
                         multiFinish();
                     else {
                         if (type == 1) {
-                            String usersinvite = "";
+                           // String usersinvite = "";
                             ArrayList<String> users = new ArrayList();
                             for (int i = 0; i < mSelection.size(); i++) {
                                 SelectedContact contact = mSelection.valueAt(i);
-                                users.add(contact.nickname);
-                                if(usersinvite.isEmpty())
+                                users.add(contact.getUsername());
+                               /* if(usersinvite.isEmpty())
                                 {
                                     usersinvite = contact.nickname;
 
@@ -613,7 +630,7 @@ public class ContactsPickerActivity extends BaseActivity {
                                 else
                                 {
                                     usersinvite = usersinvite + "-" + contact.nickname;
-                                }
+                                }*/
                             }
                             Gson gson = new Gson();
                             String jsonObject = gson.toJson(users);
@@ -652,13 +669,6 @@ public class ContactsPickerActivity extends BaseActivity {
                     startActivityForResult(i, REQUEST_CODE_ADD_CONTACT);
                     return true;
             }
-            isClickedMenu = true;
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isClickedMenu = false;
-                }
-            }, 500);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -745,13 +755,13 @@ public class ContactsPickerActivity extends BaseActivity {
 
                         long providerId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
                         long accountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
-                        String account = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
                         final String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                        String jid = new XmppAddress(address).getUser();
 
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListener(ContactsPickerActivity.this) {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, jid), new RestAPIListener(ContactsPickerActivity.this) {
                             @Override
                             public void OnComplete(String s) {
                                 ImApp.removeContact(getContentResolver(), address, conn);
@@ -869,11 +879,34 @@ public class ContactsPickerActivity extends BaseActivity {
             isenablealphabet = check;
         }
 
+        private void updateHeaders(Cursor cursor) {
+            charSection.clear();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
+                    if (TextUtils.isEmpty(name)) {
+                        String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                        name = new XmppAddress(address).getUser();
+                    }
+                    if (!TextUtils.isEmpty(name)) {
+                        charSection.add(String.valueOf(name.charAt(0)).toUpperCase());
+                    } else {
+                        charSection.add("");
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
         @Override
         public boolean hasStableIds() {
             return true;
         }
 
+        @Override
+        public void changeCursor(Cursor cursor) {
+            updateHeaders(cursor);
+            super.changeCursor(cursor);
+        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -891,8 +924,6 @@ public class ContactsPickerActivity extends BaseActivity {
             ContactViewHolder holder = v.getViewHolder();
             if (holder == null) {
                 holder = new ContactViewHolder(v);
-
-                // holder.mMediaThumb = (ImageView)findViewById(R.id.media_thumbnail);
                 v.setViewHolder(holder);
             }
             v.bind(holder, cursor, mSearchString, false);
@@ -1014,20 +1045,11 @@ public class ContactsPickerActivity extends BaseActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             mAdapter.changeCursor(newCursor);
-            mAdapter.charSection.clear();
-            if (newCursor.moveToFirst()) {
-                do {
-                    mAdapter.charSection.add(String.valueOf(newCursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME).charAt(0)).toUpperCase());
-                } while (newCursor.moveToNext());
-            }
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
             mAdapter.swapCursor(null);
-
-
         }
 
     }

@@ -265,6 +265,9 @@ public class ConversationView implements OnHandleMessage {
     private boolean istranslate;
     private boolean isSearchMode;
 
+    //Check to avoid re-query many times
+    private boolean mQuerying = false;
+
     private static final int VIEW_TYPE_CHAT = 1;
     public static final int VIEW_TYPE_INVITATION = 2;
     private static final int VIEW_TYPE_SUBSCRIPTION = 3;
@@ -1186,7 +1189,7 @@ public class ConversationView implements OnHandleMessage {
             }
         });
 
-          mComposeMessage.setOnKeyListener(new View.OnKeyListener() {
+        mComposeMessage.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -1652,16 +1655,17 @@ public class ConversationView implements OnHandleMessage {
     private int loaderId = 100001;
 
     private synchronized void startQuery(long chatId) {
+        if (!mQuerying) {
+            mQuerying = true;
+            mUri = Imps.Messages.getContentUriByThreadId(chatId);
 
-        mUri = Imps.Messages.getContentUriByThreadId(chatId);
+            mLoaderManager = mActivity.getSupportLoaderManager();
 
-        mLoaderManager = mActivity.getSupportLoaderManager();
-
-        if (mLoaderManager == null)
-            mLoaderManager.initLoader(loaderId++, null, new MyLoaderCallbacks());
-        else
-            mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
-
+            if (mLoaderManager == null)
+                mLoaderManager.initLoader(loaderId++, null, new MyLoaderCallbacks());
+            else
+                mLoaderManager.restartLoader(loaderId++, null, new MyLoaderCallbacks());
+        }
     }
 
     class MyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -1694,6 +1698,7 @@ public class ConversationView implements OnHandleMessage {
                 }
 
             }
+            mQuerying = false;
 
         }
 
@@ -1706,18 +1711,20 @@ public class ConversationView implements OnHandleMessage {
     }
 
     void scheduleRequery(long interval) {
+        if (!mQuerying) {
+            mQuerying = true;
 
+            if (mRequeryCallback == null) {
+                mRequeryCallback = new RequeryCallback();
+            } else {
+                mHandler.removeCallbacks(mRequeryCallback);
+            }
 
-        if (mRequeryCallback == null) {
-            mRequeryCallback = new RequeryCallback();
-        } else {
-            mHandler.removeCallbacks(mRequeryCallback);
+            if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
+                Debug.d("scheduleRequery");
+            }
+            mHandler.postDelayed(mRequeryCallback, interval);
         }
-
-        if (Log.isLoggable(ImApp.LOG_TAG, Log.DEBUG)) {
-            Debug.d("scheduleRequery");
-        }
-        mHandler.postDelayed(mRequeryCallback, interval);
 
 
     }
@@ -2103,7 +2110,6 @@ public class ConversationView implements OnHandleMessage {
         }
 
         if (this.isGroupChat()) {
-            mComposeMessage.setHint(R.string.compose_hint);
         } else if (mCurrentChatSession != null) {
             IOtrChatSession otrChatSession = null;
 
@@ -2135,7 +2141,6 @@ public class ConversationView implements OnHandleMessage {
                 mIsStartingOtr = false; //it's started!
 
                 if (mSendButton.getVisibility() == View.GONE) {
-                    mComposeMessage.setHint(R.string.compose_hint);
                     mSendButton.setImageResource(R.drawable.ic_send);
                 }
 
@@ -2150,15 +2155,10 @@ public class ConversationView implements OnHandleMessage {
             } else if (mIsStartingOtr) {
 
             } else if (mLastSessionStatus == SessionStatus.PLAINTEXT) {
-
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
-
-
             } else if (mLastSessionStatus == SessionStatus.FINISHED) {
 
                 mSendButton.setImageResource(R.drawable.ic_send_holo_light);
-                mComposeMessage.setHint(R.string.compose_hint);
             }
         }
     }
@@ -2637,6 +2637,7 @@ public class ConversationView implements OnHandleMessage {
         private int mDeliveredColumn;
         private int mMimeTypeColumn;
         private int mIdColumn;
+        private int mUsernameColumn;
 
         class BodyTranslate {
             public boolean mIstranslate;
@@ -2900,14 +2901,17 @@ public class ConversationView implements OnHandleMessage {
 
             int messageType = cursor.getInt(mTypeColumn);
             final String nickname = isGroupChat() ? cursor.getString(mNicknameColumn) : mRemoteNickname;
-            final String address = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mActivity.getContentResolver(), nickname) : mRemoteAddress;
-
-
+            String addressTemp = isGroupChat() && !TextUtils.isEmpty(nickname) ? Imps.Contacts.getAddressFromNickname(mContext.getContentResolver(),nickname) : mRemoteAddress;
+            if (TextUtils.isEmpty(addressTemp)) {
+                addressTemp = nickname+ Constant.EMAIL_DOMAIN;
+            }
+            final String address = addressTemp;
             final String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             final String body = cursor.getString(mBodyColumn);
-            if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
-                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+            if (!istranslate || cursor.getString(mMimeTypeColumn) != null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
 
                 viewHolder.btntranslate.setVisibility(View.GONE);
                 viewHolder.txttranslate.setVisibility(View.GONE);
@@ -2915,7 +2919,7 @@ public class ConversationView implements OnHandleMessage {
             } else {
                 viewHolder.btntranslate.setEnabled(true);
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
-                if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                if (bodytranslate.get(viewHolder.getPos()).mIstranslate) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         String translate = "";
@@ -2992,13 +2996,13 @@ public class ConversationView implements OnHandleMessage {
                 @Override
                 public void onClick(View view) {
                     if (finalMessageType == Imps.MessageType.INCOMING) {
-                        Intent intent = new Intent(mContext, ProfileActivity.class);
                         String correctAddress = address;
-                        if (TextUtils.isEmpty(address))
-                            correctAddress = nickname + Constant.EMAIL_DOMAIN;
-                        intent.putExtra("address", correctAddress);
-                        intent.putExtra("nickname", nickname);
-                        mContext.startActivity(intent);
+                        if (!TextUtils.isEmpty(address)) {
+                            if (address.contains("@")) {
+                                correctAddress = address.split("@")[0];
+                            }
+                            ProfileActivity.start(mActivity,correctAddress);
+                        }
                     } else {
                         goMyPage();
                     }
@@ -3568,7 +3572,6 @@ public class ConversationView implements OnHandleMessage {
         intent.putExtra("provider", mProviderId);
         intent.putExtra("isGroupChat", mContactType);
         intent.putExtra("nickname", mRemoteNickname);
-
         //intent.putExtra("groupid", mActivity.getGroupDto());
         mActivity.startActivityForResult(intent, ConversationDetailActivity.REQUEST_FROM_SETTING);
     }

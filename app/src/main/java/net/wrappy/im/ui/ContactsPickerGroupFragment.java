@@ -124,10 +124,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
             public void onSelectBottomSheetCell(int index) {
                 switch (index) {
                     case 1:
-                        AppFuncs.openCamera(getActivity(), IMAGE_AVARTA);
+                        AppFuncs.openCamera(getActivity(), true);
                         break;
                     case 2:
-                        AppFuncs.openGallery(getActivity(), IMAGE_AVARTA);
+                        AppFuncs.openGallery(getActivity(), true);
                         break;
                     default:
                 }
@@ -135,25 +135,34 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         }).show();
     }
 
+    public void updateAvatar(Intent data) {
+        if (data!=null) {
+            resultUri = UCrop.getOutput(data);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (requestCode == IMAGE_AVARTA) {
-
-                AppFuncs.cropImage(getActivity(), data, true);
-
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                if (data!=null) {
-                    resultUri = UCrop.getOutput(data);
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                    GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            if (requestCode == IMAGE_AVARTA) {
+//
+//                AppFuncs.cropImage(getActivity(), data, true);
+//
+//            } else if (requestCode == UCrop.REQUEST_CROP) {
+//                if (data!=null) {
+//                    resultUri = UCrop.getOutput(data);
+//                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+//                    GlideHelper.loadBitmap(getActivity(), btnGroupPhoto, resultUri.toString(), true);
+//                }
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
     }
 
     public String getGroupName() {
@@ -169,7 +178,10 @@ public class ContactsPickerGroupFragment extends Fragment implements View.OnClic
         try {
             if (cursor != null && cursor.moveToFirst()) { //make sure you got results, and move to first row
                 do {
-                    String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME); //column 1 for the current row
+                    String mName = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME); //column 1 for the current row
+                    if (mName.contains("@")) {
+                        mName = mName.split("@")[0];
+                    }
                     arrListMember.add(mName);
                 } while (cursor.moveToNext()); //move to next row in the query result
             }

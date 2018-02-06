@@ -100,11 +100,6 @@ public class ChatGroup extends ImEntity {
         return member;
     }
 
-    public ArrayList<Contact> getGMembers() {
-
-       return new ArrayList(mMembers.values());
-    }
-
     /**
      * Notifies that a contact has joined into this group.
      *

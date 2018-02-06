@@ -408,7 +408,7 @@ public class GroupDisplayActivity extends BaseActivity {
     }
 
     private void updateUnknownFriendInfoInGroup(final GroupMemberDisplay member) {
-        RestAPI.GetDataWrappy(ImApp.sImApp, String.format(RestAPI.GET_MEMBER_INFO_BY_JID, new XmppAddress(member.nickname).getUser()), new RestAPIListener() {
+        RestAPI.GetDataWrappy(ImApp.sImApp, RestAPI.getMemberByIdUrl(member.nickname), new RestAPIListener() {
             @Override
             public void OnComplete(String s) {
                 Debug.d(s);
@@ -597,10 +597,8 @@ public class GroupDisplayActivity extends BaseActivity {
             IChatSessionManager manager = mConn.getChatSessionManager();
             IChatSession session = manager.getChatSession(mAddress);
 
-
-            if (session == null) {
-                session = manager.createMultiUserChatSession(mAddress,mName, null,false);
-            }
+            if (session == null)
+                session = manager.createChatSession(mAddress, true);
 
             if (session != null) {
                 session.leave();

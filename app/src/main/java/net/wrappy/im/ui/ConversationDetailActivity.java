@@ -86,6 +86,7 @@ import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.ErrorCode;
 import net.wrappy.im.helper.FileUtil;
 import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
@@ -99,6 +100,7 @@ import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
+import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.widgets.LetterAvatar;
@@ -109,6 +111,7 @@ import net.wrappy.im.util.PopupUtils;
 import net.wrappy.im.util.PreferenceUtils;
 import net.wrappy.im.util.SecureMediaStore;
 import net.wrappy.im.util.SystemServices;
+import net.wrappy.im.util.Utils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -134,7 +137,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     private AddContactAsyncTask task;
 
-   // private WpKChatGroupDto chatGroupDto;
+    // private WpKChatGroupDto chatGroupDto;
 
     boolean isRegisterNotificationCenter;
 
@@ -143,6 +146,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         intent.putExtra(BundleKeyConstant.CONTACT_ID_KEY, chatId);
         intent.putExtra(BundleKeyConstant.NICK_NAME_KEY, nickname);
         intent.putExtra(BundleKeyConstant.REFERENCE_KEY, reference);
+        intent.putExtra(BundleKeyConstant.ADDRESS_KEY, nickname + Constant.EMAIL_DOMAIN);
         return intent;
     }
 
@@ -155,8 +159,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         return intent;
     }
 
-   // public WpKChatGroupDto getGroupDto() {
-   //     return chatGroupDto;
+    // public WpKChatGroupDto getGroupDto() {
+    //     return chatGroupDto;
     //}
 
 
@@ -198,8 +202,10 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private MyHandler mHandler;
 
     private TextView txtStatus;
+    private TextView txtTitleActionBar;
 
     WpKChatGroupDto wpKChatGroupDto;
+    IImConnection mConn;
 
     @Override
     public void onHandle(Message msg) {
@@ -208,9 +214,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-        if (id == NotificationCenter.changeAvatarGroupFromSetting) {
-            setCustomActionBar(mConvoView.isGroupChat());
-        } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
+        if (id == NotificationCenter.addSearchBarInDetailConverasation) {
             addSearchViewInActionBar();
         }
         if (id == NotificationCenter.updateConversationDetail) {
@@ -383,13 +387,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                     //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
                 }
             }
-            /*  }
-            else
-            {
-                int padding = 24;
-                LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, "test", padding);
-                getSupportActionBar().setIcon(lavatar.getCurrent());
-            }*/
         }
     }
 
@@ -431,34 +428,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         mPrettyTime = new PrettyTime(getCurrentLocale());
 
-//        setSupportActionBar(mToolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_proteusion));
-
-//        applyStyleForToolbar();
-
-        Intent intent = getIntent();
-        processIntent(intent);
-
-
-        collapseToolbar();
-
-       /* getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );*/
-      /*  String address = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
-
-        if (mConvoView.isGroupChat()) {
-            String[] separated = address.split("@");
-
-            RestAPI.GetDataWrappy(ConversationDetailActivity.this, String.format(RestAPI.GET_GROUP_BY_XMPP_ID, separated[0]), new RestAPIListener(this) {
-                @Override
-                public void OnComplete(int httpCode, String error, String s) {
-                    chatGroupDto = new Gson().fromJson(s, WpKChatGroupDto.class);
-                }
-            });
-        }*/
 
         mConvoView.getHistoryView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -478,10 +447,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         });
 
+        setCustomActionBar(mConvoView.isGroupChat());
+        processIntent(getIntent());
+
         // set background for this screen
         loadBitmapPreferences();
-        setCustomActionBar(mConvoView.isGroupChat());
-//        updateStatusAvatar(mConvoView.isGroupChat());
     }
 
     @Override
@@ -500,7 +470,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 break;
             case R.drawable.ic_camera:
                 PopupUtils.showCustomDialog(this, getString(R.string.comming_soon), getString(R.string.comming_soon), R.string.ok, null);
-                //mConvoView.startVideoConference();
                 break;
             case R.drawable.ic_info_outline_white_24dp:
                 mConvoView.startSettingScreen();
@@ -514,9 +483,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         ImageView avatar = (ImageView) view.findViewById(R.id.chat_room_avatar);
         ImageView status = (ImageView) view.findViewById(R.id.chat_room_status);
-        TextView txt = (TextView) view.findViewById(R.id.chat_room_nickname);
+        txtTitleActionBar = (TextView) view.findViewById(R.id.chat_room_nickname);
 
-        String avarImg = Imps.Avatars.getAvatar(getContentResolver(),getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
+        String avarImg = Imps.Avatars.getAvatar(getContentResolver(), getIntent().getStringExtra(BundleKeyConstant.ADDRESS_KEY));
 
         if (!TextUtils.isEmpty(avarImg)) {
             mReference = avarImg;
@@ -529,18 +498,20 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
             status.setVisibility(View.GONE);
             if (wpKChatGroupDto != null) {
-                txt.setText(wpKChatGroupDto.getName());
+                txtTitleActionBar.setText(wpKChatGroupDto.getName());
             } else {
-                txt.setText(mNickname);
+                txtTitleActionBar.setText(mNickname);
             }
         } else {
             if (TextUtils.isEmpty(mReference)) {
                 GlideHelper.loadAvatarFromNickname(this, avatar, mNickname);
             } else {
-                GlideHelper.loadBitmapToCircleImage(this, avatar, getAvatarUrl(mReference));
+                GlideHelper.loadBitmapToCircleImageDefault(this, avatar, getAvatarUrl(mReference), mNickname);
             }
             setAvatarStatus(status);
-            txt.setText(mNickname);
+            String fName = Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress);
+            if (!Utils.setTextForView(txtTitleActionBar,fName))
+                Utils.setTextForView(txtTitleActionBar,mNickname);
         }
 
         addCustomViewToActionBar(view);
@@ -587,90 +558,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         mHandler.sendEmptyMessage(1);
     }
 
-
-    /*public void applyStyleForToolbar() {
-        getSupportActionBar().setTitle(mConvoView.getTitle());
-        String name = mConvoView.getTitle();
-        if (TextUtils.isEmpty(name) && !TextUtils.isEmpty(mNickname)) {
-            mConvoView.setRemoteNickname(mNickname);
-        }
-        txtStatus.setText(String.format(getString(R.string.message_waiting_for_friend), mConvoView.getTitle()));
-        mApp = ((ImApp) getApplicationContext());
-        Drawable avatar = null;
-        try {
-
-            avatar = DatabaseUtils.getAvatarFromAddress(mApp.getContentResolver(), mConvoView.getTitle() + Constant.EMAIL_DOMAIN, ImApp.DEFAULT_AVATAR_WIDTH, ImApp.DEFAULT_AVATAR_HEIGHT, true);
-        } catch (DecoderException e) {
-            e.printStackTrace();
-        }
-        getSupportActionBar().setLogo(avatar);
-
-        if (mConvoView.getLastSeen() != null) {
-            getSupportActionBar().setSubtitle(new PrettyTime().format(mConvoView.getLastSeen()));
-        } else if (mConvoView.getRemotePresence() != -1) {
-            if (mConvoView.getRemotePresence() == Presence.AWAY)
-                getSupportActionBar().setSubtitle(getString(R.string.presence_away));
-                //   else if (mConvoView.getRemotePresence() == Presence.OFFLINE)
-                //       getSupportActionBar().setSubtitle(getString(R.string.presence_offline));
-            else if (mConvoView.getRemotePresence() == Presence.DO_NOT_DISTURB)
-                getSupportActionBar().setSubtitle(getString(R.string.presence_busy));
-
-        } else {
-            getSupportActionBar().setSubtitle(mConvoView.getSubtitle());
-        }
-
-        //first set font
-//        Typeface typeface = CustomTypefaceManager.getCurrentTypeface(this);
-//
-//        if (typeface != null) {
-//            for (int i = 0; i < mToolbar.getChildCount(); i++) {
-//                View view = mToolbar.getChildAt(i);
-//                if (view instanceof TextView) {
-//                    TextView tv = (TextView) view;
-//                    tv.setTypeface(typeface);
-//                    break;
-//                }
-//            }
-//        }
-
-        //not set color
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int themeColorHeader = settings.getInt("themeColor", -1);
-        int themeColorText = settings.getInt("themeColorText", -1);
-        int themeColorBg = settings.getInt("themeColorBg", -1);
-
-        if (themeColorHeader != -1) {
-
-            if (themeColorText == -1)
-                themeColorText = Utils.getContrastColor(themeColorHeader);
-
-            if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setNavigationBarColor(themeColorHeader);
-                getWindow().setStatusBarColor(themeColorHeader);
-                getWindow().setTitleColor(themeColorText);
-            }
-
-            //      appBarLayout.setBackgroundColor(themeColorHeader);
-            //   collapsingToolbar.setBackgroundColor(themeColorHeader);
-//            mToolbar.setBackgroundColor(themeColorHeader);
-//            mToolbar.setTitleTextColor(themeColorText);
-
-        }
-
-        if (themeColorBg != -1) {
-            getWindow().setBackgroundDrawable(new ColorDrawable(themeColorBg));
-
-            View viewInput = findViewById(R.id.inputLayout);
-            viewInput.setBackgroundColor(themeColorBg);
-
-            if (themeColorText != -1) {
-                mConvoView.mComposeMessage.setTextColor(themeColorText);
-                mConvoView.mComposeMessage.setHintTextColor(themeColorText);
-            }
-        }
-
-    }*/
-
     MyLoaderCallbacks loaderCallbacks;
 
     private void processIntent(Intent intent) {
@@ -681,6 +568,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             mChatId = intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY, -1);
         mAddress = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
         mNickname = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+        if (TextUtils.isEmpty(mNickname)) {
+            mNickname = mAddress.split("@")[0];
+        }
         mReference = intent.getStringExtra(BundleKeyConstant.REFERENCE_KEY);
 
         if (mChatId == -1) {
@@ -699,19 +589,34 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         RestAPI.PostDataWrappy(this, null, String.format(RestAPI.POST_ADD_CONTACT, mNickname), new RestAPIListener(this) {
             @Override
             public void OnComplete(String s) {
-                mConvoView.updateStatusAddContact();
-                task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
-                    @Override
-                    public void onFinished(Integer code) {
-                        startChat();
-                    }
-                });
-                task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+                addContactXmpp();
+            }
 
+            @Override
+            protected void onError(int errorCode) {
+                if (errorCode == ErrorCode.WP_K_MEMBER_ALREADY_EXISTS.getErrorCode())
+                    addContactXmpp();
+                else
+                    super.onError(errorCode);
             }
         });
     }
 
+    private void addContactXmpp() {
+        mConvoView.updateStatusAddContact();
+        task = new AddContactAsyncTask(mApp.getDefaultProviderId(), mApp.getDefaultAccountId()).setCallback(new AddContactAsyncTask.AddContactCallback() {
+            @Override
+            public void onFinished(Integer code) {
+                startChat();
+            }
+
+            @Override
+            public void onError() {
+                // TODO: show refresh button
+            }
+        });
+        task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
+    }
 
     public void startChat() {
         if (loaderCallbacks != null) {
@@ -723,7 +628,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private void startChatting() {
         mConvoView.bindChat(mChatId, mNickname, mReference);
         mConvoView.startListening();
-//        applyStyleForToolbar();
+        setCustomActionBar(mConvoView.isGroupChat());
     }
 
     public void collapseToolbar() {
@@ -741,9 +646,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onResume();
         if (!isRegisterNotificationCenter) {
             isRegisterNotificationCenter = true;
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().addObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().addObserver(this, NotificationCenter.updateConversationDetail);
         }
 
         mConvoView.setSelected(true);
@@ -1376,7 +1281,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
         @Override
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
-
             if (data == null || data.getCount() == 0) {
                 findViewById(R.id.btnAddFriend).performClick();
                 mConvoView.setViewType(ConversationView.VIEW_TYPE_INVITATION);
@@ -1409,8 +1313,8 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         super.onDestroy();
         if (isRegisterNotificationCenter) {
             NotificationCenter.getInstance().removeObserver(this, NotificationCenter.changeAvatarGroupFromSetting);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.addSearchBarInDetailConverasation);
-            NotificationCenter.getInstance().removeObserver(this,NotificationCenter.updateConversationDetail);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.addSearchBarInDetailConverasation);
+            NotificationCenter.getInstance().removeObserver(this, NotificationCenter.updateConversationDetail);
         }
         mConvoView.stopListening();
         if (task != null)

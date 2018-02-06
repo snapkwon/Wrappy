@@ -45,7 +45,6 @@ import android.widget.TextView;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IContactListManager;
@@ -290,17 +289,17 @@ public class ContactListFilterView extends LinearLayout {
     }
 
     protected void setContactNickname(String aAddress, String aNickname, IImConnection conn) {
-        try {
-
-            IContactListManager listManager = conn.getContactListManager();
-            int result = listManager.setContactName(aAddress, aNickname);
-            if (result != ImErrorInfo.NO_ERROR) {
-                AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + result, true); // TODO -LS error handling
-            }
-        } catch (Exception e) {
-            AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + e.getMessage(), true); // TODO -LS error handling
-        }
-        mFilterList.invalidate();
+//        try {
+//
+//            IContactListManager listManager = conn.getContactListManager();
+//            int result = listManager.setContactName(aAddress, aNickname);
+//            if (result != ImErrorInfo.NO_ERROR) {
+//                AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + result, true); // TODO -LS error handling
+//            }
+//        } catch (Exception e) {
+//            AppFuncs.alert(mContext, mContext.getString(R.string.error_prefix) + e.getMessage(), true); // TODO -LS error handling
+//        }
+//        mFilterList.invalidate();
         final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
     }
@@ -337,7 +336,7 @@ public class ContactListFilterView extends LinearLayout {
     }
 
     private IImConnection getConnection(Cursor c) {
-        return ImApp.sImApp.getConnection(c.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER), c.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
+        return ImApp.getConnection(c.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER), c.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
 
     }
 

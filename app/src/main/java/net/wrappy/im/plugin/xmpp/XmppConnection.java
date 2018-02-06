@@ -21,6 +21,7 @@ import net.wrappy.im.model.ChatGroup;
 import net.wrappy.im.model.ChatGroupManager;
 import net.wrappy.im.model.ChatSession;
 import net.wrappy.im.model.ChatSessionManager;
+import net.wrappy.im.model.ConferenceMessage;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ContactList;
 import net.wrappy.im.model.ContactListListener;
@@ -37,6 +38,7 @@ import net.wrappy.im.provider.Imps;
 import net.wrappy.im.provider.ImpsErrorInfo;
 import net.wrappy.im.service.IChatSession;
 import net.wrappy.im.service.adapters.ChatSessionAdapter;
+import net.wrappy.im.ui.conference.ConferenceConstant;
 import net.wrappy.im.ui.legacy.DatabaseUtils;
 import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
@@ -876,7 +878,7 @@ public class XmppConnection extends ImConnection {
             if (mMUCs.containsKey(chatRoomJid)) {
                 MultiUserChat muc = mMUCs.get(chatRoomJid);
                 try {
-                    String reason = group.getName();;
+                    String reason = group.getName();
                     muc.kickParticipant(Resourcepart.from(contact.getName()), reason);
                     // muc.kickParticipant(chatRoomJid, contact.getAddress().getBareAddress());
                 } catch (Exception e) {
@@ -2284,6 +2286,11 @@ public class XmppConnection extends ImConnection {
                         } catch (Exception e) {
                             debug(TAG, "error parsing address", e);
                         }
+                    }
+                    if (isLoadOld && !TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+                        ConferenceMessage conference = new ConferenceMessage(body);
+                        conference.endCall();
+                        rec.setBody(conference.toString());
                     }
 
                 }
