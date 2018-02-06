@@ -755,13 +755,13 @@ public class ContactsPickerActivity extends BaseActivity {
 
                         long providerId = cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER);
                         long accountId = cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT);
-                        String account = cursor.getString(ContactListItem.COLUMN_CONTACT_NICKNAME);
                         final String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
+                        String jid = new XmppAddress(address).getUser();
 
                         ImApp app = (ImApp) getApplication();
                         final IImConnection conn = app.getConnection(providerId, accountId);
 
-                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, account), new RestAPIListener(ContactsPickerActivity.this) {
+                        RestAPI.DeleteDataWrappy(ContactsPickerActivity.this, null, String.format(RestAPI.DELETE_CONTACT, jid), new RestAPIListener(ContactsPickerActivity.this) {
                             @Override
                             public void OnComplete(String s) {
                                 ImApp.removeContact(getContentResolver(), address, conn);
