@@ -1317,17 +1317,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             if (originValues != null) {
                 values = originValues;
             }
-            //values.put(Imps.Contacts.NICKNAME, name);
             if (!TextUtils.isEmpty(email)) {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
-//            if (!TextUtils.isEmpty(fullname)) {
-//                values.put(Imps.Contacts.NICKNAME,fullname);
-//            } else {
-//                if (!TextUtils.isEmpty(name)) {
-//                    values.put(Imps.Contacts.NICKNAME,name);
-//                }
-//            }
             if (TextUtils.isEmpty(name)) {
                 name = new XmppAddress(address).getUser();
             }
@@ -1356,6 +1348,9 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 values.put(Imps.Contacts.USERNAME, address);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
+            String avatar = wpKMemberDto.getAvatar()!=null? wpKMemberDto.getAvatar().getReference() : "";
+            String banner = wpKMemberDto.getBanner()!=null? wpKMemberDto.getBanner().getReference() : "";
+            Imps.Avatars.updateAvatarBannerToDB(address,avatar,banner);
         }
     }
 

@@ -303,17 +303,11 @@ public class ContactsPickerActivity extends BaseActivity {
                     }
                 } else {
                     Cursor cursor = (Cursor) mAdapter.getItem(position);
-//                    Intent data = new Intent();
-//                    data.putExtra(BundleKeyConstant.RESULT_KEY, cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME));
-//                    data.putExtra(BundleKeyConstant.PROVIDER_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_PROVIDER));
-//                    data.putExtra(BundleKeyConstant.ACCOUNT_KEY, cursor.getLong(ContactListItem.COLUMN_CONTACT_ACCOUNT));
-//
-//                    setResult(RESULT_OK, data);
                     String address = cursor.getString(ContactListItem.COLUMN_CONTACT_USERNAME);
                     String nickName = address.split("@")[0];
                     long chatId = Imps.Contacts.getContactIdFromAddress(getContentResolver(),address);
-
-                    Intent intent = ConversationDetailActivity.getStartIntent(ContactsPickerActivity.this,chatId,nickName,"");
+                    String referenceAvatar = Imps.Avatars.getAvatar(getContentResolver(),address);
+                    Intent intent = ConversationDetailActivity.getStartIntent(ContactsPickerActivity.this,chatId,nickName,referenceAvatar);
                     startActivity(intent);
                     finish();
                 }
