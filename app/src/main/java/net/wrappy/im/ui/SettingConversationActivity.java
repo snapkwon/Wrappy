@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -40,7 +39,6 @@ import net.wrappy.im.helper.layout.AppTextView;
 import net.wrappy.im.helper.layout.CircleImageView;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
-import net.wrappy.im.model.Contact;
 import net.wrappy.im.model.ImConnection;
 import net.wrappy.im.model.MemberGroupDisplay;
 import net.wrappy.im.model.WpKChatGroupDto;
@@ -68,6 +66,9 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class SettingConversationActivity extends BaseActivity {
+
+    final String IS_OWNER = "owner";
+
     @BindView(R.id.layout_search_setting)
     LinearLayout mSearchLayout;
     @BindView(R.id.switch_notification)
@@ -105,13 +106,10 @@ public class SettingConversationActivity extends BaseActivity {
     private long mProviderId = -1;
     private long mAccountId = -1;
     private long mLastChatId = -1;
-    private String mLocalAddress = null;
     private int mContactType = -1;
-    private String mName = "";
 
     private IImConnection mConn;
     private IChatSession mSession;
-    private Contact mGroupOwner;
     private boolean mIsOwner = false;
     WpKChatGroupDto wpKChatGroup;
     WpKChatGroupDto wpKChatGroupTemp;
@@ -120,11 +118,9 @@ public class SettingConversationActivity extends BaseActivity {
 
     private MemberGroupAdapter memberGroupAdapter;
     private ArrayList<MemberGroupDisplay> memberGroupDisplays;
-    private Thread mThreadUpdate;
-    private String mAdminGroup;
+    private String mOwnerGroup = "";
 
     private final static int REQUEST_PICK_CONTACT = 100;
-    private final static int REQUEST_CAMERA = 101;
 
     public final static int PICKER_ADD_MEMBER = 1;
 
@@ -136,32 +132,6 @@ public class SettingConversationActivity extends BaseActivity {
     private String oldGroupName = null;
     boolean isLoaded = false;
 
-    private Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            memberGroupAdapter.setData(memberGroupDisplays);
-            if (memberGroupDisplays != null && memberGroupDisplays.size() > 0) {
-                for (MemberGroupDisplay member : memberGroupDisplays) {
-                    if (member.getAffiliation() != null && (member.getAffiliation().contentEquals("owner") ||
-                            member.getAffiliation().contentEquals("admin"))) {
-                        if (mIsOwner) {
-                            mMemberLeaveGroup.setVisibility(View.GONE);
-                            mAdminDeleteGroup.setVisibility(View.VISIBLE);
-                            mAddMemberLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            //btnGroupPhoto.setEnabled(false);
-                            mMemberLeaveGroup.setVisibility(View.VISIBLE);
-                            mAdminDeleteGroup.setVisibility(View.GONE);
-                            mAddMemberLayout.setVisibility(View.GONE);
-                        }
-                        memberGroupAdapter.setAdmin(member.getUsername());
-                        edGroupSubText.setText(String.format(getString(R.string.create_by), TextUtils.isEmpty(member.getNickname())?member.getUsername():member.getNickname()));
-                    }
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting_conversation);
@@ -169,12 +139,9 @@ public class SettingConversationActivity extends BaseActivity {
 
         imApp = (ImApp) getApplication();
         // back button at action bar
-        getSupportActionBar().setTitle(getResources().getString(R.string.setting_screen));
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initActionBarDefault(true,R.string.setting_screen);
         Intent intent = getIntent();
         if (intent != null) {
-            mName = getIntent().getStringExtra("nickname");
             mAddress = getIntent().getStringExtra("address");
             mProviderId = getIntent().getLongExtra("provider", -1);
             mAccountId = getIntent().getLongExtra("account", -1);
@@ -206,103 +173,105 @@ public class SettingConversationActivity extends BaseActivity {
         mMemberGroupsLayout.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         if (isGroup) {
             textLeaveGroup.setText(getString(R.string.setting_delete_and_leave_group));
-            String groupXmppId = mAddress;
-            if (mAddress.contains("@")) {
-                groupXmppId = mAddress.split("@")[0];
-            }
 
-//            edGroupName.setText(Imps.Contacts.getNicknameFromAddress(getContentResolver(), mAddress));
-            String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
-            GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
+            setAvatarGroup();
 
-            memberGroupDisplays = new ArrayList<>();
+            initRecycleView();
 
-            String currentUser = Imps.Account.getUserName(getContentResolver(), mAccountId);
-
-            mGroupRecycleView.setNestedScrollingEnabled(false);
-            mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mAdminGroup, mLastChatId, mSession);
-            mGroupRecycleView.setAdapter(memberGroupAdapter);
-
-            RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
-                @Override
-                public void OnComplete(String s) {
-                    try {
-                        Gson gson = new Gson();
-                        wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
-                        }.getType());
-                        memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
-                        idMemberOwner = wpKChatGroup.getIdentifier();
-
-                        identifiers = wpKChatGroup.getParticipators();
-
-                        edGroupName.setText(wpKChatGroup.getName());
-                        if (wpKChatGroup.getIcon() != null) {
-                            GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
-                            updateAvatar();
-                        }
-                        isLoaded = true;
-                        if (identifiers != null) {
-                           updateMembers();
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
+            getWpkGroupFromServer();
         } else {
             isLoaded = true;
             lnAvatarOfGroup.setVisibility(View.GONE);
         }
     }
 
-    private void updateMembers() {
-        if (mThreadUpdate != null) {
-            mThreadUpdate.interrupt();
-            mThreadUpdate = null;
-        }
-        mThreadUpdate = new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-                ArrayList<MemberGroupDisplay> members = new ArrayList<>();
-
-                for (WpKMemberDto memberDto : identifiers) {
-
-                    MemberGroupDisplay member = new MemberGroupDisplay();
-                    member.setNickname(memberDto.getGiven());
-                    member.setUsername(memberDto.getIdentifier());
-                    if (memberDto.getAvatar() != null) {
-                        member.setReferenceAvatar(memberDto.getAvatar().getReference());
-                    }
-                    if (memberDto.getId() == idMemberOwner) {
-                        member.setAffiliation("owner");
-                        if (member.getUsername().equals(new XmppAddress(ImApp.sImApp.getDefaultUsername()).getUser())) {
-                            mIsOwner = true;
-                        }
-                    } else {
-                        member.setAffiliation("member");
-                    }
-                    members.add(member);
-                }
-
-                memberGroupDisplays.clear();
-                memberGroupDisplays.addAll(members);
-
-                runOnUiThread(mRunnable);
-            }
-        });
-        mThreadUpdate.start();
+    private void setAvatarGroup() {
+        String avatar = Imps.Avatars.getAvatar(getContentResolver(), mAddress);
+        GlideHelper.loadBitmapToImageView(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(avatar));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
+    private void initRecycleView() {
+        memberGroupDisplays = new ArrayList<>();
+        String currentUser = new XmppAddress(ImApp.sImApp.getDefaultUsername()).getUser();
+        mGroupRecycleView.setNestedScrollingEnabled(false);
+        mGroupRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        memberGroupAdapter = new MemberGroupAdapter(this, memberGroupDisplays, currentUser, mOwnerGroup, mLastChatId, mSession);
+        mGroupRecycleView.setAdapter(memberGroupAdapter);
+    }
+
+    private void getWpkGroupFromServer() {
+        String groupXmppId = mAddress;
+        if (mAddress.contains("@")) {
+            groupXmppId = mAddress.split("@")[0];
         }
-        return super.onOptionsItemSelected(item);
+
+        RestAPI.GetDataWrappy(getApplicationContext(), RestAPI.getGroupByXmppId(groupXmppId), new RestAPIListener(SettingConversationActivity.this) {
+            @Override
+            public void OnComplete(String s) {
+                try {
+                    Gson gson = new Gson();
+                    wpKChatGroup = gson.fromJson(s, new TypeToken<WpKChatGroupDto>() {
+                    }.getType());
+                    isLoaded = true;
+                    memberGroupAdapter.setmWpKChatGroupDto(wpKChatGroup);
+
+                    idMemberOwner = wpKChatGroup.getIdentifier();
+
+                    identifiers = wpKChatGroup.getParticipators();
+
+                    edGroupName.setText(wpKChatGroup.getName());
+                    if (wpKChatGroup.getIcon() != null) {
+                        GlideHelper.loadBitmapToCircleImage(getApplicationContext(), btnGroupPhoto, RestAPI.getAvatarUrl(wpKChatGroup.getIcon().getReference()));
+                        updateAvatar();
+                    }
+
+                    if (identifiers != null) {
+                        updateMembers();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void updateMembers() {
+        ArrayList<MemberGroupDisplay> members = new ArrayList<>();
+
+        for (WpKMemberDto memberDto : identifiers) {
+
+            MemberGroupDisplay member = new MemberGroupDisplay();
+            member.setNickname(memberDto.getGiven());
+            member.setUsername(memberDto.getIdentifier());
+            if (memberDto.getAvatar() != null) {
+                member.setReferenceAvatar(memberDto.getAvatar().getReference());
+            }
+            if (memberDto.getId() == idMemberOwner) {
+                member.setAffiliation(IS_OWNER);
+                edGroupSubText.setText(String.format(getString(R.string.create_by), TextUtils.isEmpty(member.getNickname())?member.getUsername():member.getNickname()));
+                if (member.getUsername().equals(new XmppAddress(ImApp.sImApp.getDefaultUsername()).getUser())) {
+                    mIsOwner = true;
+                    memberGroupAdapter.setOwner(member.getUsername());
+                }
+            } else {
+                member.setAffiliation("member");
+            }
+            members.add(member);
+        }
+
+        memberGroupDisplays.clear();
+        memberGroupDisplays.addAll(members);
+        memberGroupAdapter.setData(memberGroupDisplays);
+        if (mIsOwner) {
+            mMemberLeaveGroup.setVisibility(View.GONE);
+            mAdminDeleteGroup.setVisibility(View.VISIBLE);
+            mAddMemberLayout.setVisibility(View.VISIBLE);
+        } else {
+            mMemberLeaveGroup.setVisibility(View.VISIBLE);
+            mAdminDeleteGroup.setVisibility(View.GONE);
+            mAddMemberLayout.setVisibility(View.GONE);
+        }
     }
 
     @OnCheckedChanged({R.id.switch_notification})
@@ -318,7 +287,6 @@ public class SettingConversationActivity extends BaseActivity {
                 case R.id.layout_search_setting:
                     NotificationCenter.getInstance().postNotificationName(NotificationCenter.addSearchBarInDetailConverasation, "");
                     finish();
-//                searchActive();
                     break;
                 case R.id.layout_change_background_setting:
                     mBackgroundFragment = BackgroundBottomSheetFragment.getInstance();
@@ -404,6 +372,33 @@ public class SettingConversationActivity extends BaseActivity {
     }
 
     @Override
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+        super.onResultPickerImage(isAvatar, data, isSuccess);
+        try {
+            Uri uri = UCrop.getOutput(data);
+            btnGroupPhoto.setImageURI(uri);
+            RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                    try {
+                        final String reference = RestAPI.getPhotoReference(result.getResult());
+                        WpKIcon wpKIcon = new WpKIcon();
+                        wpKIcon.setReference(reference);
+                        wpKChatGroupTemp = wpKChatGroup;
+                        wpKChatGroupTemp.setIcon(wpKIcon);
+                        updateData();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    @Override
     protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -424,29 +419,6 @@ public class SettingConversationActivity extends BaseActivity {
                     }
 
                 }
-
-            } else if (requestCode == REQUEST_CAMERA) {
-                AppFuncs.cropImage(this, data, true);
-                NotificationCenter.getInstance().postNotificationName(NotificationCenter.changeAvatarGroupFromSetting, "");
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                Uri uri = UCrop.getOutput(data);
-                btnGroupPhoto.setImageURI(uri);
-                RestAPI.uploadFile(getApplicationContext(), new File(uri.getPath()), RestAPI.PHOTO_AVATAR).setCallback(new FutureCallback<Response<String>>() {
-                    @Override
-                    public void onCompleted(Exception e, Response<String> result) {
-                        try {
-                            AppFuncs.log(result.getResult());
-                            final String reference = RestAPI.getPhotoReference(result.getResult());
-                            WpKIcon wpKIcon = new WpKIcon();
-                            wpKIcon.setReference(reference);
-                            wpKChatGroupTemp = wpKChatGroup;
-                            wpKChatGroupTemp.setIcon(wpKIcon);
-                            updateData();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
 
             }
         }

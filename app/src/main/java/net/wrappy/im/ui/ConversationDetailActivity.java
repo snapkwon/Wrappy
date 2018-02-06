@@ -214,9 +214,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-        if (id == NotificationCenter.changeAvatarGroupFromSetting) {
-            setCustomActionBar(mConvoView.isGroupChat());
-        } else if (id == NotificationCenter.addSearchBarInDetailConverasation) {
+        if (id == NotificationCenter.addSearchBarInDetailConverasation) {
             addSearchViewInActionBar();
         }
         if (id == NotificationCenter.updateConversationDetail) {
