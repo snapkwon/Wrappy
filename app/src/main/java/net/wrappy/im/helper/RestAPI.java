@@ -18,12 +18,14 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.koushikdutta.ion.builder.Builders;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.model.BaseObject;
 import net.wrappy.im.model.WpkToken;
 import net.wrappy.im.model.translate.DetectLanguageResponse;
 import net.wrappy.im.model.translate.TranslateLanguageResponse;
 import net.wrappy.im.provider.Store;
+import net.wrappy.im.util.Constant;
 import net.wrappy.im.util.Debug;
 
 import org.json.JSONException;
@@ -48,8 +50,8 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-      //  private static String root_url = "https://webserv-ci.wrappy.network:8081/8EF640C4836D96CE990B71F60E0EA1DB/";// real
-    private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
+        private static String root_url = BuildConfig.ROOT_URL;// real
+    //private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
     // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
 //    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
 
@@ -113,6 +115,14 @@ public class RestAPI {
 
     private static int NUMBER_REQUEST_TOKEN = 3;
 
+    public static String getMemberByIdUrl(String jid) {
+        String identifer = jid;
+        if (jid.contains(Constant.EMAIL_DOMAIN)) {
+            identifer = jid.split("@")[0];
+        }
+        return String.format(GET_MEMBER_INFO_BY_JID,identifer.toLowerCase());
+    }
+
     public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
         return String.format(POST_VERIFY_CODE_CHANGE_PHONE, user, oldPhone, newPhone);
     }
@@ -126,6 +136,9 @@ public class RestAPI {
     }
 
     public static String getGroupByXmppId(String xmppId) {
+        if (xmppId.contains("@")) {
+            xmppId = xmppId.split("@")[0];
+        }
         return String.format(GET_GROUP_BY_XMPP_ID, xmppId);
     }
 
@@ -133,8 +146,8 @@ public class RestAPI {
         return String.format(POST_LOGIN, user, pass);
     }
 
-    public static String resetPasswordUrl(String hash, String newPass , String newPasscode) {
-        return String.format(POST_RESET_PASSWORD, hash, newPass);
+    public static String resetPasswordUrl(String hash, String newPass) {
+        return String.format(GET_RESET_PASSWORD, hash, newPass);
     }
 
     public static String getHashStringResetPassUrl(String username, String answer01, String answer02, String answer03) {
@@ -148,10 +161,6 @@ public class RestAPI {
     private static String refreshTokenUrl(Context context) {
         String refreshToken = Store.getStringData(context, WpkToken.STORE_REFRESH_TOKEN);
         return String.format(POST_REFRESH_TOKEN, refreshToken);
-    }
-
-    public static String getMemberByIdUrl(String jid) {
-        return String.format(GET_MEMBER_BY_JID, jid.toLowerCase());
     }
 
     public static String getPhotoReference(String s) {
