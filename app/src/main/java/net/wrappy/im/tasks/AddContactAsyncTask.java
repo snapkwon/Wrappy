@@ -8,6 +8,7 @@ import android.util.Log;
 
 import net.wrappy.im.ImApp;
 import net.wrappy.im.crypto.otr.OtrAndroidKeyManagerImpl;
+import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.service.IContactList;
 import net.wrappy.im.service.IContactListManager;
 import net.wrappy.im.service.IImConnection;
@@ -50,7 +51,10 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
     protected void onPostExecute(Integer response) {
         super.onPostExecute(response);
         if (listenner != null) {
-            listenner.onFinished(response);
+            if (response == ImErrorInfo.NO_ERROR)
+                listenner.onFinished(response);
+            else
+                listenner.onError();
         }
     }
 
@@ -117,5 +121,7 @@ public class AddContactAsyncTask extends AsyncTask<String, Void, Integer> {
 
     public interface AddContactCallback {
         void onFinished(Integer code);
+
+        void onError();
     }
 }

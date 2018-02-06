@@ -2909,8 +2909,9 @@ public class ConversationView implements OnHandleMessage {
             final String mimeType = cursor.getString(mMimeTypeColumn);
             int id = cursor.getInt(mIdColumn);
             final String body = cursor.getString(mBodyColumn);
-            if (istranslate == false || cursor.getString(mMimeTypeColumn) != null
-                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
+            if (!istranslate || cursor.getString(mMimeTypeColumn) != null
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.CONFERENCE_PREFIX)
+                    || cursor.getString(mBodyColumn).startsWith(ConferenceConstant.SEND_LOCATION_FREFIX)) {
 
                 viewHolder.btntranslate.setVisibility(View.GONE);
                 viewHolder.txttranslate.setVisibility(View.GONE);
@@ -2918,7 +2919,7 @@ public class ConversationView implements OnHandleMessage {
             } else {
                 viewHolder.btntranslate.setEnabled(true);
                 viewHolder.btntranslate.setVisibility(View.VISIBLE);
-                if (bodytranslate.get(viewHolder.getPos()).mIstranslate == true) {
+                if (bodytranslate.get(viewHolder.getPos()).mIstranslate) {
                     if (bodytranslate.size() > viewHolder.getPos() && !bodytranslate.get(viewHolder.getPos()).mTexttranslate.isEmpty()) {
                         viewHolder.txttranslate.setVisibility(View.VISIBLE);
                         String translate = "";

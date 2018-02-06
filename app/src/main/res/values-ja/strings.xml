@@ -337,7 +337,7 @@
     <string name="id_or_username">ユーザーID</string>
     <string name="forget_password">パターンパスを忘れた</string>
     <string name="login">ログイン</string>
-    <string name="waiting_dialog">待っている…</string>
+    <string name="waiting_dialog">読み込み中…</string>
     <string name="search_username">友達のユーザーIDから追加</string>
     <string name="add_contact">連絡先を追加</string>
     <string name="title_activity_wallet__complete_">Wallet_Complete_Activity</string>

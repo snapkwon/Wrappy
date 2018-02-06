@@ -605,6 +605,11 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             public void onFinished(Integer code) {
                 startChat();
             }
+
+            @Override
+            public void onError() {
+                // TODO: show refresh button
+            }
         });
         task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
     }
