@@ -1306,13 +1306,14 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     public static void updateContact(ContentValues originValues, String address, WpKMemberDto wpKMemberDto, IImConnection mConn) {
         // update the server
         if (sImApp != null && wpKMemberDto != null && mConn != null) {
+            String correctAddress = address.toLowerCase();
             String name = wpKMemberDto.getIdentifier();
             String email = wpKMemberDto.getEmail();
             String fullname = wpKMemberDto.getGiven();
             Uri.Builder builder = Imps.Contacts.CONTENT_URI_CONTACTS_BY.buildUpon();
             // update locally
             String selection = Imps.Contacts.USERNAME + "=?";
-            String[] selectionArgs = {address};
+            String[] selectionArgs = {correctAddress};
             ContentValues values = new ContentValues();
             if (originValues != null) {
                 values = originValues;
@@ -1321,7 +1322,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 values.put(Imps.Contacts.CONTACT_EMAIL, email);
             }
             if (TextUtils.isEmpty(name)) {
-                name = new XmppAddress(address).getUser();
+                name = new XmppAddress(correctAddress).getUser();
             }
             values.put(Imps.Contacts.NICKNAME,fullname);
 
@@ -1345,7 +1346,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
                 cursor.close();
             }
             if (!isUpdated) {
-                values.put(Imps.Contacts.USERNAME, address);
+                values.put(Imps.Contacts.USERNAME, correctAddress);
                 sImApp.getContentResolver().insert(builder.build(), values);
             }
             String avatar = wpKMemberDto.getAvatar()!=null? wpKMemberDto.getAvatar().getReference() : "";
