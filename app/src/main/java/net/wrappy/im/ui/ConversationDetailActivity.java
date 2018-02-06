@@ -451,7 +451,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         processIntent(getIntent());
 
         // set background for this screen
-        loadBitmapPreferences();
+        //loadBitmapPreferences();
     }
 
     @Override
@@ -568,11 +568,14 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             mChatId = intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY, -1);
         mAddress = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
         mNickname = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+        if (TextUtils.isEmpty(mNickname)) {
+            mNickname = mAddress.split("@")[0];
+        }
         mReference = intent.getStringExtra(BundleKeyConstant.REFERENCE_KEY);
-
+        loaderCallbacks = new MyLoaderCallbacks();
         if (mChatId == -1) {
             android.app.LoaderManager loaderManager = getLoaderManager();
-            loaderCallbacks = new MyLoaderCallbacks();
+
             loaderManager.initLoader(1, null, loaderCallbacks);
         } else {
 //            finish();
