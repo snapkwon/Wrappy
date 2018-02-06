@@ -451,7 +451,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         processIntent(getIntent());
 
         // set background for this screen
-        //loadBitmapPreferences();
+        loadBitmapPreferences();
     }
 
     @Override
