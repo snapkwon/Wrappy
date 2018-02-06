@@ -1896,6 +1896,23 @@ public class Imps {
             return result;
         }
 
+        public static String getReference(ContentResolver resolver, String address, boolean isAvatar) {
+            String selection = Imps.Avatars.CONTACT + "='" + address + "'";
+            String result = "";
+            Cursor cursor = resolver.query(Avatars.CONTENT_URI, new String[]{isAvatar?DATA:BANNER},
+                    selection, null, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        result = cursor.getString(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return result;
+        }
+
         public static void updateAvatarBannerToDB(String address, String avatar, String banner) {
             avatar = avatar == null? "" : avatar;
             banner = banner == null? "" : banner;

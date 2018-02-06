@@ -137,8 +137,7 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
 
                 GlideHelper.loadAvatarFromNickname(itemView.getContext(), avatar, member.getNickname());
 
-            }
-            else {
+            } else {
                 String nameText = member.getUsername();
                 if (member.getUsername().contains("@")) {
                     String[] name = member.getUsername().split("@");
@@ -152,20 +151,19 @@ public class MemberGroupAdapter extends RecyclerView.Adapter<MemberGroupAdapter.
             if (!TextUtils.isEmpty(member.getReferenceAvatar())) {
                 GlideHelper.loadBitmapToCircleImage(itemView.getContext(), avatar, RestAPI.getAvatarUrl(member.getReferenceAvatar()));
             }
-
+            mDeleteMember.setVisibility(View.GONE);
             if (currentUser.equals(mAdminGroup)) {
                 if (isAdminGroup(member)) {
                     avatarCrown.setVisibility(View.VISIBLE);
-                    mDeleteMember.setVisibility(View.GONE);
                 } else {
-                    mDeleteMember.setVisibility(View.VISIBLE);
-
-                    mDeleteMember.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            confirmRemoveMember(getAdapterPosition(), member);
-                        }
-                    });
+//                    mDeleteMember.setVisibility(View.VISIBLE);
+//
+//                    mDeleteMember.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            confirmRemoveMember(getAdapterPosition(), member);
+//                        }
+//                    });
                 }
             } else {
                 if (isAdminGroup(member)) {
