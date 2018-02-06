@@ -25,7 +25,7 @@ public class ContactApproveTask extends AsyncTask<WpKChatRoster[], Long, String>
     protected String doInBackground(WpKChatRoster[]... params) {
         WpKChatRoster[] rosters = params[0];
         try {
-            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultProviderId());
+            IImConnection connection = ImApp.getConnection(ImApp.sImApp.getDefaultProviderId(), ImApp.sImApp.getDefaultAccountId());
             if (connection != null && connection.getState() == ImConnection.LOGGED_IN) {
                 IChatSessionManager chatSessionManager = connection.getChatSessionManager();
                 IContactListManager contactListManager = connection.getContactListManager();
