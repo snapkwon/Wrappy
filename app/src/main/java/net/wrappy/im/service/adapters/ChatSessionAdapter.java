@@ -1353,9 +1353,13 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 String body = message.getBody();
                 if (!TextUtils.isEmpty(body) && body.startsWith(ConferenceConstant.CONFERENCE_PREFIX)) {
                     long startTime = message.getDateTime().getTime();
-                    if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME) {
-                        ConferenceMessage conference = new ConferenceMessage(body);
-                        conference.missed();
+                    ConferenceMessage conference = new ConferenceMessage(body);
+                    if (System.currentTimeMillis() - startTime > Constant.MISSED_CALL_TIME || conference.isEnded()) {
+                        if (conference.isEnded()) {
+                            conference.accept();
+                        } else {
+                            conference.missed();
+                        }
                         updateMessageInDb(message.getID(), conference.toString());
                     } else {
                         ConferenceCall conferenceCall = new ConferenceCall(bareAddress, nickname, body, uri, getChatUri());
