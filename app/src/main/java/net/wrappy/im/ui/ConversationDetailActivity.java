@@ -687,6 +687,7 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     public void onStop() {
         super.onStop();
+        AppFuncs.clearNumberMsgOnBadger();
     }
 
     @Override
