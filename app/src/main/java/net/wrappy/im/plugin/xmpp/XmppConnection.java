@@ -1444,7 +1444,9 @@ public class XmppConnection extends ImConnection {
         try {
             if (mUsername == null || mUsername.length() == 0)
                 throw new Exception("empty username not allowed");
-
+            getContactListManager();
+            getChatSessionManager();
+            getChatGroupManager();
             initConnectionAndLogin(providerSettings, mUsername);
 
             setState(LOGGED_IN, null);
@@ -2134,19 +2136,17 @@ public class XmppConnection extends ImConnection {
             @Override
             public void connected(XMPPConnection connection) {
                 debug(TAG, "connected");
+            }
+
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                debug(TAG, "authenticated: resumed=" + resumed);
                 setState(LOGGED_IN, null);
                 try {
                     initOmemo((XMPPTCPConnection) connection);
                 } catch (Exception e) {
                     debug("OMEMO", "There was a problem init'g omemo", e);
                 }
-
-            }
-
-            @Override
-            public void authenticated(XMPPConnection connection, boolean resumed) {
-                debug(TAG, "authenticated: resumed=" + resumed);
-
                 sendPresencePacket();
                 ((XmppChatGroupManager) getChatGroupManager()).reconnectAll();
 
@@ -4056,7 +4056,7 @@ public class XmppConnection extends ImConnection {
     private void handleChatState(String from, String chatStateXml) throws RemoteException {
 
         Presence p = null;
-        Contact contact = mContactListManager.getContact(from);
+        Contact contact = getContactListManager().getContact(from);
         if (contact == null)
             return;
 
