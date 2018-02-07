@@ -92,10 +92,10 @@ public class RestAPI {
     private static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
-    private static String GET_PROMOTION_CONTENT = root_url + "/member/%s/promotion-content";
+    private static String GET_PROMOTION_CONTENT = root_url + "member/%s/promotion-content";
     public static String GET_PROMOTION_BALANCE = root_url + "member/promotion/invitation/bonus_balance";
     public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
-    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+    public static String ADD_MEMBER_TO_GROUP = root_url + "chat/group/%s/";
     public static String REFERRAL = root_url + "member/inviter/%s";
     public static String ADD_MEMBER_TO_GROUP_CHAT = root_url + "chat/group/%s/participator/%s";
 
