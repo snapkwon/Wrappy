@@ -30,7 +30,6 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <!--
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -74,7 +73,6 @@
         android:label="@string/ic_launcher_name"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup,android:label">
-
         <meta-data
             android:name="net.wrappy.im.helper.glide.UnsafeOkHttpGlideModule"
             android:value="GlideModule" />
@@ -121,7 +119,8 @@
                 android:name="info.guardianproject.otr.app.im.signup_url"
                 android:value="http://xmpp.org/services/" />
         </service>
-        <!--<service android:name=".GethService.GethLightService" />-->
+        <!-- <service android:name=".GethService.GethLightService" /> -->
+
 
         <!--
         <service android:name=".plugin.loopback.LoopbackImPlugin">
@@ -184,8 +183,8 @@
             android:name=".ui.ContactsPickerActivity"
             android:exported="false"
             android:label="@string/choose_friend"
-            android:theme="@style/AppThemeNoAction"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoAction">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -281,9 +280,9 @@
             android:name=".ui.onboarding.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" />
-        <!--<activity-->
-        <!--android:name=".ui.qr.QrScanActivity"-->
-        <!--android:configChanges="keyboardHidden|orientation|screenSize" />-->
+        <!-- <activity -->
+        <!-- android:name=".ui.qr.QrScanActivity" -->
+        <!-- android:configChanges="keyboardHidden|orientation|screenSize" /> -->
         <activity
             android:name=".ui.qr.QrDisplayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -310,10 +309,10 @@
         <activity android:name=".ui.widgets.SecureCameraActivity" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|locale"
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden|locale"
             android:theme="@style/AppThemeNoAction"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
@@ -344,9 +343,7 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -376,9 +373,9 @@
             android:theme="@style/AppThemeNoAction" />
         <activity android:name=".ui.GroupDisplayActivity" />
 
-        <!--<meta-data-->
-        <!--android:name="io.fabric.ApiKey"-->
-        <!--android:value="9ebe0e16d1080723d689921d921604890f1a06c2" />-->
+        <!-- <meta-data -->
+        <!-- android:name="io.fabric.ApiKey" -->
+        <!-- android:value="9ebe0e16d1080723d689921d921604890f1a06c2" /> -->
 
         <meta-data
             android:name="net.wrappy.im.tasks.GlideVFSModule"
@@ -415,7 +412,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name="net.wrappy.im.ui.PatternActivity"
+            android:name=".ui.PatternActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -446,20 +443,20 @@
             android:name=".ui.ConferenceActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
-        <!--<activity-->
-        <!--android:name=".ui.Wallet_Complete_Activity"-->
-        <!--android:label="@string/title_activity_wallet__complete_" />-->
+        <!-- <activity -->
+        <!-- android:name=".ui.Wallet_Complete_Activity" -->
+        <!-- android:label="@string/title_activity_wallet__complete_" /> -->
         <activity android:name="me.ydcool.lib.qrmodule.activity.QrScannerActivity" />
-        <!--<activity android:name=".ui.TransactionTab" />-->
-        <!--<activity android:name=".ui.Send_Ethereum_Activity" />-->
-        <!--<activity android:name=".ui.WalletQrCodeDetailActivity" />-->
-        <!--<activity android:name=".ui.PackupWalletAccount" />-->
-        <!--<activity android:name=".ui.ChangePasswordAccount" />-->
+        <!-- <activity android:name=".ui.TransactionTab" /> -->
+        <!-- <activity android:name=".ui.Send_Ethereum_Activity" /> -->
+        <!-- <activity android:name=".ui.WalletQrCodeDetailActivity" /> -->
+        <!-- <activity android:name=".ui.PackupWalletAccount" /> -->
+        <!-- <activity android:name=".ui.ChangePasswordAccount" /> -->
         <activity android:name=".ui.TransactionDetailActivity" />
-        <!--<activity android:name=".ui.Create_New_Wallet" />-->
+        <!-- <activity android:name=".ui.Create_New_Wallet" /> -->
         <activity
             android:name=".ui.VerifyEmailOrPhoneActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -483,6 +480,15 @@
         <activity
             android:name=".ui.ReferralActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.InputPasswordRegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ui.InputPasswordLoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"></activity>
+        <activity android:name=".ui.ForgetPasswordInputNewPassword"></activity>
     </application>
 
 </manifest>

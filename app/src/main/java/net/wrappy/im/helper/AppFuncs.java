@@ -53,8 +53,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.leolin.shortcutbadger.ShortcutBadger;
-
 /**
  * Created by ben on 14/11/2017.
  */

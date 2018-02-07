@@ -92,14 +92,12 @@
     <string name="menu_contact_nickname">連絡先ニックネーム</string>
     <string name="menu_view_blocked">ブロックされた</string>
     <string name="nickname">ニックネーム</string>
-
     <string name="confirm_delete_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されます。</string>
     <string name="confirm_block_contact">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"はブロックされます。</string>
     <string name="add_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が追加されました。</string>
     <string name="delete_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"が削除されました。</string>
     <string name="block_contact_success">連絡先 \"<xliff:g id="user">%1$s</xliff:g>\"がブロックされました。</string>
     <string name="unblock_contact_success">\"<xliff:g id="user">%1$s</xliff:g>\"にブロックされていません。</string>
-
     <string name="menu_verify">連絡先を確認する</string>
     <string name="empty_conversation_group">会話が開いていないチャットを開始するにはタップしてください！</string>
     <string name="search_label">連絡先</string>
@@ -129,6 +127,7 @@
     <string name="accept_invitation">同意する</string>
     <string name="decline_invitation">低下</string>
     <string name="connecting_to_group_chat_">グループチャットに接続しています…</string>
+
     <string name="empty_contact_list">連絡先が見つかりません。 招待するにはタップします。</string>
     <string name="subscription_prompt"><xliff:g id="USER">%1$s</xliff:g>を追加しますか？</string>
     <string name="approve_subscription">はい</string>
@@ -168,6 +167,7 @@
     <string name="menu_locale">言語</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">言語</string>
     <string name="use_system_default">システムデフォルトを使用する</string>
+
     <string name="button_yes_accept_all">はい、すべて受け入れます</string>
     <string name="pref_delete_unsecured_media_title">安全でないメディアを削除する</string>
     <string name="pref_delete_unsecured_media_summary">写真やファイルを共有した後、インポート後に元の安全でないストレージから自動的に削除します</string>
@@ -308,7 +308,6 @@
     <string name="group_admin">管理者</string>
     <string name="group_you">君は</string>
     <string name="title_activity_launcher">LauncherActivity</string>
-
     <string name="Page1Titlenull"></string>
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">無料</string>
@@ -516,10 +515,12 @@
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
     <string name="comming_soon">近日公開</string>
-    <string name="fullname">名前</string>
+   <string name="fullname">名前</string>
     <string name="info">お知らせ</string>
-
-    <string name="reset_your_password">パスワードのリセット</string>
+    <string name="wrong_format_password">パスワードは最低8文字の英数字、最低1文字の大文字、最低1文字の小文字、および最低1数字を含ませてください</string>
+    <string name = "pattern_coutdown">"%s秒以内"</string>
+    <string name = "passcode_coutdown">"%s秒以内"</string>
+ <string name="reset_your_password">パスワードのリセット</string>
     <string name="receive_password_via_email">パスワードリセットのリンクがWrappyに登録されているE-mailに送られます。</string>
     <string name="copy_and_paste_url">＊もしリンクがクリックできない場合は、URLをコピーしてブラウザに直接貼り付けて表示してください。</string>
     <string name="back_to_login">ログインに戻る</string>
@@ -531,6 +532,4 @@
         <item>女性</item>
         <item>男性</item>
     </string-array>
-
-
 </resources>

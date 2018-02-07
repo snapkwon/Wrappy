@@ -1031,6 +1031,5 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             return syncContactRunnable;
         }
     }
-
 }
 

@@ -16,17 +16,25 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/pl_message_text"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:gravity="center|bottom"
+            android:layout_marginTop="20dp"
             android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/pl_countdown_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center|bottom"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/pl_message_text_error"
@@ -34,11 +42,13 @@
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:gravity="center|bottom"
+            android:layout_marginTop="20dp"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@color/error"
             android:visibility="gone"/>
 
         <me.tornado.android.patternlock.PatternView
+            android:layout_marginTop="20dp"
             android:id="@+id/pl_pattern"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -53,8 +63,8 @@
         <TextView
             android:id="@+id/bottomText"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center|top"
             android:textAppearance="?android:textAppearanceMedium" />
     </LinearLayout>
@@ -63,7 +73,8 @@
         android:id="@+id/pl_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/pl_left_button"

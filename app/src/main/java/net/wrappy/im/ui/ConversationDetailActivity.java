@@ -495,8 +495,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
 
             @Override
             public void onError() {
-                // TODO: show refresh button
+
             }
+
         });
         task.execute(mAddress + Constant.EMAIL_DOMAIN, null, mNickname);
     }
