@@ -133,7 +133,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
         Intent in = getIntent();
         Uri data = in.getData();
         if (data != null) {
-            type_request = REQUEST_CODE_REGISTER;
+            type_request = REQUEST_CODE_INPUT_NEW_PASSWORD;
             hashResetPassword = data.getLastPathSegment();
         }
 
