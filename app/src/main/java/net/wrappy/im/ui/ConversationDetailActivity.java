@@ -568,6 +568,9 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             mChatId = intent.getLongExtra(BundleKeyConstant.CONTACT_ID_KEY, -1);
         mAddress = intent.getStringExtra(BundleKeyConstant.ADDRESS_KEY);
         mNickname = intent.getStringExtra(BundleKeyConstant.NICK_NAME_KEY);
+        if (TextUtils.isEmpty(mNickname)) {
+            mNickname = mAddress.split("@")[0];
+        }
         mReference = intent.getStringExtra(BundleKeyConstant.REFERENCE_KEY);
 
         if (mChatId == -1) {

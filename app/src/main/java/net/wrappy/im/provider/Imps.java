@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * The IM provider stores all information about roster contacts, chat messages,
  * presence, etc.
@@ -3378,7 +3380,10 @@ public class Imps {
     }
 
     public static int updateMessageBody(ContentResolver resolver, String id, String body, String mimeType) {
-
+        int oldNum = Store.getIntData(ImApp.sImApp.getApplicationContext(),Store.NUM_UNREAD_MESSAGE);
+        int newNum = oldNum+1;
+        Store.putIntData(ImApp.sImApp.getApplicationContext(),Store.NUM_UNREAD_MESSAGE,newNum);
+        ShortcutBadger.applyCount(ImApp.sImApp.getApplicationContext(), newNum);
         Uri.Builder builder = Imps.Messages.OTR_MESSAGES_CONTENT_URI.buildUpon();
         builder.appendPath(id);
 

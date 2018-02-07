@@ -12,6 +12,7 @@ public class Store {
 
     public final static String USERNAME = "wr_username";
     public final static String REFERRAL = "wr_referral";
+    public final static String NUM_UNREAD_MESSAGE = "wr_number_unread_message";
 
     public static void putStringData(Context context, String key, String data) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
