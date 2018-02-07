@@ -72,7 +72,7 @@
     <color name="menu_text_normal">#929292</color>
     <color name="menu_text_active">#ea657c</color>
 
-    <color name="background_gainsboro">#dcdcdc</color>
+    <color name="background_gainsboro">#f2f2f2</color>
     <color name="line">#D4D4D4</color>
     <color name="color_translate">#0094d4</color>
     </resources>
