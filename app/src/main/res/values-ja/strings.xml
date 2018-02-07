@@ -32,7 +32,7 @@
 
     <!-- General: Actions -->
     <string name="confirm">確認</string>
-    <string name="ok">[OK]</string>
+    <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
@@ -116,7 +116,6 @@
     <string name="wants_to_send_you_the_file">あなたにファイルを送ろうとしています</string>
     <string name="no_connection_for_sending">あなたのシェアを送るための接続はありません！</string>
 
-    <string name="compose_hint">メッセージを送ります</string>
     <string name="compose_hint_secure">プライベートメッセージを送信する</string>
     <string name="menu_end_conversation">チャットを終了</string>
     <string name="select_link_title">リンクを選択</string>
@@ -512,7 +511,7 @@
     <string name="request_send_email_success">正常に送信され、新しいパスワードを変更するために、あなたのメールをチェックしてください</string>
     <string name="remove_member_success">このグループには%sの削除</string>
     <string name="skip_referral">招待コードを入力しなくて本当によろしいですか？+100PTSのボーナスがゲット出来ません。</string>
-    <string name="create_by">%sで作成します。</string>
+    <string name="create_by">管理人:%s</string>
     <string name="chat_message_item">%1$sチャット%2$s</string>
     <string name="message_kicked_from_group">%sは管理者によって削除されます</string>
     <string name="comming_soon">近日公開</string>

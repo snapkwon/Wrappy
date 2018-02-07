@@ -69,13 +69,13 @@
     <string name="title_pending">承認待ちの</string>
 
 
-    <string name="action_add_buddy">友人を追加</string>
+    <string name="action_add_buddy">友達を追加</string>
     <string name="action_leave">離れる</string>
-    <string name="add_people">人々を追加</string>
+    <string name="add_people">友達を選択</string>
     <string name="turn_notifications_on">通知をオンにする</string>
     <string name="turn_notifications_off">通知のミュート</string>
-    <string name="num_member_group_chat">メンバー%1$s人</string>
-    <string name="confirm_leave_group">あなたは本当にグループを離れたいですか？</string>
+    <string name="num_member_group_chat">計%1$s人</string>
+    <string name="confirm_leave_group">グループから退出します</string>
     <string name="confirm_delete_and_leave_group">グループを削除してもよろしいですか？</string>
     <string name="confirm_remove_member_group">このメンバーを削除してもよろしいですか？</string>
     <string name="contactswrappy">連絡先</string>
