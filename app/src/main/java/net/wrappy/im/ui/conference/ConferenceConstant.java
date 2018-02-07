@@ -5,7 +5,7 @@ package net.wrappy.im.ui.conference;
  */
 
 public class ConferenceConstant {
-    public static final String CONFERENCE_HOST = "https://video-bridge2.proteusiondev.com:7443/ofmeet/%s";
+    public static final String CONFERENCE_HOST = "https://im.wrappy.network:7443/ofmeet/%s";
     public static final String KEY = "video-meeting-request";
     public static final String REGEX = ":";
     public static final String CONFERENCE_PREFIX = REGEX + KEY;

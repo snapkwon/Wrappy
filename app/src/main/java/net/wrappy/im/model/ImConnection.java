@@ -19,8 +19,6 @@ package net.wrappy.im.model;
 
 import android.content.Context;
 
-import net.wrappy.im.helper.NotificationCenter;
-
 import org.jivesoftware.smackx.httpfileupload.UploadProgressListener;
 
 import java.io.InputStream;
@@ -149,8 +147,6 @@ public abstract class ImConnection {
                 listener.onStateChanged(state, error);
             }
         }
-
-        NotificationCenter.getInstance().postNotificationName(NotificationCenter.networkStateChange,state);
     }
 
     protected void notifyUserPresenceUpdated() {

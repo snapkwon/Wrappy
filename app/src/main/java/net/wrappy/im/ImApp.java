@@ -1368,13 +1368,16 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public static String getNickname(String address) {
-        String email = "";
+        String nickname = "";
         if (address.equals(sImApp.getDefaultUsername())) {
-            email = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_NAME, ImApp.sImApp.getDefaultAccountId());
+            nickname = Imps.Account.getString(sImApp.getContentResolver(), Imps.Account.ACCOUNT_NAME, ImApp.sImApp.getDefaultAccountId());
         } else {
-            email = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
+            nickname = Imps.Contacts.getString(sImApp.getContentResolver(), Imps.Contacts.NICKNAME, address);
         }
-        return email;
+        if (TextUtils.isEmpty(nickname)) {
+            nickname = new XmppAddress(address).getUser();
+        }
+        return nickname;
     }
 
     public static void broadcastIdentity(String indentity) {

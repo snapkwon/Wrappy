@@ -2,6 +2,10 @@ package net.wrappy.im.crypto.otr;
 
 import android.text.TextUtils;
 
+import net.java.otr4j.OtrException;
+import net.java.otr4j.session.SessionID;
+import net.java.otr4j.session.SessionStatus;
+import net.java.otr4j.session.TLV;
 import net.wrappy.im.model.ChatSession;
 import net.wrappy.im.model.ImErrorInfo;
 import net.wrappy.im.model.Message;
@@ -10,11 +14,6 @@ import net.wrappy.im.provider.Imps;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.java.otr4j.OtrException;
-import net.java.otr4j.session.SessionID;
-import net.java.otr4j.session.SessionStatus;
-import net.java.otr4j.session.TLV;
 
 public class OtrChatListener implements MessageListener {
 
@@ -55,7 +54,7 @@ public class OtrChatListener implements MessageListener {
             SessionID sessionID = mOtrChatManager.getSessionId(localAddress, remoteAddress);
             SessionStatus otrStatus = mOtrChatManager.getSessionStatus(sessionID);
 
-            if (otrStatus == SessionStatus.ENCRYPTED) {
+            if (otrStatus != SessionStatus.FINISHED) {
                 boolean verified = mOtrChatManager.getKeyManager().isVerified(sessionID);
 
                 if (verified) {
