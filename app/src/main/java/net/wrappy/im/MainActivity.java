@@ -116,6 +116,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import info.guardianproject.iocipher.VirtualFileSystem;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static net.wrappy.im.helper.RestAPI.GET_LIST_CONTACT;
 
@@ -392,6 +393,7 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
     @Override
     protected void onResume() {
         super.onResume();
+        ShortcutBadger.applyCount(getApplicationContext(), 0);
         if (!isRegisterNotification) {
             isRegisterNotification = true;
             NotificationCenter.getInstance().addObserver(this, NotificationCenter.networkStateChange);

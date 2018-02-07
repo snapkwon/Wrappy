@@ -1130,6 +1130,10 @@ public class ChatSessionAdapter extends IChatSession.Stub {
                 return false;
             } else if (msg.getBody().startsWith(ConferenceConstant.EDIT_CHAT_FREFIX)) {
                 String[] message_edit = ConferenceUtils.getEditedMessage(msg.getBody());
+//                int oldNum = Store.getIntData(ImApp.sImApp.getApplicationContext(),Store.NUM_UNREAD_MESSAGE);
+//                int newNum = oldNum+1;
+//                Store.putIntData(ImApp.sImApp.getApplicationContext(),Store.NUM_UNREAD_MESSAGE,newNum);
+//                ShortcutBadger.applyCount(ImApp.sImApp.getApplicationContext(), newNum);
                 updateMessageInDb(message_edit[0], message_edit[1]);
                 deleteMessageInDb(msg.getID());
                 return false;
