@@ -734,11 +734,6 @@ public class ChatSessionAdapter extends IChatSession.Stub {
         }
     }
 
-    @Override
-    public List<Contact> getMembers() throws RemoteException {
-        return null;
-    }
-
     private String getNickName(String username) {
         ImEntity participant = mChatSession.getParticipant();
         if (mIsGroupChat) {

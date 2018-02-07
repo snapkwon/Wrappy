@@ -145,7 +145,7 @@ public class RestAPI {
     public static String loginUrl(String user, String pass) {
         return String.format(POST_LOGIN, user, pass);
     }
-    
+
 
     public static String getHashStringResetPassUrl(String username, String answer01, String answer02, String answer03) {
         return String.format(GET_HASH_RESET_PASS, username, answer01, answer02, answer03);

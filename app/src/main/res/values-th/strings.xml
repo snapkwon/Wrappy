@@ -92,12 +92,14 @@
     <string name="menu_contact_nickname">ชื่อเล่นแหล่งติดต่อ</string>
     <string name="menu_view_blocked">ถูกปิดกั้น</string>
     <string name="nickname">ชื่อเล่น</string>
+
     <string name="confirm_delete_contact">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" จะถูกลบ</string>
     <string name="confirm_block_contact">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" จะถูกปิดกั้น</string>
     <string name="add_contact_success">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" ถูกเพิ่มแล้ว</string>
     <string name="delete_contact_success">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" ถูกลบแล้ว</string>
     <string name="block_contact_success">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" ถูกปิดกั้นแล้ว</string>
     <string name="unblock_contact_success">แหล่งติดต่อ \"<xliff:g id="user">%1$s</xliff:g>\" ถูกยกเลิกการปิดกั้นแล้ว</string>
+
     <string name="menu_verify">ตรวจสอบแหล่งติดต่อ</string>
     <string name="empty_conversation_group">ไม่พบการสนทนาที่เปิดอยู่ แตะเพื่อเริ่มต้นการพูดคุย!</string>
     <string name="search_label">แหล่งติดต่อ</string>
@@ -110,11 +112,12 @@
     <string name="contact_offline"><xliff:g id="user">%1$s</xliff:g> ออฟไลน์อยู่</string>
     <string name="contact_joined"><xliff:g id="user">%1$s</xliff:g> เข้าร่วมแล้ว</string>
     <string name="contact_left"><xliff:g id="user">%1$s</xliff:g> ออกไปแล้ว</string>
+
     <string name="file_transfer">ส่งผ่านไฟล์</string>
     <string name="accept_transfer_">ยอมรับการส่งผ่านไหม</string>
     <string name="wants_to_send_you_the_file">ต้องการส่งไฟล์ให้คุณ</string>
     <string name="no_connection_for_sending">ไม่พบการเชื่อมต่อสำหรับการส่งการแชร์ของคุณ!</string>
-    <string name="compose_hint">ส่งข้อความ</string>
+
     <string name="compose_hint_secure">ส่งข้อความส่วนตัว</string>
     <string name="menu_end_conversation">จบการพูดคุย</string>
     <string name="select_link_title">เลือกลิงก์</string>
@@ -297,7 +300,6 @@
     <string name="popup_delete_photo">ลบภาพ</string>
     <string name="this_is_a_group_chat">ส่งข้อความกลุ่ม</string>
     <string name="unable_to_securely_share_this_file">ไม่สามารถแชร์ไฟล์นี้ได้อย่างปลอดภัย</string>
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">คีย์สโตร์ของคุณมีปัญหา โปรดติดตั้ง Wrappy อีกครั้ง หรือ \'ล้างข้อมูล\' สำหรับแอพ</string>
     <string name="swipe_hint">กวาดซ้ายและขวาเพื่อดูตัวเลือกเพิ่มขึ้น</string>
     <string name="no_convos">เวลาสำหรับเริ่มต้น Wrappy!</string>
     <string name="title_more">สำรวจ</string>
@@ -306,6 +308,7 @@
     <string name="group_admin">แอดมิน</string>
     <string name="group_you">คุณ</string>
     <string name="title_activity_launcher">กิจกรรมลอนเชอร์</string>
+
     <string name="Page1Titlenull"></string>
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">ฟรี</string>
@@ -449,6 +452,7 @@
     <string name="current_balance">สมดุลปัจจุบัน</string>
     <string name="add_photo">เพิ่มรูปภาพ!</string>
     <string name="error_upload_photo">การอัพโหลดรูปภาพกลุ่มล้มเหลว!</string>
+    <string name="error_creating_group">Create Group Fail</string>
     <string name="select_file_to_send">เลือกไฟล์</string>
     <string name="google_play_services_not_available">บริการกูเกิ้ลเพลย์ไม่สามารถใช้ได้</string>
     <string name="english">อังกฤษ</string>
@@ -488,20 +492,16 @@
     <string name="message_spam">รายงานสแปม</string>
     <string name="invite_friend_earn">เชิญเพื่อนเพิ่มเพื่อรับเหรียญพีทีเอสเพิ่ม</string>
     <string name="promotion_description">Wrappy จะให้รางวัลคุณเมื่อคุณเชิญเพื่อนให้ติดตั้งแอพ Wrappy</string>
-    <string name="promotion_invite_friends">เชิญเพื่อน</string>
     <string name="verify_send_sms_fail">การส่งเอสเอ็มเอสล้มเหลว</string>
     <string name="verify_send_sms_success">ส่งเอสเอ็มเอสเสร็จแล้ว</string>
     <string name="verify_fail">การตรวจสอบล้มเหลว</string>
-    <string name="from">จาก</string>
     <string name="security_question_change">เปลี่ยนคำถามเพื่อความปลอดภัย</string>
     <string name="security_change_old_question">ตอบคำถามเพื่อความปลอดภัยเก่าของคุณ</string>
-    <string name="level">ระดับ</string>
     <string name="success">สำเร็จ!</string>
     <string name="secu_success_description">เปลี่ยนคำถามเพื่อความปลอดภัยของคุณเสร็จแล้ว</string>
     <string name="fail">ล้มเหลว</string>
     <string name="upload_fail">อัพโหลดล้มเหลว</string>
     <string name="cancel_and_home">ยกเลิกขั้นตอนนี้และกลับไปยังหน้าจอเข้าสู่ระบบ?</string>
-    <string name="invite_friends_text">เชิญเพื่อน</string>
     <string name="email_tile">อีเมล์ *</string>
     <string name="logout_noti">คุณต้องการที่จะออกจากระบบของอุปกรณ์นี้?</string>
     <string name="share_title">เลือกวิธีการใช้งานร่วมกัน</string>
@@ -518,4 +518,17 @@
     <string name="comming_soon">เร็ว ๆ นี้</string>
     <string name="fullname">ชื่อเต็ม</string>
     <string name="info">Info</string>
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+    <string name="local_time_format">MMM dd, yyyy</string>
+    <string name="promotion_format">%1$s จาก <b>%2$s</b> ระดับ (%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>หญิง</item>
+        <item>ชาย</item>
+    </string-array>
 </resources>

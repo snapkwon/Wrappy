@@ -49,10 +49,7 @@
     <!-- Views: Setup -->
     <string name="add_account">增 <xliff:g id="account">%1$s</xliff:g> 戶口</string>
     <string name="menu_about">關於</string>
-
     <string name="signed_out_prompt_with_error">You have been signed out of <xliff:g id="account">%1$s</xliff:g> because <xliff:g id="reason">%2$s</xliff:g></string>
-
-
     <string name="pass_err_length">你的密碼不夠長</string>
     <!-- Views: About: Welcome -->
     <!-- Views: About: OTR -->
@@ -104,9 +101,7 @@
     <string name="unblock_contact_success">聯絡人\"<xliff:g id="user">%1$s</xliff:g>\"被解除</string>
 
     <string name="menu_verify">驗証聯絡人</string>
-
     <string name="empty_conversation_group">没有對話, 按下並展開交談</string>
-
     <string name="search_label">聯絡</string>
     <string name="search_hint">輸入聯絡人名字去聊天</string>
     <string name="input_contact_label">輸入朋友的用戶名</string>
@@ -123,7 +118,6 @@
     <string name="wants_to_send_you_the_file">想發送文件</string>
     <string name="no_connection_for_sending">未有連線去發送你的分享</string>
 
-    <string name="compose_hint">發送訊息</string>
     <string name="compose_hint_secure">發送私人訊息</string>
     <string name="menu_end_conversation">結束聊天</string>
     <string name="select_link_title">選擇連結</string>
@@ -135,9 +129,7 @@
     <string name="accept_invitation">接受</string>
     <string name="decline_invitation">否定</string>
     <string name="connecting_to_group_chat_">連接到群組聊天</string>
-
     <string name="empty_contact_list">未有聯絡人, 請邀請</string>
-
     <string name="subscription_prompt">加入<xliff:g id="USER">%1$s</xliff:g>?</string>
     <string name="approve_subscription">是的</string>
     <string name="decline_subscription">否的</string>
@@ -176,7 +168,6 @@
     <string name="menu_locale">語言</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">語言</string>
     <string name="use_system_default">使用原廠設定</string>
-
     <string name="button_yes_accept_all">是的, 全部接受</string>
     <string name="pref_delete_unsecured_media_title">删除不安全媒體檔案</string>
     <string name="pref_delete_unsecured_media_summary">分享照片或文件後，自動將其從原始不安全的存儲中刪除</string>
@@ -309,7 +300,6 @@
     <string name="popup_delete_photo">移除相片檔案</string>
     <string name="this_is_a_group_chat">發送訊息在群組</string>
     <string name="unable_to_securely_share_this_file">不能在非保安設定情況下分享檔案</string>
-    <string name="your_keystore_is_corrupted_please_re_install_chatsecure_or_clear_data_for_the_app">你所輸入的密鑰已損壞, 請重新安裝程式或消除數據再試</string>
     <string name="swipe_hint">請按左面或右面展開功能表</string>
     <string name="no_convos">立即使用WRAPPY</string>
     <string name="title_more">發現</string>
@@ -318,6 +308,7 @@
     <string name="group_admin">管理</string>
     <string name="group_you">你</string>
     <string name="title_activity_launcher">昇上活動表</string>
+
     <string name="Page1Titlenull"></string>
     <string name="Page1Title">Wrappy</string>
     <string name="Page2Title">免費</string>
@@ -477,7 +468,6 @@
     <string name="logout_device">登出這設備</string>
     <string name="message_remove_avatar_success">移除個人頭像成功</string>
     <string name="message_remove_banner_success">移除旗幟成功</string>
-    <string name="error_get_user_profile">不能錄取用家的檔案</string>
     <string name="hint_password">輸入密碼</string>
     <string name="error_reset_password">重啟密碼失敗</string>
     <string name="warning">警告</string>
@@ -502,20 +492,16 @@
     <string name="message_spam">請報告</string>
     <string name="invite_friend_earn">邀請更多朋友可得到更多的PTS COIN</string>
     <string name="promotion_description">當你邀請其他朋友使用WRAPPY, 糸統會獎勵你</string>
-    <string name="promotion_invite_friends">邀請朋友</string>
     <string name="verify_send_sms_fail">發送訊息失敗</string>
     <string name="verify_send_sms_success">發送訊息成功</string>
     <string name="verify_fail">核實測試失敗</string>
-    <string name="from">由</string>
     <string name="security_question_change">請更改保安提問問題</string>
     <string name="security_change_old_question">請回答你已設定的提問問題</string>
-    <string name="level">水平</string>
     <string name="success">成功</string>
     <string name="secu_success_description">你的問題(秘密)已更改</string>
     <string name="fail">失敗</string>
     <string name="upload_fail">上傳失敗</string>
     <string name="cancel_and_home">取消這一步驟，並返回到登錄屏幕？</string>
-    <string name="invite_friends_text">邀請朋友</string>
     <string name="email_tile">郵件*</string>
     <string name="logout_noti">你想退出這個設備的？</string>
     <string name="share_title">選擇共享方法</string>
@@ -532,4 +518,13 @@
     <string name="comming_soon">快來了</string>
     <string name="fullname">全名</string>
     <string name="info">Info</string>
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+    <string name="local_time_format">MMM dd, yyyy</string>
+    <string name="promotion_format">%1$s 由 <b>%2$s</b> 水平 (%3$s)</string>
+
 </resources>

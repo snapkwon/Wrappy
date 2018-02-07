@@ -137,7 +137,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private void getSecurityQuestions() {
         registrationData = new Registration();
         WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
-        wpKAuthDto.setPasscode(getIntent().getStringExtra(UpdateProfileActivity.PASSCODE));
         ArrayList<SecurityQuestions> securityQuestions = getIntent().getParcelableArrayListExtra(SecurityQuestions.class.getName());
         registrationData.setWpKAuthDto(wpKAuthDto);
         password = wpKAuthDto.getSecret();

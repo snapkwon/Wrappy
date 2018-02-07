@@ -49,10 +49,7 @@
     <!-- Views: Setup -->
     <string name="add_account">Thêm tài khoản <xliff:g id="account">%1$s</xliff:g></string>
     <string name="menu_about">Trong khoảng</string>
-
     <string name="signed_out_prompt_with_error">Bạn đã được đăng xuất khỏi <xliff:g id="account">%1$s</xliff:g> vì <xliff:g id="reason">%2$s</xliff:g></string>
-
-
     <string name="pass_err_length">Mật khẩu của bạn không đủ dài</string>
     <!-- Views: About: Welcome -->
     <!-- Views: About: OTR -->
@@ -104,9 +101,7 @@
     <string name="unblock_contact_success">Liên hệ với \"<xliff:g id="user">%1$s</xliff:g>\" bỏ cấm.</string>
 
     <string name="menu_verify">Xác minh liên hệ</string>
-
     <string name="empty_conversation_group">Không nói chuyện cởi mở bấm để bắt đầu trò chuyện!</string>
-
     <string name="search_label">Danh bạ</string>
     <string name="search_hint">Gõ tên của một số liên lạc để trò chuyện với</string>
     <string name="input_contact_label">Nhập tên người dùng đầy đủ của bạn bè (tức là wrappyisfun.4x3f5g@wrappy.net.) Ở đây:</string>
@@ -123,7 +118,6 @@
     <string name="wants_to_send_you_the_file">Muốn gửi cho bạn tập tin</string>
     <string name="no_connection_for_sending">Không có kết nối để chia sẻ!</string>
 
-    <string name="compose_hint">Gửi tin nhắn</string>
     <string name="compose_hint_secure">Gửi tin nhắn</string>
     <string name="menu_end_conversation">Kết thúc trò chuyện</string>
     <string name="select_link_title">Chọn liên kết</string>
@@ -135,9 +129,7 @@
     <string name="accept_invitation">Chấp nhận</string>
     <string name="decline_invitation">Từ chối</string>
     <string name="connecting_to_group_chat_">Kết nối để trò chuyện nhóm…</string>
-
     <string name="empty_contact_list">Không tìm thấy địa chỉ liên lạc. Bấm để mời.</string>
-
     <string name="subscription_prompt">Thêm <xliff:g id="USER">%1$s</xliff:g>?</string>
     <string name="approve_subscription">Vâng</string>
     <string name="decline_subscription">Không</string>
@@ -176,7 +168,6 @@
     <string name="menu_locale">Ngôn ngữ</string>
     <string name="KEY_PREF_LANGUAGE_TITLE">Ngôn ngữ</string>
     <string name="use_system_default">Mặc định sử dụng hệ thống</string>
-
     <string name="button_yes_accept_all">Vâng, chấp nhận tất cả</string>
     <string name="pref_delete_unsecured_media_title">Xóa không an toàn truyền thông</string>
     <string name="pref_delete_unsecured_media_summary">Sau khi chia sẻ một bức ảnh hoặc tập tin, tự động xóa nó từ bản gốc, lưu trữ không an toàn sau khi nhập khẩu</string>
@@ -285,8 +276,6 @@
 
 
     <string name="mtm_accept_cert">Chấp nhận certificate server?</string>
-
-
     <string name="loading">Tải…</string>
     <!-- Other -->
 
@@ -309,15 +298,10 @@
     <string name="popup_take_photo">Chụp hình</string>
     <string name="popup_choose_gallery">Chọn từ thư viện ảnh</string>
     <string name="popup_delete_photo">Xóa ảnh</string>
-
     <string name="this_is_a_group_chat">Gửi tin nhắn theo nhóm</string>
-
     <string name="unable_to_securely_share_this_file">Không thể một cách an toàn chia sẻ tệp này</string>
-
     <string name="swipe_hint">swipe trái và phải cho các tùy chọn thêm</string>
-
     <string name="no_convos">Bắt đầu trò chuyện với Wrappy!</string>
-
     <string name="title_more">Khám phá</string>
     <string name="title_me">Tôi</string>
     <string name="no_photos">Hình ảnh được chia sẻ và nhận được sẽ xuất hiện ở đây</string>
@@ -508,20 +492,16 @@
     <string name="message_spam">Báo cáo thư rác</string>
     <string name="invite_friend_earn">Mời bạn bè cùng tham gia để kiếm thêm đồng PTS</string>
     <string name="promotion_description">Wrappy tặng thưởng cho bạn khi bạn mời bạn bè cài đặt ứng dụng Wrappy</string>
-    <string name="promotion_invite_friends">Mời bạn bè</string>
     <string name="verify_send_sms_fail">Gửi tin nhắn thất bại</string>
     <string name="verify_send_sms_success">Gửi tin nhắn thành công</string>
     <string name="verify_fail">Xác nhận thất bại</string>
-    <string name="from">Từ</string>
     <string name="security_question_change">Thay đổi câu hỏi bảo mật</string>
     <string name="security_change_old_question">Trả lời câu hỏi bí mật cũ của bạn</string>
-    <string name="level">Cấp độ</string>
     <string name="success">Sự thành công!</string>
     <string name="secu_success_description">Câu hỏi bí mật của bạn thay đổi thành công</string>
     <string name="fail">Thất ​​bại</string>
     <string name="upload_fail">Tải lên thất bại</string>
     <string name="cancel_and_home">Bỏ qua bước này và quay trở lại màn hình đăng nhập?</string>
-    <string name="invite_friends_text">Mời bạn bè</string>
     <string name="email_tile">Email *</string>
     <string name="logout_noti">Bạn có muốn đăng xuất</string>
     <string name="share_title">Chia sẻ với bạn bè</string>
@@ -538,4 +518,17 @@
     <string name="comming_soon">Sắp có</string>
     <string name="fullname">Họ và Tên</string>
     <string name="info">Info</string>
+
+    <string name="reset_your_password">Reset your password</string>
+    <string name="receive_password_via_email">You should receive a password reset link via email to the email address associated with your account.</string>
+    <string name="copy_and_paste_url">If you cannot click the URL, please copy and paste the URL into your browser.</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="resend_link">Resend</string>
+    <string name="local_time_format">MMM dd, yyyy</string>
+    <string name="promotion_format">%1$s từ <b>%2$s</b> cấp độ (%3$s)</string>
+
+    <string-array name="profile_gender_display">
+        <item>Nữ</item>
+        <item>Nam</item>
+    </string-array>
 </resources>
