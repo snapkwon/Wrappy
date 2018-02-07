@@ -30,7 +30,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.ConferenceUtils;
@@ -3453,7 +3452,7 @@ public class Imps {
         values.put(Imps.Messages.IS_DELIVERED, isDelivered);
         values.put(Messages.THREAD_ID, threadId);
         int result = resolver.update(builder.build(), values, null, null);
-        AppFuncs.log(values.toString());
+
         if (result == 0) {
             builder = Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
             builder.appendPath(msgId);
