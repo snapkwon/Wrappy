@@ -154,7 +154,7 @@ public class SetPatternActivity extends BasePatternActivity
 
         removeClearPatternRunnable();
 
-        mMessageText.setText(R.string.pl_recording_pattern);
+     //   mMessageText.setText(R.string.pl_recording_pattern);
         mPatternView.setDisplayMode(PatternView.DisplayMode.Correct);
         mLeftButton.setEnabled(false);
         mRightButton.setEnabled(false);

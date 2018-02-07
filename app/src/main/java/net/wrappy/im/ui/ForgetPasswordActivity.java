@@ -32,8 +32,9 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forget_password_question_activity);
         ButterKnife.bind(this);
-
-        initActionBarDefault(true, R.string.forget_password);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_arrow_back);
+        getSupportActionBar().setTitle(R.string.forget_password);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         goToQuestionFragment();
 
     }
@@ -67,7 +68,7 @@ public class ForgetPasswordActivity extends BaseActivity implements AppDelegate 
                     if (data.length() > 10) {
                         Intent intent = PatternActivity.getStartIntent(this);
                         Bundle arg = new Bundle();
-                        arg.putInt("type", LauncherActivity.REQUEST_CODE_REGISTER);
+                        arg.putInt("type", LauncherActivity.REQUEST_CODE_INPUT_NEW_PASSWORD);
                         arg.putString("username", "");
                         arg.putString(FORGET_PASSWORD, data);
                         intent.putExtras(arg);

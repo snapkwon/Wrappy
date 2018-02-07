@@ -1,5 +1,6 @@
 package net.wrappy.im.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ import net.wrappy.im.model.Banner;
 import net.wrappy.im.model.BottomSheetCell;
 import net.wrappy.im.model.BottomSheetListener;
 import net.wrappy.im.model.Registration;
+import net.wrappy.im.model.RegistrationAccount;
 import net.wrappy.im.model.SecurityQuestions;
 import net.wrappy.im.model.WpKAuthDto;
 import net.wrappy.im.model.WpKMemberDto;
@@ -64,6 +67,8 @@ import butterknife.Optional;
 public class UpdateProfileActivity extends BaseActivity implements View.OnClickListener {
 
     private final int VERIFY_CODE = 104;
+
+    public static final String PASSCODE = "passcode";
 
     boolean isFlag;
     String user, email, phone, gender, password, nickname;
@@ -230,14 +235,16 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
                     AppFuncs.alert(getApplicationContext(), error, true);
                     return;
                 }
-                AppFuncs.showProgressWaiting(this);
+                appFuncs.showProgressWaiting(this);
                 boolean isFileExist = false;
                 if (uriAvatar != null) {
                     isFileExist = true;
+                    AppFuncs.log("Upload Avatar");
                     uploadFileProfile(uriAvatar, RestAPI.PHOTO_AVATAR);
                 }
                 if (uriHeader != null) {
                     isFileExist = true;
+                    AppFuncs.log("Upload Banner");
                     uploadFileProfile(uriHeader, RestAPI.PHOTO_BRAND);
                 }
                 if (!isFileExist) {
@@ -321,6 +328,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
 
                 try {
                     String reference = RestAPI.getPhotoReference(result.getResult());
+                    AppFuncs.log("Upload " + reference);
                     if (type.equals(RestAPI.PHOTO_AVATAR)) {
                         avatarReference = reference;
                     } else {
@@ -428,7 +436,6 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
             }
         }, null);
     }
-
     @Override
     public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
         super.onResultPickerImage(isAvatar, data, isSuccess);

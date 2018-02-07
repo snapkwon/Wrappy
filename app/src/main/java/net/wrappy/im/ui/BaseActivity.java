@@ -12,9 +12,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,7 +36,6 @@ import butterknife.ButterKnife;
  * Created by n8fr8 on 5/7/16.
  */
 public class BaseActivity extends AppCompatActivity {
-
 
     public static final int REQUEST_PERMISSION_CAMERA_AVATAR = 501;
     public static final int REQUEST_PERMISSION_CAMERA_BANNER = 502;
@@ -183,7 +185,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    @Override
+@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
@@ -229,5 +231,40 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {}
+
+    public void showHidePassword(final EditText editText) {
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            boolean isVisible = false;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+
+                    if (motionEvent.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                        if (!isVisible) {
+                            editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            editText.setSelection(editText.length());
+                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_show, 0);
+                            isVisible = true;
+                        } else {
+                            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            editText.setSelection(editText.length());
+                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_hidden, 0);
+                            isVisible = false;
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+
 
 }

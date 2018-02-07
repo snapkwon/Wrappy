@@ -25,6 +25,7 @@ public class WpkToken implements Parcelable {
     private String scope;
     private String jid;
     private String xmppPassword;
+    private boolean hasPasscode;
 
     public WpkToken(String access_token, String token_type, String refresh_token, int expires_in, String scope, String jid, String xmppPassword) {
         this.access_token = access_token;
@@ -137,5 +138,13 @@ public class WpkToken implements Parcelable {
         Store.putStringData(context,STORE_REFRESH_TOKEN,getRefresh_token());
         Store.putStringData(context,STORE_TOKEN_TYPE,getToken_type());
         Store.putIntData(context,STORE_EXPIRES_IN,getExpires_in());
+    }
+
+    public boolean getHasPasscode() {
+        return hasPasscode;
+    }
+
+    public void setHasPasscode(boolean hasPasscode) {
+        this.hasPasscode = hasPasscode;
     }
 }

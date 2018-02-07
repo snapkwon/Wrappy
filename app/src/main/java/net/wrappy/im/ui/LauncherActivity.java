@@ -2,6 +2,7 @@ package net.wrappy.im.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -28,6 +29,9 @@ public class LauncherActivity extends BaseActivity {
     LinearLayout lnLoginFrame;
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
+    public static final int REQUEST_CODE_INPUT_NEW_PASSWORD = 1113;
+
+    public static final int RESULT_ERROR= 4001;
 
     boolean isFlag;
 
@@ -124,6 +128,19 @@ public class LauncherActivity extends BaseActivity {
 
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+            switch (requestCode) {
+                case RESULT_ERROR:
+                   if(resultIntent!=null && !resultIntent.getStringExtra("error").isEmpty()) {
+                        PopupUtils.showOKDialog(LauncherActivity.this, LauncherActivity.this.getString(R.string.error), resultIntent.getStringExtra("error"), null);
+                   }
+                    break;
+            }
+    }
+
+
     private void showLogin() {
 
         Intent intent = PatternActivity.getStartIntent(LauncherActivity.this);
@@ -131,7 +148,7 @@ public class LauncherActivity extends BaseActivity {
         arg.putInt("type", REQUEST_CODE_LOGIN);
         arg.putString("username", mEditUsername.getText().toString().trim());
         intent.putExtras(arg);
-        this.startActivity(intent);
+        this.startActivityForResult(intent , RESULT_ERROR);
 
     }
 

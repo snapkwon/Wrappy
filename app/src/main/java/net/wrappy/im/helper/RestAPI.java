@@ -66,8 +66,8 @@ public class RestAPI {
     private static String POST_LOGIN = root_url + "oauth/token?grant_type=password&username=%s&password=%s&scope=all";
     private static String POST_PHOTO = root_url + "kernal/asset/retain/";
     private static String GET_PHOTO = root_url + "kernal/asset/";
-    private static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
-    private static String GET_RESET_PASSWORD = root_url + "member/%s/password/%s";
+    public static String GET_MEMBER_INFO_BY_JID = root_url + "member/get-detail-by-jid/%s/";
+    public static String POST_RESET_PASSWORD = root_url + "member/%s/password/%s/%s/reset/";
     private static String GET_HASH_RESET_PASS = root_url + "member/%s/security/1/%s/2/%s/3/%s/password/reset";
     public static String PIN_CONVERSATION = root_url + "chat/pin/%s";// XMPP ID
     public static String GET_RANDOM_2_QUESTIONS = root_url + "member/security/";
@@ -75,6 +75,7 @@ public class RestAPI {
     public static String GET_COUNTRY_CODES = root_url + "master/country";
     public static String GET_TYPE_ROSTER = root_url + "chat/roster/group/type";
     public static String POST_ROSTER_CREATE = root_url + "chat/roster/group/add";
+    private static String GET_MEMBER_BY_JID = root_url + "member/find-by-jid/%s/";
     public static String POST_CHANGE_QUESTION_CHECK = root_url + "member/security/check";
     public static String PUT_CHANGE_SECURITY_QUESTION = root_url + "member/security/";
     private static String POST_FORGET_PASS_CHECK_QUESTIONS = root_url + "/member/%s/security/password/reset";
@@ -96,6 +97,9 @@ public class RestAPI {
     public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
     public static String REFERRAL = root_url + "member/inviter/%s";
     public static String ADD_MEMBER_TO_GROUP_CHAT = root_url + "chat/group/%s/participator/%s";
+
+    public static String CHECK_PASSCODE = root_url + "member/login/%s/check-passcode/";
+    public static String CREATE_PASSCODE = root_url + "member/%s/check-passcode/";
 
     public static String DETECT_LANGUAGE = "https://www.googleapis.com/language/translate/v2/detect?key=%1$s&q=%2$s";
     public static String TRANSLATE_LANGUAGE = "https://translation.googleapis.com/language/translate/v2?key=%1$s&source=%2$s&target=%3$s&q=%4$s";
@@ -142,9 +146,6 @@ public class RestAPI {
         return String.format(POST_LOGIN, user, pass);
     }
 
-    public static String resetPasswordUrl(String hash, String newPass) {
-        return String.format(GET_RESET_PASSWORD, hash, newPass);
-    }
 
     public static String getHashStringResetPassUrl(String username, String answer01, String answer02, String answer03) {
         return String.format(GET_HASH_RESET_PASS, username, answer01, answer02, answer03);
