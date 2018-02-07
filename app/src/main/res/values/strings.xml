@@ -549,7 +549,7 @@
     <string name="wrong_format_password">Password must have at least 8 characters. Inlcluding 1 Uppercase, 1 lowercase and 1 number.</string>
     <string name = "password_is_empty">password cannot be empty</string>
     <string name = "pattern_coutdown">Draw your pattern\n\nin %s seconds </string>
-    <string name = "passcode_coutdown">Input your passcode\n\nin %s seconds </string>
+    <string name = "passcode_coutdown">Input your password\n\nin %s seconds </string>
 
     <string name="reset_your_password">Reset your password</string>
     <string name="receive_password_via_email">A reset link has been sent to the email address associated with your account.</string>
@@ -563,5 +563,6 @@
         <item>Female</item>
         <item>Male</item>
     </string-array>
+    <string name="forget_passcode">Forget Password</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

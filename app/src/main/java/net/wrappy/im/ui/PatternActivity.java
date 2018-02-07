@@ -73,7 +73,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
 
     void startTimer() {
-        cTimer = new CountDownTimer(60000, 1000) {
+        cTimer = new CountDownTimer(49000, 1000) {
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
@@ -222,6 +222,12 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppFuncs.dismissProgressWaiting();
     }
 
     @Override
