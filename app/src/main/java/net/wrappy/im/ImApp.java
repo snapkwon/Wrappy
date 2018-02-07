@@ -99,6 +99,7 @@ import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.cacheword.PRNGFixes;
 import info.guardianproject.iocipher.VirtualFileSystem;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
 
@@ -276,6 +277,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
     }
 
     public void logout() {
+        ShortcutBadger.applyCount(ImApp.sImApp.getApplicationContext(), 0);
         OtrChatManager.endAllSessions();
         resetDB();
         ImPluginHelper.getInstance(sImApp).reset();
