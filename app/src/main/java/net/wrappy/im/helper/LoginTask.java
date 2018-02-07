@@ -21,10 +21,8 @@ import java.security.KeyPair;
 
 public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAccount> {
 
-    private Activity activity;
     private SimpleAlertHandler mHandler;
     private EventListenner listenner;
-    private RegistrationAccount registrationAccount;
     private WeakReference<Activity> weakReference;
 
     public interface EventListenner {
@@ -39,45 +37,47 @@ public class LoginTask extends AsyncTask<RegistrationAccount, Void, OnboardingAc
 
     public Activity getActivity() {
         if (weakReference != null) {
-            activity = weakReference.get();
+            return weakReference.get();
         }
-        return activity;
+        return null;
     }
 
     @Override
     protected OnboardingAccount doInBackground(RegistrationAccount... accounts) {
         try {
+            if (getActivity() != null) {
+                OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
+                KeyPair keyPair = keyMan.generateLocalKeyPair();
 
-            OtrAndroidKeyManagerImpl keyMan = OtrAndroidKeyManagerImpl.getInstance(getActivity());
-            KeyPair keyPair = keyMan.generateLocalKeyPair();
+                RegistrationAccount registrationAccount = accounts[0];
+                final OnboardingAccount result = OnboardingManager.addExistingAccount(getActivity(), mHandler, registrationAccount);
 
-            registrationAccount = accounts[0];
-            final OnboardingAccount result = OnboardingManager.addExistingAccount(getActivity(), mHandler, registrationAccount);
-
-            if (result != null) {
-                String jabberId = result.username + '@' + result.domain;
-                keyMan.storeKeyPair(jabberId, keyPair);
-                SignInHelper signInHelper = new SignInHelper(activity, mHandler);
-                signInHelper.setSignInListener(new SignInHelper.SignInListener() {
-                    @Override
-                    public void connectedToService() {
-                        if (listenner != null) {
-                            listenner.OnComplete(true, result);
+                if (result != null) {
+                    String jabberId = result.username + '@' + result.domain;
+                    keyMan.storeKeyPair(jabberId, keyPair);
+                    SignInHelper signInHelper = new SignInHelper(getActivity(), mHandler);
+                    signInHelper.setSignInListener(new SignInHelper.SignInListener() {
+                        @Override
+                        public void connectedToService() {
+                            if (listenner != null) {
+                                listenner.OnComplete(true, result);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void stateChanged(int state, long accountId) {
-                    }
-                });
-                signInHelper.activateAccount(result.providerId, result.accountId);
-                signInHelper.signIn(result.password, result.providerId, result.accountId, true);
+                        @Override
+                        public void stateChanged(int state, long accountId) {
+                        }
+                    });
+                    signInHelper.activateAccount(result.providerId, result.accountId);
+                    signInHelper.signIn(result.password, result.providerId, result.accountId, true);
+                }
+                return result;
             }
-            return result;
         } catch (Exception e) {
             Log.e(ImApp.LOG_TAG, "auto onboarding fail", e);
-            return null;
+
         }
+        return null;
     }
 
     @Override

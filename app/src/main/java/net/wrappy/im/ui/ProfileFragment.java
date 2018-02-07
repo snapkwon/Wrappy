@@ -95,7 +95,7 @@ public class ProfileFragment extends BaseFragmentV4 {
     @BindView(R.id.edProfileEmail)
     AppEditTextView edEmail;
     @BindView(R.id.edProfileGender)
-    AppEditTextView edGender;
+    AppTextView edGender;
     @BindView(R.id.lnForSeft)
     LinearLayout lnForSeft;
     @BindView(R.id.lnForFriend)
