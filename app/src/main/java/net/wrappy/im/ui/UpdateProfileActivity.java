@@ -110,6 +110,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     List<WpkCountry> wpkCountry;
     WpkToken wpkToken;
     String locale = "";
+    String passcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +118,8 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         initActionBarDefault(true,R.string.update_profile);
+
+        passcode =  getIntent().getStringExtra(UpdateProfileActivity.PASSCODE);
 
         ImageView backButton = (ImageView) findViewById(getResources().getIdentifier("action_bar_arrow_back", "id", getPackageName()));
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +140,7 @@ public class UpdateProfileActivity extends BaseActivity implements View.OnClickL
     private void getSecurityQuestions() {
         registrationData = new Registration();
         WpKAuthDto wpKAuthDto = getIntent().getParcelableExtra(WpKAuthDto.class.getName());
+        wpKAuthDto.setPasscode(passcode);
         ArrayList<SecurityQuestions> securityQuestions = getIntent().getParcelableArrayListExtra(SecurityQuestions.class.getName());
         registrationData.setWpKAuthDto(wpKAuthDto);
         password = wpKAuthDto.getSecret();
