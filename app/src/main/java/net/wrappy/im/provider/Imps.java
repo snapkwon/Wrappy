@@ -30,6 +30,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.wrappy.im.ImApp;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.WpKMemberDto;
 import net.wrappy.im.model.WpkRoster;
 import net.wrappy.im.util.ConferenceUtils;
@@ -3450,6 +3451,7 @@ public class Imps {
         int result = resolver.update(builder.build(), values, null, null);
 
         if (result == 0) {
+            AppFuncs.minusNumberMsgOnBadger();
             builder = Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
             builder.appendPath(msgId);
             result = resolver.update(builder.build(), values, null, null);

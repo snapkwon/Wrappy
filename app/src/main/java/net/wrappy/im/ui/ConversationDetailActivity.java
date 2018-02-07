@@ -29,14 +29,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -54,7 +46,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -67,9 +58,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -92,7 +81,6 @@ import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.NotificationCenter.NotificationCenterDelegate;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
-import net.wrappy.im.helper.glide.CircleTransform;
 import net.wrappy.im.helper.glide.GlideHelper;
 import net.wrappy.im.helper.layout.LayoutHelper;
 import net.wrappy.im.model.Presence;
@@ -100,10 +88,8 @@ import net.wrappy.im.model.WpKChatGroupDto;
 import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.service.IChatSession;
-import net.wrappy.im.service.IImConnection;
 import net.wrappy.im.tasks.AddContactAsyncTask;
 import net.wrappy.im.ui.conference.ConferenceConstant;
-import net.wrappy.im.ui.widgets.LetterAvatar;
 import net.wrappy.im.util.BundleKeyConstant;
 import net.wrappy.im.util.ConferenceUtils;
 import net.wrappy.im.util.Constant;
@@ -205,7 +191,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     private TextView txtTitleActionBar;
 
     WpKChatGroupDto wpKChatGroupDto;
-    IImConnection mConn;
 
     @Override
     public void onHandle(Message msg) {
@@ -287,108 +272,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             }
         }
     };
-
-    public Bitmap createImage(int width, int height, int color, String name) {
-        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        Paint paintCicle = new Paint();
-        Paint paintText = new Paint();
-
-        Rect rect = new Rect(0, 0, width, height);
-        RectF rectF = new RectF(rect);
-        float density = ConversationDetailActivity.this.getResources().getDisplayMetrics().density;
-        float roundPx = 100 * density;
-
-        paintCicle.setColor(Color.GRAY);
-        paintCicle.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-
-// Set Border For Circle
-        paintCicle.setStyle(Paint.Style.FILL);
-        paintCicle.setStrokeWidth(1.0f);
-
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paintCicle);
-
-        paintText.setColor(Color.WHITE);
-        paintText.setTextSize(convertDpToPx(25));
-
-        canvas.drawText(name, convertDpToPx(17), convertDpToPx(28), paintText);
-
-        return output;
-    }
-
-    private int convertDpToPx(int dp) {
-        return Math.round(dp * (getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-
-
-    public void updateStatusAvatar(boolean isgroupchat) {
-        String references = getIntent().getStringExtra(BundleKeyConstant.REFERENCE_KEY);
-
-        //  getSupportActionBar().getCustomView().findViewById()
-        if (references != null && !references.isEmpty()) {
-            BitmapTypeRequest<String> request = Glide.with(ConversationDetailActivity.this).load(getAvatarUrl(references)).asBitmap();
-            if (true)
-                request.transform(new CircleTransform(ConversationDetailActivity.this));
-            request.diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, convertDpToPx(50), convertDpToPx(50), false));
-//                    mToolbar.setLogo(d);
-                }
-
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                    AppFuncs.log(e.getLocalizedMessage());
-                }
-            });
-        } else {
-            if (isgroupchat == true) {
-                //    int padding = 24;
-                //   LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, chatGroupDto.getName(), padding);
-                // if(isgroup) {
-//                mToolbar.setLogo(ConversationDetailActivity.this.getResources().getDrawable(R.drawable.chat_group));
-            } else {
-                try {
-                    if (getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY) != null) {
-                        int padding = 24;
-                        LetterAvatar lavatar = new LetterAvatar(ConversationDetailActivity.this, getIntent().getStringExtra(BundleKeyConstant.NICK_NAME_KEY), padding);
-
-                        Drawable d;//= new BitmapDrawable(getResources(), b);
-
-
-                        Bitmap output = Bitmap.createBitmap(convertDpToPx(50), convertDpToPx(50), Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(output);
-
-                        Paint paintCicle = new Paint();
-
-                        Rect rect = new Rect(0, 0, convertDpToPx(50), convertDpToPx(50));
-                        RectF rectF = new RectF(rect);
-                        paintCicle.setColor(Color.GRAY);
-                        paintCicle.setAntiAlias(true);
-                        canvas.drawARGB(0, 0, 0, 0);
-
-// Set Border For Circle
-                        paintCicle.setStyle(Paint.Style.FILL);
-                        paintCicle.setStrokeWidth(1.0f);
-
-                        canvas.drawRoundRect(rectF, convertDpToPx(50), convertDpToPx(50), paintCicle);
-
-                        lavatar.draw(canvas);
-
-
-                        d = new BitmapDrawable(getResources(), output);
-
-//                        mToolbar.setLogo(d);
-                    }
-                } catch (OutOfMemoryError ome) {
-                    //this seems to happen now and then even on tiny images; let's catch it and just not set an avatar
-                }
-            }
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -631,16 +514,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
         setCustomActionBar(mConvoView.isGroupChat());
     }
 
-    public void collapseToolbar() {
-
-        //   appBarLayout.setExpanded(false);
-    }
-
-    public void expandToolbar() {
-
-        //    appBarLayout.setExpanded(true);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -686,7 +559,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
     @Override
     public void onStop() {
         super.onStop();
-        AppFuncs.clearNumberMsgOnBadger();
     }
 
     @Override
@@ -763,11 +635,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             //getMenuInflater().inflate(R.menu.menu_conversation_detail, menu);
         }
         return true;
-    }
-
-    void showAddContact() {
-        Intent intent = new Intent(this, ContactsPickerActivity.class);
-        startActivityForResult(intent, REQUEST_PICK_CONTACTS);
     }
 
     void startImagePicker() {
@@ -949,12 +816,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
             AppFuncs.alert(this, R.string.google_play_services_not_available,
                     true);
         }
-    }
-
-    private boolean isCallable(Intent intent) {
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
     }
 
     public void handleSendDelete(Uri contentUri, String defaultType, boolean delete, boolean resizeImage, boolean importContent) {
@@ -1182,10 +1043,6 @@ public class ConversationDetailActivity extends BaseActivity implements OnHandle
                 Log.e(ImApp.LOG_TAG, "couldn't start audio", e);
             }
         }
-    }
-
-    public int getAudioAmplitude() {
-        return mMediaRecorder.getMaxAmplitude();
     }
 
     public void stopAudioRecording(boolean send) {
