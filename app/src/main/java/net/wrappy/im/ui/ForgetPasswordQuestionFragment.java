@@ -161,7 +161,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
     }
 
-    int time = 0;
+    int time = 1;
 
     private void postDataForForgetPassword(JsonObject json) {
         RestAPI.PostDataWrappy(getActivity(), json, RestAPI.getCheckForgetPasswordSecurityQuestionsUrl(Store.getStringData(getActivity(), Store.USERNAME)), new RestAPIListener() {
