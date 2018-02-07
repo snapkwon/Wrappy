@@ -87,7 +87,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
 
         userName = getIntent().getStringExtra("username");
 
-        showHidePassword(edtPassword);
+        showHidePassword(edtPassword, true);
 
         mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
