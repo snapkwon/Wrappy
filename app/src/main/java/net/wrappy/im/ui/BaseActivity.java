@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.yalantis.ucrop.UCrop;
 import net.ironrabbit.type.CustomTypefaceManager;
 import net.wrappy.im.R;
 import net.wrappy.im.helper.AppFuncs;
+import net.wrappy.im.helper.layout.AppFonts;
 import net.wrappy.im.helper.layout.AppTextView;
 
 import butterknife.ButterKnife;
@@ -245,7 +248,7 @@ public class BaseActivity extends AppCompatActivity {
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
 
-                    if (motionEvent.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (motionEvent.getRawX() >= (editText.getWidth() - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width() - editText.getPaddingRight())) {
 
                         if (!isVisible) {
                             editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
@@ -256,6 +259,10 @@ public class BaseActivity extends AppCompatActivity {
                             editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                             editText.setSelection(editText.length());
                             editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_hidden, 0);
+
+                            Typeface myTypeface = Typeface.createFromAsset(getApplicationContext().getAssets(), AppFonts.FONT_REGULAR);
+                            editText.setTypeface(myTypeface);
+
                             isVisible = false;
                         }
                     }

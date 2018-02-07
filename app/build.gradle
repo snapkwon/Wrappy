@@ -9,8 +9,8 @@ android {
     defaultConfig {
         //applicationId 'net.wrappy.im'
         applicationId 'net.wrappy.im'
-        versionCode 22
-        versionName "1.0.2"
+        versionCode 23
+        versionName "1.1.6"
         archivesBaseName = "Wrappy-" + versionName
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
