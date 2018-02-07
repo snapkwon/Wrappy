@@ -491,14 +491,10 @@ public class AppFuncs {
         ShortcutBadger.applyCount(context, newCount);
     }
 
-    public static void minusNumberMsgOnBadger() {
+    public static void clearNumberMsgOnBadger() {
         Context context = ImApp.sImApp.getApplicationContext();
-        int oldCount = Store.getIntData(context,Store.NUM_UNREAD_MESSAGE);
-        if (oldCount > 0) {
-            int newCount = oldCount-1;
-            Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,newCount);
-            ShortcutBadger.applyCount(context, newCount);
-        }
+        Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,0);
+        ShortcutBadger.applyCount(context, 0);
     }
 
 }

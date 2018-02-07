@@ -201,7 +201,7 @@ public class StatusBarNotifier {
         for (Object nInfo : infos) {
             NotificationInfo info = (NotificationInfo)nInfo;
             if (info.mProviderId == providerId) {
-                AppFuncs.minusNumberMsgOnBadger();
+
                 mNotificationManager.cancel(info.computeNotificationId());
                 mNotificationInfos.remove(info);
             }
@@ -214,7 +214,6 @@ public class StatusBarNotifier {
         for (Object nInfo : infos) {
             NotificationInfo info = (NotificationInfo)nInfo;
             if (info.getSender() != null && info.getSender().equals(username)) {
-
                 mNotificationManager.cancel(info.computeNotificationId());
                 mNotificationInfos.remove(info);
             }

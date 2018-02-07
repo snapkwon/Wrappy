@@ -1033,5 +1033,11 @@ public class MainActivity extends BaseActivity implements AppDelegate, Notificat
             return syncContactRunnable;
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AppFuncs.clearNumberMsgOnBadger();
+    }
 }
 

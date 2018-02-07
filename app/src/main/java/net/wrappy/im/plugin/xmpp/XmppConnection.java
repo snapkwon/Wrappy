@@ -3638,7 +3638,7 @@ public class XmppConnection extends ImConnection {
 
     public void debug(String tag, String msg) {
         //  if (Log.isLoggable(TAG, Log.DEBUG)) {
-        if (Debug.DEBUG_ENABLED) {
+        if (true) {
             Log.d(tag, "" + mGlobalId + " : " + msg);
         }
     }
@@ -4054,7 +4054,9 @@ public class XmppConnection extends ImConnection {
     }
 
     private void handleChatState(String from, String chatStateXml) throws RemoteException {
-
+        if (from==null) {
+            return;
+        }
         Presence p = null;
         Contact contact = mContactListManager.getContact(from);
         if (contact == null)
