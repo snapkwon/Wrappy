@@ -47,7 +47,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
     CountDownTimer cTimer = null;
 
     void startTimer() {
-        cTimer = new CountDownTimer(60000, 1000) {
+        cTimer = new CountDownTimer(49000, 1000) {
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
@@ -73,6 +73,13 @@ public class InputPasswordLoginActivity extends BaseActivity {
         if(cTimer!=null)
             cTimer.start();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppFuncs.dismissProgressWaiting();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
