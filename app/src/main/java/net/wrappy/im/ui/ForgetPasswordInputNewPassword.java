@@ -183,7 +183,7 @@ public class ForgetPasswordInputNewPassword extends BaseActivity {
         mEditPassword.setText("");
         mEditConfirmPassword.setText("");
 
-        showHidePassword(mEditPassword);
-        showHidePassword(mEditConfirmPassword);
+        showHidePassword(mEditPassword, false);
+        showHidePassword(mEditConfirmPassword, false);
     }
 }

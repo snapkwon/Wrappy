@@ -47,7 +47,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
     CountDownTimer cTimer = null;
 
     void startTimer() {
-        cTimer = new CountDownTimer(49000, 1000) {
+        cTimer = new CountDownTimer(AppFuncs.TIMECOUNTDOWN, 1000) {
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
@@ -94,7 +94,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
 
         userName = getIntent().getStringExtra("username");
 
-        showHidePassword(edtPassword);
+        showHidePassword(edtPassword, true);
 
         mBtnForgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +107,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AppFuncs.showProgressWaiting(InputPasswordLoginActivity.this);
                 RestAPI.PostDataWrappy(InputPasswordLoginActivity.this, null, String.format(RestAPI.CHECK_PASSCODE, edtPassword.getText().toString()), new RestAPIListener(InputPasswordLoginActivity.this) {
 
                     @Override

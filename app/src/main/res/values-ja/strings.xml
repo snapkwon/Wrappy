@@ -536,5 +536,5 @@
     <string name="input_your_password">パスワードを入力</string>
     <string name="create_new_password">パスワードを登録</string>
     <string name="input_repeat_password">パスワード再入力</string>
-    <string name="forget_passcode">パスワードをお忘れですか</string>
+    <string name="forget_passcode">パスワードを忘れた</string>
 </resources>

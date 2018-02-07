@@ -63,6 +63,8 @@ public class AppFuncs {
 
     public static DisplayMetrics displayMetrics = new DisplayMetrics();
 
+    public static int TIMECOUNTDOWN = 49000;
+
     private static AppFuncs _ins;
 
     public static AppFuncs getInstance() {

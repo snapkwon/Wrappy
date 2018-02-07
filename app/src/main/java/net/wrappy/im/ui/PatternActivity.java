@@ -73,7 +73,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
 
 
     void startTimer() {
-        cTimer = new CountDownTimer(49000, 1000) {
+        cTimer = new CountDownTimer(AppFuncs.TIMECOUNTDOWN, 1000) {
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) (millisUntilFinished / 1000);
                 //int minutes = seconds / 60;
