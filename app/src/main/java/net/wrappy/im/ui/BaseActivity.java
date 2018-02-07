@@ -188,7 +188,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-@Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
@@ -196,7 +196,7 @@ public class BaseActivity extends AppCompatActivity {
                 case UCrop.RESULT_ERROR:
                     final Throwable cropError = UCrop.getError(data);
                     AppFuncs.log(cropError.getLocalizedMessage());
-                    onResultPickerImage(false,data,false);
+                    onResultPickerImage(false, data, false);
                     break;
                 case RESULT_AVATAR:
                     AppFuncs.cropImage(this, data, true, AVATAR);
@@ -205,10 +205,10 @@ public class BaseActivity extends AppCompatActivity {
                     AppFuncs.cropImage(this, data, false, BANNER);
                     break;
                 case AVATAR:
-                    onResultPickerImage(true,data,true);
+                    onResultPickerImage(true, data, true);
                     break;
                 case BANNER:
-                    onResultPickerImage(false,data,true);
+                    onResultPickerImage(false, data, true);
                     break;
             }
         }
@@ -219,23 +219,24 @@ public class BaseActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_PERMISSION_CAMERA_AVATAR:
-                AppFuncs.openCamera(this,true);
+                AppFuncs.openCamera(this, true);
                 break;
             case REQUEST_PERMISSION_CAMERA_BANNER:
-                AppFuncs.openCamera(this,false);
+                AppFuncs.openCamera(this, false);
                 break;
             case REQUEST_PERMISSION_PICKER_AVATAR:
-                AppFuncs.openGallery(this,true);
+                AppFuncs.openGallery(this, true);
                 break;
             case REQUEST_PERMISSION_PICKER_BANNER:
-                AppFuncs.openGallery(this,false);
+                AppFuncs.openGallery(this, false);
                 break;
         }
     }
 
-    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {}
+    public void onResultPickerImage(boolean isAvatar, Intent data, boolean isSuccess) {
+    }
 
-    public void showHidePassword(final EditText editText) {
+    public void showHidePassword(final EditText editText, final boolean isLogin) {
         editText.setOnTouchListener(new View.OnTouchListener() {
             boolean isVisible = false;
 
@@ -253,12 +254,23 @@ public class BaseActivity extends AppCompatActivity {
                         if (!isVisible) {
                             editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                             editText.setSelection(editText.length());
-                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_show, 0);
+
+                            if (isLogin) {
+                                editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_1, 0, R.drawable.ic_show, 0);
+                            } else {
+                                editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_show, 0);
+                            }
+
                             isVisible = true;
                         } else {
                             editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                             editText.setSelection(editText.length());
-                            editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_hidden, 0);
+
+                            if (isLogin) {
+                                editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_1, 0, R.drawable.ic_hidden, 0);
+                            } else {
+                                editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_hidden, 0);
+                            }
 
                             Typeface myTypeface = Typeface.createFromAsset(getApplicationContext().getAssets(), AppFonts.FONT_REGULAR);
                             editText.setTypeface(myTypeface);
@@ -271,7 +283,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
 }

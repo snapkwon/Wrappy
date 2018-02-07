@@ -579,6 +579,8 @@ public class RestAPI {
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
                     case "ERROR_CODE_LOGIN_LOCKED":
                         return ErrorCode.ERROR_CODE_LOGIN_LOCKED.getErrorCode();
+                    case "ERROR_CODE_LOGIN_BLOCKED":
+                        return ErrorCode.ERROR_CODE_LOGIN_LOCKED.getErrorCode();
                     case "WP_K_MEMBER_NOT_FOUND":
                         return ErrorCode.WP_K_MEMBER_NOT_FOUND.getErrorCode();
                 }

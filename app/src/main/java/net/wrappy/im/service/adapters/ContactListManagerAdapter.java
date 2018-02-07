@@ -1360,7 +1360,7 @@ public class ContactListManagerAdapter extends
 
     private ContentValues getContactContentValues(Contact contact, long listId) {
 
-        final String username = mAdaptee.normalizeAddress(contact.getAddress().getAddress());
+        final String username = mAdaptee.normalizeAddress(contact.getAddress().getAddress()).toLowerCase();
         String nickname = contact.getName();
 
         int type = contact.getType();
