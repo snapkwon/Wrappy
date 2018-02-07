@@ -238,7 +238,7 @@
                                 android:orientation="horizontal"
                                 android:padding="10dp">
 
-                                <net.wrappy.im.helper.layout.AppEditTextView
+                                <net.wrappy.im.helper.layout.AppTextView
                                     android:id="@+id/edProfileGender"
                                     style="@style/AppText02"
                                     android:layout_width="match_parent"
