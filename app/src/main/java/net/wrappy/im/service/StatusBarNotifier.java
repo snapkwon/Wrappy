@@ -41,6 +41,8 @@ import net.wrappy.im.provider.Imps;
 
 import java.util.ArrayList;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 public class StatusBarNotifier {
     private static final boolean DBG = false;
 
@@ -68,11 +70,9 @@ public class StatusBarNotifier {
         if (!Preferences.isNotificationEnabled()) {
             return;
         }
-
         //msg = html2text(msg); // strip tags for html client inbound msgs
         Bitmap avatar = BitmapFactory.decodeResource(mContext.getResources(),
                 R.mipmap.ic_launcher);
-
         String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
@@ -206,6 +206,7 @@ public class StatusBarNotifier {
                 mNotificationInfos.remove(info);
             }
         }
+        ShortcutBadger.applyCount(ImApp.sImApp.getApplicationContext(), mNotificationInfos.size());
     }
 
     public void notify(String title, String tickerText, String message,
@@ -268,7 +269,7 @@ public class StatusBarNotifier {
         mNotificationManager.notify(info.computeNotificationId(),
                 info.createNotification(tickerText, lightWeightNotify, iconSmall, iconLarge, intent));
 
-
+        ShortcutBadger.applyCount(ImApp.sImApp.getApplicationContext(), mNotificationInfos.size());
 
 
     }

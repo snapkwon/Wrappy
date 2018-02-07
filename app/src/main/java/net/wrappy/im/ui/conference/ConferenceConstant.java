@@ -1,11 +1,13 @@
 package net.wrappy.im.ui.conference;
 
+import net.wrappy.im.util.Constant;
+
 /**
  * Created by USER on 11/30/2017.
  */
 
 public class ConferenceConstant {
-    public static final String CONFERENCE_HOST = "https://im.wrappy.network:7443/ofmeet/%s";
+    public static final String CONFERENCE_HOST = "https://" + Constant.DOMAIN + ":7443/ofmeet/%s";
     public static final String KEY = "video-meeting-request";
     public static final String REGEX = ":";
     public static final String CONFERENCE_PREFIX = REGEX + KEY;

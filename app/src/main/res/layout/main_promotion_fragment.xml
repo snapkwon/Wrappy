@@ -86,15 +86,32 @@
         android:paddingLeft="16dp"
         android:orientation="vertical">
 
-        <net.wrappy.im.helper.layout.AppTextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/promotion_history"
-            android:textSize="18sp"
-            android:textColor="#000"
-            app:font_type="bold"
-            android:layout_marginBottom="5dp"
-            />
+            android:orientation="horizontal">
+
+            <net.wrappy.im.helper.layout.AppTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/promotion_history"
+                android:textSize="18sp"
+                android:textColor="#000"
+                app:font_type="bold"
+                android:layout_marginBottom="5dp"
+                />
+
+            <net.wrappy.im.helper.layout.AppTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/promotion_history_description"
+                android:textSize="12sp"
+                android:textColor="#9b9b9b"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                />
+
+        </LinearLayout>
 
         <View style="@style/divider" android:layout_marginBottom="10dp"/>
 

@@ -58,11 +58,10 @@ public class Utils {
     }
 
     public static boolean setTextForView(TextView view, String text) {
-        if (!TextUtils.isEmpty(text)) {
+        if (view!=null && !TextUtils.isEmpty(text)) {
             view.setText(text);
             return true;
         }
-        view.setText("");
         return false;
     }
 
