@@ -53,6 +53,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * Created by ben on 14/11/2017.
  */
@@ -466,7 +468,8 @@ public class AppFuncs {
     }
 
     public static void sendRequestInviteFriend(final Activity activity) {
-        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListener(activity) {
+        String countryCode = activity.getResources().getConfiguration().locale.toString().toLowerCase();
+        RestAPI.GetDataWrappy(activity, RestAPI.getContentPromotionUrl(countryCode), new RestAPIListener(activity) {
             @Override
             public void OnComplete(String s) {
                 try {

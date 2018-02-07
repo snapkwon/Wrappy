@@ -3453,9 +3453,8 @@ public class Imps {
         values.put(Imps.Messages.IS_DELIVERED, isDelivered);
         values.put(Messages.THREAD_ID, threadId);
         int result = resolver.update(builder.build(), values, null, null);
-
+        AppFuncs.log(values.toString());
         if (result == 0) {
-            AppFuncs.minusNumberMsgOnBadger();
             builder = Messages.CONTENT_URI_MESSAGES_BY_PACKET_ID.buildUpon();
             builder.appendPath(msgId);
             result = resolver.update(builder.build(), values, null, null);

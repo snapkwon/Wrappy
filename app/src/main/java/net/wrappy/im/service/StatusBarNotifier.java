@@ -36,6 +36,7 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.RouterActivity;
+import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.provider.Imps;
 
@@ -68,7 +69,7 @@ public class StatusBarNotifier {
         if (!Preferences.isNotificationEnabled()) {
             return;
         }
-
+        AppFuncs.plusNumberMsgOnBadger();
         //msg = html2text(msg); // strip tags for html client inbound msgs
         Bitmap avatar = BitmapFactory.decodeResource(mContext.getResources(),
                 R.mipmap.ic_launcher);
