@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.crypto.omemo.Omemo;
+import net.wrappy.im.helper.NotificationCenter;
 import net.wrappy.im.helper.RestAPI;
 import net.wrappy.im.helper.RestAPIListener;
 import net.wrappy.im.model.Address;
@@ -1395,7 +1396,9 @@ public class XmppConnection extends ImConnection {
 
     private void reconnectWhenPingFailed() {
         debug(TAG, "re-login on ping failed: " + mUser.getAddress().getAddress());
-        mStreamHandler.quickShutdown();
+        if (mStreamHandler != null) {
+            mStreamHandler.quickShutdown();
+        }
         do_login();
         clearPing();
     }
@@ -1464,7 +1467,6 @@ public class XmppConnection extends ImConnection {
                     mRetryLogin = false;
                     mNeedReconnect = false;
                 }
-
             }
 
             if (mRetryLogin && getState() != SUSPENDED) {
@@ -3628,6 +3630,7 @@ public class XmppConnection extends ImConnection {
             }
         }
 
+        NotificationCenter.getInstance().postNotificationName(NotificationCenter.networkStateChange, state);
         //Update presence state when state changed
         if (mUserPresence != null && mConnection != null && mConnection.isConnected())
             sendPresencePacket();
