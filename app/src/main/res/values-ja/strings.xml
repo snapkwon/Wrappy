@@ -40,7 +40,7 @@
     <!-- Views -->
     <string name="title_activity_lock_screen">Wrappy Locked</string>
     <string name="lock_screen_create_passphrase">パスワードを設定してください</string>
-    <string name="lock_screen_confirm_passphrase">パスワードを認証する</string>
+    <string name="lock_screen_confirm_passphrase">パスワード再確認</string>
     <string name="lock_screen_passphrase_hint">パスワード</string>
     <string name="lock_screen_passphrase_not_set_enter">アプリをロックするパスフレーズを設定してください</string>
     <string name="lock_screen_passphrase_not_set_confirm">新しいパスワードを確認</string>
@@ -532,4 +532,7 @@
         <item>女性</item>
         <item>男性</item>
     </string-array>
+    <string name="input_your_password">パスワードを入力</string>
+    <string name="create_new_password">パスワードを登録</string>
+    <string name="input_repeat_password">パスワード再入力</string>
 </resources>
