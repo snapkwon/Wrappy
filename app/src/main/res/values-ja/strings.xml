@@ -527,6 +527,7 @@
     <string name="resend_link">もう一度送信</string>
     <string name="local_time_format">yyyy年MMMdd日</string>
     <string name="promotion_format">%1$s<b>%2$s</b>から　レベル(%3$s)</string>
+    <string name="promotion_history_description">レベル2以降は表示されません</string>
 
     <string-array name="profile_gender_display">
         <item>女性</item>
