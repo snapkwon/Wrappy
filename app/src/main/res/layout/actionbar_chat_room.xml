@@ -39,17 +39,18 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:textColor="#ffffff"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp" />
 
         <SearchView
             android:id="@+id/searchtext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_margin="5dp"
             android:icon="@drawable/ic_chat_menu_search"
             android:iconifiedByDefault="false"
             android:searchIcon="@null"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/background_search_view"
             android:visibility="gone"/>
     </LinearLayout>

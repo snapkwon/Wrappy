@@ -80,6 +80,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AppFuncs.showProgressWaiting(InputPasswordRegisterActivity.this);
                 String password = mEditPassword.getText().toString();
                 if(password.isEmpty())
                 {
@@ -168,7 +169,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
         mEditPassword.setText("");
         mEditConfirmPassword.setText("");
 
-        showHidePassword(mEditPassword);
-        showHidePassword(mEditConfirmPassword);
+        showHidePassword(mEditPassword, false);
+        showHidePassword(mEditConfirmPassword, false);
     }
 }

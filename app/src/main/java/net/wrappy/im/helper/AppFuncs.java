@@ -37,6 +37,7 @@ import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
 import net.wrappy.im.provider.Imps;
+import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.util.Debug;
@@ -52,6 +53,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * Created by ben on 14/11/2017.
  */
@@ -59,6 +62,8 @@ import java.util.regex.Pattern;
 public class AppFuncs {
 
     public static DisplayMetrics displayMetrics = new DisplayMetrics();
+
+    public static int TIMECOUNTDOWN = 49000;
 
     private static AppFuncs _ins;
 
@@ -465,7 +470,8 @@ public class AppFuncs {
     }
 
     public static void sendRequestInviteFriend(final Activity activity) {
-        RestAPI.GetDataWrappy(activity, RestAPI.GET_PROMOTION_SETTING, new RestAPIListener(activity) {
+        String countryCode = activity.getResources().getConfiguration().locale.toString().toLowerCase();
+        RestAPI.GetDataWrappy(activity, RestAPI.getContentPromotionUrl(countryCode), new RestAPIListener(activity) {
             @Override
             public void OnComplete(String s) {
                 try {
@@ -479,4 +485,23 @@ public class AppFuncs {
             }
         });
     }
+
+    public static void plusNumberMsgOnBadger() {
+        Context context = ImApp.sImApp.getApplicationContext();
+        int oldCount = Store.getIntData(context,Store.NUM_UNREAD_MESSAGE);
+        int newCount = oldCount+1;
+        Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,newCount);
+        ShortcutBadger.applyCount(context, newCount);
+    }
+
+    public static void minusNumberMsgOnBadger() {
+        Context context = ImApp.sImApp.getApplicationContext();
+        int oldCount = Store.getIntData(context,Store.NUM_UNREAD_MESSAGE);
+        if (oldCount > 0) {
+            int newCount = oldCount-1;
+            Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,newCount);
+            ShortcutBadger.applyCount(context, newCount);
+        }
+    }
+
 }
