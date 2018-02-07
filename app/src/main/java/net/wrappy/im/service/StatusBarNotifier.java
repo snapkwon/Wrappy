@@ -36,10 +36,8 @@ import net.wrappy.im.MainActivity;
 import net.wrappy.im.Preferences;
 import net.wrappy.im.R;
 import net.wrappy.im.RouterActivity;
-import net.wrappy.im.helper.AppFuncs;
 import net.wrappy.im.model.Contact;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.util.Constant;
 
 import java.util.ArrayList;
 
@@ -75,25 +73,16 @@ public class StatusBarNotifier {
         Bitmap avatar = BitmapFactory.decodeResource(mContext.getResources(),
                 R.mipmap.ic_launcher);
 
-
-        String identifer = nickname;
-        if (nickname.contains(Constant.EMAIL_DOMAIN)) {
-            identifer = nickname.split("@")[0];
-            nickname = Imps.Contacts.getNicknameFromAddress(mContext.getContentResolver(),nickname);
-        }
-        if (TextUtils.isEmpty(nickname)) {
-            nickname = identifer;
-        }
-        AppFuncs.plusNumberMsgOnBadger();
+        String title = nickname;
         String snippet = mContext.getString(R.string.new_messages_notify) + ' ' + nickname;// + ": " + msg;
         Intent intent = getDefaultIntent(accountId, providerId);//new Intent(Intent.ACTION_VIEW);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(ContentUris.withAppendedId(Imps.Chats.CONTENT_URI, chatId),Imps.Chats.CONTENT_ITEM_TYPE);
         intent.putExtra(ImServiceConstants.EXTRA_INTENT_FROM_ADDRESS, username);
-        intent.putExtra("title", identifer);
+        intent.putExtra("title", title);
         intent.putExtra("isgroup", false);
         intent.addCategory(ImApp.IMPS_CATEGORY);
-        notify(username, identifer, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.notify_wrappy, avatar);
+        notify(username, title, snippet, msg, providerId, accountId, intent, lightWeightNotify, R.drawable.notify_wrappy, avatar);
     }
 
     public void notifyGroupChat(long providerId, long accountId, long chatId, String remoteAddress, String groupname,
@@ -201,7 +190,6 @@ public class StatusBarNotifier {
         for (Object nInfo : infos) {
             NotificationInfo info = (NotificationInfo)nInfo;
             if (info.mProviderId == providerId) {
-
                 mNotificationManager.cancel(info.computeNotificationId());
                 mNotificationInfos.remove(info);
             }

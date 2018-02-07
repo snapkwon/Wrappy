@@ -37,7 +37,6 @@ import net.wrappy.im.model.PromotionSetting;
 import net.wrappy.im.model.Registration;
 import net.wrappy.im.model.T;
 import net.wrappy.im.provider.Imps;
-import net.wrappy.im.provider.Store;
 import net.wrappy.im.ui.BaseActivity;
 import net.wrappy.im.ui.ConversationDetailActivity;
 import net.wrappy.im.util.Debug;
@@ -52,8 +51,6 @@ import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import me.leolin.shortcutbadger.ShortcutBadger;
 
 /**
  * Created by ben on 14/11/2017.
@@ -482,19 +479,4 @@ public class AppFuncs {
             }
         });
     }
-
-    public static void plusNumberMsgOnBadger() {
-        Context context = ImApp.sImApp.getApplicationContext();
-        int oldCount = Store.getIntData(context,Store.NUM_UNREAD_MESSAGE);
-        int newCount = oldCount+1;
-        Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,newCount);
-        ShortcutBadger.applyCount(context, newCount);
-    }
-
-    public static void clearNumberMsgOnBadger() {
-        Context context = ImApp.sImApp.getApplicationContext();
-        Store.putIntData(context,Store.NUM_UNREAD_MESSAGE,0);
-        ShortcutBadger.applyCount(context, 0);
-    }
-
 }
