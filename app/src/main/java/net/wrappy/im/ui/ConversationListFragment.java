@@ -42,7 +42,6 @@ import android.widget.TextView;
 import net.wrappy.im.MainActivity;
 import net.wrappy.im.R;
 import net.wrappy.im.comon.BaseFragmentV4;
-import net.wrappy.im.plugin.xmpp.XmppAddress;
 import net.wrappy.im.provider.Imps;
 import net.wrappy.im.tasks.MigrateAccountTask;
 import net.wrappy.im.ui.conversation.CustomBottomSheetDialogFragment;
@@ -238,7 +237,7 @@ public class ConversationListFragment extends BaseFragmentV4 {
                 String s = DatabaseUtils.dumpCursorToString(cursor);
                 final long chatId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ID);
                 final String address = cursor.getString(ConversationListItem.COLUMN_CONTACT_USERNAME);
-                String nicknameTemp = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
+                final String nickname = cursor.getString(ConversationListItem.COLUMN_CONTACT_NICKNAME);
 
                 final long providerId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_PROVIDER);
                 final long accountId = cursor.getLong(ConversationListItem.COLUMN_CONTACT_ACCOUNT);
@@ -261,10 +260,6 @@ public class ConversationListFragment extends BaseFragmentV4 {
 
                 ConversationListItem clItem = ((ConversationListItem) viewHolder.itemView.findViewById(R.id.convoitemview));
 
-                if (TextUtils.isEmpty(nicknameTemp)) {
-                    nicknameTemp = new XmppAddress(address).getUser();
-                }
-                final String nickname = nicknameTemp;
                 clItem.bind(viewHolder, chatId, providerId, accountId, address, nickname, type, lastMsg, lastMsgDate, lastMsgType, presence, null, true, false, chatFavorite, reference);
 
                 clItem.setOnClickListener(new View.OnClickListener() {
