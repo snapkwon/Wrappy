@@ -1,10 +1,13 @@
 package net.wrappy.im.model;
 
+import android.text.TextUtils;
+
 /**
  * Created by ben on 09/01/2018.
  */
 
 public class PromotionSetting {
+    private String result;
     private String content;
     private boolean enablePromotion;
     private String subTitle;
@@ -13,6 +16,7 @@ public class PromotionSetting {
     public PromotionSetting() {}
 
     public String getContent() {
+        if (!TextUtils.isEmpty(result)) return result;
         return content;
     }
 
