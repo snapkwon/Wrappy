@@ -568,5 +568,6 @@
 
     <string name="update_password">Update password</string>
     <string name="update_password_title">Please create a password to improve the security on your account</string>
+    <string name="reset_your_password_title">Success! Email has been sent</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

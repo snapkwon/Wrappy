@@ -28,7 +28,7 @@ public class SetPatternActivity extends BasePatternActivity
         if (m_typePattern == TYPE_NOCONFIRM) {
             view.setVisibility(View.GONE);
             bottomText.setVisibility(View.VISIBLE);
-            bottomText.setText("Forget password");
+            bottomText.setText(this.getResources().getString(R.string.pl_forgot_pattern));
         } else if (m_typePattern == TYPE_CONFIRM) {
             view.setVisibility(View.VISIBLE);
             bottomText.setVisibility(View.GONE);

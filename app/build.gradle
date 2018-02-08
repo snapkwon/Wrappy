@@ -10,7 +10,7 @@ android {
         //applicationId 'net.wrappy.im'
         applicationId 'net.wrappy.im'
         versionCode 23
-        versionName "1.1.6"
+        versionName "1.1.7"
         archivesBaseName = "Wrappy-" + versionName
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
@@ -56,8 +56,8 @@ android {
     productFlavors {
         dev {
             dimension "free"
-            applicationId = "net.wrappy.im2"
-            applicationId 'net.wrappy.im2'
+            applicationId = "net.wrappy.im"
+            applicationId 'net.wrappy.im'
             buildConfigField 'String', 'ROOT_URL', '"http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/"'
             buildConfigField 'String', 'DOMAIN', '"imdev.wrappy.network"'
             buildConfigField 'Boolean', 'IS_DEV', 'true'

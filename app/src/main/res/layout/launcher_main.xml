@@ -73,5 +73,16 @@
 
     </LinearLayout>
 
+    <net.wrappy.im.helper.layout.AppTextView
+        android:id="@+id/txtLoginVersionName"
+        style="@style/AppText02_Menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/txt_light"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="14sp"/>
 
 </RelativeLayout>
