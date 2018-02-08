@@ -739,7 +739,7 @@ public class ContactListManagerAdapter extends
         public void onSubScriptionChanged(final Contact from, long providerId, long accountId, final int subType, final int subStatus) {
             //Avoid crash when null adapter
             if (mAdaptee != null && from != null && from.getAddress() != null) {
-                String username = mAdaptee.normalizeAddress(from.getAddress().getAddress());
+                String username = mAdaptee.normalizeAddress(from.getAddress().getAddress()).toLowerCase();
                 String nickname = from.getName();
                 insertOrUpdateSubscription(username, from,
                         subType,
@@ -952,8 +952,8 @@ public class ContactListManagerAdapter extends
     private void insertOrUpdateSubscription(final String username, final Contact contact, final int subscriptionType,
                                             final int subscriptionStatus) {
 
-        String selection = Imps.Contacts.USERNAME + "='" + username + "'";
-        String[] selectionArgs = null;
+        String selection = Imps.Contacts.USERNAME + "=?";
+        String[] selectionArgs = new String[]{username};
         Cursor cursor = mResolver.query(mContactUrl, new String[]{Imps.Contacts._ID},
                 selection, selectionArgs, null);
         if (cursor == null) {

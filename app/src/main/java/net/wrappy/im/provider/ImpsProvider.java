@@ -2171,7 +2171,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
             whereClause.append("=?");
 
             for (int i = 0; i < usernameCount; i++) {
-                String username = usernames.get(i);
+                String username = usernames.get(i).toLowerCase();
                 String nickname = nicknames.get(i);
                 int type = 0;
                 int subscriptionStatus = 0;
