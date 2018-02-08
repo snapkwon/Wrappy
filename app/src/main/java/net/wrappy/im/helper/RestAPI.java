@@ -50,10 +50,7 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-        private static String root_url = BuildConfig.ROOT_URL;// real
-    //private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
-    // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
-//    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
+    private static String root_url = BuildConfig.ROOT_URL;// real
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
@@ -92,10 +89,10 @@ public class RestAPI {
     private static String POST_VERIFY_RESEND_CODE = root_url + "/member/sms/resend/%s/%s";
     public static String GET_PROMOTION_HISTORY = root_url + "member/promotion/invitation/award_history";
     public static String GET_PROMOTION_SETTING = root_url + "master/promotion/setting";
-    private static String GET_PROMOTION_CONTENT = root_url + "/member/%s/promotion-content";
+    private static String GET_PROMOTION_CONTENT = root_url + "member/%s/promotion-content";
     public static String GET_PROMOTION_BALANCE = root_url + "member/promotion/invitation/bonus_balance";
     public static String DELETE_MEMBER_GROUP = root_url + "chat/group/%s/participator/%s";
-    public static String ADD_MEMBER_TO_GROUP = root_url + "/chat/group/%s/";
+    public static String ADD_MEMBER_TO_GROUP = root_url + "chat/group/%s/";
     public static String REFERRAL = root_url + "member/inviter/%s";
     public static String ADD_MEMBER_TO_GROUP_CHAT = root_url + "chat/group/%s/participator/%s";
 
@@ -121,11 +118,11 @@ public class RestAPI {
         if (jid.contains(Constant.EMAIL_DOMAIN)) {
             identifer = jid.split("@")[0];
         }
-        return String.format(GET_MEMBER_INFO_BY_JID,identifer.toLowerCase());
+        return String.format(GET_MEMBER_INFO_BY_JID, identifer.toLowerCase());
     }
 
     public static String getContentPromotionUrl(String countryCode) {
-        return String.format(GET_PROMOTION_CONTENT,countryCode);
+        return String.format(GET_PROMOTION_CONTENT, countryCode);
     }
 
     public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
@@ -579,7 +576,7 @@ public class RestAPI {
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
                     case "ERROR_CODE_LOGIN_FOURTH_TIME_FAIL":
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
-                    case " ERROR_CODE_LOGIN_FIFTH_TIME_FAIL":
+                    case "ERROR_CODE_LOGIN_FIFTH_TIME_FAIL":
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
                     case "ERROR_CODE_LOGIN_LOCKED":
                         return ErrorCode.ERROR_CODE_LOGIN_LOCKED.getErrorCode();

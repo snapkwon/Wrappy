@@ -31,6 +31,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
+import net.wrappy.im.BuildConfig;
 import net.wrappy.im.ImApp;
 import net.wrappy.im.R;
 import net.wrappy.im.model.PromotionSetting;
@@ -119,10 +120,8 @@ public class AppFuncs {
     }
 
     public static void log(String string) {
-        try {
-            Log.i("wrappy_log", string);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (BuildConfig.DEBUG) {
+            Log.d("wrappy_log", string);
         }
     }
 
