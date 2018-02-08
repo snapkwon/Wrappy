@@ -2136,17 +2136,18 @@ public class XmppConnection extends ImConnection {
             @Override
             public void connected(XMPPConnection connection) {
                 debug(TAG, "connected");
-            }
-
-            @Override
-            public void authenticated(XMPPConnection connection, boolean resumed) {
-                debug(TAG, "authenticated: resumed=" + resumed);
                 setState(LOGGED_IN, null);
                 try {
                     initOmemo((XMPPTCPConnection) connection);
                 } catch (Exception e) {
                     debug("OMEMO", "There was a problem init'g omemo", e);
                 }
+            }
+
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                debug(TAG, "authenticated: resumed=" + resumed);
+
                 sendPresencePacket();
                 ((XmppChatGroupManager) getChatGroupManager()).reconnectAll();
 
