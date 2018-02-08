@@ -80,7 +80,6 @@ public class InputPasswordRegisterActivity extends BaseActivity {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppFuncs.showProgressWaiting(InputPasswordRegisterActivity.this);
                 String password = mEditPassword.getText().toString();
                 if(password.isEmpty())
                 {
@@ -103,7 +102,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                                     @Override
                                     public void OnComplete(String s) {
                                         try {
-
+                                            AppFuncs.showProgressWaiting(InputPasswordRegisterActivity.this);
                                             doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
                                         } catch (Exception ex) {
                                             AppFuncs.dismissProgressWaiting();
