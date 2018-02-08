@@ -88,7 +88,7 @@ public class ForgetPasswordQuestionFragment extends Fragment {
 
     private void getListQuestion() {
         AppFuncs.showProgressWaiting(getActivity());
-        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS + Store.getStringData(getActivity(), Store.USERNAME), new RestAPIListener(getActivity()) {
+        RestAPIListener restAPIListener = new RestAPIListener(getActivity()) {
             @Override
             public void OnComplete(String s) {
                 try {
@@ -118,7 +118,21 @@ public class ForgetPasswordQuestionFragment extends Fragment {
                     ex.printStackTrace();
                 }
             }
+
+            @Override
+            protected void onError(int errorCode) {
+                super.onError(errorCode);
+
+            }
+        };
+
+        restAPIListener.setOnListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LauncherActivity.start(getActivity());
+            }
         });
+        RestAPI.GetDataWrappy(getActivity(), RestAPI.GET_RANDOM_2_QUESTIONS + Store.getStringData(getActivity(), Store.USERNAME), restAPIListener);
 
     }
 
