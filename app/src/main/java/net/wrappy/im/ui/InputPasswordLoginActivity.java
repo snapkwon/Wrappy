@@ -3,6 +3,7 @@ package net.wrappy.im.ui;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -46,6 +47,8 @@ public class InputPasswordLoginActivity extends BaseActivity {
     String userName;
     CountDownTimer cTimer = null;
 
+    private long lastClickTime = 0;
+
     void startTimer() {
         cTimer = new CountDownTimer(AppFuncs.TIMECOUNTDOWN, 1000) {
             public void onTick(long millisUntilFinished) {
@@ -75,8 +78,8 @@ public class InputPasswordLoginActivity extends BaseActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         AppFuncs.dismissProgressWaiting();
     }
 
@@ -86,7 +89,6 @@ public class InputPasswordLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_password_login);
 
-        ButterKnife.bind(this);
         wpkToken = getIntent().getParcelableExtra(PatternActivity.USER_INFO);
         initViews();
 
@@ -107,36 +109,44 @@ public class InputPasswordLoginActivity extends BaseActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppFuncs.showProgressWaiting(InputPasswordLoginActivity.this);
-                RestAPI.PostDataWrappy(InputPasswordLoginActivity.this, null, String.format(RestAPI.CHECK_PASSCODE, edtPassword.getText().toString()), new RestAPIListener(InputPasswordLoginActivity.this) {
 
-                    @Override
-                    public void onError(int errorCode)
-                    {
-                        int resId = getResId("error_" + errorCode);
-                        getIntent().putExtra("error", InputPasswordLoginActivity.this.getString(resId));
-                        setResult(RESULT_OK, getIntent());
-                        finish();
-                    }
-                    @Override
-                    public void OnComplete(String s) {
-                        try {
-                            boolean ischeck = (new JsonParser()).parse(s).getAsBoolean();
-                            if(ischeck ==true)
-                            {
-                                doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
-                            }
-                            else
-                            {
-                                onLoginFailed();
-                            }
+                if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
+                if(edtPassword.getText().toString().isEmpty())
+                {
+                    PopupUtils.showCustomDialog(InputPasswordLoginActivity.this,getString(R.string.warning),getString(R.string.password_is_empty), R.string.ok, null);
+                }
+                else {
+                    AppFuncs.showProgressWaiting(InputPasswordLoginActivity.this);
+                    RestAPI.PostDataWrappy(InputPasswordLoginActivity.this, null, String.format(RestAPI.CHECK_PASSCODE, edtPassword.getText().toString()), new RestAPIListener(InputPasswordLoginActivity.this) {
 
-                        } catch (Exception ex) {
-                            AppFuncs.dismissProgressWaiting();
-                            ex.printStackTrace();
+                        @Override
+                        public void onError(int errorCode) {
+                            int resId = getResId("error_" + errorCode);
+                            getIntent().putExtra("error", InputPasswordLoginActivity.this.getString(resId));
+                            setResult(RESULT_OK, getIntent());
+                            finish();
                         }
-                    }
-                });
+
+                        @Override
+                        public void OnComplete(String s) {
+                            try {
+                                boolean ischeck = (new JsonParser()).parse(s).getAsBoolean();
+                                if (ischeck == true) {
+                                    doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
+                                } else {
+                                    onLoginFailed();
+                                }
+
+                            } catch (Exception ex) {
+                                AppFuncs.dismissProgressWaiting();
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                }
              //   doExistingAccountRegister(wpkToken.getJid() + Constant.EMAIL_DOMAIN, wpkToken.getXmppPassword(), userName);
             }
         });
