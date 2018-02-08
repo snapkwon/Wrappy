@@ -78,8 +78,8 @@ public class InputPasswordLoginActivity extends BaseActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         AppFuncs.dismissProgressWaiting();
     }
 

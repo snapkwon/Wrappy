@@ -225,8 +225,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         AppFuncs.dismissProgressWaiting();
     }
 
@@ -278,6 +278,18 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
       ForgetPasswordInputNewPassword.start(PatternActivity.this);
   }*/
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+        switch (requestCode) {
+            case LauncherActivity.RESULT_ERROR:
+                if(resultIntent!=null && !resultIntent.getStringExtra("error").isEmpty()) {
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
+                break;
+        }
+    }
+
     private void login(String pass) {
         AppFuncs.showProgressWaiting(this);
         String url = RestAPI.loginUrl(Store.getStringData(getApplicationContext(), Store.USERNAME), pass);
@@ -304,9 +316,8 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         Intent intent = new Intent(PatternActivity.this, InputPasswordLoginActivity.class);
                         intent.putExtra(PatternActivity.USER_INFO, wpkToken);
                         intent.putExtra("username",username);
-                        PatternActivity.this.startActivity(intent);
+                        PatternActivity.this.startActivityForResult(intent,LauncherActivity.RESULT_ERROR);
                         AppFuncs.dismissProgressWaiting();
-                        finish();
                     }
                     else
                     {
