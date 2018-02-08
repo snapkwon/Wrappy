@@ -49,10 +49,12 @@
     <string name="error_8032">ユーザー登録に失敗しました。時間を空けてもう一度お試しください</string>
     <string name="error_8033">予期せぬエラー、もう一度お試し下さい</string>
     <string name="error_8034">ユーザーIDまたはパターンが正しくありません</string>
-    <string name="error_8035">IDもしくはパスワードが正しくありません。あと2回のミスでアカウントが3時間ロックされます</string>
-    <string name="error_8036">IDもしくはパスワードが正しくありません。あと1回のミスでアカウントが3時間ロックされます</string>
-    <string name="error_8037">IDもしくはパスワードが正しくありません。アカウントは3時間ロックされます。</string>
-    <string name="error_8038">IDもしくはパスワードが正しくありません。</string>
+    <string name="error_8035">IDもしくはパスワードが正しくありません。あなたのアカウントが１分ロックされます。</string>
+    <string name="error_8036">IDもしくはパスワードが正しくありません。あなたのアカウントが１０分ロックされます。</string>
+    <string name="error_8037">IDもしくはパスワードが正しくありません。あなたのアカウントが１時間ロックされます。</string>
+    <string name="error_8038">IDもしくはパスワードが正しくありません。あなたのアカウントが１０時間ロックされます。</string>
+    <string name="error_8039">IDもしくはパスワードが正しくありません。あなたのアカウントが１日ロックされます。</string>
+    <string name="error_8040">IDもしくはパスワードが正しくありません。</string>
     <string name="error_unknown">エラーが発生したましたので、後ほどもう一度お試しください。</string>
     <string name="error_empty_nickname">名前は最低1文字必要です</string>
 
