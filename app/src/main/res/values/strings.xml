@@ -565,5 +565,8 @@
         <item>Male</item>
     </string-array>
     <string name="forget_passcode">Forget Password</string>
+
+    <string name="update_password">Update password</string>
+    <string name="update_password_title">Please create a password to improve the security on your account</string>
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>
