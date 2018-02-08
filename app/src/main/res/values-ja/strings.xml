@@ -541,4 +541,5 @@
     <string name="update_password">パスワードの更新</string>
     <string name="update_password_title">アカウントセキュリティの向上のためパスワードを登録してください</string>
     <string name="reset_your_password_title">E-メール送信完了</string>
+    <string name="please_input_the_password">パスワードを入力</string>
 </resources>

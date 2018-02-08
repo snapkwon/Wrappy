@@ -286,6 +286,10 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 }
+                else
+                {
+                    finish();
+                }
                 break;
         }
     }
