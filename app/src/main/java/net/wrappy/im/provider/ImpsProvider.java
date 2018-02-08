@@ -100,7 +100,7 @@ public class ImpsProvider extends ContentProvider implements ICacheWordSubscribe
     public static final String ENCRYPTED_DATABASE_NAME = "impsenc.db";
     public static final String UNENCRYPTED_DATABASE_NAME = "imps.db";
 
-    private static final int DATABASE_VERSION = 109;
+    private static final int DATABASE_VERSION = 110;//increase version to clear duplicate contacts
 
     protected static final int MATCH_PROVIDERS = 1;
     protected static final int MATCH_PROVIDERS_BY_ID = 2;
