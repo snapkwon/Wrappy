@@ -174,7 +174,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
 
     private void initViews() {
 
-        if(wpkToken.getHasPasscode() == true )
+        if(getIntent().getBooleanExtra("hasPasscode",true) == true )
         {
             mTitlePage.setText(R.string.create_new_password);
             initActionBarDefault(true, R.string.registration);

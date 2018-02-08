@@ -316,6 +316,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         Intent intent = new Intent(PatternActivity.this, InputPasswordLoginActivity.class);
                         intent.putExtra(PatternActivity.USER_INFO, wpkToken);
                         intent.putExtra("username",username);
+                        intent.putExtra("hashPasscode",wpkToken.getHasPasscode());
                         PatternActivity.this.startActivityForResult(intent,LauncherActivity.RESULT_ERROR);
                         AppFuncs.dismissProgressWaiting();
                     }
@@ -324,6 +325,7 @@ public class PatternActivity extends me.tornado.android.patternlock.SetPatternAc
                         Intent intent = new Intent(PatternActivity.this, InputPasswordRegisterActivity.class);
                         intent.putExtra(PatternActivity.USER_INFO, wpkToken);
                         intent.putExtra("username",username);
+                        intent.putExtra("hasPasscode",wpkToken.getHasPasscode());
                         PatternActivity.this.startActivity(intent);
                         AppFuncs.dismissProgressWaiting();
                         finish();
