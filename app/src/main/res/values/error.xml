@@ -49,10 +49,12 @@
     <string name="error_8032">Create new user failed. Please try again.</string>
     <string name="error_8033">Oops! You answered the wrong security question</string>
     <string name="error_8034">The username or pattern is incorrect</string>
-    <string name="error_8035">The username or password is incorrect. You have only 2 times to input again.</string>
-    <string name="error_8036">The username or password is incorrect. You have only 1 time to input again.</string>
-    <string name="error_8037">The username or password is incorrect. Your account is locked in 3 hours.</string>
-    <string name="error_8038">The username or password is incorrect. Your account has been blocked.</string>
+    <string name="error_8035">The username or password is incorrect. Your account has been blocked in 1 minute.</string>
+    <string name="error_8036">The username or password is incorrect. Your account has been blocked in 10 minute.</string>
+    <string name="error_8037">The username or password is incorrect. Your account has been blocked in 1 hour.</string>
+    <string name="error_8038">The username or password is incorrect. Your account has been blocked in 10 hours.</string>
+    <string name="error_8039">The username or password is incorrect. Your account has been blocked in 1 day.</string>
+    <string name="error_8040">The username or password is incorrect. Your account has been blocked.</string>
     <string name="error_unknown">An error occurred, please try again later.</string>
     <string name="error_empty_nickname">Your Nickname must have at least 1 character</string>
 
