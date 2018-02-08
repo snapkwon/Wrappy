@@ -50,10 +50,7 @@ public class RestAPI {
 
     private static final int TIME_OUT = 120000;
 
-        private static String root_url = BuildConfig.ROOT_URL;// real
-    //private static String root_url = "http://192.168.100.187:8080/8EF640C4836D96CE990B71F60E0EA1DB/";// dev
-    // public static String root_url = "http://10.0.3.2:8080/wrappy-web-application/";
-//    private static String root_url_dev = "https://webserv-ci.proteusiondev.com:8081/wrappy-web-application/";
+    private static String root_url = BuildConfig.ROOT_URL;// real
 
     public static String GET_MEMBER_INFO = root_url + "member";// identifier
     public static String GET_SEARCH_USERNAME = root_url + "member/%s";// identifier
@@ -121,11 +118,11 @@ public class RestAPI {
         if (jid.contains(Constant.EMAIL_DOMAIN)) {
             identifer = jid.split("@")[0];
         }
-        return String.format(GET_MEMBER_INFO_BY_JID,identifer.toLowerCase());
+        return String.format(GET_MEMBER_INFO_BY_JID, identifer.toLowerCase());
     }
 
     public static String getContentPromotionUrl(String countryCode) {
-        return String.format(GET_PROMOTION_CONTENT,countryCode);
+        return String.format(GET_PROMOTION_CONTENT, countryCode);
     }
 
     public static String getVerifyCodeByNewPhoneNumber(String user, String oldPhone, String newPhone) {
