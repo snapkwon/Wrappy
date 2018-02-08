@@ -22,14 +22,17 @@ import butterknife.OnClick;
 
 public class LauncherActivity extends BaseActivity {
 
-    @BindView(R.id.viewFlipper1) ViewFlipper mViewFlipper;
-    @BindView(R.id.edtUserMame) EditText mEditUsername;
-    @BindView(R.id.txtLoginVersionName) AppTextView txtLoginVersionName;
+    @BindView(R.id.viewFlipper1)
+    ViewFlipper mViewFlipper;
+    @BindView(R.id.edtUserMame)
+    EditText mEditUsername;
+    @BindView(R.id.txtLoginVersionName)
+    AppTextView txtLoginVersionName;
 
     public static final int REQUEST_CODE_REGISTER = 1111;
     public static final int REQUEST_CODE_LOGIN = 1112;
     public static final int REQUEST_CODE_INPUT_NEW_PASSWORD = 1113;
-    public static final int RESULT_ERROR= 4001;
+    public static final int RESULT_ERROR = 4001;
 
     boolean isFlag;
 
@@ -47,25 +50,26 @@ public class LauncherActivity extends BaseActivity {
         mViewFlipper.setDisplayedChild(0);
 
         String versionName = BuildConfig.VERSION_NAME;
-        Utils.setTextForView(txtLoginVersionName,versionName);
+        Utils.setTextForView(txtLoginVersionName, "v " + versionName);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
-            switch (requestCode) {
-                case RESULT_ERROR:
-                   if(resultIntent!=null && !resultIntent.getStringExtra("error").isEmpty()) {
-                        PopupUtils.showOKDialog(LauncherActivity.this, LauncherActivity.this.getString(R.string.error), resultIntent.getStringExtra("error"), null);
-                   }
-                    break;
-            }
+        switch (requestCode) {
+            case RESULT_ERROR:
+                if (resultIntent != null && !resultIntent.getStringExtra("error").isEmpty()) {
+                    PopupUtils.showOKDialog(LauncherActivity.this, LauncherActivity.this.getString(R.string.error), resultIntent.getStringExtra("error"), null);
+                }
+                break;
+        }
     }
 
-    @OnClick({R.id.btnShowLogin,R.id.btnShowRegister,R.id.lnLoginFrame})
+    @OnClick({R.id.btnShowLogin, R.id.btnShowRegister, R.id.lnLoginFrame})
     public void onClick(View v) {
         if (isFlag) {
             return;
-        } isFlag = true;
+        }
+        isFlag = true;
         AppFuncs.dismissKeyboard(LauncherActivity.this);
         switch (v.getId()) {
             case R.id.btnShowLogin:
@@ -92,7 +96,7 @@ public class LauncherActivity extends BaseActivity {
         arg.putInt("type", REQUEST_CODE_LOGIN);
         arg.putString("username", mEditUsername.getText().toString().trim());
         intent.putExtras(arg);
-        this.startActivityForResult(intent , RESULT_ERROR);
+        this.startActivityForResult(intent, RESULT_ERROR);
 
     }
 
