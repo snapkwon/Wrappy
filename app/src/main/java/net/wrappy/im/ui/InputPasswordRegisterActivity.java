@@ -2,6 +2,7 @@ package net.wrappy.im.ui;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -53,6 +54,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
     private String patternPassword;
     WpkToken wpkToken;
     String userName;
+    private long lastClickTime = 0;
 
     private void showQuestionScreen(String pass ,String passcode) {
             Intent intent = new Intent(this, RegistrationSecurityQuestionActivity.class);
@@ -81,6 +83,10 @@ public class InputPasswordRegisterActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String password = mEditPassword.getText().toString();
+                if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
                 if(password.isEmpty())
                 {
                     PopupUtils.showCustomDialog(InputPasswordRegisterActivity.this,getString(R.string.warning),getString(R.string.password_is_empty), R.string.ok, null);
@@ -98,6 +104,16 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                             {
 
                                 RestAPI.PostDataWrappy(InputPasswordRegisterActivity.this, null, String.format(RestAPI.CREATE_PASSCODE, password), new RestAPIListener(InputPasswordRegisterActivity.this) {
+
+                                    @Override
+                                    public void onError(int errorCode)
+                                    {
+                                        int resId = getResId("error_" + errorCode);
+                                        getIntent().putExtra("error", InputPasswordRegisterActivity.this.getString(resId));
+                                        setResult(RESULT_OK, getIntent());
+                                        finish();
+                                    }
+
 
                                     @Override
                                     public void OnComplete(String s) {
@@ -157,9 +173,17 @@ public class InputPasswordRegisterActivity extends BaseActivity {
     }
 
     private void initViews() {
-        initActionBarDefault(true, R.string.registration);
 
-        mTitlePage.setText(R.string.create_new_password);
+        if(wpkToken.getHasPasscode() == true )
+        {
+            mTitlePage.setText(R.string.create_new_password);
+            initActionBarDefault(true, R.string.registration);
+        }
+        else
+        {
+            initActionBarDefault(true, R.string.update_password);
+            mTitlePage.setText(R.string.update_password_title);
+        }
         mTitlePassword.setText(R.string.create_new_password);
         mEditPassword.setHint(R.string.input_your_password);
         mEditConfirmPassword.setHint(R.string.input_repeat_password);

@@ -537,4 +537,8 @@
     <string name="create_new_password">パスワードを登録</string>
     <string name="input_repeat_password">パスワード再入力</string>
     <string name="forget_passcode">パスワードを忘れた</string>
+
+    <string name="update_password">パスワードの更新</string>
+    <string name="update_password_title">アカウントセキュリティの向上のためパスワードを登録してください</string>
+
 </resources>
