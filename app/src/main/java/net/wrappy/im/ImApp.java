@@ -1355,7 +1355,7 @@ public class ImApp extends MultiDexApplication implements ICacheWordSubscriber {
             }
             String avatar = wpKMemberDto.getAvatar()!=null? wpKMemberDto.getAvatar().getReference() : "";
             String banner = wpKMemberDto.getBanner()!=null? wpKMemberDto.getBanner().getReference() : "";
-            Imps.Avatars.updateAvatarBannerToDB(address,avatar,banner);
+            Imps.Avatars.updateAvatarBannerToDB(correctAddress, avatar, banner);
         }
     }
 
