@@ -579,7 +579,7 @@ public class RestAPI {
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
                     case "ERROR_CODE_LOGIN_FOURTH_TIME_FAIL":
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
-                    case " ERROR_CODE_LOGIN_FIFTH_TIME_FAIL":
+                    case "ERROR_CODE_LOGIN_FIFTH_TIME_FAIL":
                         return ErrorCode.ERROR_CODE_LOGIN_THIRD_TIME_FAIL.getErrorCode();
                     case "ERROR_CODE_LOGIN_LOCKED":
                         return ErrorCode.ERROR_CODE_LOGIN_LOCKED.getErrorCode();
