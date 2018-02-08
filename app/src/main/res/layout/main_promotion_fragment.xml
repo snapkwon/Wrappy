@@ -101,15 +101,15 @@
                 android:layout_marginBottom="5dp"
                 />
 
-            <net.wrappy.im.helper.layout.AppTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/promotion_history_description"
-                android:textSize="12sp"
-                android:textColor="#9b9b9b"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="5dp"
-                />
+            <!--<net.wrappy.im.helper.layout.AppTextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/promotion_history_description"-->
+                <!--android:textSize="12sp"-->
+                <!--android:textColor="#9b9b9b"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--/>-->
 
         </LinearLayout>
 

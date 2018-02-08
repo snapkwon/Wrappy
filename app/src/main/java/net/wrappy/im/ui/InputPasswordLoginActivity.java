@@ -59,6 +59,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
             }
             public void onFinish() {
                 cancelTimer();
+                setResult(RESULT_OK, null);
                 finish();
             }
         };
@@ -116,7 +117,7 @@ public class InputPasswordLoginActivity extends BaseActivity {
                 lastClickTime = SystemClock.elapsedRealtime();
                 if(edtPassword.getText().toString().isEmpty())
                 {
-                    PopupUtils.showCustomDialog(InputPasswordLoginActivity.this,getString(R.string.warning),getString(R.string.password_is_empty), R.string.ok, null);
+                    PopupUtils.showCustomDialog(InputPasswordLoginActivity.this,getString(R.string.warning),getString(R.string.please_input_the_password), R.string.ok, null);
                 }
                 else {
                     AppFuncs.showProgressWaiting(InputPasswordLoginActivity.this);

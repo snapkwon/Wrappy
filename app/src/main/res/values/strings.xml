@@ -547,7 +547,7 @@
         <string name="fullname">Nickname</string>
     <string name="info">Info</string>
     <string name="wrong_format_password">Password must have at least 8 characters. Inlcluding 1 Uppercase, 1 lowercase and 1 number.</string>
-    <string name = "password_is_empty">password cannot be empty</string>
+    <string name = "password_is_empty">Password cannot be empty</string>
     <string name = "pattern_coutdown">Draw your pattern\n\nin %s seconds </string>
     <string name = "passcode_coutdown">Input your password\n\nin %s seconds </string>
 
@@ -569,5 +569,7 @@
     <string name="update_password">Update password</string>
     <string name="update_password_title">Please create a password to improve the security on your account</string>
     <string name="reset_your_password_title">Success! Email has been sent</string>
+    <string name="please_input_the_password">Input your password</string>
+
     <!--<string name="waiting_develop">This function is developing</string>-->
 </resources>

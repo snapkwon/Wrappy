@@ -89,7 +89,7 @@ public class InputPasswordRegisterActivity extends BaseActivity {
                 lastClickTime = SystemClock.elapsedRealtime();
                 if(password.isEmpty())
                 {
-                    PopupUtils.showCustomDialog(InputPasswordRegisterActivity.this,getString(R.string.warning),getString(R.string.password_is_empty), R.string.ok, null);
+                    PopupUtils.showCustomDialog(InputPasswordRegisterActivity.this,getString(R.string.warning),getString(R.string.please_input_the_password), R.string.ok, null);
                 }
                 else
                 {
